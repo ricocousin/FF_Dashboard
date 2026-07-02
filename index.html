@@ -1128,42 +1128,34 @@ async function init() {
   const strengthDisplayPct = strengthPct !== null ? Math.min(strengthPct, 130) : 0;
 
   const grid1 = document.createElement('div');
-  grid1.className = 'grid-2';
+  grid1.className = 'card';
 
-  const yearCard = document.createElement('div');
-  yearCard.className = 'card';
+  const yearCard = grid1;
   yearCard.innerHTML = `
-    <div class="card-title">Distance ${thisYear}</div>
-    <div>
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.25rem">
-        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">${targetLabel}</span>
-        <span style="font-family:var(--font-display);font-size:1.4rem;color:${isOverflow ? 'var(--accent2)' : 'var(--accent)'}">${fmt(rawPct, 0)}%</span>
+    <div class="card-title">Distance & strength sessions ${thisYear}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.25rem">
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">${targetLabel}</span>
+          <span style="font-family:var(--font-display);font-size:1.4rem;color:${isOverflow ? 'var(--accent2)' : 'var(--accent)'}">${fmt(rawPct, 0)}%</span>
+        </div>
+        <div class="year-bar-track"><div class="year-bar-fill${isOverflow ? ' overflow' : ''}" style="width:${displayPct}%"></div></div>
+        <div class="year-bar-labels"><span>${fmt(yearDist, 0)} km done</span><span>${isOverflow ? '+' + fmt(yearDist - targetKm, 0) + ' km ahead' : fmt(targetKm - yearDist, 0) + ' km to go'}</span></div>
       </div>
-      <div class="year-bar-track"><div class="year-bar-fill${isOverflow ? ' overflow' : ''}" style="width:${displayPct}%"></div></div>
-      <div class="year-bar-labels"><span>${fmt(yearDist, 0)} km done</span><span>${isOverflow ? '+' + fmt(yearDist - targetKm, 0) + ' km ahead' : fmt(targetKm - yearDist, 0) + ' km to go'}</span></div>
-    </div>
-    <div class="chart-wrap" style="margin-top:1.5rem;height:155px"><canvas id="monthChart"></canvas></div>
-  `;
-  grid1.appendChild(yearCard);
-
-  const strengthYearCard = document.createElement('div');
-  strengthYearCard.className = 'card';
-  strengthYearCard.innerHTML = `
-    <div class="card-title">Strength sessions ${thisYear}</div>
-    <div>
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.25rem">
-        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">${totalStrengthPrevYear > 0 ? `vs ${prevYear} total (${totalStrengthPrevYear} sessions)` : 'Sessions this year'}</span>
-        <span style="font-family:var(--font-display);font-size:1.4rem;color:${strengthOverflow ? 'var(--accent2)' : 'var(--strength)'}">${strengthPct !== null ? strengthPct + '%' : totalStrengthThisYear}</span>
-      </div>
-      <div class="year-bar-track"><div class="year-bar-fill${strengthOverflow ? ' overflow' : ''}" style="width:${strengthDisplayPct}%;background:var(--strength)"></div></div>
-      <div class="year-bar-labels">
-        <span>${totalStrengthThisYear} sessions done</span>
-        <span>${totalStrengthPrevYear > 0 ? (strengthOverflow ? '+' + (totalStrengthThisYear - totalStrengthPrevYear) + ' ahead' : (totalStrengthPrevYear - totalStrengthThisYear) + ' to match') : ''}</span>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.25rem">
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">${totalStrengthPrevYear > 0 ? `vs ${prevYear} total (${totalStrengthPrevYear} sessions)` : 'Sessions this year'}</span>
+          <span style="font-family:var(--font-display);font-size:1.4rem;color:${strengthOverflow ? 'var(--accent2)' : 'var(--strength)'}">${strengthPct !== null ? strengthPct + '%' : totalStrengthThisYear}</span>
+        </div>
+        <div class="year-bar-track"><div class="year-bar-fill${strengthOverflow ? ' overflow' : ''}" style="width:${strengthDisplayPct}%;background:var(--strength)"></div></div>
+        <div class="year-bar-labels">
+          <span>${totalStrengthThisYear} sessions done</span>
+          <span>${totalStrengthPrevYear > 0 ? (strengthOverflow ? '+' + (totalStrengthThisYear - totalStrengthPrevYear) + ' ahead' : (totalStrengthPrevYear - totalStrengthThisYear) + ' to match') : ''}</span>
+        </div>
       </div>
     </div>
-    <div class="chart-wrap" style="margin-top:1.5rem;height:155px"><canvas id="monthStrengthChart"></canvas></div>
+    <div class="chart-wrap" style="height:200px"><canvas id="monthChart"></canvas></div>
   `;
-  grid1.appendChild(strengthYearCard);
   app.appendChild(grid1);
 
   // ── Build sWeekMap for combined chart ────────────────────────────────────────
@@ -1191,38 +1183,56 @@ async function init() {
   // ── Render charts ─────────────────────────────────────────────────────────────
   requestAnimationFrame(() => {
     const monthTrend = linearTrend(monthData);
+    const maxMonthDist = Math.max(...monthData, 1);
+    const maxMonthStr = Math.max(...monthStrengthData, 1);
+
     new Chart($('monthChart'), {
       type: 'bar',
       data: { labels: monthLabels, datasets: [
-        { data: monthData.map(v => parseFloat(v.toFixed(1))),
-          backgroundColor: monthData.map((_, i) => i === currentMonth ? 'rgba(232,255,90,0.85)' : 'rgba(232,255,90,0.2)'),
-          borderRadius: 2, order: 2 },
-        { type: 'line', data: monthTrend, borderColor: 'rgba(255,107,53,0.7)', borderWidth: 1.5,
-          borderDash: [4,3], pointRadius: 0, fill: false, tension: 0, order: 1 }
+        {
+          type: 'line',
+          label: 'Distance (km)',
+          data: monthData.map(v => parseFloat(v.toFixed(1))),
+          borderColor: 'rgba(232,255,90,0.9)',
+          backgroundColor: 'rgba(232,255,90,0.08)',
+          pointBackgroundColor: monthData.map((_, i) => i === currentMonth ? 'rgba(255,107,53,1)' : 'rgba(232,255,90,0.9)'),
+          pointBorderColor: 'transparent',
+          pointRadius: 4, borderWidth: 2, tension: 0.35, fill: true,
+          yAxisID: 'yDist', order: 1
+        },
+        {
+          type: 'bar',
+          label: 'Strength sessions',
+          data: monthStrengthData,
+          backgroundColor: monthStrengthData.map((_, i) => i === currentMonth ? 'rgba(74,158,255,0.7)' : 'rgba(74,158,255,0.25)'),
+          borderRadius: 2,
+          yAxisID: 'yStr', order: 2
+        }
       ] },
-      options: { ...chartOpts(), scales: {
-        x: { grid: { display: false }, ticks: { color: '#6b6b78' } },
-        y: { grid: { color: '#1f1f24' }, ticks: { callback: v => `${v}km` } }
-      }, plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip,
-        callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` ${ctx.parsed.y} km` : ` Trend` } }} }
-    });
-
-    const strengthMonthTrend = linearTrend(monthStrengthData);
-    new Chart($('monthStrengthChart'), {
-      type: 'bar',
-      data: { labels: monthLabels, datasets: [
-        { data: monthStrengthData,
-          backgroundColor: monthStrengthData.map((_, i) => i === currentMonth ? 'rgba(74,158,255,0.85)' : 'rgba(74,158,255,0.2)'),
-          borderRadius: 2, order: 2 },
-        { type: 'line', data: strengthMonthTrend, borderColor: 'rgba(255,107,53,0.7)', borderWidth: 1.5,
-          borderDash: [4,3], pointRadius: 0, fill: false, tension: 0, order: 1 }
-      ] },
-      options: { ...chartOpts(), scales: {
-        x: { grid: { display: false }, ticks: { color: '#6b6b78' } },
-        y: { grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', stepSize: 1 },
-          min: 0, max: Math.max(...monthStrengthData, 1) + 1 }
-      }, plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip,
-        callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}` : ` Trend` } }} }
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        layout: { padding: { top: 14 } },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: '#6b6b78' } },
+          yDist: {
+            type: 'linear', position: 'left',
+            grid: { color: '#1f1f24' },
+            ticks: { color: '#e8ff5a', callback: v => `${v}km` },
+            min: 0, max: Math.ceil(maxMonthDist * 1.2)
+          },
+          yStr: {
+            type: 'linear', position: 'right',
+            grid: { display: false },
+            ticks: { color: '#4a9eff', stepSize: 1, callback: v => Number.isInteger(v) ? `${v}s` : '' },
+            min: 0, max: Math.max(maxMonthStr + 1, 4)
+          }
+        },
+        plugins: {
+          legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } },
+          tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1, titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 10,
+            callbacks: { label: ctx => ctx.dataset.yAxisID === 'yDist' ? ` ${ctx.parsed.y} km` : ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}` } }
+        }
+      }
     });
 
     const distTrend = linearTrend(combinedRunDist);

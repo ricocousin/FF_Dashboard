@@ -320,16 +320,9 @@ async function init() {
       <div class="stat"><span class="stat-label">Avg / week (${thisMonth})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(avgActivityMinsPerWeekMonth)}</span><span class="stat-sub">${fmtHrs(monthRunMins / numMonthRunWeeks)} run · ${fmtHrs(monthStrengthMins / numMonthStrengthWeeks)} lift</span></div>
       <div class="stat"><span class="stat-label">Streak vs ${INTENSITY_GOAL_MINS}min goal</span><span class="stat-value" style="color:var(--intensity)">${intensityStreak} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${bestIntensityStreak} wks</span></div>
     </div>
+    ${recoveryRow}
   `;
   app.appendChild(overviewBlock);
-
-  // ── Recovery row (own block, own row, underneath main overview) ───────────────
-  if (recoveryRow) {
-    const recoveryBlock = document.createElement('div');
-    recoveryBlock.className = 'overview-block';
-    recoveryBlock.innerHTML = recoveryRow;
-    app.appendChild(recoveryBlock);
-  }
 
   // ── Week map (needed before charts) ──────────────────────────────────────────
   const weekMap = {};

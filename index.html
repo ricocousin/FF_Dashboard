@@ -131,10 +131,15 @@
 <script>
 const $ = id => document.getElementById(id);
 function fmt(n, dec = 1) { if (n === null || n === undefined || n === '') return '—'; return Number(n).toFixed(dec); }
-function isoWeek(dateStr) { const d = new Date(dateStr + 'T00:00:00'); const jan4 = new Date(d.getFullYear(), 0, 4); const week = Math.ceil(((d - jan4) / 86400000 + jan4.getDay() + 1) / 7); return `${d.getFullYear()}-W${String(week).padStart(2,'00')}`; }
+function localDate(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
+function parseLocalDate(dateStr) { const [y, m, d] = dateStr.split('-').map(Number); return new Date(y, m - 1, d); }
+function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch])); }
+function isoWeek(dateStr) { const d = parseLocalDate(dateStr); d.setHours(0, 0, 0, 0); const thursday = new Date(d); thursday.setDate(d.getDate() + 4 - (d.getDay() || 7)); const isoYear = thursday.getFullYear(); const yearStart = new Date(isoYear, 0, 1); const week = Math.ceil((((thursday - yearStart) / 86400000) + 1) / 7); return `${isoYear}-W${String(week).padStart(2, '0')}`; }
 function weekStartDate(isoWk) { const [y, w] = isoWk.split('-W').map(Number); const jan4 = new Date(y, 0, 4); const dayOfWeek = jan4.getDay() || 7; const week1Mon = new Date(jan4); week1Mon.setDate(jan4.getDate() - dayOfWeek + 1); const result = new Date(week1Mon); result.setDate(week1Mon.getDate() + (w - 1) * 7); return result; }
+function shiftWeekKey(isoWk, weeks) { const d = weekStartDate(isoWk); d.setDate(d.getDate() + weeks * 7); return isoWeek(localDate(d)); }
+function weekRange(startKey, endKey) { const weeks = []; if (!startKey || !endKey) return weeks; for (let wk = startKey, guard = 0; wk <= endKey && guard < 800; wk = shiftWeekKey(wk, 1), guard++) weeks.push(wk); return weeks; }
 function paceToSec(p) { if (!p) return null; const [m, s] = p.split(':').map(Number); return m * 60 + (s || 0); }
-function secToPace(s) { if (!s || s <= 0 || !isFinite(s)) return '—'; return `${Math.floor(s/60)}:${String(Math.round(s%60)).padStart(2,'0')}`; }
+function secToPace(s) { if (!s || s <= 0 || !isFinite(s)) return '—'; const total = Math.round(s); return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`; }
 function fmtHrs(mins) { if (!mins || mins <= 0) return '—'; const h = Math.floor(mins / 60); const m = Math.round(mins % 60); return h > 0 ? `${h}h ${m}m` : `${m}m`; }
 function fmtDuration(timeStr) { if (!timeStr) return '—'; const parts = timeStr.split(':').map(Number); if (parts.length === 3) { const [h, m, s] = parts; if (h > 0) return `${h}h ${m}m`; return `${m}m ${s}s`; } return timeStr; }
 function linearTrend(values) { const n = values.length; if (n < 2) return values.map(() => null); const xs = values.map((_, i) => i); const validPairs = xs.map((x, i) => [x, values[i]]).filter(([,v]) => v !== null && v !== undefined && !isNaN(v)); if (validPairs.length < 2) return values.map(() => null); const xMean = validPairs.reduce((s, [x]) => s + x, 0) / validPairs.length; const yMean = validPairs.reduce((s, [,y]) => s + y, 0) / validPairs.length; let num = 0, den = 0; validPairs.forEach(([x, y]) => { num += (x - xMean) * (y - yMean); den += (x - xMean) ** 2; }); const slope = den !== 0 ? num / den : 0; const intercept = yMean - slope * xMean; return xs.map(x => slope * x + intercept); }
@@ -157,14 +162,13 @@ async function init() {
   const runs = runRows.filter(r => r.date);
   let sessions = [];
   if (strengthRaw) { const { data: sRows } = Papa.parse(strengthRaw, { header: true, skipEmptyLines: true }); sessions = sRows.filter(r => r.date); }
-  const ltData = (ltDataRaw || []).filter(r => { const sec = paceToSec(r.lt_pace); return sec && sec > 120 && sec < 900; });
+  const ltData = (ltDataRaw || []).filter(r => { const sec = paceToSec(r.lt_pace); return sec && sec > 90 && sec < 900; });
   if (summary) $('last-updated').textContent = `Updated ${summary.last_updated}`;
 
   const app = $('app');
   app.innerHTML = '';
 
   const today = new Date();
-  const localDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   const todayIso = localDate(today);
   const lastCompleteDay = new Date(today);
   lastCompleteDay.setDate(today.getDate() - 1);
@@ -180,20 +184,27 @@ async function init() {
   const totalStrengthMinYear = yearSessions.reduce((s, r) => s + (parseFloat(r.duration_min) || 0), 0);
   const runWeeksYear = new Set(yearRuns.map(r => isoWeek(r.date)));
   const sWeeksYear = new Set(yearSessions.map(s => isoWeek(s.date)));
+  const activityWeeksYear = new Set([...runWeeksYear, ...sWeeksYear]);
   const numRunWeeks = Math.max(runWeeksYear.size, 1);
   const numSWeeks = Math.max(sWeeksYear.size, 1);
+  const numActivityWeeks = Math.max(activityWeeksYear.size, 1);
   const avgRunDistPerWeek = yearDist / numRunWeeks;
   const avgRunDistPerRun = yearDist / Math.max(yearRuns.length, 1);
-  const avgSessPerWeek = yearSessions.length / numRunWeeks;
-  const monthRuns = yearRuns.filter(r => new Date(r.date + 'T00:00:00').toLocaleString('en', { month: 'short' }) === thisMonth);
-  const monthSessions = yearSessions.filter(s => new Date(s.date + 'T00:00:00').toLocaleString('en', { month: 'short' }) === thisMonth);
+  const avgSessPerWeek = yearSessions.length / numSWeeks;
+  const monthRuns = yearRuns.filter(r => parseLocalDate(r.date).toLocaleString('en', { month: 'short' }) === thisMonth);
+  const monthSessions = yearSessions.filter(s => parseLocalDate(s.date).toLocaleString('en', { month: 'short' }) === thisMonth);
+  const monthRunWeeks = new Set(monthRuns.map(r => isoWeek(r.date)));
+  const monthStrengthWeeks = new Set(monthSessions.map(s => isoWeek(s.date)));
+  const monthActivityWeeks = new Set([...monthRunWeeks, ...monthStrengthWeeks]);
+  const numMonthRunWeeks = Math.max(monthRunWeeks.size, 1);
+  const numMonthStrengthWeeks = Math.max(monthStrengthWeeks.size, 1);
+  const numMonthActivityWeeks = Math.max(monthActivityWeeks.size, 1);
   const totalRunMinsYear = yearRuns.reduce((s, r) => { const parts = (r.moving_time || '').split(':').map(Number); return s + (parts[0] * 60 + (parts[1] || 0) + (parts[2] || 0) / 60); }, 0);
   const monthRunMins = monthRuns.reduce((s, r) => { const parts = (r.moving_time || '').split(':').map(Number); return s + (parts[0] * 60 + (parts[1] || 0) + (parts[2] || 0) / 60); }, 0);
   const monthStrengthMins = monthSessions.reduce((s, r) => s + (parseFloat(r.duration_min) || 0), 0);
-  const weeksInMonth = Math.max(new Set(monthRuns.map(r => isoWeek(r.date))).size, 1);
   const totalActivityMinsYear = totalRunMinsYear + totalStrengthMinYear;
-  const avgActivityMinsPerWeek = totalActivityMinsYear / numRunWeeks;
-  const avgActivityMinsPerWeekMonth = (monthRunMins + monthStrengthMins) / weeksInMonth;
+  const avgActivityMinsPerWeek = totalActivityMinsYear / numActivityWeeks;
+  const avgActivityMinsPerWeekMonth = (monthRunMins + monthStrengthMins) / numMonthActivityWeeks;
   const latestLT = ltData.length > 0 ? ltData[ltData.length - 1] : null;
   const zones = latestLT ? calcZones(latestLT.lt_pace, latestLT.lt_hr) : null;
 
@@ -207,7 +218,7 @@ async function init() {
     coachCard.className = 'coach-card';
     const rawText = coachData.summary || coachData.insights.join('\n\n');
     const paragraphs = rawText.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
-    const parasHtml = paragraphs.map(p => `<div class="coach-insight">${p}</div>`).join('');
+    const parasHtml = paragraphs.map(p => `<div class="coach-insight">${escapeHtml(p)}</div>`).join('');
     function usageColor(usd) { if (usd < 0.004) return '#4a9eff'; if (usd < 0.008) return '#7bc67e'; if (usd < 0.015) return '#e8ff5a'; if (usd < 0.025) return '#ff9f40'; return '#ff6b35'; }
     function mtdColor(usd) { if (usd < 0.10) return '#4a9eff'; if (usd < 0.25) return '#7bc67e'; if (usd < 0.35) return '#e8ff5a'; if (usd < 0.42) return '#ff9f40'; return '#ff6b35'; }
     function ytdColor(usd) { if (usd < 1.00) return '#4a9eff'; if (usd < 2.50) return '#7bc67e'; if (usd < 3.50) return '#e8ff5a'; if (usd < 4.50) return '#ff9f40'; return '#ff6b35'; }
@@ -221,9 +232,9 @@ async function init() {
   const stepsOverviewData = (() => {
     if (!Object.keys(stepsData || {}).length) return null;
     const allVals = Object.entries(stepsData).filter(([d, v]) => v > 0 && d <= lastCompleteDate);
-    const avg7d = (() => { const days = []; for (let i = 1; i <= 7; i++) { const d = new Date(); d.setDate(d.getDate() - i); const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; if (stepsData[ds]) days.push(stepsData[ds]); } return days.length ? Math.round(days.reduce((s, v) => s + v, 0) / days.length) : null; })();
+    const avg7d = (() => { const days = []; for (let i = 1; i <= 7; i++) { const d = new Date(); d.setDate(d.getDate() - i); const ds = localDate(d); if (stepsData[ds]) days.push(stepsData[ds]); } return days.length ? Math.round(days.reduce((s, v) => s + v, 0) / days.length) : null; })();
     const cutoff30d = new Date(); cutoff30d.setDate(cutoff30d.getDate() - 30);
-    const last30d = allVals.filter(([d]) => new Date(d) >= cutoff30d);
+    const last30d = allVals.filter(([d]) => parseLocalDate(d) >= cutoff30d);
     const avg30d = last30d.length ? Math.round(last30d.reduce((s, [, v]) => s + v, 0) / last30d.length) : null;
     const avgAll = allVals.length ? Math.round(allVals.reduce((s, [, v]) => s + v, 0) / allVals.length) : null;
     return { avgAll, avg7d, avg30d };
@@ -234,11 +245,13 @@ async function init() {
   yearRuns.forEach(r => { const wk = isoWeek(r.date); const parts = (r.moving_time || '').split(':').map(Number); const mins = parts[0] * 60 + (parts[1] || 0) + (parts[2] || 0) / 60; weekMinMap[wk] = (weekMinMap[wk] || 0) + mins; });
   yearSessions.forEach(s => { const wk = isoWeek(s.date); weekMinMap[wk] = (weekMinMap[wk] || 0) + (parseFloat(s.duration_min) || 0); });
   const sortedWeekKeys = Object.keys(weekMinMap).sort();
+  const lastCompleteWeek = isoWeek(lastCompleteDate);
+  const currentWeekComplete = lastCompleteDate === localDate(new Date(weekStartDate(lastCompleteWeek).getFullYear(), weekStartDate(lastCompleteWeek).getMonth(), weekStartDate(lastCompleteWeek).getDate() + 6));
+  const streakAnchor = weekMinMap[lastCompleteWeek] >= INTENSITY_GOAL_MINS || currentWeekComplete ? lastCompleteWeek : shiftWeekKey(lastCompleteWeek, -1);
+  const intensityWeekKeys = sortedWeekKeys.length ? weekRange(sortedWeekKeys[0], streakAnchor) : [];
   let intensityStreak = 0, bestIntensityStreak = 0, currentStreakCount = 0;
-  for (const wk of sortedWeekKeys) { if (weekMinMap[wk] >= INTENSITY_GOAL_MINS) { currentStreakCount++; bestIntensityStreak = Math.max(bestIntensityStreak, currentStreakCount); } else { currentStreakCount = 0; } }
-  const currentWk = isoWeek(`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`);
-  const lastWeekKey = sortedWeekKeys[sortedWeekKeys.length - 1];
-  intensityStreak = lastWeekKey === currentWk ? currentStreakCount : (weekMinMap[lastWeekKey] >= INTENSITY_GOAL_MINS ? currentStreakCount : 0);
+  for (const wk of intensityWeekKeys) { if ((weekMinMap[wk] || 0) >= INTENSITY_GOAL_MINS) { currentStreakCount++; bestIntensityStreak = Math.max(bestIntensityStreak, currentStreakCount); } else { currentStreakCount = 0; } }
+  for (let i = intensityWeekKeys.length - 1; i >= 0; i--) { if ((weekMinMap[intensityWeekKeys[i]] || 0) >= INTENSITY_GOAL_MINS) intensityStreak++; else break; }
 
   const stepsRow = stepsOverviewData ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avgAll?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avg7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avg30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div></div>` : '';
 
@@ -254,14 +267,14 @@ async function init() {
     <div class="overview-full">
       <div class="overview-label lift" style="grid-column:1/-1">Strength</div>
       <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value blue">${fmt(avgSessPerWeek, 1)}</span><span class="stat-sub">${summary?.total_strength_this_year ?? yearSessions.length} sessions ${thisYear}</span></div>
-      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(totalStrengthMinYear / numRunWeeks / 60, 1)} <small style="font-size:.9rem;color:var(--text-dim)">hrs</small></span><span class="stat-sub">${(totalStrengthMinYear / 60).toFixed(1)} hrs ${thisYear}</span></div>
+      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(totalStrengthMinYear / numSWeeks / 60, 1)} <small style="font-size:.9rem;color:var(--text-dim)">hrs</small></span><span class="stat-sub">${(totalStrengthMinYear / 60).toFixed(1)} hrs ${thisYear}</span></div>
       <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value blue">${summary?.current_strength_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${summary?.longest_strength_weekly_streak ?? '—'} wks</span></div>
     </div>
     ${stepsRow}
     <div class="overview-full">
       <div class="overview-label intensity" style="grid-column:1/-1">Intensity Minutes</div>
       <div class="stat"><span class="stat-label">Avg / week (${thisYear})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(avgActivityMinsPerWeek)}</span><span class="stat-sub">${fmtHrs(totalRunMinsYear / numRunWeeks)} run · ${fmtHrs(totalStrengthMinYear / numSWeeks)} lift</span></div>
-      <div class="stat"><span class="stat-label">Avg / week (${thisMonth})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(avgActivityMinsPerWeekMonth)}</span><span class="stat-sub">${fmtHrs(monthRunMins / weeksInMonth)} run · ${fmtHrs(monthStrengthMins / weeksInMonth)} lift</span></div>
+      <div class="stat"><span class="stat-label">Avg / week (${thisMonth})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(avgActivityMinsPerWeekMonth)}</span><span class="stat-sub">${fmtHrs(monthRunMins / numMonthRunWeeks)} run · ${fmtHrs(monthStrengthMins / numMonthStrengthWeeks)} lift</span></div>
       <div class="stat"><span class="stat-label">Streak vs ${INTENSITY_GOAL_MINS}min goal</span><span class="stat-value" style="color:var(--intensity)">${intensityStreak} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${bestIntensityStreak} wks</span></div>
     </div>
   `;
@@ -297,18 +310,18 @@ async function init() {
   const isOverflow = yearDist > targetKm;
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const monthDist = Array(12).fill(0);
-  yearRuns.forEach(r => { const mo = new Date(r.date + 'T00:00:00').getMonth(); monthDist[mo] += parseFloat(r.distance_km) || 0; });
+  yearRuns.forEach(r => { const mo = parseLocalDate(r.date).getMonth(); monthDist[mo] += parseFloat(r.distance_km) || 0; });
   const currentMonth = today.getMonth();
   const monthLabels = months.slice(0, currentMonth + 1);
   const monthData = monthDist.slice(0, currentMonth + 1);
   const prevYear = (today.getFullYear() - 1).toString();
   const monthStrength = Array(12).fill(0);
-  yearSessions.forEach(s => { const mo = new Date(s.date + 'T00:00:00').getMonth(); monthStrength[mo]++; });
+  yearSessions.forEach(s => { const mo = parseLocalDate(s.date).getMonth(); monthStrength[mo]++; });
   const monthStrengthData = monthStrength.slice(0, currentMonth + 1);
   const totalStrengthThisYear = yearSessions.length;
   const totalStrengthPrevYear = sessions.filter(s => s.date.startsWith(prevYear)).length;
   const strengthPct = totalStrengthPrevYear > 0 ? Math.round((totalStrengthThisYear / totalStrengthPrevYear) * 100) : null;
-  const strengthOverflow = totalStrengthThisYear > totalStrengthPrevYear;
+  const strengthOverflow = totalStrengthPrevYear > 0 && totalStrengthThisYear > totalStrengthPrevYear;
   const strengthDisplayPct = strengthPct !== null ? Math.min(strengthPct, 130) : 0;
 
   // ── 16-week chart card ────────────────────────────────────────────────────────
@@ -359,7 +372,7 @@ async function init() {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const startDow = (firstDay.getDay() + 6) % 7;
-    const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+    const todayStr = localDate(now);
     const runIcon = (color = '#e8ff5a') => `<svg class="cal-icon" viewBox="0 0 14 14" fill="none"><circle cx="10" cy="3" r="1.5" fill="${color}"/><path d="M7 5.5l1.5-2 2 1-1 2.5-2.5 1L5 11H3" stroke="${color}" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 8l-2 3" stroke="${color}" stroke-width="1.2" stroke-linecap="round"/></svg>`;
     const strengthIcon = (color = '#4a9eff') => `<svg class="cal-icon" viewBox="0 0 14 14" fill="none"><rect x="1" y="6" width="2" height="3" rx="0.5" fill="${color}"/><rect x="11" y="6" width="2" height="3" rx="0.5" fill="${color}"/><rect x="3" y="5" width="2" height="5" rx="0.5" fill="${color}"/><rect x="9" y="5" width="2" height="5" rx="0.5" fill="${color}"/><rect x="5" y="6.5" width="4" height="2" rx="0.5" fill="${color}"/></svg>`;
     let dayCells = '';
@@ -367,7 +380,7 @@ async function init() {
     let currentRow = [];
     for (let i = 0; i < startDow; i++) currentRow.push(null);
     for (let d = 1; d <= lastDay.getDate(); d++) {
-      const dateStr = `${year}-${String(month + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const dateStr = localDate(new Date(year, month, d));
       const isToday = dateStr === todayStr;
       const isFuture = dateStr > todayStr;
       const hasRun = runDates.has(dateStr);
@@ -395,10 +408,10 @@ async function init() {
   runHeading.textContent = 'Running';
   app.appendChild(runHeading);
 
-  const efforts = calcBestEfforts(runs.filter(r => r.type === 'outdoor'));
+  const efforts = calcBestEfforts(runsComplete.filter(r => r.type === 'outdoor'));
   const effortsCard = document.createElement('div');
   effortsCard.className = 'card';
-  effortsCard.innerHTML = `<div class="card-title">Personal bests — by distance category</div><div class="efforts-grid">${efforts.map(e => `<div class="effort"><div class="effort-label">${e.label}</div><div class="effort-value">${e.pace}</div><div class="effort-detail">${e.time} · ${e.dist}</div><div class="effort-sub">${e.name}</div><div class="effort-date">${e.date ?? ''}</div></div>`).join('')}</div>`;
+  effortsCard.innerHTML = `<div class="card-title">Personal bests — by distance category</div><div class="efforts-grid">${efforts.map(e => `<div class="effort"><div class="effort-label">${e.label}</div><div class="effort-value">${e.pace}</div><div class="effort-detail">${e.time} · ${e.dist}</div><div class="effort-sub">${escapeHtml(e.name)}</div><div class="effort-date">${e.date ?? ''}</div></div>`).join('')}</div>`;
   app.appendChild(effortsCard);
 
   const ltCard = document.createElement('div');

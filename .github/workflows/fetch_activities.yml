@@ -2,8 +2,8 @@ name: Fetch Garmin Activities
 
 on:
   schedule:
-    - cron: '0 5 * * *'     # daily incremental
-    - cron: '0 4 1-7 * 0'    # first Sunday of each month
+    - cron: '0 4 * * *'   # 6am Danish time in summer (UTC+2)
+    - cron: '0 5 * * *'   # 6am Danish time in winter (UTC+1)
   workflow_dispatch:
 
 jobs:
@@ -12,15 +12,30 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Check if this is the correct Danish local hour
+        id: dst_check
+        run: |
+          DK_HOUR=$(TZ='Europe/Copenhagen' date +%H)
+          echo "Danish local hour right now: $DK_HOUR"
+          if [ "$DK_HOUR" == "06" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping — this cron fire doesn't match current Danish 6am (DST offset)."
+          fi
+
       - name: Set up Python
+        if: steps.dst_check.outputs.run == 'true'
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
       - name: Install dependencies
+        if: steps.dst_check.outputs.run == 'true'
         run: pip install garminconnect
 
       - name: Run fetch script
+        if: steps.dst_check.outputs.run == 'true'
         env:
           GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
           GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
@@ -28,11 +43,10 @@ jobs:
         run: python fetch_activities.py
 
       - name: Commit and push data files
+        if: steps.dst_check.outputs.run == 'true'
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add runs.csv summary.json strength.csv lactate.json coach_summary.json api_usage.json steps.csv
           git diff --staged --quiet || git commit -m "Update activity data"
           git push
-
-

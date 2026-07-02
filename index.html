@@ -376,6 +376,10 @@ async function init() {
     const runIcon = (color = '#e8ff5a') => `<svg class="cal-icon" viewBox="0 0 14 14" fill="none"><circle cx="10" cy="3" r="1.5" fill="${color}"/><path d="M7 5.5l1.5-2 2 1-1 2.5-2.5 1L5 11H3" stroke="${color}" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 8l-2 3" stroke="${color}" stroke-width="1.2" stroke-linecap="round"/></svg>`;
     const strengthIcon = (color = '#4a9eff') => `<svg class="cal-icon" viewBox="0 0 14 14" fill="none"><rect x="1" y="6" width="2" height="3" rx="0.5" fill="${color}"/><rect x="11" y="6" width="2" height="3" rx="0.5" fill="${color}"/><rect x="3" y="5" width="2" height="5" rx="0.5" fill="${color}"/><rect x="9" y="5" width="2" height="5" rx="0.5" fill="${color}"/><rect x="5" y="6.5" width="4" height="2" rx="0.5" fill="${color}"/></svg>`;
     let dayCells = '';
+    // Leading blank cells so day 1 lands in the correct weekday column.
+    for (let i = 0; i < startDow; i++) {
+      dayCells += `<div class="cal-day"></div>`;
+    }
     const calRows = [];
     let currentRow = [];
     for (let i = 0; i < startDow; i++) currentRow.push(null);

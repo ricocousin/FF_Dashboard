@@ -1,19 +1,19 @@
 {
-  "last_updated": "2026-07-01 21:30 UTC",
-  "summary": "Volume has pulled back 13% over the last four weeks \u2014 eight runs versus ten in the prior block \u2014 which fits a natural consolidation pattern, particularly after the 44 km effort on June 8th that carried a load of 355, the heaviest single session in the recent window by a significant margin. Yesterday's 11.7 km at 5:59/km and HR 143 looks like appropriate recovery pacing off the back of that workload distribution.\n\nThe June 27th run stands out as the quality anchor of the recent block: 15.7 km at 4:49/km with HR 161, sitting meaningfully above the other aerobic sessions in both pace and cardiac cost. With your current LT pegged at 4:24/km @ 178 bpm as of today, that effort was operating in the upper aerobic/threshold-adjacent zone \u2014 useful stimulus, and worth tracking whether you can sustain that pace band as volume rebuilds.\n\nDaily steps averaging 13,940 \u2014 with rest days still holding above 11,400 \u2014 reflects solid non-running movement load, which matters for ultra preparation. Strength frequency (four sessions in four weeks) is functional but on the leaner side given the 34 YTD sessions; if the current three-week streak is a deliberate rebuild of consistency, maintaining that cadence into the next block would be the priority.",
+  "last_updated": "2026-07-02 11:58 UTC",
+  "summary": "Your 12-week average sits at 29.3 km/week across 27 runs, and the recent 4-week dip to 113 km (-9% vs the prior block) is modest enough to read as consolidation rather than any meaningful withdrawal from load \u2014 particularly given the 44 km long effort on June 8th, which anchors that window with real durability work.\n\nThe June 27th run stands out as the quality marker of the past fortnight: 15.7 km at 4:49/km with HR 161 is a strong aerobic output, sitting notably closer to threshold territory than your typical moderate-effort days. Today's LT test result \u2014 4:24/km at 178 bpm \u2014 is a clean data point and will become more informative as the 30-day baseline builds. For now it establishes a reference: your June 27th average pace was within roughly 25 seconds of that threshold, which confirms it was a genuinely hard aerobic effort, not a tempo misread.\n\nDaily steps averaging 14,120 over the past four weeks \u2014 including 11,641 on rest days \u2014 reflects a background activity floor that matters for durability and doesn't show up in run kilometres. Combined with the bike commute, your actual movement load is meaningfully higher than the running data alone suggests.",
   "insights": [
-    "Volume has pulled back 13% over the last four weeks \u2014 eight runs versus ten in the prior block \u2014 which fits a natural consolidation pattern, particularly after the 44 km effort on June 8th that carried a load of 355, the heaviest single session in the recent window by a significant margin. Yesterday's 11.7 km at 5:59/km and HR 143 looks like appropriate recovery pacing off the back of that workload distribution.\n\nThe June 27th run stands out as the quality anchor of the recent block: 15.7 km at 4:49/km with HR 161, sitting meaningfully above the other aerobic sessions in both pace and cardiac cost. With your current LT pegged at 4:24/km @ 178 bpm as of today, that effort was operating in the upper aerobic/threshold-adjacent zone \u2014 useful stimulus, and worth tracking whether you can sustain that pace band as volume rebuilds.\n\nDaily steps averaging 13,940 \u2014 with rest days still holding above 11,400 \u2014 reflects solid non-running movement load, which matters for ultra preparation. Strength frequency (four sessions in four weeks) is functional but on the leaner side given the 34 YTD sessions; if the current three-week streak is a deliberate rebuild of consistency, maintaining that cadence into the next block would be the priority."
+    "Your 12-week average sits at 29.3 km/week across 27 runs, and the recent 4-week dip to 113 km (-9% vs the prior block) is modest enough to read as consolidation rather than any meaningful withdrawal from load \u2014 particularly given the 44 km long effort on June 8th, which anchors that window with real durability work.\n\nThe June 27th run stands out as the quality marker of the past fortnight: 15.7 km at 4:49/km with HR 161 is a strong aerobic output, sitting notably closer to threshold territory than your typical moderate-effort days. Today's LT test result \u2014 4:24/km at 178 bpm \u2014 is a clean data point and will become more informative as the 30-day baseline builds. For now it establishes a reference: your June 27th average pace was within roughly 25 seconds of that threshold, which confirms it was a genuinely hard aerobic effort, not a tempo misread.\n\nDaily steps averaging 14,120 over the past four weeks \u2014 including 11,641 on rest days \u2014 reflects a background activity floor that matters for durability and doesn't show up in run kilometres. Combined with the bike commute, your actual movement load is meaningfully higher than the running data alone suggests."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 1234,
-    "output_tokens": 305,
-    "cost_usd": 0.008277,
-    "cost_dkk": 0.05711,
-    "date": "2026-07-01"
+    "input_tokens": 2049,
+    "output_tokens": 297,
+    "cost_usd": 0.010602,
+    "cost_dkk": 0.07315,
+    "date": "2026-07-02"
   },
-  "usage_mtd_usd": 0.00828,
-  "usage_mtd_dkk": 0.0571,
-  "usage_ytd_usd": 0.00828,
-  "usage_ytd_dkk": 0.0571
+  "usage_mtd_usd": 0.01888,
+  "usage_mtd_dkk": 0.1303,
+  "usage_ytd_usd": 0.01888,
+  "usage_ytd_dkk": 0.1303
 }

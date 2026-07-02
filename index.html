@@ -603,7 +603,8 @@ async function init() {
   app.innerHTML = '';
 
   const today = new Date();
-  const todayIso = today.toISOString().slice(0, 10);
+  const localDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const todayIso = localDate(today);
 
   // ── Last complete date ────────────────────────────────────────────────────
   // Today's data is always partial — activities, steps, and metrics are only
@@ -612,7 +613,7 @@ async function init() {
   // (steps ring, last run label, coach summary) are exempt from this rule.
   const lastCompleteDay = new Date(today);
   lastCompleteDay.setDate(today.getDate() - 1);
-  const lastCompleteDate = lastCompleteDay.toISOString().slice(0, 10);
+  const lastCompleteDate = localDate(lastCompleteDay);
 
   const thisYear = today.getFullYear().toString();
   const thisMonth = today.toLocaleString('en', { month: 'short' });
@@ -800,43 +801,40 @@ async function init() {
   const overviewBlock = document.createElement('div');
   overviewBlock.className = 'overview-block';
   overviewBlock.innerHTML = `
-    <div class="overview">
-      <div class="overview-half">
-        <div class="overview-label run">Running</div>
-        <div class="stat">
-          <span class="stat-label">Avg / run</span>
-          <span class="stat-value accent">${fmt(avgRunDistPerRun, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span>
-          <span class="stat-sub">${summary?.total_runs_this_year ?? yearRuns.length} runs ${thisYear}</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Avg / week</span>
-          <span class="stat-value">${fmt(avgRunDistPerWeek, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span>
-          <span class="stat-sub">${fmt(summary?.total_distance_this_year_km ?? yearDist, 0)} km ${thisYear}</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Weekly streak</span>
-          <span class="stat-value accent">${summary?.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span>
-          <span class="stat-sub">Best: ${summary?.longest_weekly_streak ?? '—'} wks</span>
-        </div>
+    <div class="overview-full">
+      <div class="overview-label run" style="grid-column:1/-1">Running</div>
+      <div class="stat">
+        <span class="stat-label">Avg / run</span>
+        <span class="stat-value accent">${fmt(avgRunDistPerRun, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span>
+        <span class="stat-sub">${summary?.total_runs_this_year ?? yearRuns.length} runs ${thisYear}</span>
       </div>
-      <div class="overview-divider"></div>
-      <div class="overview-half">
-        <div class="overview-label lift">Strength</div>
-        <div class="stat">
-          <span class="stat-label">Avg / week</span>
-          <span class="stat-value blue">${fmt(avgSessPerWeek, 1)}</span>
-          <span class="stat-sub">${summary?.total_strength_this_year ?? yearSessions.length} sessions ${thisYear}</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Avg / week</span>
-          <span class="stat-value">${fmt(totalStrengthMinYear / numRunWeeks / 60, 1)} <small style="font-size:.9rem;color:var(--text-dim)">hrs</small></span>
-          <span class="stat-sub">${(totalStrengthMinYear / 60).toFixed(1)} hrs ${thisYear}</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Weekly streak</span>
-          <span class="stat-value blue">${summary?.current_strength_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span>
-          <span class="stat-sub">Best: ${summary?.longest_strength_weekly_streak ?? '—'} wks</span>
-        </div>
+      <div class="stat">
+        <span class="stat-label">Avg / week</span>
+        <span class="stat-value">${fmt(avgRunDistPerWeek, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span>
+        <span class="stat-sub">${fmt(summary?.total_distance_this_year_km ?? yearDist, 0)} km ${thisYear}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Weekly streak</span>
+        <span class="stat-value accent">${summary?.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span>
+        <span class="stat-sub">Best: ${summary?.longest_weekly_streak ?? '—'} wks</span>
+      </div>
+    </div>
+    <div class="overview-full">
+      <div class="overview-label lift" style="grid-column:1/-1">Strength</div>
+      <div class="stat">
+        <span class="stat-label">Avg / week</span>
+        <span class="stat-value blue">${fmt(avgSessPerWeek, 1)}</span>
+        <span class="stat-sub">${summary?.total_strength_this_year ?? yearSessions.length} sessions ${thisYear}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Avg / week</span>
+        <span class="stat-value">${fmt(totalStrengthMinYear / numRunWeeks / 60, 1)} <small style="font-size:.9rem;color:var(--text-dim)">hrs</small></span>
+        <span class="stat-sub">${(totalStrengthMinYear / 60).toFixed(1)} hrs ${thisYear}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Weekly streak</span>
+        <span class="stat-value blue">${summary?.current_strength_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span>
+        <span class="stat-sub">Best: ${summary?.longest_strength_weekly_streak ?? '—'} wks</span>
       </div>
     </div>
     ${stepsRow}
@@ -861,6 +859,31 @@ async function init() {
   `;
   app.appendChild(overviewBlock);
 
+  // ── Weekly distance chart — shown above calendar per Strava-style layout ─────
+  const weekMap = {};
+  runsComplete.forEach(r => {
+    const wk = isoWeek(r.date);
+    if (!weekMap[wk]) weekMap[wk] = { dist: 0 };
+    weekMap[wk].dist += parseFloat(r.distance_km) || 0;
+  });
+  const weekKeys = Object.keys(weekMap).sort().slice(-16);
+  const weekDistances = weekKeys.map(k => parseFloat(weekMap[k].dist.toFixed(1)));
+  const weekLabelsRun = weekKeys.map(k => k.split('-')[1]);
+  const weekMonthBoundary = weekKeys.map((k, i) => {
+    if (i === 0) return false;
+    return weekStartDate(k).getMonth() !== weekStartDate(weekKeys[i-1]).getMonth();
+  });
+  const monthNamesShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const weekMonthLabel = weekKeys.map(k => monthNamesShort[weekStartDate(k).getMonth()]);
+
+  const weeklyDistCard = document.createElement('div');
+  weeklyDistCard.className = 'card';
+  weeklyDistCard.innerHTML = `
+    <div class="card-title">Weekly distance — last 16 weeks</div>
+    <div class="chart-wrap"><canvas id="weeklyDistChart"></canvas></div>
+  `;
+  app.appendChild(weeklyDistCard);
+
   // ── Activity calendar ────────────────────────────────────────────────────────
   const calCard = document.createElement('div');
   calCard.className = 'card';
@@ -878,7 +901,7 @@ async function init() {
     for (let i = 7; i >= 0; i--) {
       const d = new Date(now);
       d.setDate(now.getDate() - now.getDay() + 1 - i * 7); // Monday of that week
-      const wk = isoWeek(d.toISOString().slice(0, 10));
+      const wk = isoWeek(localDate(d));
       streakWeeks.push({ wk, date: new Date(d) });
     }
 
@@ -1087,25 +1110,7 @@ async function init() {
   const monthLabels = months.slice(0, currentMonth + 1);
   const monthData = monthDist.slice(0, currentMonth + 1);
 
-  // Weekly distance — exclude today (partial data)
-  const weekMap = {};
-  runsComplete.forEach(r => {
-    const wk = isoWeek(r.date);
-    if (!weekMap[wk]) weekMap[wk] = { dist: 0 };
-    weekMap[wk].dist += parseFloat(r.distance_km) || 0;
-  });
-  const weekKeys = Object.keys(weekMap).sort().slice(-16);
-  const weekDistances = weekKeys.map(k => parseFloat(weekMap[k].dist.toFixed(1)));
-  const weekLabelsRun = weekKeys.map(k => k.split('-')[1]);
-  const weekMonthBoundary = weekKeys.map((k, i) => {
-    if (i === 0) return false;
-    const curMonth = weekStartDate(k).getMonth();
-    const prevMonth = weekStartDate(weekKeys[i - 1]).getMonth();
-    return curMonth !== prevMonth;
-  });
-  const monthNamesShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const weekMonthLabel = weekKeys.map(k => monthNamesShort[weekStartDate(k).getMonth()]);
-
+  // yearCard only — weekly dist moved above calendar
   const grid1 = document.createElement('div');
   grid1.className = 'grid-2';
 
@@ -1124,14 +1129,6 @@ async function init() {
     <div class="chart-wrap" style="margin-top:1.5rem;height:155px"><canvas id="monthChart"></canvas></div>
   `;
   grid1.appendChild(yearCard);
-
-  const distCard = document.createElement('div');
-  distCard.className = 'card';
-  distCard.innerHTML = `
-    <div class="card-title">Weekly distance — last 16 weeks</div>
-    <div class="chart-wrap"><canvas id="weeklyDistChart"></canvas></div>
-  `;
-  grid1.appendChild(distCard);
   app.appendChild(grid1);
 
   // ── Strength section ─────────────────────────────────────────────────────────

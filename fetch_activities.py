@@ -1,6 +1,8 @@
 import os
 import csv
 import json
+import urllib.request
+import urllib.error
 from datetime import datetime, timedelta
 from garminconnect import Garmin
 
@@ -348,12 +350,146 @@ lt_records = sorted([r for r in lt_records if is_valid_lt_record(r)], key=lambda
 with open(lt_file, "w", encoding="utf-8") as f:
     json.dump(lt_records, f, indent=2)
 
+# ── Polar Accesslink: sleep + steps ───────────────────────────────────────────
+# Deliberately separate from Garmin data. Garmin (via H10 chest strap) remains
+# the sole source of truth for runs.csv/strength.csv — Frederik's Polar Loop
+# mis-tags H10-strap runs as "indoor" activities, so Polar exercise data is
+# NOT pulled or merged here. Polar is used only for:
+#   - sleep.csv   (Garmin doesn't provide this at all)
+#   - polar_steps.csv (kept separate from iPhone-derived steps.csv so wrist
+#     vs. phone step counts can be compared on the dashboard, not silently merged)
+#
+# NOTE: Accesslink v3 endpoints below are correct as of setup (July 2026), but
+# Polar has been known to adjust response shapes — if fields come back empty,
+# check https://www.polar.com/accesslink-api/ for the current schema before
+# assuming the fetch is broken.
+
+polar_token = os.environ.get("POLAR_ACCESS_TOKEN", "")
+polar_user_id = os.environ.get("POLAR_USER_ID", "")
+
+def polar_get(url):
+    req = urllib.request.Request(
+        url,
+        headers={
+            "Authorization": f"Bearer {polar_token}",
+            "Accept": "application/json"
+        },
+        method="GET"
+    )
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        if resp.status == 204:
+            return None
+        return json.loads(resp.read().decode("utf-8"))
+
+def polar_delete(url):
+    req = urllib.request.Request(
+        url,
+        headers={"Authorization": f"Bearer {polar_token}"},
+        method="DELETE"
+    )
+    urllib.request.urlopen(req, timeout=30)
+
+if polar_token and polar_user_id:
+    # ── Sleep ──────────────────────────────────────────────────────────────
+    try:
+        existing_sleep = {}
+        if os.path.exists("sleep.csv"):
+            with open("sleep.csv", "r", encoding="utf-8") as f:
+                for row in csv.DictReader(f):
+                    if row.get("date"):
+                        existing_sleep[row["date"]] = row
+
+        sleep_resp = polar_get("https://www.polaraccesslink.com/v3/users/sleep")
+        nights = (sleep_resp or {}).get("nights", [])
+
+        for night in nights:
+            date = night.get("date", "")
+            if not date:
+                continue
+            existing_sleep[date] = {
+                "date": date,
+                "sleep_score": night.get("sleep_score", ""),
+                "total_sleep_min": round((night.get("total_sleep") or 0) / 60) if night.get("total_sleep") else "",
+                "sleep_start": night.get("sleep_start_time", ""),
+                "sleep_end": night.get("sleep_end_time", ""),
+                "continuity": night.get("continuity", "")
+            }
+
+        sleep_fieldnames = ["date", "sleep_score", "total_sleep_min", "sleep_start", "sleep_end", "continuity"]
+        with open("sleep.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=sleep_fieldnames, extrasaction="ignore")
+            writer.writeheader()
+            for date in sorted(existing_sleep.keys(), reverse=True):
+                writer.writerow(existing_sleep[date])
+
+        print(f"Polar sleep: {len(nights)} nights fetched, {len(existing_sleep)} total in sleep.csv")
+    except Exception as e:
+        print(f"Polar sleep fetch skipped: {e}")
+
+    # ── Steps (via activity transactions) ─────────────────────────────────
+    try:
+        existing_polar_steps = {}
+        if os.path.exists("polar_steps.csv"):
+            with open("polar_steps.csv", "r", encoding="utf-8") as f:
+                for row in csv.DictReader(f):
+                    if row.get("date"):
+                        existing_polar_steps[row["date"]] = int(row.get("steps") or 0)
+
+        tx_url = f"https://www.polaraccesslink.com/v3/users/{polar_user_id}/activity-transactions"
+        req = urllib.request.Request(
+            tx_url,
+            headers={"Authorization": f"Bearer {polar_token}", "Accept": "application/json"},
+            method="POST"
+        )
+        transaction_id = None
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                if resp.status == 201:
+                    tx_data = json.loads(resp.read().decode("utf-8"))
+                    transaction_id = tx_data.get("transaction-id")
+        except urllib.error.HTTPError as e:
+            if e.code == 204:
+                print("Polar steps: no new activity data since last sync")
+            else:
+                raise
+
+        if transaction_id:
+            tx_detail_url = f"{tx_url}/{transaction_id}"
+            tx_detail = polar_get(tx_detail_url) or {}
+            activity_urls = tx_detail.get("activity-log", [])
+
+            new_step_count = 0
+            for act_url in activity_urls:
+                try:
+                    day = polar_get(act_url) or {}
+                    date = day.get("date", "")
+                    steps = day.get("active-steps", day.get("steps"))
+                    if date and steps is not None:
+                        existing_polar_steps[date] = int(steps)
+                        new_step_count += 1
+                except Exception as inner_e:
+                    print(f"  Skipped one Polar activity record: {inner_e}")
+
+            # Commit the transaction so these records aren't re-served next run
+            polar_delete(tx_detail_url)
+            print(f"Polar steps: {new_step_count} day(s) updated via transaction {transaction_id}")
+
+        with open("polar_steps.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=["date", "steps"])
+            writer.writeheader()
+            for date in sorted(existing_polar_steps.keys(), reverse=True):
+                writer.writerow({"date": date, "steps": existing_polar_steps[date]})
+
+        print(f"polar_steps.csv: {len(existing_polar_steps)} total days")
+    except Exception as e:
+        print(f"Polar steps fetch skipped: {e}")
+else:
+    print("POLAR_ACCESS_TOKEN / POLAR_USER_ID not set — skipping Polar fetch")
+
 # ── AI Coach block ────────────────────────────────────────────────────────────
 # Calls Anthropic API (claude-sonnet-4-6) to generate a daily coaching summary.
 # Data-anchored, tonally neutral, coaching-oriented with conversational
 # reflection on outliers. Falls back to a static message if API call fails.
-
-import urllib.request
 
 all_runs_sorted = sorted(all_run_rows, key=lambda x: x.get("date", ""))
 all_strength_sorted = sorted(all_strength_rows, key=lambda x: x.get("date", ""))

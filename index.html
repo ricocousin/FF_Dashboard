@@ -885,7 +885,6 @@ async function init() {
     <div class="chart-wrap"><canvas id="optionAChart"></canvas></div>
   `;
   app.appendChild(comparisonGrid);
-  app.appendChild(grid1);
 
   // ── Activity calendar ────────────────────────────────────────────────────────
   const calCard = document.createElement('div');
@@ -1157,6 +1156,8 @@ async function init() {
     </div>
     <div class="chart-wrap" style="height:200px"><canvas id="monthChart"></canvas></div>
   `;
+  app.appendChild(grid1);
+
   // ── Build sWeekMap for combined chart ────────────────────────────────────────
   const sWeekMap = {};
   sessionsComplete.forEach(s => {

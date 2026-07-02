@@ -1092,14 +1092,14 @@ async function init() {
   }
   app.appendChild(ltCard);
 
-  // Distance progress (overflow-capable) + weekly distance
+  // Distance progress (overflow-capable)
   const prevYearDist = summary?.total_distance_prev_year_km ?? null;
   const targetKm = prevYearDist && prevYearDist > 0 ? prevYearDist : 2000;
   const targetLabel = prevYearDist && prevYearDist > 0
     ? `vs ${today.getFullYear() - 1} total (${fmt(targetKm, 0)} km)`
     : 'Progress to 2,000 km';
   const rawPct = (yearDist / targetKm) * 100;
-  const displayPct = Math.min(rawPct, 130); // cap visual bar growth but show real %
+  const displayPct = Math.min(rawPct, 130);
   const isOverflow = yearDist > targetKm;
 
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1112,7 +1112,21 @@ async function init() {
   const monthLabels = months.slice(0, currentMonth + 1);
   const monthData = monthDist.slice(0, currentMonth + 1);
 
-  // yearCard only — weekly dist moved above calendar
+  // Strength sessions by month — this year and last year total
+  const prevYear = (today.getFullYear() - 1).toString();
+  const monthStrength = Array(12).fill(0);
+  yearSessions.forEach(s => {
+    const mo = new Date(s.date + 'T00:00:00').getMonth();
+    monthStrength[mo]++;
+  });
+  const monthStrengthData = monthStrength.slice(0, currentMonth + 1);
+  const totalStrengthThisYear = yearSessions.length;
+  const totalStrengthPrevYear = sessions.filter(s => s.date.startsWith(prevYear)).length;
+  const strengthPct = totalStrengthPrevYear > 0
+    ? Math.round((totalStrengthThisYear / totalStrengthPrevYear) * 100) : null;
+  const strengthOverflow = totalStrengthThisYear > totalStrengthPrevYear;
+  const strengthDisplayPct = strengthPct !== null ? Math.min(strengthPct, 130) : 0;
+
   const grid1 = document.createElement('div');
   grid1.className = 'grid-2';
 
@@ -1131,6 +1145,25 @@ async function init() {
     <div class="chart-wrap" style="margin-top:1.5rem;height:155px"><canvas id="monthChart"></canvas></div>
   `;
   grid1.appendChild(yearCard);
+
+  const strengthYearCard = document.createElement('div');
+  strengthYearCard.className = 'card';
+  strengthYearCard.innerHTML = `
+    <div class="card-title">Strength sessions ${thisYear}</div>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.25rem">
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">${totalStrengthPrevYear > 0 ? `vs ${prevYear} total (${totalStrengthPrevYear} sessions)` : 'Sessions this year'}</span>
+        <span style="font-family:var(--font-display);font-size:1.4rem;color:${strengthOverflow ? 'var(--accent2)' : 'var(--strength)'}">${strengthPct !== null ? strengthPct + '%' : totalStrengthThisYear}</span>
+      </div>
+      <div class="year-bar-track"><div class="year-bar-fill${strengthOverflow ? ' overflow' : ''}" style="width:${strengthDisplayPct}%;background:var(--strength)"></div></div>
+      <div class="year-bar-labels">
+        <span>${totalStrengthThisYear} sessions done</span>
+        <span>${totalStrengthPrevYear > 0 ? (strengthOverflow ? '+' + (totalStrengthThisYear - totalStrengthPrevYear) + ' ahead' : (totalStrengthPrevYear - totalStrengthThisYear) + ' to match') : ''}</span>
+      </div>
+    </div>
+    <div class="chart-wrap" style="margin-top:1.5rem;height:155px"><canvas id="monthStrengthChart"></canvas></div>
+  `;
+  grid1.appendChild(strengthYearCard);
   app.appendChild(grid1);
 
   // ── Build sWeekMap for combined chart ────────────────────────────────────────
@@ -1172,6 +1205,24 @@ async function init() {
         y: { grid: { color: '#1f1f24' }, ticks: { callback: v => `${v}km` } }
       }, plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip,
         callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` ${ctx.parsed.y} km` : ` Trend` } }} }
+    });
+
+    const strengthMonthTrend = linearTrend(monthStrengthData);
+    new Chart($('monthStrengthChart'), {
+      type: 'bar',
+      data: { labels: monthLabels, datasets: [
+        { data: monthStrengthData,
+          backgroundColor: monthStrengthData.map((_, i) => i === currentMonth ? 'rgba(74,158,255,0.85)' : 'rgba(74,158,255,0.2)'),
+          borderRadius: 2, order: 2 },
+        { type: 'line', data: strengthMonthTrend, borderColor: 'rgba(255,107,53,0.7)', borderWidth: 1.5,
+          borderDash: [4,3], pointRadius: 0, fill: false, tension: 0, order: 1 }
+      ] },
+      options: { ...chartOpts(), scales: {
+        x: { grid: { display: false }, ticks: { color: '#6b6b78' } },
+        y: { grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', stepSize: 1 },
+          min: 0, max: Math.max(...monthStrengthData, 1) + 1 }
+      }, plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip,
+        callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}` : ` Trend` } }} }
     });
 
     const distTrend = linearTrend(combinedRunDist);

@@ -877,21 +877,7 @@ async function init() {
   const weekMonthLabel = weekKeys.map(k => monthNamesShort[weekStartDate(k).getMonth()]);
 
   // ── Combined run+strength charts — two options for comparison ─────────────────
-  // Build unified 16-week keys covering both run and strength data
-  const allWeekSet = new Set([...Object.keys(weekMap), ...Object.keys(sWeekMap)]);
-  const combinedWeekKeys = [...allWeekSet].sort().slice(-16);
-  const combinedRunDist = combinedWeekKeys.map(k => parseFloat((weekMap[k]?.dist || 0).toFixed(1)));
-  const combinedStrSess = combinedWeekKeys.map(k => sWeekMap[k]?.count || 0);
-  const combinedLabels = combinedWeekKeys.map(k => k.split('-')[1]);
-  const combinedMonthBoundary = combinedWeekKeys.map((k, i) => {
-    if (i === 0) return false;
-    return weekStartDate(k).getMonth() !== weekStartDate(combinedWeekKeys[i-1]).getMonth();
-  });
-  const combinedMonthLabel = combinedWeekKeys.map(k => monthNamesShort[weekStartDate(k).getMonth()]);
-
-  const maxDist = Math.max(...combinedRunDist, 1);
-  const maxSess = Math.max(...combinedStrSess, 1);
-
+  // Combined data built after sWeekMap is defined — see strength section below
   const comparisonGrid = document.createElement('div');
   comparisonGrid.className = 'grid-2';
   comparisonGrid.innerHTML = `
@@ -1198,6 +1184,20 @@ async function init() {
     <div class="chart-wrap"><canvas id="strengthCountChart"></canvas></div>
   `;
   app.appendChild(sCountCard);
+
+  // ── Combined data for comparison charts (needs both weekMap and sWeekMap) ─────
+  const allWeekSet = new Set([...Object.keys(weekMap), ...Object.keys(sWeekMap)]);
+  const combinedWeekKeys = [...allWeekSet].sort().slice(-16);
+  const combinedRunDist = combinedWeekKeys.map(k => parseFloat((weekMap[k]?.dist || 0).toFixed(1)));
+  const combinedStrSess = combinedWeekKeys.map(k => sWeekMap[k]?.count || 0);
+  const combinedLabels = combinedWeekKeys.map(k => k.split('-')[1]);
+  const combinedMonthBoundary = combinedWeekKeys.map((k, i) => {
+    if (i === 0) return false;
+    return weekStartDate(k).getMonth() !== weekStartDate(combinedWeekKeys[i-1]).getMonth();
+  });
+  const combinedMonthLabel = combinedWeekKeys.map(k => monthNamesShort[weekStartDate(k).getMonth()]);
+  const maxDist = Math.max(...combinedRunDist, 1);
+  const maxSess = Math.max(...combinedStrSess, 1);
 
   // ── Render charts ─────────────────────────────────────────────────────────────
   requestAnimationFrame(() => {

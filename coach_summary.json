@@ -1,19 +1,19 @@
 {
-  "last_updated": "2026-07-02 22:54 UTC",
-  "summary": "Your 4-week volume has essentially flatlined \u2014 127 km versus 125 km the prior block, 9 runs each \u2014 which at face value looks like consolidation, but the composition tells a more useful story. The 44 km effort on June 8th anchors that period, and the current block has been built around shorter, more frequent outputs with the standout being last Saturday's 15.73 km at 4:49/km average, your sharpest sustained pace in recent weeks and a clear marker that aerobic speed is in good shape.\n\nToday's 13.77 km at 5:48/km with HR 137 is a clean aerobic recovery or base-building effort \u2014 low drift relative to the effort, and it pairs well with Monday's 11.73 km at a similarly easy intensity. That's two consecutive days of moderate volume at controlled heart rate, which is exactly the kind of back-to-back durability work that compounds quietly over time.\n\nYour lactate threshold is now logged at 4:24/km at 178 bpm as of today \u2014 no 30-day baseline yet to compare against, but that figure sits meaningfully faster than your half marathon PB pace of 4:18/km, which is consistent with the fitness suggested by the 4:49/km average last Saturday. Worth watching as that baseline builds.",
+  "last_updated": "2026-07-02 23:02 UTC",
+  "summary": "Your volume has stabilised cleanly over the past eight weeks \u2014 125 km and 127 km in back-to-back four-week blocks, 9 runs each, representing genuine consolidation rather than drift. The 20-week running streak landing exactly at your current best is worth noting: that's consistent contact with training through what appears to be a high-output period of the year, and today's 13.77 km at 5:48/km with HR 137 adds another aerobic maintenance brick without accumulating meaningful fatigue.\n\nThe standout data point in recent history remains June 27th \u2014 15.73 km at 4:49/km with HR 161, which is your sharpest effort in this window and well inside threshold territory. Paired with today's LT test result of 4:24/km at 178 bpm, that gives you a useful anchor: your aerobic efficiency at easy effort looks solid (HR 137 for sub-6 pace), and your threshold sits at a pace consistent with someone who ran a 4:18/km half last September. There's no detraining signal here.\n\nThe 44 km long run on June 8th remains the structural foundation of the recent block \u2014 442m of gain at 5:53/km average is meaningful durability work, and it was only three and a half weeks ago. That kind of effort takes time to express as fitness rather than fatigue, so the subsequent lower-load pattern through late June is contextually appropriate.",
   "insights": [
-    "Your 4-week volume has essentially flatlined \u2014 127 km versus 125 km the prior block, 9 runs each \u2014 which at face value looks like consolidation, but the composition tells a more useful story. The 44 km effort on June 8th anchors that period, and the current block has been built around shorter, more frequent outputs with the standout being last Saturday's 15.73 km at 4:49/km average, your sharpest sustained pace in recent weeks and a clear marker that aerobic speed is in good shape.\n\nToday's 13.77 km at 5:48/km with HR 137 is a clean aerobic recovery or base-building effort \u2014 low drift relative to the effort, and it pairs well with Monday's 11.73 km at a similarly easy intensity. That's two consecutive days of moderate volume at controlled heart rate, which is exactly the kind of back-to-back durability work that compounds quietly over time.\n\nYour lactate threshold is now logged at 4:24/km at 178 bpm as of today \u2014 no 30-day baseline yet to compare against, but that figure sits meaningfully faster than your half marathon PB pace of 4:18/km, which is consistent with the fitness suggested by the 4:49/km average last Saturday. Worth watching as that baseline builds."
+    "Your volume has stabilised cleanly over the past eight weeks \u2014 125 km and 127 km in back-to-back four-week blocks, 9 runs each, representing genuine consolidation rather than drift. The 20-week running streak landing exactly at your current best is worth noting: that's consistent contact with training through what appears to be a high-output period of the year, and today's 13.77 km at 5:48/km with HR 137 adds another aerobic maintenance brick without accumulating meaningful fatigue.\n\nThe standout data point in recent history remains June 27th \u2014 15.73 km at 4:49/km with HR 161, which is your sharpest effort in this window and well inside threshold territory. Paired with today's LT test result of 4:24/km at 178 bpm, that gives you a useful anchor: your aerobic efficiency at easy effort looks solid (HR 137 for sub-6 pace), and your threshold sits at a pace consistent with someone who ran a 4:18/km half last September. There's no detraining signal here.\n\nThe 44 km long run on June 8th remains the structural foundation of the recent block \u2014 442m of gain at 5:53/km average is meaningful durability work, and it was only three and a half weeks ago. That kind of effort takes time to express as fitness rather than fatigue, so the subsequent lower-load pattern through late June is contextually appropriate."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 2168,
-    "output_tokens": 301,
-    "cost_usd": 0.011019,
-    "cost_dkk": 0.07603,
+    "input_tokens": 2174,
+    "output_tokens": 335,
+    "cost_usd": 0.011547,
+    "cost_dkk": 0.07967,
     "date": "2026-07-02"
   },
-  "usage_mtd_usd": 0.0193,
-  "usage_mtd_dkk": 0.1331,
-  "usage_ytd_usd": 0.0193,
-  "usage_ytd_dkk": 0.1331
+  "usage_mtd_usd": 0.01982,
+  "usage_mtd_dkk": 0.1368,
+  "usage_ytd_usd": 0.01982,
+  "usage_ytd_dkk": 0.1368
 }

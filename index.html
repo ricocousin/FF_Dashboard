@@ -876,13 +876,36 @@ async function init() {
   const monthNamesShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const weekMonthLabel = weekKeys.map(k => monthNamesShort[weekStartDate(k).getMonth()]);
 
-  const weeklyDistCard = document.createElement('div');
-  weeklyDistCard.className = 'card';
-  weeklyDistCard.innerHTML = `
-    <div class="card-title">Weekly distance — last 16 weeks</div>
-    <div class="chart-wrap"><canvas id="weeklyDistChart"></canvas></div>
+  // ── Combined run+strength charts — two options for comparison ─────────────────
+  // Build unified 16-week keys covering both run and strength data
+  const allWeekSet = new Set([...Object.keys(weekMap), ...Object.keys(sWeekMap)]);
+  const combinedWeekKeys = [...allWeekSet].sort().slice(-16);
+  const combinedRunDist = combinedWeekKeys.map(k => parseFloat((weekMap[k]?.dist || 0).toFixed(1)));
+  const combinedStrSess = combinedWeekKeys.map(k => sWeekMap[k]?.count || 0);
+  const combinedLabels = combinedWeekKeys.map(k => k.split('-')[1]);
+  const combinedMonthBoundary = combinedWeekKeys.map((k, i) => {
+    if (i === 0) return false;
+    return weekStartDate(k).getMonth() !== weekStartDate(combinedWeekKeys[i-1]).getMonth();
+  });
+  const combinedMonthLabel = combinedWeekKeys.map(k => monthNamesShort[weekStartDate(k).getMonth()]);
+
+  const maxDist = Math.max(...combinedRunDist, 1);
+  const maxSess = Math.max(...combinedStrSess, 1);
+
+  const comparisonGrid = document.createElement('div');
+  comparisonGrid.className = 'grid-2';
+  comparisonGrid.innerHTML = `
+    <div class="card">
+      <div class="card-title">Option A — dual axis overlay</div>
+      <div class="chart-wrap"><canvas id="optionAChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Option B — stacked panels</div>
+      <div class="chart-wrap" style="height:110px"><canvas id="optionBRunChart"></canvas></div>
+      <div class="chart-wrap" style="height:110px;margin-top:2px"><canvas id="optionBStrChart"></canvas></div>
+    </div>
   `;
-  app.appendChild(weeklyDistCard);
+  app.appendChild(comparisonGrid);
 
   // ── Activity calendar ────────────────────────────────────────────────────────
   const calCard = document.createElement('div');
@@ -1195,58 +1218,127 @@ async function init() {
         callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` ${ctx.parsed.y} km` : ` Trend` } }} }
     });
 
-    const distTrend = linearTrend(weekDistances);
-    const weeklyMonthLinePlugin = {
-      id: 'weeklyMonthLines',
+    const distTrend = linearTrend(combinedRunDist);
+    const strTrend = linearTrend(combinedStrSess);
+
+    // Shared month boundary plugin factory
+    const makeMonthPlugin = (id, boundaries, labels) => ({
+      id,
       afterDraw(chart) {
         const { ctx, chartArea, scales } = chart;
         ctx.save();
-        ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+        ctx.strokeStyle = 'rgba(255,255,255,0.12)';
         ctx.setLineDash([3,3]);
         ctx.font = '9px "DM Mono", monospace';
-        ctx.fillStyle = 'rgba(255,255,255,0.35)';
+        ctx.fillStyle = 'rgba(255,255,255,0.3)';
         ctx.textAlign = 'left';
-        weekMonthBoundary.forEach((isBoundary, i) => {
+        boundaries.forEach((isBoundary, i) => {
           if (isBoundary) {
             const x = scales.x.getPixelForValue(i) - (scales.x.getPixelForValue(1) - scales.x.getPixelForValue(0)) / 2;
-            ctx.beginPath();
-            ctx.moveTo(x, chartArea.top);
-            ctx.lineTo(x, chartArea.bottom);
-            ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x, chartArea.top); ctx.lineTo(x, chartArea.bottom); ctx.stroke();
             ctx.setLineDash([]);
-            ctx.fillText(weekMonthLabel[i], x + 4, chartArea.top + 10);
+            ctx.fillText(labels[i], x + 4, chartArea.top + 10);
             ctx.setLineDash([3,3]);
           }
         });
         ctx.restore();
       }
-    };
+    });
 
-    new Chart($('weeklyDistChart'), {
-      type: 'line',
-      data: { labels: weekLabelsRun, datasets: [
-        { data: weekDistances,
+    // ── Option A: dual Y-axis overlay ────────────────────────────────────────
+    new Chart($('optionAChart'), {
+      type: 'bar',
+      data: { labels: combinedLabels, datasets: [
+        {
+          type: 'line',
+          label: 'Distance (km)',
+          data: combinedRunDist,
           borderColor: 'rgba(232,255,90,0.9)',
-          backgroundColor: 'rgba(232,255,90,0.18)',
-          pointBackgroundColor: weekDistances.map((_, i) =>
-            i === weekDistances.length - 1 ? 'rgba(255,107,53,1)' : 'rgba(232,255,90,0.9)'),
+          backgroundColor: 'rgba(232,255,90,0.12)',
+          pointBackgroundColor: combinedRunDist.map((_, i) => i === combinedRunDist.length-1 ? 'rgba(255,107,53,1)' : 'rgba(232,255,90,0.9)'),
           pointBorderColor: 'transparent',
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          borderWidth: 2,
-          tension: 0.35,
-          fill: true,
-          order: 2 },
-        { data: distTrend, borderColor: 'rgba(255,107,53,0.6)', borderWidth: 1.5,
-          borderDash: [4,3], pointRadius: 0, fill: false, tension: 0, order: 1 }
+          pointRadius: 3, borderWidth: 2, tension: 0.35, fill: true,
+          yAxisID: 'yRun', order: 1
+        },
+        {
+          type: 'bar',
+          label: 'Strength sessions',
+          data: combinedStrSess,
+          backgroundColor: combinedStrSess.map((_, i) => i === combinedStrSess.length-1 ? 'rgba(74,158,255,0.7)' : 'rgba(74,158,255,0.3)'),
+          borderRadius: 2,
+          yAxisID: 'yStr', order: 2
+        }
       ] },
-      options: { ...chartOpts({ layout: { padding: { top: 14 } } }), scales: {
-        x: { grid: { display: false }, ticks: { color: '#6b6b78' } },
-        y: { grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', callback: v => `${v}km` }, beginAtZero: true }
-      }, plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip,
-        callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` ${ctx.parsed.y} km` : ` Trend` } } },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        layout: { padding: { top: 14 } },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: '#6b6b78' } },
+          yRun: {
+            type: 'linear', position: 'left',
+            grid: { color: '#1f1f24' },
+            ticks: { color: '#e8ff5a', callback: v => `${v}km` },
+            min: 0, max: Math.ceil(maxDist * 1.15)
+          },
+          yStr: {
+            type: 'linear', position: 'right',
+            grid: { display: false },
+            ticks: { color: '#4a9eff', stepSize: 1, callback: v => Number.isInteger(v) ? `${v}s` : '' },
+            min: 0, max: Math.max(maxSess + 1, 4)
+          }
+        },
+        plugins: {
+          legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } },
+          tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1, titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 10,
+            callbacks: { label: ctx => ctx.dataset.yAxisID === 'yRun' ? ` ${ctx.parsed.y} km` : ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}` } }
+        }
       },
-      plugins: [weeklyMonthLinePlugin]
+      plugins: [makeMonthPlugin('optionAMonthLines', combinedMonthBoundary, combinedMonthLabel)]
+    });
+
+    // ── Option B: stacked panels ──────────────────────────────────────────────
+    new Chart($('optionBRunChart'), {
+      type: 'line',
+      data: { labels: combinedLabels, datasets: [
+        { data: combinedRunDist,
+          borderColor: 'rgba(232,255,90,0.9)', backgroundColor: 'rgba(232,255,90,0.12)',
+          pointRadius: 2, borderWidth: 2, tension: 0.35, fill: true },
+        { data: distTrend, borderColor: 'rgba(255,107,53,0.5)', borderWidth: 1.5,
+          borderDash: [4,3], pointRadius: 0, fill: false }
+      ] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: {
+          x: { display: false },
+          y: { grid: { color: '#1f1f24' }, ticks: { color: '#e8ff5a', callback: v => `${v}km` }, beginAtZero: true }
+        },
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1,
+          titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 8,
+          callbacks: { label: ctx => ` ${ctx.parsed.y} km` } } }
+      },
+      plugins: [makeMonthPlugin('optionBRunLines', combinedMonthBoundary, combinedMonthLabel)]
+    });
+
+    new Chart($('optionBStrChart'), {
+      type: 'bar',
+      data: { labels: combinedLabels, datasets: [
+        { data: combinedStrSess,
+          backgroundColor: combinedStrSess.map((_, i) => i === combinedStrSess.length-1 ? 'rgba(74,158,255,0.7)' : 'rgba(74,158,255,0.3)'),
+          borderRadius: 2 },
+        { type: 'line', data: strTrend, borderColor: 'rgba(255,107,53,0.5)', borderWidth: 1.5,
+          borderDash: [4,3], pointRadius: 0, fill: false }
+      ] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: {
+          x: { grid: { display: false }, ticks: { color: '#6b6b78' } },
+          y: { grid: { color: '#1f1f24' }, ticks: { color: '#4a9eff', stepSize: 1 },
+            min: 0, max: Math.max(maxSess + 1, 4) }
+        },
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1,
+          titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 8,
+          callbacks: { label: ctx => ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}` } } }
+      }
     });
 
     if ($('ltChart') && ltData.length > 1) {

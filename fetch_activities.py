@@ -435,7 +435,7 @@ if polar_token and polar_user_id:
                     if row.get("date"):
                         existing_polar_steps[row["date"]] = int(row.get("steps") or 0)
 
-        tx_url = f"https://www.polaraccesslink.com/v3/users/{polar_user_id}/activity-transactions"
+        tx_url = "https://www.polaraccesslink.com/v3/users/activity-transactions"
         req = urllib.request.Request(
             tx_url,
             headers={"Authorization": f"Bearer {polar_token}", "Accept": "application/json"},

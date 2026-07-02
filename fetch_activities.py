@@ -367,6 +367,20 @@ with open(lt_file, "w", encoding="utf-8") as f:
 polar_token = os.environ.get("POLAR_ACCESS_TOKEN", "")
 polar_user_id = os.environ.get("POLAR_USER_ID", "")
 
+def _sleep_duration_min(start_iso, end_iso):
+    """Derive sleep duration in minutes from start/end ISO timestamps.
+    Polar's 'total_sleep' field name is unverified against real payloads and
+    came back empty in practice — start/end timestamps are confirmed present
+    and reliable, so duration is computed directly from those instead."""
+    if not start_iso or not end_iso:
+        return ""
+    try:
+        start = datetime.fromisoformat(start_iso)
+        end = datetime.fromisoformat(end_iso)
+        return round((end - start).total_seconds() / 60)
+    except Exception:
+        return ""
+
 def polar_get(url):
     req = urllib.request.Request(
         url,
@@ -409,7 +423,7 @@ if polar_token and polar_user_id:
             existing_sleep[date] = {
                 "date": date,
                 "sleep_score": night.get("sleep_score", ""),
-                "total_sleep_min": round((night.get("total_sleep") or 0) / 60) if night.get("total_sleep") else "",
+                "total_sleep_min": _sleep_duration_min(night.get("sleep_start_time"), night.get("sleep_end_time")),
                 "sleep_start": night.get("sleep_start_time", ""),
                 "sleep_end": night.get("sleep_end_time", ""),
                 "continuity": night.get("continuity", "")

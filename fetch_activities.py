@@ -89,13 +89,44 @@ def calc_pace(duration_s, distance_m):
     pace_s = int((pace_sec - pace_min) * 60)
     return f"{pace_min}:{pace_s:02d}"
 
-def speed_to_pace(speed_mps):
-    if not speed_mps or speed_mps == 0:
+def sec_to_pace(seconds):
+    if not seconds or seconds <= 0:
         return ""
-    pace_sec = 1000 / speed_mps / 60
-    pace_min = int(pace_sec)
-    pace_s = int((pace_sec - pace_min) * 60)
+    total_seconds = int(round(seconds))
+    pace_min = total_seconds // 60
+    pace_s = total_seconds % 60
     return f"{pace_min}:{pace_s:02d}"
+
+def speed_to_pace(speed_mps):
+    if not speed_mps or speed_mps <= 0:
+        return ""
+    return sec_to_pace(1000 / speed_mps)
+
+def parse_pace_sec(pace_str):
+    if not pace_str:
+        return None
+    try:
+        m, s = str(pace_str).split(":")
+        return int(m) * 60 + int(s)
+    except Exception:
+        return None
+
+def lt_speed_to_pace(speed_value):
+    """Convert Garmin LT speed to min/km, accepting m/s and km/h-like values."""
+    if not speed_value or speed_value <= 0:
+        return ""
+
+    # Garmin activity speeds are normally m/s. Keep a km/h fallback because
+    # the LT endpoint is less transparent than activity payloads.
+    candidates = [1000 / speed_value, 3600 / speed_value]
+    for pace_seconds in candidates:
+        if 120 < pace_seconds < 900:
+            return sec_to_pace(pace_seconds)
+    return ""
+
+def is_valid_lt_record(record):
+    pace_sec = parse_pace_sec(record.get("lt_pace"))
+    return pace_sec is not None and 120 < pace_sec < 900
 
 def get_week(date):
     return date.isocalendar()[:2]
@@ -187,35 +218,50 @@ with open("strength.csv", "w", newline="", encoding="utf-8") as f:
     writer.writerows(all_strength_rows)
 
 # ── Aggregate stats ───────────────────────────────────────────────────────────
-year_start = datetime(today.year, 1, 1).date()
+# Historical dashboard stats use yesterday as cutoff because today's data can be partial.
+today_date = today.date()
+last_complete_date = today_date - timedelta(days=1)
+last_complete_str = str(last_complete_date)
+
+def row_date(row):
+    if not row.get("date"):
+        return None
+    try:
+        return datetime.strptime(row["date"], "%Y-%m-%d").date()
+    except Exception:
+        return None
+
+complete_run_rows = [r for r in all_run_rows if row_date(r) and r["date"] <= last_complete_str]
+complete_strength_rows = [s for s in all_strength_rows if row_date(s) and s["date"] <= last_complete_str]
+
 prev_year_start = datetime(today.year - 1, 1, 1).date()
 prev_year_end = datetime(today.year - 1, 12, 31).date()
 
-runs_this_year = [a for a in all_run_rows if a.get("date", "")[:4] == str(today.year)]
-runs_prev_year = [a for a in all_run_rows
+summary_runs_this_year = [a for a in complete_run_rows if a.get("date", "")[:4] == str(today.year)]
+summary_runs_prev_year = [a for a in complete_run_rows
     if str(prev_year_start) <= a.get("date", "") <= str(prev_year_end)]
 
-strength_this_year = [a for a in all_strength_rows if a.get("date", "")[:4] == str(today.year)]
+summary_strength_this_year = [a for a in complete_strength_rows if a.get("date", "")[:4] == str(today.year)]
 
-total_distance_this_year = sum(float(a.get("distance_km") or 0) for a in runs_this_year)
-total_distance_prev_year = sum(float(a.get("distance_km") or 0) for a in runs_prev_year)
-total_strength_min_this_year = sum(float(a.get("duration_min") or 0) for a in strength_this_year)
+total_distance_this_year = sum(float(a.get("distance_km") or 0) for a in summary_runs_this_year)
+total_distance_prev_year = sum(float(a.get("distance_km") or 0) for a in summary_runs_prev_year)
+total_strength_min_this_year = sum(float(a.get("duration_min") or 0) for a in summary_strength_this_year)
 
 run_dates = sorted(set(
     datetime.strptime(a["date"], "%Y-%m-%d").date()
-    for a in all_run_rows if a.get("date")
+    for a in complete_run_rows if a.get("date")
 ))
 
 weeks_with_runs = set(get_week(d) for d in run_dates)
 strength_dates = sorted(set(
     datetime.strptime(a["date"], "%Y-%m-%d").date()
-    for a in all_strength_rows if a.get("date")
+    for a in complete_strength_rows if a.get("date")
 ))
 weeks_with_strength = set(get_week(d) for d in strength_dates)
 
 def calc_current_streak(weeks_set):
     streak = 0
-    week = today.date() - timedelta(days=today.weekday())
+    week = last_complete_date - timedelta(days=last_complete_date.weekday())
     while get_week(week) in weeks_set:
         streak += 1
         week -= timedelta(weeks=1)
@@ -240,17 +286,18 @@ def calc_longest_streak(weeks_set):
 
 weeks_in_year = len(set(get_week(
     datetime.strptime(a["date"], "%Y-%m-%d").date()
-) for a in runs_this_year if a.get("date")))
+) for a in summary_runs_this_year if a.get("date")))
 
 summary = {
     "last_updated": today.strftime("%Y-%m-%d %H:%M UTC"),
-    "total_runs_this_year": len(runs_this_year),
+    "last_complete_date": last_complete_str,
+    "total_runs_this_year": len(summary_runs_this_year),
     "total_distance_this_year_km": round(total_distance_this_year, 1),
     "total_distance_prev_year_km": round(total_distance_prev_year, 1),
-    "avg_runs_per_week_this_year": round(len(runs_this_year) / max(weeks_in_year, 1), 1),
+    "avg_runs_per_week_this_year": round(len(summary_runs_this_year) / max(weeks_in_year, 1), 1),
     "current_weekly_streak": calc_current_streak(weeks_with_runs),
     "longest_weekly_streak": calc_longest_streak(weeks_with_runs),
-    "total_strength_this_year": len(strength_this_year),
+    "total_strength_this_year": len(summary_strength_this_year),
     "total_strength_min_this_year": round(total_strength_min_this_year, 0),
     "current_strength_weekly_streak": calc_current_streak(weeks_with_strength),
     "longest_strength_weekly_streak": calc_longest_streak(weeks_with_strength)
@@ -260,7 +307,6 @@ with open("summary.json", "w", encoding="utf-8") as f:
     json.dump(summary, f, indent=2)
 
 # ── Lactate threshold ─────────────────────────────────────────────────────────
-# ── Lactate threshold ─────────────────────────────────────────────────────────
 lt_records = []
 lt_file = "lactate.json"
 
@@ -268,31 +314,36 @@ if os.path.exists(lt_file):
     with open(lt_file, "r", encoding="utf-8") as f:
         lt_records = json.load(f)
 
+# Drop old bad LT records before appending. This keeps lactate.json clean, not
+# merely hidden by the dashboard filter.
+lt_records = [r for r in lt_records if is_valid_lt_record(r)]
+
 try:
     lt = client.get_lactate_threshold()
     lt_data = lt.get("speed_and_heart_rate", {})
     lt_hr = lt_data.get("heartRate")
     lt_speed = lt_data.get("speed")
     lt_date = lt_data.get("calendarDate", "")[:10]
-    if lt_hr and lt_speed:
-        pace_sec = (1 / (lt_speed * 10)) * (1000 / 60)
-        pace_min = int(pace_sec)
-        pace_s = int((pace_sec - pace_min) * 60)
+    lt_pace = lt_speed_to_pace(lt_speed)
+
+    if lt_hr and lt_pace:
         today_str = str(today.date())
         if not any(r["date"] == today_str for r in lt_records):
             lt_records.append({
                 "date": today_str,
                 "lt_hr": round(lt_hr),
-                "lt_pace": f"{pace_min}:{pace_s:02d}",
+                "lt_pace": lt_pace,
                 "lt_source_date": lt_date
             })
-            print(f"LT recorded: {pace_min}:{pace_s:02d} /km @ {round(lt_hr)} bpm")
+            print(f"LT recorded: {lt_pace} /km @ {round(lt_hr)} bpm")
         else:
             print("LT already recorded today")
     else:
-        print("LT data not available")
+        print("LT data not available or outside sane pace range")
 except Exception as e:
     print(f"LT fetch skipped: {e}")
+
+lt_records = sorted([r for r in lt_records if is_valid_lt_record(r)], key=lambda x: x["date"])
 
 with open(lt_file, "w", encoding="utf-8") as f:
     json.dump(lt_records, f, indent=2)
@@ -304,21 +355,14 @@ with open(lt_file, "w", encoding="utf-8") as f:
 
 import urllib.request
 
-def parse_pace_sec(pace_str):
-    if not pace_str:
-        return None
-    try:
-        m, s = pace_str.split(":")
-        return int(m) * 60 + int(s)
-    except Exception:
-        return None
-
-def fmt_pace(pace_str):
-    return pace_str if pace_str else "—"
-
 all_runs_sorted = sorted(all_run_rows, key=lambda x: x.get("date", ""))
 all_strength_sorted = sorted(all_strength_rows, key=lambda x: x.get("date", ""))
 today_date = today.date()
+
+runs_this_year = [a for a in all_run_rows if a.get("date", "")[:4] == str(today.year)]
+runs_prev_year = [a for a in all_run_rows
+    if str(prev_year_start) <= a.get("date", "") <= str(prev_year_end)]
+strength_this_year = [a for a in all_strength_rows if a.get("date", "")[:4] == str(today.year)]
 
 # ── Build data context for the prompt ────────────────────────────────────────
 
@@ -392,7 +436,7 @@ for label, min_dist in pb_cats:
 
 # Recent run details (last 8) — elevation included for trail context
 run_details = []
-for r in reversed(recent_runs[-16:]):
+for r in reversed(recent_runs[-8:]):
     elev = f" | ↑{r.get('elevation_gain_m','?')}m" if r.get('elevation_gain_m') else ""
     run_details.append(
         f"  {r['date']} | {r.get('distance_km','?')} km | {r.get('avg_pace_min_km','?')} /km | "

@@ -21,6 +21,7 @@
       --strength:  #4a9eff;
       --steps:     #f472b6;
       --intensity: #a78bfa;
+      --recovery:  #fbbf24;
       --font-display: 'Syne', sans-serif;
       --font-body:    'Inter', sans-serif;
       --font-mono:    'DM Mono', monospace;
@@ -76,6 +77,7 @@
     .overview-label.lift { color: var(--strength); }
     .overview-label.steps { color: var(--steps); }
     .overview-label.intensity { color: var(--intensity); }
+    .overview-label.recovery { color: var(--recovery); }
     @media (max-width: 800px) { .overview { grid-template-columns: 1fr; } .overview-divider { display: none; } }
     .stat { background: var(--surface); padding: 1rem 1.5rem; display: flex; flex-direction: column; gap: 0.2rem; }
     .stat-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
@@ -149,13 +151,14 @@ function calcBestEfforts(runs) { const cats = [{ label: '5 km', min: 4 }, { labe
 function calcZones(ltPaceStr, ltHr) { const ltSec = paceToSec(ltPaceStr); if (!ltSec) return null; const z1HrMax = ltHr ? Math.round(ltHr * 0.80) : null; const z2HrMax = ltHr ? Math.round(ltHr * 0.90) : null; const z3HrMax = ltHr ? Math.round(ltHr * 0.99) : null; const z4HrMax = ltHr ? Math.round(ltHr * 1.05) : null; return [ { name: 'Z1 EASY', pace: `> ${secToPace(ltSec + 75)}`, hr: ltHr ? `< ${z1HrMax} bpm` : '', color: '#4a9eff', pct: 40 }, { name: 'Z2 AEROBIC', pace: `${secToPace(ltSec + 45)}–${secToPace(ltSec + 74)}`, hr: ltHr ? `${z1HrMax}–${z2HrMax} bpm` : '', color: '#7bc67e', pct: 60 }, { name: 'Z3 TEMPO', pace: `${secToPace(ltSec + 10)}–${secToPace(ltSec + 44)}`, hr: ltHr ? `${z2HrMax}–${z3HrMax} bpm` : '', color: '#e8ff5a', pct: 78 }, { name: 'Z4 LT', pace: `${secToPace(ltSec - 10)}–${secToPace(ltSec + 9)}`, hr: ltHr ? `${z3HrMax}–${z4HrMax} bpm` : '', color: '#ff9f40', pct: 90 }, { name: 'Z5 HARD', pace: `< ${secToPace(ltSec - 11)}`, hr: ltHr ? `> ${z4HrMax} bpm` : '', color: '#ff6b35', pct: 100 } ]; }
 
 async function init() {
-  const [runsRaw, strengthRaw, summary, ltDataRaw, coachData, stepsRaw] = await Promise.all([
+  const [runsRaw, strengthRaw, summary, ltDataRaw, coachData, stepsRaw, sleepRaw] = await Promise.all([
     fetch('runs.csv').then(r => r.text()),
     fetch('strength.csv').then(r => r.text()).catch(() => null),
     fetch('summary.json').then(r => r.json()).catch(() => null),
     fetch('lactate.json').then(r => r.json()).catch(() => []),
     fetch('coach_summary.json').then(r => r.json()).catch(() => null),
-    fetch('steps.csv').then(r => r.text()).catch(() => null)
+    fetch('steps.csv').then(r => r.text()).catch(() => null),
+    fetch('sleep.csv').then(r => r.text()).catch(() => null)
   ]);
 
   const { data: runRows } = Papa.parse(runsRaw, { header: true, skipEmptyLines: true });
@@ -212,6 +215,15 @@ async function init() {
   if (stepsRaw) { const { data: stepsRows } = Papa.parse(stepsRaw, { header: true, skipEmptyLines: true }); stepsRows.forEach(r => { if (r.date) stepsData[r.date] = parseInt(r.steps) || 0; }); }
   const STEP_GOAL = 10000;
 
+  // ── Sleep data (Recovery row) ──────────────────────────────────────────────────
+  let sleepData = {};
+  if (sleepRaw) {
+    const { data: sleepRows } = Papa.parse(sleepRaw, { header: true, skipEmptyLines: true });
+    sleepRows.forEach(r => {
+      if (r.date) sleepData[r.date] = { minutes: parseFloat(r.total_sleep_min) || 0, score: r.sleep_score !== '' && r.sleep_score !== undefined ? parseFloat(r.sleep_score) : null };
+    });
+  }
+
   // ── Coach card ────────────────────────────────────────────────────────────────
   if (coachData && (coachData.summary || (coachData.insights && coachData.insights.length > 0))) {
     const coachCard = document.createElement('div');
@@ -240,6 +252,29 @@ async function init() {
     return { avgAll, avg7d, avg30d };
   })();
 
+  // ── Recovery (sleep) overview data ─────────────────────────────────────────────
+  const recoveryOverviewData = (() => {
+    const entries = Object.entries(sleepData).filter(([d, v]) => v.minutes > 0 && d <= lastCompleteDate);
+    if (!entries.length) return null;
+
+    const avgOf = (pairs) => {
+      const mins = pairs.filter(([, v]) => v.minutes > 0);
+      const scores = pairs.filter(([, v]) => v.score !== null && !isNaN(v.score));
+      return {
+        mins: mins.length ? mins.reduce((s, [, v]) => s + v.minutes, 0) / mins.length : null,
+        score: scores.length ? scores.reduce((s, [, v]) => s + v.score, 0) / scores.length : null
+      };
+    };
+
+    const cutoff7d = new Date(); cutoff7d.setDate(cutoff7d.getDate() - 7);
+    const cutoff30d = new Date(); cutoff30d.setDate(cutoff30d.getDate() - 30);
+    const last7d = entries.filter(([d]) => parseLocalDate(d) >= cutoff7d);
+    const last30d = entries.filter(([d]) => parseLocalDate(d) >= cutoff30d);
+    const yearEntries = entries.filter(([d]) => d.startsWith(thisYear));
+
+    return { week: avgOf(last7d), month: avgOf(last30d), year: avgOf(yearEntries) };
+  })();
+
   const INTENSITY_GOAL_MINS = 210;
   const weekMinMap = {};
   yearRuns.forEach(r => { const wk = isoWeek(r.date); const parts = (r.moving_time || '').split(':').map(Number); const mins = parts[0] * 60 + (parts[1] || 0) + (parts[2] || 0) / 60; weekMinMap[wk] = (weekMinMap[wk] || 0) + mins; });
@@ -254,6 +289,14 @@ async function init() {
   for (let i = intensityWeekKeys.length - 1; i >= 0; i--) { if ((weekMinMap[intensityWeekKeys[i]] || 0) >= INTENSITY_GOAL_MINS) intensityStreak++; else break; }
 
   const stepsRow = stepsOverviewData ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avgAll?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avg7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avg30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div></div>` : '';
+
+  const recoveryTile = (label, data) => {
+    const durationStr = data && data.mins ? fmtHrs(data.mins) : '—';
+    const scoreStr = data && data.score !== null && data.score !== undefined ? `Score: ${Math.round(data.score)}` : 'Score: —';
+    return `<div class="stat"><span class="stat-label">${label}</span><span class="stat-value" style="color:var(--recovery)">${durationStr}</span><span class="stat-sub">${scoreStr}</span></div>`;
+  };
+
+  const recoveryRow = recoveryOverviewData ? `<div class="overview-full"><div class="overview-label recovery" style="grid-column:1/-1">Recovery</div>${recoveryTile('Avg / week', recoveryOverviewData.week)}${recoveryTile('Avg / month', recoveryOverviewData.month)}${recoveryTile('Avg / year', recoveryOverviewData.year)}</div>` : '';
 
   const overviewBlock = document.createElement('div');
   overviewBlock.className = 'overview-block';
@@ -279,6 +322,14 @@ async function init() {
     </div>
   `;
   app.appendChild(overviewBlock);
+
+  // ── Recovery row (own block, own row, underneath main overview) ───────────────
+  if (recoveryRow) {
+    const recoveryBlock = document.createElement('div');
+    recoveryBlock.className = 'overview-block';
+    recoveryBlock.innerHTML = recoveryRow;
+    app.appendChild(recoveryBlock);
+  }
 
   // ── Week map (needed before charts) ──────────────────────────────────────────
   const weekMap = {};

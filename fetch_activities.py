@@ -452,6 +452,8 @@ if polar_token and polar_user_id:
                 if resp.status == 201:
                     tx_data = json.loads(resp.read().decode("utf-8"))
                     transaction_id = tx_data.get("transaction-id")
+                elif resp.status == 204:
+                    print("Polar steps: no new activity data available (204 — device may not have synced recently)")
         except urllib.error.HTTPError as e:
             if e.code == 204:
                 print("Polar steps: no new activity data since last sync")

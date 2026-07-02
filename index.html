@@ -254,7 +254,7 @@ async function init() {
 
   // ── Recovery (sleep) overview data ─────────────────────────────────────────────
   const recoveryOverviewData = (() => {
-    const entries = Object.entries(sleepData).filter(([d, v]) => v.minutes > 0 && d <= lastCompleteDate);
+    const entries = Object.entries(sleepData).filter(([d, v]) => v.minutes > 0 && d <= todayIso);
     if (!entries.length) return null;
 
     const avgOf = (pairs) => {

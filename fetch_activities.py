@@ -435,10 +435,15 @@ if polar_token and polar_user_id:
                     if row.get("date"):
                         existing_polar_steps[row["date"]] = int(row.get("steps") or 0)
 
-        tx_url = "https://www.polaraccesslink.com/v3/users/activity-transactions"
+        tx_url = f"https://www.polaraccesslink.com/v3/users/{polar_user_id}/activity-transactions"
         req = urllib.request.Request(
             tx_url,
-            headers={"Authorization": f"Bearer {polar_token}", "Accept": "application/json"},
+            data=b"",
+            headers={
+                "Authorization": f"Bearer {polar_token}",
+                "Accept": "application/json",
+                "Content-Length": "0"
+            },
             method="POST"
         )
         transaction_id = None

@@ -879,17 +879,10 @@ async function init() {
   // ── Combined run+strength charts — two options for comparison ─────────────────
   // Combined data built after sWeekMap is defined — see strength section below
   const comparisonGrid = document.createElement('div');
-  comparisonGrid.className = 'grid-2';
+  comparisonGrid.className = 'card';
   comparisonGrid.innerHTML = `
-    <div class="card">
-      <div class="card-title">Option A — dual axis overlay</div>
-      <div class="chart-wrap"><canvas id="optionAChart"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Option B — stacked panels</div>
-      <div class="chart-wrap" style="height:110px"><canvas id="optionBRunChart"></canvas></div>
-      <div class="chart-wrap" style="height:110px;margin-top:2px"><canvas id="optionBStrChart"></canvas></div>
-    </div>
+    <div class="card-title">Weekly distance & strength — last 16 weeks</div>
+    <div class="chart-wrap"><canvas id="optionAChart"></canvas></div>
   `;
   app.appendChild(comparisonGrid);
 
@@ -1140,50 +1133,13 @@ async function init() {
   grid1.appendChild(yearCard);
   app.appendChild(grid1);
 
-  // ── Strength section ─────────────────────────────────────────────────────────
-  const liftHeading = document.createElement('div');
-  liftHeading.className = 'section-heading lift';
-  liftHeading.textContent = 'Strength Training';
-  app.appendChild(liftHeading);
-
+  // ── Build sWeekMap for combined chart ────────────────────────────────────────
   const sWeekMap = {};
   sessionsComplete.forEach(s => {
     const wk = isoWeek(s.date);
     if (!sWeekMap[wk]) sWeekMap[wk] = { count: 0 };
     sWeekMap[wk].count++;
   });
-  const sWeekKeys = Object.keys(sWeekMap).sort().slice(-16);
-  const sWeekCounts = sWeekKeys.map(k => sWeekMap[k].count);
-  const sWeekLabels = sWeekKeys.map(k => k.split('-')[1]);
-  const sWeekMonthBoundary = sWeekKeys.map((k, i) => {
-    if (i === 0) return false;
-    const curMonth = weekStartDate(k).getMonth();
-    const prevMonth = weekStartDate(sWeekKeys[i - 1]).getMonth();
-    return curMonth !== prevMonth;
-  });
-
-  // Total sessions per month for the label badges — exclude today
-  const sessionsByMonthKey = {};
-  sessionsComplete.forEach(s => {
-    const d = new Date(s.date + 'T00:00:00');
-    const key = `${d.getFullYear()}-${d.getMonth()}`;
-    sessionsByMonthKey[key] = (sessionsByMonthKey[key] || 0) + 1;
-  });
-  const sWeekMonthLabel = sWeekKeys.map(k => {
-    const d = weekStartDate(k);
-    const key = `${d.getFullYear()}-${d.getMonth()}`;
-    const name = monthNamesShort[d.getMonth()];
-    const count = sessionsByMonthKey[key] || 0;
-    return `${name} (${count})`;
-  });
-
-  const sCountCard = document.createElement('div');
-  sCountCard.className = 'card';
-  sCountCard.innerHTML = `
-    <div class="card-title">Weekly sessions — last 16 weeks</div>
-    <div class="chart-wrap"><canvas id="strengthCountChart"></canvas></div>
-  `;
-  app.appendChild(sCountCard);
 
   // ── Combined data for comparison charts (needs both weekMap and sWeekMap) ─────
   const allWeekSet = new Set([...Object.keys(weekMap), ...Object.keys(sWeekMap)]);
@@ -1296,51 +1252,6 @@ async function init() {
       plugins: [makeMonthPlugin('optionAMonthLines', combinedMonthBoundary, combinedMonthLabel)]
     });
 
-    // ── Option B: stacked panels ──────────────────────────────────────────────
-    new Chart($('optionBRunChart'), {
-      type: 'line',
-      data: { labels: combinedLabels, datasets: [
-        { data: combinedRunDist,
-          borderColor: 'rgba(232,255,90,0.9)', backgroundColor: 'rgba(232,255,90,0.12)',
-          pointRadius: 2, borderWidth: 2, tension: 0.35, fill: true },
-        { data: distTrend, borderColor: 'rgba(255,107,53,0.5)', borderWidth: 1.5,
-          borderDash: [4,3], pointRadius: 0, fill: false }
-      ] },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        scales: {
-          x: { display: false },
-          y: { grid: { color: '#1f1f24' }, ticks: { color: '#e8ff5a', callback: v => `${v}km` }, beginAtZero: true }
-        },
-        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1,
-          titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 8,
-          callbacks: { label: ctx => ` ${ctx.parsed.y} km` } } }
-      },
-      plugins: [makeMonthPlugin('optionBRunLines', combinedMonthBoundary, combinedMonthLabel)]
-    });
-
-    new Chart($('optionBStrChart'), {
-      type: 'bar',
-      data: { labels: combinedLabels, datasets: [
-        { data: combinedStrSess,
-          backgroundColor: combinedStrSess.map((_, i) => i === combinedStrSess.length-1 ? 'rgba(74,158,255,0.7)' : 'rgba(74,158,255,0.3)'),
-          borderRadius: 2 },
-        { type: 'line', data: strTrend, borderColor: 'rgba(255,107,53,0.5)', borderWidth: 1.5,
-          borderDash: [4,3], pointRadius: 0, fill: false }
-      ] },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        scales: {
-          x: { grid: { display: false }, ticks: { color: '#6b6b78' } },
-          y: { grid: { color: '#1f1f24' }, ticks: { color: '#4a9eff', stepSize: 1 },
-            min: 0, max: Math.max(maxSess + 1, 4) }
-        },
-        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1,
-          titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 8,
-          callbacks: { label: ctx => ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}` } } }
-      }
-    });
-
     if ($('ltChart') && ltData.length > 1) {
       const ltSorted = [...ltData].sort((a, b) => a.date.localeCompare(b.date));
       const ltSecs = ltSorted.map(r => paceToSec(r.lt_pace));
@@ -1360,51 +1271,6 @@ async function init() {
           callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` LT pace: ${secToPace(ctx.parsed.y)} /km` : ` Trend` } }} }
       });
     }
-
-    const strengthTrend = linearTrend(sWeekCounts);
-    const strengthMonthLinePlugin = {
-      id: 'strengthMonthLines',
-      afterDraw(chart) {
-        const { ctx, chartArea, scales } = chart;
-        ctx.save();
-        ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-        ctx.setLineDash([3,3]);
-        ctx.font = '9px "DM Mono", monospace';
-        ctx.fillStyle = 'rgba(255,255,255,0.45)';
-        ctx.textAlign = 'left';
-        sWeekMonthBoundary.forEach((isBoundary, i) => {
-          if (isBoundary) {
-            const x = scales.x.getPixelForValue(i) - (scales.x.getPixelForValue(1) - scales.x.getPixelForValue(0)) / 2;
-            ctx.beginPath();
-            ctx.moveTo(x, chartArea.top);
-            ctx.lineTo(x, chartArea.bottom);
-            ctx.stroke();
-            ctx.setLineDash([]);
-            ctx.fillText(sWeekMonthLabel[i], x + 4, chartArea.top + 10);
-            ctx.setLineDash([3,3]);
-          }
-        });
-        ctx.restore();
-      }
-    };
-
-    new Chart($('strengthCountChart'), {
-      type: 'bar',
-      data: { labels: sWeekLabels, datasets: [
-        { data: sWeekCounts,
-          backgroundColor: sWeekCounts.map((_, i) =>
-            i === sWeekCounts.length - 1 ? 'rgba(255,107,53,0.85)' : 'rgba(74,158,255,0.25)'),
-          borderRadius: 2, order: 2 },
-        { type: 'line', data: strengthTrend, borderColor: 'rgba(255,107,53,0.7)', borderWidth: 1.5,
-          borderDash: [4,3], pointRadius: 0, fill: false, tension: 0, order: 1 }
-      ] },
-      options: { ...chartOpts({ layout: { padding: { top: 14 } } }), scales: {
-        x: { grid: { display: false }, ticks: { color: '#6b6b78' } },
-        y: { grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', stepSize: 1 } }
-      }, plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip,
-        callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}` : ` Trend` } }} },
-      plugins: [strengthMonthLinePlugin]
-    });
   });
 }
 

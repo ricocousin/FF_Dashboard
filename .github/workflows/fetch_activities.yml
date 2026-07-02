@@ -15,13 +15,18 @@ jobs:
       - name: Check if this is the correct Danish local hour
         id: dst_check
         run: |
-          DK_HOUR=$(TZ='Europe/Copenhagen' date +%H)
-          echo "Danish local hour right now: $DK_HOUR"
-          if [ "$DK_HOUR" == "06" ]; then
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "Manual run via workflow_dispatch — bypassing DST hour check."
             echo "run=true" >> "$GITHUB_OUTPUT"
           else
-            echo "run=false" >> "$GITHUB_OUTPUT"
-            echo "Skipping — this cron fire doesn't match current Danish 6am (DST offset)."
+            DK_HOUR=$(TZ='Europe/Copenhagen' date +%H)
+            echo "Danish local hour right now: $DK_HOUR"
+            if [ "$DK_HOUR" == "06" ]; then
+              echo "run=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "run=false" >> "$GITHUB_OUTPUT"
+              echo "Skipping — this cron fire doesn't match current Danish 6am (DST offset)."
+            fi
           fi
 
       - name: Set up Python

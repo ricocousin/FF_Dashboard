@@ -542,6 +542,28 @@ rest_day_steps = [s for d, s in recent_steps.items()
     and d not in {s["date"] for s in recent_strength}]
 avg_rest_steps = round(sum(rest_day_steps) / max(len(rest_day_steps), 1)) if rest_day_steps else 0
 
+# Sleep data (supporting context only — no behavior change based on this yet)
+sleep_data = {}
+if os.path.exists("sleep.csv"):
+    with open("sleep.csv", "r", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            if row.get("date"):
+                sleep_data[row["date"]] = row
+
+recent_sleep = {d: s for d, s in sleep_data.items()
+    if datetime.strptime(d, "%Y-%m-%d").date() >= cutoff_4wk}
+sleep_lines = []
+for d in sorted(recent_sleep.keys(), reverse=True)[:14]:
+    s = recent_sleep[d]
+    mins = s.get("total_sleep_min", "")
+    hrs_str = f"{int(float(mins)) // 60}h{int(float(mins)) % 60:02d}m" if mins else "?"
+    sleep_lines.append(f"  {d} | {hrs_str} | score {s.get('sleep_score', '?')}")
+
+sleep_durations = [float(s["total_sleep_min"]) for s in recent_sleep.values() if s.get("total_sleep_min")]
+sleep_scores = [float(s["sleep_score"]) for s in recent_sleep.values() if s.get("sleep_score")]
+avg_sleep_min = round(sum(sleep_durations) / len(sleep_durations)) if sleep_durations else None
+avg_sleep_score = round(sum(sleep_scores) / len(sleep_scores), 1) if sleep_scores else None
+
 # LT trend
 lt_history = []
 if os.path.exists(lt_file):
@@ -630,6 +652,7 @@ COACHING PRINCIPLES:
 - Only flag potential detraining if multiple metrics suggest it simultaneously.
 - Avoid confirmation bias. If the data contradicts prior assumptions about the athlete, favour the data.
 - When uncertainty exists, acknowledge it rather than inventing certainty.
+- Sleep data (from Polar Loop) is supporting context only. Note it when relevant, but do not change training recommendations or caution level based on sleep — this data stream is new and not yet validated enough to drive advice.
 
 DECISION FRAMEWORK — ask these questions before writing:
 1. What changed since the prior period? Is the change meaningful or within normal variance?
@@ -699,6 +722,12 @@ SUPPORTING METRICS:
 - Average daily steps (last 4 weeks): {avg_daily_steps:,}
 - Average steps on rest days: {avg_rest_steps:,}
 - Step days tracked: {len(recent_steps)}
+
+SLEEP (last 4 weeks, from Polar Loop — supporting context only, do not let this drive training recommendations):
+- Average duration: {f"{avg_sleep_min // 60}h{avg_sleep_min % 60:02d}m" if avg_sleep_min else "No data yet"}
+- Average score: {avg_sleep_score if avg_sleep_score is not None else "No data yet"}
+- Nights tracked: {len(recent_sleep)}
+{chr(10).join(sleep_lines) if sleep_lines else "  No sleep data in the last 4 weeks"}
 
 Generate the coaching summary now."""
 

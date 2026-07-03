@@ -442,8 +442,30 @@ async function init() {
   const intensityDeltaHtml = deltaBadge(intensityDelta, v => `${fmtHrs(v)} vs yr avg`);
   const recoveryDeltaHtml = deltaBadge(recoveryDelta, v => `${fmtHrs(v)} vs mo avg`);
 
-  const stepsRowResolved = stepsRow.replace('__STEPS_DELTA__', stepsDeltaHtml);
-  const recoveryRowResolved = recoveryRow.replace('__RECOVERY_DELTA__', recoveryDeltaHtml);
+  // ── Qualitative "so what" labels ─────────────────────────────────────────────
+  // Thresholds chosen per-metric for what a "meaningful" change actually looks
+  // like on that scale (e.g. 1km on a ~23km/wk base is noise; 500 steps/day on
+  // a ~14000 base is noise) — not a single generic percentage across all five.
+  // Same value-neutral spirit as the delta badges: describes direction, not a
+  // good/bad judgment (e.g. "Decreased" for strength frequency isn't framed as
+  // bad, since a deliberate deload is a legitimate reason for that direction).
+  function qualLabel(delta, threshold, risingWord, fallingWord, compareLabel) {
+    if (delta === null || delta === undefined || isNaN(delta)) return '';
+    if (Math.abs(delta) <= threshold) {
+      return `<br><span style="color:var(--text-dim)">Stable — no meaningful change vs ${compareLabel}</span>`;
+    }
+    const word = delta > 0 ? risingWord : fallingWord;
+    return `<br><span style="color:var(--text-dim)">${word} vs ${compareLabel}</span>`;
+  }
+
+  const runQualHtml = qualLabel(runWeekDelta, 1, 'Increased', 'Decreased', 'last week');
+  const strengthQualHtml = qualLabel(strengthWeekDelta, 1, 'Increased', 'Decreased', 'last week');
+  const stepsQualHtml = qualLabel(stepsDelta, 500, 'Increased', 'Decreased', '30d average');
+  const intensityQualHtml = qualLabel(intensityDelta, 15, 'Increased', 'Decreased', 'year average');
+  const recoveryQualHtml = qualLabel(recoveryDelta, 15, 'Increased', 'Decreased', 'month average');
+
+  const stepsRowResolved = stepsRow.replace('__STEPS_DELTA__', stepsDeltaHtml + stepsQualHtml);
+  const recoveryRowResolved = recoveryRow.replace('__RECOVERY_DELTA__', recoveryDeltaHtml + recoveryQualHtml);
 
   const overviewBlock = document.createElement('div');
   overviewBlock.className = 'overview-block';
@@ -451,12 +473,12 @@ async function init() {
     <div class="overview-full">
       <div class="overview-label run" style="grid-column:1/-1">Running</div>
       <div class="stat"><span class="stat-label">Avg / run</span><span class="stat-value accent">${fmt(avgRunDistPerRun, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${summary?.total_runs_this_year ?? yearRuns.length} runs ${thisYear}</span></div>
-      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(avgRunDistPerWeek, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${fmt(summary?.total_distance_this_year_km ?? yearDist, 0)} km ${thisYear}${runDeltaHtml}</span></div>
+      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(avgRunDistPerWeek, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${fmt(summary?.total_distance_this_year_km ?? yearDist, 0)} km ${thisYear}${runDeltaHtml}${runQualHtml}</span></div>
       <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value accent">${summary?.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${summary?.longest_weekly_streak ?? '—'} wks</span></div>
     </div>
     <div class="overview-full">
       <div class="overview-label lift" style="grid-column:1/-1">Strength</div>
-      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value blue">${fmt(avgSessPerWeek, 1)}</span><span class="stat-sub">${summary?.total_strength_this_year ?? yearSessions.length} sessions ${thisYear}${strengthDeltaHtml}</span></div>
+      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value blue">${fmt(avgSessPerWeek, 1)}</span><span class="stat-sub">${summary?.total_strength_this_year ?? yearSessions.length} sessions ${thisYear}${strengthDeltaHtml}${strengthQualHtml}</span></div>
       <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(totalStrengthMinYear / numSWeeks / 60, 1)} <small style="font-size:.9rem;color:var(--text-dim)">hrs</small></span><span class="stat-sub">${(totalStrengthMinYear / 60).toFixed(1)} hrs ${thisYear}</span></div>
       <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value blue">${summary?.current_strength_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${summary?.longest_strength_weekly_streak ?? '—'} wks</span></div>
     </div>
@@ -464,7 +486,7 @@ async function init() {
     <div class="overview-full">
       <div class="overview-label intensity" style="grid-column:1/-1">Intensity Minutes</div>
       <div class="stat"><span class="stat-label">Avg / week (${thisYear})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(avgActivityMinsPerWeek)}</span><span class="stat-sub">${fmtHrs(totalRunMinsYear / numRunWeeks)} run · ${fmtHrs(totalStrengthMinYear / numSWeeks)} lift</span></div>
-      <div class="stat"><span class="stat-label">Avg / week (${thisMonth})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(avgActivityMinsPerWeekMonth)}</span><span class="stat-sub">${fmtHrs(monthRunMins / numMonthRunWeeks)} run · ${fmtHrs(monthStrengthMins / numMonthStrengthWeeks)} lift${intensityDeltaHtml}</span></div>
+      <div class="stat"><span class="stat-label">Avg / week (${thisMonth})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(avgActivityMinsPerWeekMonth)}</span><span class="stat-sub">${fmtHrs(monthRunMins / numMonthRunWeeks)} run · ${fmtHrs(monthStrengthMins / numMonthStrengthWeeks)} lift${intensityDeltaHtml}${intensityQualHtml}</span></div>
       <div class="stat"><span class="stat-label">Streak vs ${INTENSITY_GOAL_MINS}min goal</span><span class="stat-value" style="color:var(--intensity)">${intensityStreak} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${bestIntensityStreak} wks</span></div>
     </div>
     ${recoveryRowResolved}

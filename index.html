@@ -67,6 +67,9 @@
     .coach-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.6rem; }
     .coach-header { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-dim); display: flex; align-items: center; gap: 0.5rem; }
     .coach-headline { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; color: var(--text-hi); line-height: 1.35; margin: 0.1rem 0 0.3rem; }
+    .coach-confidence { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.4rem; }
+    .coach-confidence-bar { width: 40px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+    .coach-confidence-fill { height: 100%; border-radius: 2px; }
     .coach-watch { margin-top: 0.9rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
     .coach-watch-title { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 0.5rem; }
     .coach-watch-item { font-family: var(--font-body); font-size: 12.5px; color: var(--text-dim); line-height: 1.5; padding-left: 1.1rem; position: relative; }
@@ -157,14 +160,15 @@ function calcBestEfforts(runs) { const cats = [{ label: '5 km', min: 4 }, { labe
 function calcZones(ltPaceStr, ltHr) { const ltSec = paceToSec(ltPaceStr); if (!ltSec) return null; const z1HrMax = ltHr ? Math.round(ltHr * 0.80) : null; const z2HrMax = ltHr ? Math.round(ltHr * 0.90) : null; const z3HrMax = ltHr ? Math.round(ltHr * 0.99) : null; const z4HrMax = ltHr ? Math.round(ltHr * 1.05) : null; return [ { name: 'Z1 EASY', pace: `> ${secToPace(ltSec + 75)}`, hr: ltHr ? `< ${z1HrMax} bpm` : '', color: '#4a9eff', pct: 40 }, { name: 'Z2 AEROBIC', pace: `${secToPace(ltSec + 45)}–${secToPace(ltSec + 74)}`, hr: ltHr ? `${z1HrMax}–${z2HrMax} bpm` : '', color: '#7bc67e', pct: 60 }, { name: 'Z3 TEMPO', pace: `${secToPace(ltSec + 10)}–${secToPace(ltSec + 44)}`, hr: ltHr ? `${z2HrMax}–${z3HrMax} bpm` : '', color: '#e8ff5a', pct: 78 }, { name: 'Z4 LT', pace: `${secToPace(ltSec - 10)}–${secToPace(ltSec + 9)}`, hr: ltHr ? `${z3HrMax}–${z4HrMax} bpm` : '', color: '#ff9f40', pct: 90 }, { name: 'Z5 HARD', pace: `< ${secToPace(ltSec - 11)}`, hr: ltHr ? `> ${z4HrMax} bpm` : '', color: '#ff6b35', pct: 100 } ]; }
 
 async function init() {
-  const [runsRaw, strengthRaw, summary, ltDataRaw, coachData, stepsRaw, sleepRaw] = await Promise.all([
+  const [runsRaw, strengthRaw, summary, ltDataRaw, coachData, stepsRaw, sleepRaw, polarStepsRaw] = await Promise.all([
     fetch('runs.csv').then(r => r.text()),
     fetch('strength.csv').then(r => r.text()).catch(() => null),
     fetch('summary.json').then(r => r.json()).catch(() => null),
     fetch('lactate.json').then(r => r.json()).catch(() => []),
     fetch('coach_summary.json').then(r => r.json()).catch(() => null),
     fetch('steps.csv').then(r => r.text()).catch(() => null),
-    fetch('sleep.csv').then(r => r.text()).catch(() => null)
+    fetch('sleep.csv').then(r => r.text()).catch(() => null),
+    fetch('polar_steps.csv').then(r => r.text()).catch(() => null)
   ]);
 
   const { data: runRows } = Papa.parse(runsRaw, { header: true, skipEmptyLines: true });
@@ -219,6 +223,27 @@ async function init() {
 
   let stepsData = {};
   if (stepsRaw) { const { data: stepsRows } = Papa.parse(stepsRaw, { header: true, skipEmptyLines: true }); stepsRows.forEach(r => { if (r.date) stepsData[r.date] = parseInt(r.steps) || 0; }); }
+
+  let polarStepsData = {};
+  if (polarStepsRaw) { const { data: polarStepsRows } = Papa.parse(polarStepsRaw, { header: true, skipEmptyLines: true }); polarStepsRows.forEach(r => { if (r.date) polarStepsData[r.date] = parseInt(r.steps) || 0; }); }
+
+  // Reconciled daily steps: average of both sources when both report that day
+  // (smooths device-specific counting quirks), falls back to whichever single
+  // source is present when the other device wasn't worn/synced that day.
+  const reconciledStepsData = {};
+  const stepDiscrepancies = [];
+  new Set([...Object.keys(stepsData), ...Object.keys(polarStepsData)]).forEach(date => {
+    const iphone = stepsData[date];
+    const polar = polarStepsData[date];
+    if (iphone && polar) {
+      reconciledStepsData[date] = Math.round((iphone + polar) / 2);
+      stepDiscrepancies.push({ date, diff: Math.abs(iphone - polar) });
+    } else if (iphone) {
+      reconciledStepsData[date] = iphone;
+    } else if (polar) {
+      reconciledStepsData[date] = polar;
+    }
+  });
   const STEP_GOAL = 10000;
 
   // ── Sleep data (Recovery row) ──────────────────────────────────────────────────
@@ -238,6 +263,13 @@ async function init() {
     const paragraphs = rawText.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
     const parasHtml = paragraphs.map(p => `<div class="coach-insight">${escapeHtml(p)}</div>`).join('');
     const headlineHtml = coachData.headline ? `<div class="coach-headline">${escapeHtml(coachData.headline)}</div>` : '';
+    const confidenceHtml = (coachData.confidence_pct !== undefined && coachData.confidence_pct !== null) ? (() => {
+      const pct = coachData.confidence_pct;
+      const label = coachData.confidence_label || '';
+      const reasons = Array.isArray(coachData.confidence_reasons) ? coachData.confidence_reasons.join(' · ') : '';
+      const barColor = pct >= 85 ? '#7bc67e' : pct >= 65 ? '#e8ff5a' : '#ff9f40';
+      return `<div class="coach-confidence" title="${escapeHtml(reasons)}"><div class="coach-confidence-bar"><div class="coach-confidence-fill" style="width:${pct}%;background:${barColor}"></div></div><span>${pct}% · ${escapeHtml(label)}</span></div>`;
+    })() : '';
     const watchItems = Array.isArray(coachData.watch_items) ? coachData.watch_items.filter(Boolean) : [];
     const watchHtml = watchItems.length ? `<div class="coach-watch"><div class="coach-watch-title">Things to watch</div>${watchItems.map(w => `<div class="coach-watch-item">${escapeHtml(w)}</div>`).join('')}</div>` : '';
     function usageColor(usd) { if (usd < 0.004) return '#4a9eff'; if (usd < 0.008) return '#7bc67e'; if (usd < 0.015) return '#e8ff5a'; if (usd < 0.025) return '#ff9f40'; return '#ff6b35'; }
@@ -245,20 +277,26 @@ async function init() {
     function ytdColor(usd) { if (usd < 1.00) return '#4a9eff'; if (usd < 2.50) return '#7bc67e'; if (usd < 3.50) return '#e8ff5a'; if (usd < 4.50) return '#ff9f40'; return '#ff6b35'; }
     const u = coachData.usage;
     const usageHtml = u ? (() => { const dc = usageColor(u.cost_usd); const mc = mtdColor(coachData.usage_mtd_usd || 0); const yc = ytdColor(coachData.usage_ytd_usd || 0); return `<div class="coach-usage"><div><span style="color:${dc}">${u.input_tokens.toLocaleString()} it · ${u.output_tokens.toLocaleString()} ot · $${u.cost_usd.toFixed(4)} / ${u.cost_dkk.toFixed(3)} kr</span></div><div><span style="color:${mc}">MTD $${(coachData.usage_mtd_usd || 0).toFixed(4)} / ${(coachData.usage_mtd_dkk || 0).toFixed(3)} kr</span></div><div><span style="color:${yc}">YTD $${(coachData.usage_ytd_usd || 0).toFixed(4)} / ${(coachData.usage_ytd_dkk || 0).toFixed(3)} kr</span></div><div class="coach-usage-scale"><div style="background:linear-gradient(to right,#4a9eff,#7bc67e,#e8ff5a,#ff9f40,#ff6b35);height:2px;border-radius:1px;margin-top:4px;opacity:0.5"></div><div style="display:flex;justify-content:space-between;font-size:8px;color:var(--muted);margin-top:2px"><span>min</span><span>normal</span><span>elevated</span><span>high</span><span>max</span></div></div></div>`; })() : '';
-    coachCard.innerHTML = `<div class="coach-header"><span class="coach-dot"></span>Training status</div>${headlineHtml}${parasHtml}${watchHtml}<div class="coach-updated">Generated ${coachData.last_updated}</div>${usageHtml}`;
+    coachCard.innerHTML = `<div class="coach-header"><span class="coach-dot"></span>Training status</div>${headlineHtml}${confidenceHtml}${parasHtml}${watchHtml}<div class="coach-updated">Generated ${coachData.last_updated}</div>${usageHtml}`;
     app.appendChild(coachCard);
   }
 
   // ── Overview block ────────────────────────────────────────────────────────────
   const stepsOverviewData = (() => {
-    if (!Object.keys(stepsData || {}).length) return null;
-    const allVals = Object.entries(stepsData).filter(([d, v]) => v > 0 && d <= lastCompleteDate);
-    const avg7d = (() => { const days = []; for (let i = 1; i <= 7; i++) { const d = new Date(); d.setDate(d.getDate() - i); const ds = localDate(d); if (stepsData[ds]) days.push(stepsData[ds]); } return days.length ? Math.round(days.reduce((s, v) => s + v, 0) / days.length) : null; })();
+    if (!Object.keys(reconciledStepsData || {}).length) return null;
+    const allVals = Object.entries(reconciledStepsData).filter(([d, v]) => v > 0 && d <= lastCompleteDate);
+    const avg7d = (() => { const days = []; for (let i = 1; i <= 7; i++) { const d = new Date(); d.setDate(d.getDate() - i); const ds = localDate(d); if (reconciledStepsData[ds]) days.push(reconciledStepsData[ds]); } return days.length ? Math.round(days.reduce((s, v) => s + v, 0) / days.length) : null; })();
     const cutoff30d = new Date(); cutoff30d.setDate(cutoff30d.getDate() - 30);
     const last30d = allVals.filter(([d]) => parseLocalDate(d) >= cutoff30d);
     const avg30d = last30d.length ? Math.round(last30d.reduce((s, [, v]) => s + v, 0) / last30d.length) : null;
     const avgAll = allVals.length ? Math.round(allVals.reduce((s, [, v]) => s + v, 0) / allVals.length) : null;
-    return { avgAll, avg7d, avg30d };
+
+    // Discrepancy between sources, over days where both actually reported (last 30d)
+    const cutoff30dDisc = new Date(); cutoff30dDisc.setDate(cutoff30dDisc.getDate() - 30);
+    const recentDiscrepancies = stepDiscrepancies.filter(d => parseLocalDate(d.date) >= cutoff30dDisc && d.date <= lastCompleteDate);
+    const avgDiscrepancy = recentDiscrepancies.length ? Math.round(recentDiscrepancies.reduce((s, d) => s + d.diff, 0) / recentDiscrepancies.length) : null;
+
+    return { avgAll, avg7d, avg30d, avgDiscrepancy, discrepancyDays: recentDiscrepancies.length };
   })();
 
   // ── Recovery (sleep) overview data ─────────────────────────────────────────────
@@ -297,7 +335,8 @@ async function init() {
   for (const wk of intensityWeekKeys) { if ((weekMinMap[wk] || 0) >= INTENSITY_GOAL_MINS) { currentStreakCount++; bestIntensityStreak = Math.max(bestIntensityStreak, currentStreakCount); } else { currentStreakCount = 0; } }
   for (let i = intensityWeekKeys.length - 1; i >= 0; i--) { if ((weekMinMap[intensityWeekKeys[i]] || 0) >= INTENSITY_GOAL_MINS) intensityStreak++; else break; }
 
-  const stepsRow = stepsOverviewData ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avgAll?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avg7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps__STEPS_DELTA__</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avg30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div></div>` : '';
+  const stepsDiscrepancyHtml = (stepsOverviewData && stepsOverviewData.avgDiscrepancy !== null) ? `<br><span style="color:var(--text-dim)">Polar vs iPhone: ±${stepsOverviewData.avgDiscrepancy.toLocaleString()}/day (${stepsOverviewData.discrepancyDays}d overlap)</span>` : '';
+  const stepsRow = stepsOverviewData ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avgAll?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avg7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps__STEPS_DELTA__</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avg30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsDiscrepancyHtml}</span></div></div>` : '';
 
   const recoveryTile = (label, data, deltaHtml) => {
     const durationStr = data && data.mins ? fmtHrs(data.mins) : '—';

@@ -517,6 +517,8 @@ prior_dist = sum(float(r.get("distance_km") or 0) for r in prior_runs)
 # Last 4 weeks of strength
 recent_strength = [s for s in all_strength_sorted
     if s.get("date") and datetime.strptime(s["date"], "%Y-%m-%d").date() >= cutoff_4wk]
+prior_strength = [s for s in all_strength_sorted
+    if s.get("date") and cutoff_8wk <= datetime.strptime(s["date"], "%Y-%m-%d").date() < cutoff_4wk]
 
 # Steps data
 steps_data = {}
@@ -656,6 +658,92 @@ def compute_confidence():
 
 confidence_pct, confidence_label, confidence_reasons = compute_confidence()
 
+# ── Evidence catalog ────────────────────────────────────────────────────────────
+# Every item here is a fully pre-written, factually-locked sentence computed by
+# Python from real data. The model is instructed to SELECT from this list and
+# copy items verbatim — it never generates its own evidence text. This is the
+# only way to guarantee every ▲▼▬ claim in the coach output is actually true;
+# letting the model freely write "evidence" risks fabricated claims (e.g. citing
+# an "easy-run HR trend" using data that doesn't actually exist for that comparison).
+#
+# Value-neutral by design: arrows indicate DIRECTION only (▲ increased / ▼
+# decreased / ▬ stable), never a good/bad judgment — matches the same principle
+# used for the dashboard's delta indicators. Items are only included when the
+# underlying comparison is actually possible (e.g. skip sleep evidence if there's
+# no prior-period data yet) — no fixed count, whatever's genuinely available.
+
+def _trend_arrow(delta, threshold=0.0001):
+    if delta > threshold:
+        return "▲"
+    elif delta < -threshold:
+        return "▼"
+    return "▬"
+
+def build_evidence_catalog():
+    items = []
+
+    # LT pace vs 30 days ago
+    if latest_lt and baseline_lt:
+        latest_sec = parse_pace_sec(latest_lt["lt_pace"])
+        baseline_sec = parse_pace_sec(baseline_lt["lt_pace"])
+        if latest_sec is not None and baseline_sec is not None:
+            delta_sec = baseline_sec - latest_sec  # positive = faster (fewer seconds)
+            arrow = _trend_arrow(delta_sec)
+            items.append(f"{arrow} LT pace {'improved' if delta_sec > 0 else 'slowed' if delta_sec < 0 else 'unchanged'} "
+                         f"{abs(delta_sec)}s/km over 30 days ({baseline_lt['lt_pace']} → {latest_lt['lt_pace']}/km)")
+
+    # Weekly volume vs prior 4-week block
+    if prior_dist > 0:
+        vol_delta_pct = ((recent_dist - prior_dist) / prior_dist) * 100
+        arrow = _trend_arrow(recent_dist - prior_dist, threshold=1)
+        items.append(f"{arrow} 4-week volume {recent_dist:.0f} km vs {prior_dist:.0f} km prior block "
+                     f"({vol_delta_pct:+.0f}%)")
+
+    # Current weekly streak length
+    current_streak = summary.get("current_weekly_streak")
+    if current_streak:
+        items.append(f"▬ {current_streak}-week running streak (best: {summary.get('longest_weekly_streak', '?')} wks)")
+
+    # Sleep avg vs prior period
+    prior_sleep = {d: s for d, s in sleep_data.items()
+        if cutoff_8wk <= datetime.strptime(d, "%Y-%m-%d").date() < cutoff_4wk}
+    prior_sleep_durations = [float(s["total_sleep_min"]) for s in prior_sleep.values() if s.get("total_sleep_min")]
+    if sleep_durations and prior_sleep_durations:
+        avg_prior_sleep = sum(prior_sleep_durations) / len(prior_sleep_durations)
+        avg_recent_sleep = sum(sleep_durations) / len(sleep_durations)
+        arrow = _trend_arrow(avg_recent_sleep - avg_prior_sleep, threshold=5)
+        def _fmt_hm(mins):
+            return f"{int(mins) // 60}h{int(mins) % 60:02d}m"
+        items.append(f"{arrow} Sleep averaging {_fmt_hm(avg_recent_sleep)} vs {_fmt_hm(avg_prior_sleep)} prior period")
+
+    # Strength session consistency vs prior period
+    if len(recent_strength) or len(prior_strength):
+        arrow = _trend_arrow(len(recent_strength) - len(prior_strength))
+        items.append(f"{arrow} Strength consistency: {len(recent_strength)} sessions vs {len(prior_strength)} prior 4wk")
+
+    # HR trend on comparable-effort runs (easy/aerobic pace band only, so it's
+    # a genuine like-for-like comparison rather than mixing easy and hard efforts)
+    if latest_lt:
+        lt_sec = parse_pace_sec(latest_lt["lt_pace"])
+        if lt_sec:
+            def _easy_runs_hr(runs):
+                easy = [r for r in runs if r.get("avg_hr") not in (None, "", "0")
+                    and (parse_pace_sec(r.get("avg_pace_min_km")) or 0) > lt_sec + 45]
+                hrs = [float(r["avg_hr"]) for r in easy]
+                return hrs
+            recent_easy_hr = _easy_runs_hr(recent_runs)
+            prior_easy_hr = _easy_runs_hr(prior_runs)
+            if len(recent_easy_hr) >= 2 and len(prior_easy_hr) >= 2:
+                avg_recent_hr = sum(recent_easy_hr) / len(recent_easy_hr)
+                avg_prior_hr = sum(prior_easy_hr) / len(prior_easy_hr)
+                arrow = _trend_arrow(avg_recent_hr - avg_prior_hr, threshold=1)
+                items.append(f"{arrow} Easy-run HR averaging {avg_recent_hr:.0f} bpm vs {avg_prior_hr:.0f} bpm prior period "
+                             f"(comparable-effort runs, {len(recent_easy_hr)} vs {len(prior_easy_hr)} runs)")
+
+    return items
+
+evidence_catalog = build_evidence_catalog()
+
 # YoY
 try:
     today_last_year = today_date.replace(year=today_date.year - 1)
@@ -755,10 +843,13 @@ One sentence, the single most important insight from today's data. This is the a
 SUMMARY:
 2–4 short paragraphs separated by a blank line, as many as the data warrants — don't pad or compress artificially. Each paragraph covers one distinct theme: load/volume, intensity/quality, supporting metrics. Each paragraph 1–3 sentences. No bullet points, no headers, no greeting, no sign-off. Write in second person ("your threshold...", "you've...").
 
+EVIDENCE:
+Select whichever items from the AVAILABLE EVIDENCE list (below, in the data section) genuinely support the headline and summary you wrote. Copy each selected item VERBATIM, one per line — do not reword, do not alter any number, do not invent additional evidence not present in that list. Select as many or as few as are genuinely relevant — there is no fixed count, and it is fine to select none if nothing in the list meaningfully supports today's story. If you select zero items, write a single line: "- None directly relevant today."
+
 WATCH:
 2–4 short bullet points (one per line, starting with "- ") naming specific things worth paying attention to over the coming week — not prescribed workouts or mileage targets, since the training programme is already structured elsewhere. Frame these as things to observe or monitor, e.g. "Watch whether easy-run HR continues to decline." / "Sleep quality may become more important after the long run." If there is nothing meaningfully worth flagging this week, write a single line: "- Nothing notable to flag this week — steady state."
 
-Do not add any text outside these three sections, and use the exact delimiter labels (HEADLINE:, SUMMARY:, WATCH:) on their own lines."""
+Do not add any text outside these four sections, and use the exact delimiter labels (HEADLINE:, SUMMARY:, EVIDENCE:, WATCH:) on their own lines."""
 
 user_prompt = f"""Today: {today_date} (week {today_date.isocalendar()[1]} of {today_date.year})
 
@@ -814,6 +905,9 @@ SLEEP (last 4 weeks, from Polar Loop — supporting context only, do not let thi
 - Nights tracked: {len(recent_sleep)}
 {chr(10).join(sleep_lines) if sleep_lines else "  No sleep data in the last 4 weeks"}
 
+AVAILABLE EVIDENCE (for the EVIDENCE: section — select from this list only, copy verbatim, never invent new items):
+{chr(10).join(f"  {item}" for item in evidence_catalog) if evidence_catalog else "  No evidence items available today — write '- None directly relevant today.' in the EVIDENCE section."}
+
 Generate the coaching summary now."""
 
 # ── Call Anthropic API ────────────────────────────────────────────────────────
@@ -839,7 +933,7 @@ if api_key:
     try:
         payload = json.dumps({
             "model": "claude-sonnet-4-6",
-            "max_tokens": 500,
+            "max_tokens": 700,
             "system": system_prompt,
             "messages": [{"role": "user", "content": user_prompt}]
         }).encode("utf-8")
@@ -884,22 +978,41 @@ else:
 if not coach_text:
     coach_text = "Training data updated — coach summary unavailable today."
 
-# ── Parse HEADLINE / SUMMARY / WATCH sections ─────────────────────────────────
+# ── Parse HEADLINE / SUMMARY / EVIDENCE / WATCH sections ──────────────────────
 # Defensive parsing: if the model doesn't follow the delimited format exactly,
 # fall back to treating the whole response as the summary (same spirit as the
 # existing "coach unavailable" fallback above) rather than failing the run.
+#
+# Evidence items are additionally validated against evidence_catalog — only
+# lines that EXACTLY match a real pre-computed catalog entry survive. This is
+# the actual fabrication guard: even if the model ignores the "copy verbatim"
+# instruction and writes something plausible-but-invented, it gets silently
+# dropped here rather than displayed as if it were verified fact.
 def parse_coach_sections(text):
     headline = ""
     summary = text
+    evidence_items = []
     watch_items = []
     try:
         headline_match = re.search(r"HEADLINE:\s*(.+?)(?=\n\s*SUMMARY:)", text, re.DOTALL)
-        summary_match = re.search(r"SUMMARY:\s*(.+?)(?=\n\s*WATCH:)", text, re.DOTALL)
+        summary_match = re.search(r"SUMMARY:\s*(.+?)(?=\n\s*EVIDENCE:)", text, re.DOTALL)
+        evidence_match = re.search(r"EVIDENCE:\s*(.+?)(?=\n\s*WATCH:)", text, re.DOTALL)
         watch_match = re.search(r"WATCH:\s*(.+)", text, re.DOTALL)
 
         if headline_match and summary_match:
             headline = headline_match.group(1).strip()
             summary = summary_match.group(1).strip()
+
+            if evidence_match:
+                evidence_raw = evidence_match.group(1).strip()
+                candidate_items = [
+                    line.strip().lstrip("- ").strip()
+                    for line in evidence_raw.split("\n")
+                    if line.strip().startswith("-")
+                ]
+                catalog_set = set(item.strip() for item in evidence_catalog)
+                evidence_items = [item for item in candidate_items if item in catalog_set]
+
             if watch_match:
                 watch_raw = watch_match.group(1).strip()
                 watch_items = [
@@ -909,9 +1022,9 @@ def parse_coach_sections(text):
                 ]
     except Exception as parse_err:
         print(f"Coach section parsing failed, using raw text as summary: {parse_err}")
-    return headline, summary, watch_items
+    return headline, summary, evidence_items, watch_items
 
-coach_headline, coach_summary_text, coach_watch_items = parse_coach_sections(coach_text)
+coach_headline, coach_summary_text, coach_evidence_items, coach_watch_items = parse_coach_sections(coach_text)
 
 # ── Accumulate usage history ──────────────────────────────────────────────────
 usage_file = "api_usage.json"
@@ -950,6 +1063,7 @@ coach_summary = {
     "confidence_reasons": confidence_reasons,
     "summary": coach_summary_text,
     "watch_items": coach_watch_items,
+    "evidence_items": coach_evidence_items,
     "insights": [coach_summary_text],
     "quiet": [],
     "usage": token_usage,
@@ -967,5 +1081,6 @@ print(f"  MTD: ${mtd_cost_usd:.5f} / {mtd_cost_dkk:.4f} kr")
 print(f"  YTD: ${ytd_cost_usd:.5f} / {ytd_cost_dkk:.4f} kr")
 print(f"  Headline: {coach_headline[:120]}")
 print(f"  Watch items: {len(coach_watch_items)}")
+print(f"  Evidence items: {len(coach_evidence_items)} (catalog had {len(evidence_catalog)} available)")
 print(f"  Confidence: {confidence_pct}% ({confidence_label})")
 

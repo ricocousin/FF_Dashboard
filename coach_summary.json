@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-03 12:39 UTC",
-  "headline": "Four weeks of near-identical volume confirms a stable consolidation phase, with yesterday's LT test anchoring genuine aerobic fitness at 4:24/km.",
+  "last_updated": "2026-07-03 13:57 UTC",
+  "headline": "Running streak ties its all-time high as volume holds flat and a fresh lactate threshold test anchors current aerobic fitness at 4:24/km.",
   "confidence_pct": 83,
   "confidence_label": "Moderate data confidence",
   "confidence_reasons": [
@@ -11,25 +11,26 @@
     "Pipeline fetch completed on schedule",
     "Multiple data sources active in last 3 days"
   ],
-  "summary": "Your 4-week load is essentially flat \u2014 127 km versus 125 km the prior block, a 2% difference that's noise rather than signal. Average run length across both periods is consistent too, with nine runs in each. This isn't stagnation; it's a platform. The base is holding while you've continued to layer in quality and strength work, and that combination tends to produce delayed fitness gains rather than visible week-to-week gains in volume metrics.\n\nThe standout data point from the recent window is the June 27 effort: 15.73 km at 4:49/km with HR 161 \u2014 that's a meaningful pace-to-HR ratio, well within your demonstrated threshold ceiling of 4:24 @ 178 bpm, and it produced a load of 239, the heaviest single-run stimulus in this 8-run sample outside the 44 km June 8 long run. The two recovery runs either side of it (June 30 and July 2, both sub-140 HR at sub-6:00 pace) show appropriate modulation. The pattern of hard effort followed by genuine recovery days is functioning correctly.\n\nThe LT marker of 4:24/km at 178 bpm, recorded yesterday, is a concrete fitness anchor. Without 30-day baseline history to compare against, it can't yet be trended \u2014 but as a standalone data point, a threshold pace that close to your 10K PB effort pace (4:12/km) indicates strong top-end aerobic development. Watch how this figure moves over coming weeks as the baseline accumulates; it's likely to be one of the more informative single metrics in your profile.",
+  "summary": "Volume has been almost perfectly stable across the last eight weeks \u2014 127 km this block versus 125 km prior, with identical run counts \u2014 so there's no meaningful load change to interpret. What matters more is how that volume is distributed: the 15.73 km effort at 4:49/km on June 27 stands out as the quality anchor of the recent block, with HR at 161 and a load of 239, well above anything else in the past fortnight. The two easy runs either side of it (13.77 km at 5:48 and 11.73 km at 5:59) look like appropriate bookends rather than lost fitness.\n\nThe lactate threshold test on July 2 gives you a concrete number to work with: 4:24/km at 178 bpm. Set against your half-marathon PB pace of 4:18/km and your 10K PB pace of 4:12/km, that positions your threshold in a plausible range for your current fitness. As the 30-day baseline accumulates more tests, this single data point will become more useful \u2014 for now, treat it as a calibration marker rather than a definitive trend.\n\nEasy-run HR is tracking notably lower than the prior comparison period \u2014 averaging 147 bpm versus 157 bpm across six comparable-effort runs in each window. That's a meaningful shift in the aerobic direction at similar paces, and it's the strongest internal signal in the current data. Whether it reflects genuine aerobic adaptation, favourable conditions, or slightly reduced effort is worth watching across the coming weeks, but at face value it's a positive indicator.\n\nThe 20-week streak ties your personal best, which is worth noting not as a milestone but as evidence of structural consistency. Strength volume dropped to 4 sessions this block from 6 prior \u2014 not alarming given the run quality and overall load, but worth tracking if it extends another block.",
   "watch_items": [
-    "Track whether the June 27-style quality run produces a measurable LT shift over the next 2\u20133 test points \u2014 that session was heavy enough to drive adaptation.",
-    "Monitor how HR responds on easy runs post-LT test; a slight HR elevation for 48\u201372 hours would be normal, and would confirm the test was genuinely taxing.",
-    ""
+    "Monitor whether easy-run HR continues to sit in the 137\u2013143 bpm range at current paces \u2014 a sustained downward shift from the prior 157 bpm average would be a meaningful aerobic development signal.",
+    "Track whether strength frequency recovers toward the 6-session-per-4-week rate from the prior block, given the current 3-week streak is still early.",
+    "As more lactate threshold tests accumulate, watch whether the 4:24/km figure holds, improves, or shows"
   ],
+  "evidence_items": [],
   "insights": [
-    "Your 4-week load is essentially flat \u2014 127 km versus 125 km the prior block, a 2% difference that's noise rather than signal. Average run length across both periods is consistent too, with nine runs in each. This isn't stagnation; it's a platform. The base is holding while you've continued to layer in quality and strength work, and that combination tends to produce delayed fitness gains rather than visible week-to-week gains in volume metrics.\n\nThe standout data point from the recent window is the June 27 effort: 15.73 km at 4:49/km with HR 161 \u2014 that's a meaningful pace-to-HR ratio, well within your demonstrated threshold ceiling of 4:24 @ 178 bpm, and it produced a load of 239, the heaviest single-run stimulus in this 8-run sample outside the 44 km June 8 long run. The two recovery runs either side of it (June 30 and July 2, both sub-140 HR at sub-6:00 pace) show appropriate modulation. The pattern of hard effort followed by genuine recovery days is functioning correctly.\n\nThe LT marker of 4:24/km at 178 bpm, recorded yesterday, is a concrete fitness anchor. Without 30-day baseline history to compare against, it can't yet be trended \u2014 but as a standalone data point, a threshold pace that close to your 10K PB effort pace (4:12/km) indicates strong top-end aerobic development. Watch how this figure moves over coming weeks as the baseline accumulates; it's likely to be one of the more informative single metrics in your profile."
+    "Volume has been almost perfectly stable across the last eight weeks \u2014 127 km this block versus 125 km prior, with identical run counts \u2014 so there's no meaningful load change to interpret. What matters more is how that volume is distributed: the 15.73 km effort at 4:49/km on June 27 stands out as the quality anchor of the recent block, with HR at 161 and a load of 239, well above anything else in the past fortnight. The two easy runs either side of it (13.77 km at 5:48 and 11.73 km at 5:59) look like appropriate bookends rather than lost fitness.\n\nThe lactate threshold test on July 2 gives you a concrete number to work with: 4:24/km at 178 bpm. Set against your half-marathon PB pace of 4:18/km and your 10K PB pace of 4:12/km, that positions your threshold in a plausible range for your current fitness. As the 30-day baseline accumulates more tests, this single data point will become more useful \u2014 for now, treat it as a calibration marker rather than a definitive trend.\n\nEasy-run HR is tracking notably lower than the prior comparison period \u2014 averaging 147 bpm versus 157 bpm across six comparable-effort runs in each window. That's a meaningful shift in the aerobic direction at similar paces, and it's the strongest internal signal in the current data. Whether it reflects genuine aerobic adaptation, favourable conditions, or slightly reduced effort is worth watching across the coming weeks, but at face value it's a positive indicator.\n\nThe 20-week streak ties your personal best, which is worth noting not as a milestone but as evidence of structural consistency. Strength volume dropped to 4 sessions this block from 6 prior \u2014 not alarming given the run quality and overall load, but worth tracking if it extends another block."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 2451,
-    "output_tokens": 500,
-    "cost_usd": 0.014853,
-    "cost_dkk": 0.10249,
+    "input_tokens": 2719,
+    "output_tokens": 700,
+    "cost_usd": 0.018657,
+    "cost_dkk": 0.12873,
     "date": "2026-07-03"
   },
-  "usage_mtd_usd": 0.03468,
-  "usage_mtd_dkk": 0.2393,
-  "usage_ytd_usd": 0.03468,
-  "usage_ytd_dkk": 0.2393
+  "usage_mtd_usd": 0.03848,
+  "usage_mtd_dkk": 0.2655,
+  "usage_ytd_usd": 0.03848,
+  "usage_ytd_dkk": 0.2655
 }

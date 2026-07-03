@@ -430,9 +430,9 @@ async function init() {
   const recoveryRow = recoveryOverviewData ? `<div class="overview-full"><div class="overview-label recovery" style="grid-column:1/-1">Recovery</div>${recoveryTile('Avg / week', recoveryOverviewData.week, '__RECOVERY_DELTA__')}${recoveryTile('Avg / month', recoveryOverviewData.month)}${recoveryTile('Avg / year', recoveryOverviewData.year)}</div>` : '';
 
   // ── Change indicators (▲▼▬) — value-neutral, direction + magnitude only ───────
-  function deltaBadge(delta, formatFn) {
+  function deltaBadge(delta, formatFn, threshold = 0.05) {
     if (delta === null || delta === undefined || isNaN(delta)) return '';
-    const arrow = delta > 0.05 ? '▲' : delta < -0.05 ? '▼' : '▬';
+    const arrow = delta > threshold ? '▲' : delta < -threshold ? '▼' : '▬';
     return ` · <span style="color:var(--text-dim)">${arrow} ${formatFn(Math.abs(delta))}</span>`;
   }
   const prevCompleteWeek = shiftWeekKey(lastCompleteWeek, -1);
@@ -444,11 +444,21 @@ async function init() {
   const intensityDelta = avgActivityMinsPerWeekMonth - avgActivityMinsPerWeek;
   const recoveryDelta = (recoveryOverviewData && recoveryOverviewData.week.mins !== null && recoveryOverviewData.month.mins !== null) ? recoveryOverviewData.week.mins - recoveryOverviewData.month.mins : null;
 
-  const runDeltaHtml = deltaBadge(runWeekDelta, v => `${v.toFixed(1)} km vs last wk`);
-  const strengthDeltaHtml = deltaBadge(strengthWeekDelta, v => `${Math.round(v)} vs last wk`);
-  const stepsDeltaHtml = deltaBadge(stepsDelta, v => `${Math.round(v).toLocaleString()} vs 30d avg`);
-  const intensityDeltaHtml = deltaBadge(intensityDelta, v => `${fmtHrs(v)} vs yr avg`);
-  const recoveryDeltaHtml = deltaBadge(recoveryDelta, v => `${fmtHrs(v)} vs mo avg`);
+  // Thresholds here MUST match qualLabel's thresholds below — these two lines
+  // sit right next to each other on the dashboard, so using different cutoffs
+  // produces contradictory text (e.g. "▲ 1 vs last wk" next to "Stable — no
+  // meaningful change"). Single source of truth per metric, used by both.
+  const RUN_STABLE_THRESHOLD = 1;
+  const STRENGTH_STABLE_THRESHOLD = 1;
+  const STEPS_STABLE_THRESHOLD = 500;
+  const INTENSITY_STABLE_THRESHOLD = 15;
+  const RECOVERY_STABLE_THRESHOLD = 15;
+
+  const runDeltaHtml = deltaBadge(runWeekDelta, v => `${v.toFixed(1)} km vs last wk`, RUN_STABLE_THRESHOLD);
+  const strengthDeltaHtml = deltaBadge(strengthWeekDelta, v => `${Math.round(v)} vs last wk`, STRENGTH_STABLE_THRESHOLD);
+  const stepsDeltaHtml = deltaBadge(stepsDelta, v => `${Math.round(v).toLocaleString()} vs 30d avg`, STEPS_STABLE_THRESHOLD);
+  const intensityDeltaHtml = deltaBadge(intensityDelta, v => `${fmtHrs(v)} vs yr avg`, INTENSITY_STABLE_THRESHOLD);
+  const recoveryDeltaHtml = deltaBadge(recoveryDelta, v => `${fmtHrs(v)} vs mo avg`, RECOVERY_STABLE_THRESHOLD);
 
   // ── Qualitative "so what" labels ─────────────────────────────────────────────
   // Thresholds chosen per-metric for what a "meaningful" change actually looks
@@ -466,11 +476,11 @@ async function init() {
     return `<br><span style="color:var(--text-dim)">${word} vs ${compareLabel}</span>`;
   }
 
-  const runQualHtml = qualLabel(runWeekDelta, 1, 'Increased', 'Decreased', 'last week');
-  const strengthQualHtml = qualLabel(strengthWeekDelta, 1, 'Increased', 'Decreased', 'last week');
-  const stepsQualHtml = qualLabel(stepsDelta, 500, 'Increased', 'Decreased', '30d average');
-  const intensityQualHtml = qualLabel(intensityDelta, 15, 'Increased', 'Decreased', 'year average');
-  const recoveryQualHtml = qualLabel(recoveryDelta, 15, 'Increased', 'Decreased', 'month average');
+  const runQualHtml = qualLabel(runWeekDelta, RUN_STABLE_THRESHOLD, 'Increased', 'Decreased', 'last week');
+  const strengthQualHtml = qualLabel(strengthWeekDelta, STRENGTH_STABLE_THRESHOLD, 'Increased', 'Decreased', 'last week');
+  const stepsQualHtml = qualLabel(stepsDelta, STEPS_STABLE_THRESHOLD, 'Increased', 'Decreased', '30d average');
+  const intensityQualHtml = qualLabel(intensityDelta, INTENSITY_STABLE_THRESHOLD, 'Increased', 'Decreased', 'year average');
+  const recoveryQualHtml = qualLabel(recoveryDelta, RECOVERY_STABLE_THRESHOLD, 'Increased', 'Decreased', 'month average');
 
   const stepsRowResolved = stepsRow.replace('__STEPS_DELTA__', stepsDeltaHtml + stepsQualHtml);
   const recoveryRowResolved = recoveryRow.replace('__RECOVERY_DELTA__', recoveryDeltaHtml + recoveryQualHtml);

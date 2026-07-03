@@ -1,6 +1,7 @@
 import os
 import csv
 import json
+import re
 import urllib.request
 import urllib.error
 from datetime import datetime, timedelta
@@ -682,12 +683,18 @@ Tone and style:
 - Assume Frederik understands training concepts — no need to explain basics.
 - No generic encouragement phrases.
 
-Output format:
-- 2–4 short paragraphs separated by a blank line, as many as the data warrants — don't pad or compress artificially.
-- Each paragraph covers one distinct theme: load/volume, intensity/quality, supporting metrics.
-- Each paragraph 1–3 sentences.
-- No bullet points, no headers, no greeting, no sign-off.
-- Write in second person ("your threshold...", "you've...")."""
+Output format — respond using exactly this structure, with these literal delimiter lines:
+
+HEADLINE:
+One sentence, the single most important insight from today's data. This is the answer to "what is today's story?" — not a generic state label like "Building" or "Consolidating". Be specific and data-anchored. Examples of the right level of specificity: "Aerobic fitness remains stable despite reduced peak mileage." / "Threshold fitness continues to strengthen." Do not restate the athlete's name or date.
+
+SUMMARY:
+2–4 short paragraphs separated by a blank line, as many as the data warrants — don't pad or compress artificially. Each paragraph covers one distinct theme: load/volume, intensity/quality, supporting metrics. Each paragraph 1–3 sentences. No bullet points, no headers, no greeting, no sign-off. Write in second person ("your threshold...", "you've...").
+
+WATCH:
+2–4 short bullet points (one per line, starting with "- ") naming specific things worth paying attention to over the coming week — not prescribed workouts or mileage targets, since the training programme is already structured elsewhere. Frame these as things to observe or monitor, e.g. "Watch whether easy-run HR continues to decline." / "Sleep quality may become more important after the long run." If there is nothing meaningfully worth flagging this week, write a single line: "- Nothing notable to flag this week — steady state."
+
+Do not add any text outside these three sections, and use the exact delimiter labels (HEADLINE:, SUMMARY:, WATCH:) on their own lines."""
 
 user_prompt = f"""Today: {today_date} (week {today_date.isocalendar()[1]} of {today_date.year})
 
@@ -813,6 +820,35 @@ else:
 if not coach_text:
     coach_text = "Training data updated — coach summary unavailable today."
 
+# ── Parse HEADLINE / SUMMARY / WATCH sections ─────────────────────────────────
+# Defensive parsing: if the model doesn't follow the delimited format exactly,
+# fall back to treating the whole response as the summary (same spirit as the
+# existing "coach unavailable" fallback above) rather than failing the run.
+def parse_coach_sections(text):
+    headline = ""
+    summary = text
+    watch_items = []
+    try:
+        headline_match = re.search(r"HEADLINE:\s*(.+?)(?=\n\s*SUMMARY:)", text, re.DOTALL)
+        summary_match = re.search(r"SUMMARY:\s*(.+?)(?=\n\s*WATCH:)", text, re.DOTALL)
+        watch_match = re.search(r"WATCH:\s*(.+)", text, re.DOTALL)
+
+        if headline_match and summary_match:
+            headline = headline_match.group(1).strip()
+            summary = summary_match.group(1).strip()
+            if watch_match:
+                watch_raw = watch_match.group(1).strip()
+                watch_items = [
+                    line.strip().lstrip("- ").strip()
+                    for line in watch_raw.split("\n")
+                    if line.strip().startswith("-")
+                ]
+    except Exception as parse_err:
+        print(f"Coach section parsing failed, using raw text as summary: {parse_err}")
+    return headline, summary, watch_items
+
+coach_headline, coach_summary_text, coach_watch_items = parse_coach_sections(coach_text)
+
 # ── Accumulate usage history ──────────────────────────────────────────────────
 usage_file = "api_usage.json"
 usage_history = []
@@ -844,8 +880,10 @@ ytd_cost_dkk = ytd_cost_usd * USD_TO_DKK
 # ── Write coach_summary.json ──────────────────────────────────────────────────
 coach_summary = {
     "last_updated": today.strftime("%Y-%m-%d %H:%M UTC"),
-    "summary": coach_text,
-    "insights": [coach_text],
+    "headline": coach_headline,
+    "summary": coach_summary_text,
+    "watch_items": coach_watch_items,
+    "insights": [coach_summary_text],
     "quiet": [],
     "usage": token_usage,
     "usage_mtd_usd": round(mtd_cost_usd, 5),
@@ -860,4 +898,6 @@ with open("coach_summary.json", "w", encoding="utf-8") as f:
 print(f"Coach summary written.")
 print(f"  MTD: ${mtd_cost_usd:.5f} / {mtd_cost_dkk:.4f} kr")
 print(f"  YTD: ${ytd_cost_usd:.5f} / {ytd_cost_dkk:.4f} kr")
-print(f"  {coach_text[:120]}...")
+print(f"  Headline: {coach_headline[:120]}")
+print(f"  Watch items: {len(coach_watch_items)}")
+

@@ -32,9 +32,15 @@ if os.path.exists("strength.csv") and not is_full_refresh:
         existing_strength = list(csv.DictReader(f))
 
 # Find cutoff date for incremental fetch
-last_run_date = existing_runs[0]["date"] if existing_runs else "2000-01-01"
-last_strength_date = existing_strength[0]["date"] if existing_strength else "2000-01-01"
-cutoff = min(last_run_date, last_strength_date)
+# Only consider sources that actually have existing data — a missing/empty
+# strength.csv (or runs.csv) shouldn't drag the cutoff all the way back to
+# 2000 and force a full-history refetch every run until that file exists.
+_available_last_dates = []
+if existing_runs:
+    _available_last_dates.append(existing_runs[0]["date"])
+if existing_strength:
+    _available_last_dates.append(existing_strength[0]["date"])
+cutoff = min(_available_last_dates) if _available_last_dates else "2000-01-01"
 print(f"Fetching activities since: {cutoff}")
 
 # ── Fetch activities ──────────────────────────────────────────────────────────
@@ -140,7 +146,8 @@ run_fieldnames = [
     "avg_hr", "max_hr", "elevation_gain_m", "elevation_loss_m",
     "min_elevation_m", "max_elevation_m", "avg_pace_min_km", "max_pace_min_km",
     "avg_cadence", "calories", "training_load",
-    "aerobic_training_effect", "anaerobic_training_effect", "vo2max_estimate"
+    "aerobic_training_effect", "anaerobic_training_effect", "vo2max_estimate",
+    "activity_id"
 ]
 
 def build_run_row(a):
@@ -173,11 +180,12 @@ def build_run_row(a):
         "training_load": a.get("activityTrainingLoad", ""),
         "aerobic_training_effect": a.get("aerobicTrainingEffect", ""),
         "anaerobic_training_effect": a.get("anaerobicTrainingEffect", ""),
-        "vo2max_estimate": a.get("vO2MaxValue", "")
+        "vo2max_estimate": a.get("vO2MaxValue", ""),
+        "activity_id": a.get("activityId", "")
     }
 
 # ── Build strength records ────────────────────────────────────────────────────
-strength_fieldnames = ["date", "name", "elapsed_time", "duration_min"]
+strength_fieldnames = ["date", "name", "elapsed_time", "duration_min", "activity_id"]
 
 def build_strength_row(a):
     duration_s = a.get("duration", 0)
@@ -185,16 +193,26 @@ def build_strength_row(a):
         "date": a.get("startTimeLocal", "")[:10],
         "name": a.get("activityName", ""),
         "elapsed_time": fmt_time(duration_s),
-        "duration_min": round(duration_s / 60, 1) if duration_s else ""
+        "duration_min": round(duration_s / 60, 1) if duration_s else "",
+        "activity_id": a.get("activityId", "")
     }
 
-# ── Merge new + existing, deduplicate by date+name ───────────────────────────
-def merge(new_rows, existing_rows, key_fields):
-    existing_keys = {tuple(r[k] for k in key_fields) for r in existing_rows}
+# ── Merge new + existing, deduplicate ─────────────────────────────────────────
+# Prefer Garmin's own activityId as the true unique key — date+name alone can
+# collapse two genuinely different same-day activities that share a name (e.g.
+# two runs both auto-named "Running"). Falls back to date+name only for rows
+# written before this field existed (activity_id will be blank on those).
+def _row_key(row):
+    aid = row.get("activity_id", "")
+    if aid:
+        return ("id", aid)
+    return ("legacy", row.get("date", ""), row.get("name", ""))
+
+def merge(new_rows, existing_rows, key_fields=None):
+    new_keys = {_row_key(n) for n in new_rows}
     merged = list(new_rows)
     for r in existing_rows:
-        key = tuple(r[k] for k in key_fields)
-        if key not in {tuple(n[k] for k in key_fields) for n in new_rows}:
+        if _row_key(r) not in new_keys:
             merged.append(r)
     return sorted(merged, key=lambda x: x.get("date", ""), reverse=True)
 
@@ -205,8 +223,8 @@ if is_full_refresh:
     all_run_rows = sorted(new_run_rows, key=lambda x: x.get("date", ""), reverse=True)
     all_strength_rows = sorted(new_strength_rows, key=lambda x: x.get("date", ""), reverse=True)
 else:
-    all_run_rows = merge(new_run_rows, existing_runs, ["date", "name"])
-    all_strength_rows = merge(new_strength_rows, existing_strength, ["date", "name"])
+    all_run_rows = merge(new_run_rows, existing_runs)
+    all_strength_rows = merge(new_strength_rows, existing_strength)
 
 # ── Write runs.csv ────────────────────────────────────────────────────────────
 with open("runs.csv", "w", newline="", encoding="utf-8") as f:
@@ -413,7 +431,7 @@ def polar_get(url):
         _log_polar_http_error(f"GET {url}", e)
         raise
 
-if polar_token and polar_user_id:
+if polar_token:
     # ── Sleep ──────────────────────────────────────────────────────────────
     try:
         existing_sleep = {}
@@ -484,7 +502,7 @@ if polar_token and polar_user_id:
     except Exception as e:
         print(f"Polar steps fetch skipped: {e}")
 else:
-    print("POLAR_ACCESS_TOKEN / POLAR_USER_ID not set — skipping Polar fetch")
+    print("POLAR_ACCESS_TOKEN not set — skipping Polar fetch")
 
 # ── AI Coach block ────────────────────────────────────────────────────────────
 # Calls Anthropic API (claude-sonnet-4-6) to generate a daily coaching summary.
@@ -520,13 +538,35 @@ recent_strength = [s for s in all_strength_sorted
 prior_strength = [s for s in all_strength_sorted
     if s.get("date") and cutoff_8wk <= datetime.strptime(s["date"], "%Y-%m-%d").date() < cutoff_4wk]
 
-# Steps data
-steps_data = {}
+# Steps data — reconciled from iPhone + Polar, same logic as the dashboard's
+# reconciledStepsData in index.html (average when both sources report a day,
+# fallback to whichever single source exists). Kept in sync deliberately: the
+# coach's own step commentary was previously built from steps.csv (iPhone)
+# alone, which could disagree with what the dashboard actually displays.
+iphone_steps_data = {}
 if os.path.exists("steps.csv"):
     with open("steps.csv", "r", encoding="utf-8") as f:
         for row in csv.DictReader(f):
             if row.get("date"):
-                steps_data[row["date"]] = int(row.get("steps") or 0)
+                iphone_steps_data[row["date"]] = int(row.get("steps") or 0)
+
+polar_steps_data_for_coach = {}
+if os.path.exists("polar_steps.csv"):
+    with open("polar_steps.csv", "r", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            if row.get("date"):
+                polar_steps_data_for_coach[row["date"]] = int(row.get("steps") or 0)
+
+steps_data = {}
+for d in set(list(iphone_steps_data.keys()) + list(polar_steps_data_for_coach.keys())):
+    iphone_val = iphone_steps_data.get(d)
+    polar_val = polar_steps_data_for_coach.get(d)
+    if iphone_val and polar_val:
+        steps_data[d] = round((iphone_val + polar_val) / 2)
+    elif iphone_val:
+        steps_data[d] = iphone_val
+    elif polar_val:
+        steps_data[d] = polar_val
 
 recent_steps = {d: s for d, s in steps_data.items()
     if datetime.strptime(d, "%Y-%m-%d").date() >= cutoff_4wk}

@@ -168,16 +168,29 @@ function calcBestEfforts(runs) { const cats = [{ label: '5 km', min: 4 }, { labe
 function calcZones(ltPaceStr, ltHr) { const ltSec = paceToSec(ltPaceStr); if (!ltSec) return null; const z1HrMax = ltHr ? Math.round(ltHr * 0.80) : null; const z2HrMax = ltHr ? Math.round(ltHr * 0.90) : null; const z3HrMax = ltHr ? Math.round(ltHr * 0.99) : null; const z4HrMax = ltHr ? Math.round(ltHr * 1.05) : null; return [ { name: 'Z1 EASY', pace: `> ${secToPace(ltSec + 75)}`, hr: ltHr ? `< ${z1HrMax} bpm` : '', color: '#4a9eff', pct: 40 }, { name: 'Z2 AEROBIC', pace: `${secToPace(ltSec + 45)}–${secToPace(ltSec + 74)}`, hr: ltHr ? `${z1HrMax}–${z2HrMax} bpm` : '', color: '#7bc67e', pct: 60 }, { name: 'Z3 TEMPO', pace: `${secToPace(ltSec + 10)}–${secToPace(ltSec + 44)}`, hr: ltHr ? `${z2HrMax}–${z3HrMax} bpm` : '', color: '#e8ff5a', pct: 78 }, { name: 'Z4 LT', pace: `${secToPace(ltSec - 10)}–${secToPace(ltSec + 9)}`, hr: ltHr ? `${z3HrMax}–${z4HrMax} bpm` : '', color: '#ff9f40', pct: 90 }, { name: 'Z5 HARD', pace: `< ${secToPace(ltSec - 11)}`, hr: ltHr ? `> ${z4HrMax} bpm` : '', color: '#ff6b35', pct: 100 } ]; }
 
 async function init() {
+  const fileStatus = {};
+  const safeFetch = (name, url, parseFn) =>
+    fetch(url)
+      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return parseFn(r); })
+      .then(data => { fileStatus[name] = 'ok'; return data; })
+      .catch(e => { fileStatus[name] = `failed: ${e.message}`; return name === 'runs' ? null : (name === 'lactate' ? [] : null); });
+
   const [runsRaw, strengthRaw, summary, ltDataRaw, coachData, stepsRaw, sleepRaw, polarStepsRaw] = await Promise.all([
-    fetch('runs.csv').then(r => r.text()),
-    fetch('strength.csv').then(r => r.text()).catch(() => null),
-    fetch('summary.json').then(r => r.json()).catch(() => null),
-    fetch('lactate.json').then(r => r.json()).catch(() => []),
-    fetch('coach_summary.json').then(r => r.json()).catch(() => null),
-    fetch('steps.csv').then(r => r.text()).catch(() => null),
-    fetch('sleep.csv').then(r => r.text()).catch(() => null),
-    fetch('polar_steps.csv').then(r => r.text()).catch(() => null)
+    safeFetch('runs', 'runs.csv', r => r.text()),
+    safeFetch('strength', 'strength.csv', r => r.text()),
+    safeFetch('summary', 'summary.json', r => r.json()),
+    safeFetch('lactate', 'lactate.json', r => r.json()),
+    safeFetch('coach', 'coach_summary.json', r => r.json()),
+    safeFetch('steps', 'steps.csv', r => r.text()),
+    safeFetch('sleep', 'sleep.csv', r => r.text()),
+    safeFetch('polarSteps', 'polar_steps.csv', r => r.text())
   ]);
+
+  if (!runsRaw) {
+    const statusLines = Object.entries(fileStatus).map(([name, status]) => `${name}: ${status}`).join('<br>');
+    document.getElementById('app').innerHTML = `<div class="loading">Failed to load core data (runs.csv).<br><small>${statusLines}</small></div>`;
+    return;
+  }
 
   const { data: runRows } = Papa.parse(runsRaw, { header: true, skipEmptyLines: true });
   const runs = runRows.filter(r => r.date);
@@ -238,13 +251,21 @@ async function init() {
   // Reconciled daily steps: average of both sources when both report that day
   // (smooths device-specific counting quirks), falls back to whichever single
   // source is present when the other device wasn't worn/synced that day.
+  // If the two disagree by more than 50%, averaging produces a number that
+  // represents neither reading well — likely one device wasn't worn the full
+  // day — so use the larger (more complete) reading instead. Threshold must
+  // match the Python side (fetch_activities.py) so the coach's own step
+  // commentary agrees with what the dashboard shows.
+  const STEPS_DISAGREEMENT_THRESHOLD = 0.5;
   const reconciledStepsData = {};
   const stepDiscrepancies = [];
   new Set([...Object.keys(stepsData), ...Object.keys(polarStepsData)]).forEach(date => {
     const iphone = stepsData[date];
     const polar = polarStepsData[date];
     if (iphone && polar) {
-      reconciledStepsData[date] = Math.round((iphone + polar) / 2);
+      const larger = Math.max(iphone, polar);
+      const disagreement = larger ? Math.abs(iphone - polar) / larger : 0;
+      reconciledStepsData[date] = disagreement > STEPS_DISAGREEMENT_THRESHOLD ? larger : Math.round((iphone + polar) / 2);
       stepDiscrepancies.push({ date, diff: Math.abs(iphone - polar) });
     } else if (iphone) {
       reconciledStepsData[date] = iphone;
@@ -710,7 +731,7 @@ async function init() {
   });
 }
 
-init().catch(err => { document.getElementById('app').innerHTML = `<div class="loading">Failed to load data.<br><small>${err.message}</small></div>`; });
+init().catch(err => { document.getElementById('app').innerHTML = `<div class="loading">Dashboard failed to render (data loaded, but something broke while building the page).<br><small>${err.message}</small></div>`; });
 </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-name: Fetch Garmin Activities
+name: Sync Training Data
 
 on:
   schedule:

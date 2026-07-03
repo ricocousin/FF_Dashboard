@@ -79,6 +79,7 @@
     .coach-evidence-title { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 0.5rem; }
     .coach-evidence-item { font-family: var(--font-mono); font-size: 11.5px; color: var(--text); line-height: 1.6; }
     .coach-evidence-item + .coach-evidence-item { margin-top: 0.3rem; }
+    .coach-evidence-item.priority-low { color: var(--text-dim); opacity: 0.75; }
     .coach-digest { margin-top: 0.9rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
     .coach-digest-title { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 0.5rem; }
     .coach-digest-item { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-dim); line-height: 1.7; }
@@ -278,7 +279,14 @@ async function init() {
       return `<div class="coach-confidence" title="${escapeHtml(reasons)}"><div class="coach-confidence-bar"><div class="coach-confidence-fill" style="width:${pct}%;background:${barColor}"></div></div><span>${pct}% · ${escapeHtml(label)}</span></div>`;
     })() : '';
     const evidenceItems = Array.isArray(coachData.evidence_items) ? coachData.evidence_items.filter(Boolean) : [];
-    const evidenceHtml = evidenceItems.length ? `<div class="coach-evidence"><div class="coach-evidence-title">Evidence supporting today's assessment</div>${evidenceItems.map(e => `<div class="coach-evidence-item">${escapeHtml(e)}</div>`).join('')}</div>` : '';
+    const evidenceHtml = evidenceItems.length ? `<div class="coach-evidence"><div class="coach-evidence-title">Evidence supporting today's assessment</div>${evidenceItems.map(e => {
+      // Backward-compatible: older coach_summary.json versions stored plain strings
+      const text = typeof e === 'string' ? e : e.text;
+      const priority = typeof e === 'string' ? 'Medium' : (e.priority || 'Medium');
+      const cls = priority === 'Low' ? ' priority-low' : priority === 'High' ? '' : '';
+      const style = priority === 'High' ? ' style="color:var(--text-hi);font-weight:500"' : '';
+      return `<div class="coach-evidence-item${cls}"${style}>${escapeHtml(text)}</div>`;
+    }).join('')}</div>` : '';
     const watchItems = Array.isArray(coachData.watch_items) ? coachData.watch_items.filter(Boolean) : [];
     const watchHtml = watchItems.length ? `<div class="coach-watch"><div class="coach-watch-title">Things to watch</div>${watchItems.map(w => `<div class="coach-watch-item">${escapeHtml(w)}</div>`).join('')}</div>` : '';
 
@@ -639,7 +647,20 @@ async function init() {
   const efforts = calcBestEfforts(runsComplete.filter(r => r.type === 'outdoor'));
   const effortsCard = document.createElement('div');
   effortsCard.className = 'card';
-  effortsCard.innerHTML = `<div class="card-title">Personal bests — by distance category</div><div class="efforts-grid">${efforts.map(e => `<div class="effort"><div class="effort-label">${e.label}</div><div class="effort-value">${e.pace}</div><div class="effort-detail">${e.time} · ${e.dist}</div><div class="effort-sub">${escapeHtml(e.name)}</div><div class="effort-date">${e.date ?? ''}</div></div>`).join('')}</div>`;
+  const ltGapCategories = new Set(['10 km', 'Half']);
+  const ltPaceSecForGap = latestLT ? paceToSec(latestLT.lt_pace) : null;
+  effortsCard.innerHTML = `<div class="card-title">Personal bests — by distance category</div><div class="efforts-grid">${efforts.map(e => {
+    let gapHtml = '';
+    if (ltGapCategories.has(e.label) && ltPaceSecForGap && e.pace !== '—') {
+      const pbSec = paceToSec(e.pace.replace(' /km', ''));
+      if (pbSec) {
+        const gapSec = ltPaceSecForGap - pbSec; // positive: PB faster than current threshold (expected/normal)
+        const gapHtml_ = `${gapSec >= 0 ? '+' : ''}${gapSec}s/km`;
+        gapHtml = `<div class="effort-sub" style="margin-top:0.2rem">Current LT: ${latestLT.lt_pace}/km · Gap: ${gapHtml_}</div>`;
+      }
+    }
+    return `<div class="effort"><div class="effort-label">${e.label}</div><div class="effort-value">${e.pace}</div><div class="effort-detail">${e.time} · ${e.dist}</div><div class="effort-sub">${escapeHtml(e.name)}</div><div class="effort-date">${e.date ?? ''}</div>${gapHtml}</div>`;
+  }).join('')}</div>`;
   app.appendChild(effortsCard);
 
   // ── Render charts ─────────────────────────────────────────────────────────────

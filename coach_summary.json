@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-03 22:26 UTC",
-  "headline": "A 35% volume increase over four weeks is landing well \u2014 easy-run HR has dropped meaningfully at comparable effort, suggesting the load is building fitness rather than accumulating fatigue.",
+  "last_updated": "2026-07-03 22:57 UTC",
+  "headline": "A 35% volume step-up lands cleanly, with easy-run HR dropping markedly \u2014 aerobic efficiency is moving in the right direction.",
   "confidence_pct": 84,
   "confidence_label": "Moderate data confidence",
   "confidence_reasons": [
@@ -11,12 +11,12 @@
     "Pipeline fetch completed on schedule",
     "Multiple data sources active in last 3 days"
   ],
-  "summary": "Your aerobic efficiency is moving in the right direction. Easy-run heart rate has dropped substantially at comparable paces across this block, which is a clear within-athlete signal that the higher volume is being absorbed and converted \u2014 not just tolerated. That's the distinction worth noting: load can accumulate without producing adaptation, but the HR data suggests adaptation is happening.\n\nThe 20-week running streak ties your personal best, and strength work has also ticked up in frequency this block. The combination of higher running volume, improved aerobic efficiency markers, and maintained strength consistency is about as coherent a positive picture as the data can offer. No single metric is doing the heavy lifting here \u2014 they're pointing the same direction.\n\nOne thing worth holding: a 35% volume jump in four weeks is meaningful, and the current structural question is whether to extend this level or let the body consolidate before pushing further. The efficiency data is encouraging, but durability across a second consecutive elevated block deserves attention \u2014 the data looks good now, and that's exactly when it's worth being intentional rather than opportunistic.",
+  "summary": "The recent block represents a meaningful load increase that the body appears to have absorbed well. Easy-run HR has dropped noticeably compared to the prior period on comparable efforts \u2014 that's a concrete aerobic adaptation signal, not noise. Combined with a substantial volume step-up and stronger strength consistency, this is a block where multiple markers are pointing the same direction.\n\nThe 20-week running streak ties your personal best, which is worth acknowledging not as a milestone for its own sake but as evidence of the structural consistency that underlies these adaptations. Streaks are a trailing indicator of discipline; the HR and volume data are the leading indicators that matter more.\n\nThe lactate threshold data point from yesterday \u2014 a single test, so treat it as a baseline anchor rather than a trend \u2014 gives you a reference to compare against as more history accumulates. Watch how easy-run HR continues to evolve over the coming weeks relative to it.",
   "watch_items": [
-    "Monitor whether easy-run HR continues to stabilise or begins drifting upward \u2014 a sustained rise at the same effort level would be the first signal this block needs consolidation",
-    "Watch how the legs respond to back-to-back or higher-intensity efforts over the coming week, given the volume step-up is still recent",
-    "Strength streak is short at three weeks \u2014 worth noting whether session quality and recovery from lifting remains consistent as running load stays elevated",
-    "The 20-week streak is now at its personal best; pay attention to any subtle motivation or mechanical signals that distinguish a healthy streak from one being maintained at cost"
+    "Monitor whether the easy-run HR decline continues at comparable paces, or stabilises \u2014 either outcome is informative",
+    "With a 35% volume step-up just completed, pay attention to how legs feel on the first long or quality effort of this new week",
+    "Lactate threshold is currently a single data point \u2014 note subjective feel and HR response on threshold-adjacent efforts so the picture builds faster",
+    "Strength streak is three weeks; watch whether session quality holds as running load remains elevated"
   ],
   "evidence_items": [
     {
@@ -24,7 +24,7 @@
       "priority": "High"
     },
     {
-      "text": "\u25b2 Strength consistency: 8 sessions vs 6 prior 4wk",
+      "text": "\u25b2 Strength consistency: 9 sessions vs 6 prior 4wk",
       "priority": "High"
     },
     {
@@ -37,18 +37,18 @@
     }
   ],
   "insights": [
-    "Your aerobic efficiency is moving in the right direction. Easy-run heart rate has dropped substantially at comparable paces across this block, which is a clear within-athlete signal that the higher volume is being absorbed and converted \u2014 not just tolerated. That's the distinction worth noting: load can accumulate without producing adaptation, but the HR data suggests adaptation is happening.\n\nThe 20-week running streak ties your personal best, and strength work has also ticked up in frequency this block. The combination of higher running volume, improved aerobic efficiency markers, and maintained strength consistency is about as coherent a positive picture as the data can offer. No single metric is doing the heavy lifting here \u2014 they're pointing the same direction.\n\nOne thing worth holding: a 35% volume jump in four weeks is meaningful, and the current structural question is whether to extend this level or let the body consolidate before pushing further. The efficiency data is encouraging, but durability across a second consecutive elevated block deserves attention \u2014 the data looks good now, and that's exactly when it's worth being intentional rather than opportunistic."
+    "The recent block represents a meaningful load increase that the body appears to have absorbed well. Easy-run HR has dropped noticeably compared to the prior period on comparable efforts \u2014 that's a concrete aerobic adaptation signal, not noise. Combined with a substantial volume step-up and stronger strength consistency, this is a block where multiple markers are pointing the same direction.\n\nThe 20-week running streak ties your personal best, which is worth acknowledging not as a milestone for its own sake but as evidence of the structural consistency that underlies these adaptations. Streaks are a trailing indicator of discipline; the HR and volume data are the leading indicators that matter more.\n\nThe lactate threshold data point from yesterday \u2014 a single test, so treat it as a baseline anchor rather than a trend \u2014 gives you a reference to compare against as more history accumulates. Watch how easy-run HR continues to evolve over the coming weeks relative to it."
   ],
   "quiet": [],
   "usage": {
     "input_tokens": 2837,
-    "output_tokens": 426,
-    "cost_usd": 0.014901,
-    "cost_dkk": 0.10282,
+    "output_tokens": 357,
+    "cost_usd": 0.013866,
+    "cost_dkk": 0.09568,
     "date": "2026-07-03"
   },
-  "usage_mtd_usd": 0.03472,
-  "usage_mtd_dkk": 0.2396,
-  "usage_ytd_usd": 0.03472,
-  "usage_ytd_dkk": 0.2396
+  "usage_mtd_usd": 0.03369,
+  "usage_mtd_dkk": 0.2325,
+  "usage_ytd_usd": 0.03369,
+  "usage_ytd_dkk": 0.2325
 }

@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-03 22:26 UTC",
+  "last_updated": "2026-07-03 22:57 UTC",
   "last_complete_date": "2026-07-02",
   "this_year": "2026",
   "this_month_short": "Jul",
@@ -757,7 +757,7 @@
   "digest": [
     "\u2794 LT established at 4:24/km (baseline building)",
     "\u25b2 Weekly volume increased (168 vs 125 km prior block)",
-    "\u25b2 Strength frequency 8 vs 6 sessions prior block",
+    "\u25b2 Strength frequency 9 vs 6 sessions prior block",
     "\u25b2 Steps averaging 14,652 vs 12,952/day prior block",
     "\u2794 Sleep data still accumulating",
     "\u2794 Running streak: 20 wks (best: 20)"

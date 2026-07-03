@@ -1,4 +1,4 @@
-# Fred's Feats
+# FF_Dashboard
 
 A personal training dashboard that pulls together running, strength, sleep, and steps data from multiple sources into a single daily view — plus an AI coach that reads the same data and writes a short, evidence-backed training briefing.
 
@@ -18,6 +18,14 @@ A personal training dashboard that pulls together running, strength, sleep, and 
 ## Why it's built this way
 
 Garmin is the source of truth for run and strength *sessions* (accurate timing, GPS, pace). Polar is the source of truth for *sleep* (which Garmin doesn't provide at all) and supplements steps. The two are deliberately never merged for exercise data — the Polar Loop mis-tags H10-strap runs as "indoor" activities, so pulling Polar's version of a run would just create duplicate, less-accurate entries.
+
+**Why two wearables at all:** heavily tattooed skin blocks Garmin's optical heart-rate sensor, so runs are recorded via Garmin watch + a **Polar H10 chest strap** (paired to the watch) for accurate HR. A **Polar Loop** is also worn continuously for sleep and step tracking, and is being explored as an HR source for strength sessions too — Garmin currently has no HR data for lifting, same tattoo issue.
+
+## Repo naming note
+
+If you ever rename this repo, two things need updating to match:
+1. The GitHub Pages URL changes (`ricocousin.github.io/<old-name>/` → `.../<new-name>/`) — update any bookmarks/shortcuts.
+2. **Polar's developer portal** has the redirect URI registered as the exact old Pages URL. This only matters if the Polar access token is ever revoked and needs re-authorizing — the already-issued token keeps working regardless of the repo name, since the redirect URI is only used during the original OAuth handshake.
 
 ## AI coach design
 

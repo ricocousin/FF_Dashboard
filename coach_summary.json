@@ -1,19 +1,23 @@
 {
-  "last_updated": "2026-07-02 23:02 UTC",
-  "summary": "Your volume has stabilised cleanly over the past eight weeks \u2014 125 km and 127 km in back-to-back four-week blocks, 9 runs each, representing genuine consolidation rather than drift. The 20-week running streak landing exactly at your current best is worth noting: that's consistent contact with training through what appears to be a high-output period of the year, and today's 13.77 km at 5:48/km with HR 137 adds another aerobic maintenance brick without accumulating meaningful fatigue.\n\nThe standout data point in recent history remains June 27th \u2014 15.73 km at 4:49/km with HR 161, which is your sharpest effort in this window and well inside threshold territory. Paired with today's LT test result of 4:24/km at 178 bpm, that gives you a useful anchor: your aerobic efficiency at easy effort looks solid (HR 137 for sub-6 pace), and your threshold sits at a pace consistent with someone who ran a 4:18/km half last September. There's no detraining signal here.\n\nThe 44 km long run on June 8th remains the structural foundation of the recent block \u2014 442m of gain at 5:53/km average is meaningful durability work, and it was only three and a half weeks ago. That kind of effort takes time to express as fitness rather than fatigue, so the subsequent lower-load pattern through late June is contextually appropriate.",
+  "last_updated": "2026-07-03 08:34 UTC",
+  "headline": "Volume has flatlined at ~30 km/week for eight weeks, but the 15.73 km at 4:49/km on June 27 shows threshold-adjacent capacity is intact.",
+  "summary": "Your four-week volume is essentially unchanged \u2014 127 km against 125 km in the prior block, a difference within any meaningful margin of error. At 29.9 km/week across 12 weeks, you're in a sustained consolidation band rather than a build phase. That's not a problem by itself, but it's worth being clear-eyed that this is flat, not progressive. The two most recent runs (11.73 km at 5:59/km, HR 143; 13.77 km at 5:48/km, HR 137) look like easy recovery-range efforts, which is appropriate context following the June 27 effort.\n\nThe June 27 run stands out clearly: 15.73 km at 4:49/km with HR 161 and a load of 239 \u2014 your most aerobically demanding session in this window by a significant margin. Placed against your 10K PB pace of 4:12/km and your current LT estimate of 4:24/km at 178 bpm, that effort sits comfortably in threshold-adjacent territory. It's meaningful evidence that top-end aerobic capacity hasn't degraded despite the flat volume trend. Your June 8 long run (44 km at 5:53/km, HR 155) also reinforces that your durability base is holding \u2014 that effort is just three and a half weeks ago, well within the window where it still contributes to current readiness.\n\nStrength frequency has been modest \u2014 four sessions across four weeks (1.0/week), slightly below your YTD average of 1.3/week. This is a dip worth noting, though it doesn't yet constitute a trend. Your demonstrated strength numbers remain high, and short fluctuations in session frequency rarely erode those qualities quickly. The three-week current streak suggests you're re-establishing rhythm rather than stepping back.",
+  "watch_items": [
+    "Monitor whether the flat volume band holds, breaks upward, or begins to drift downward \u2014 eight weeks at"
+  ],
   "insights": [
-    "Your volume has stabilised cleanly over the past eight weeks \u2014 125 km and 127 km in back-to-back four-week blocks, 9 runs each, representing genuine consolidation rather than drift. The 20-week running streak landing exactly at your current best is worth noting: that's consistent contact with training through what appears to be a high-output period of the year, and today's 13.77 km at 5:48/km with HR 137 adds another aerobic maintenance brick without accumulating meaningful fatigue.\n\nThe standout data point in recent history remains June 27th \u2014 15.73 km at 4:49/km with HR 161, which is your sharpest effort in this window and well inside threshold territory. Paired with today's LT test result of 4:24/km at 178 bpm, that gives you a useful anchor: your aerobic efficiency at easy effort looks solid (HR 137 for sub-6 pace), and your threshold sits at a pace consistent with someone who ran a 4:18/km half last September. There's no detraining signal here.\n\nThe 44 km long run on June 8th remains the structural foundation of the recent block \u2014 442m of gain at 5:53/km average is meaningful durability work, and it was only three and a half weeks ago. That kind of effort takes time to express as fitness rather than fatigue, so the subsequent lower-load pattern through late June is contextually appropriate."
+    "Your four-week volume is essentially unchanged \u2014 127 km against 125 km in the prior block, a difference within any meaningful margin of error. At 29.9 km/week across 12 weeks, you're in a sustained consolidation band rather than a build phase. That's not a problem by itself, but it's worth being clear-eyed that this is flat, not progressive. The two most recent runs (11.73 km at 5:59/km, HR 143; 13.77 km at 5:48/km, HR 137) look like easy recovery-range efforts, which is appropriate context following the June 27 effort.\n\nThe June 27 run stands out clearly: 15.73 km at 4:49/km with HR 161 and a load of 239 \u2014 your most aerobically demanding session in this window by a significant margin. Placed against your 10K PB pace of 4:12/km and your current LT estimate of 4:24/km at 178 bpm, that effort sits comfortably in threshold-adjacent territory. It's meaningful evidence that top-end aerobic capacity hasn't degraded despite the flat volume trend. Your June 8 long run (44 km at 5:53/km, HR 155) also reinforces that your durability base is holding \u2014 that effort is just three and a half weeks ago, well within the window where it still contributes to current readiness.\n\nStrength frequency has been modest \u2014 four sessions across four weeks (1.0/week), slightly below your YTD average of 1.3/week. This is a dip worth noting, though it doesn't yet constitute a trend. Your demonstrated strength numbers remain high, and short fluctuations in session frequency rarely erode those qualities quickly. The three-week current streak suggests you're re-establishing rhythm rather than stepping back."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 2174,
-    "output_tokens": 335,
-    "cost_usd": 0.011547,
-    "cost_dkk": 0.07967,
-    "date": "2026-07-02"
+    "input_tokens": 2451,
+    "output_tokens": 500,
+    "cost_usd": 0.014853,
+    "cost_dkk": 0.10249,
+    "date": "2026-07-03"
   },
-  "usage_mtd_usd": 0.01982,
-  "usage_mtd_dkk": 0.1368,
-  "usage_ytd_usd": 0.01982,
-  "usage_ytd_dkk": 0.1368
+  "usage_mtd_usd": 0.03468,
+  "usage_mtd_dkk": 0.2393,
+  "usage_ytd_usd": 0.03468,
+  "usage_ytd_dkk": 0.2393
 }

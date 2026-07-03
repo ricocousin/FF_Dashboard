@@ -973,7 +973,7 @@ SLEEP (last 4 weeks, from Polar Loop — supporting context only, do not let thi
 {chr(10).join(sleep_lines) if sleep_lines else "  No sleep data in the last 4 weeks"}
 
 AVAILABLE EVIDENCE (numbered — in the EVIDENCE: section, write only the numbers of items you select, not the text):
-{chr(10).join(f"  {i+1}. {item}" for i, item in enumerate(evidence_catalog)) if evidence_catalog else "  No evidence items available today — write \"0\" in the EVIDENCE section."}
+{chr(10).join(f"  {i+1}. {item}" for i, item in enumerate(evidence_catalog)) if evidence_catalog else '  No evidence items available today — write "0" in the EVIDENCE section.'}
 
 Generate the coaching summary now."""
 

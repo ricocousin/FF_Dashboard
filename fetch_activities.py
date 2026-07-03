@@ -382,7 +382,7 @@ with open(lt_file, "w", encoding="utf-8") as f:
 
 # ── Polar Accesslink: sleep + steps ───────────────────────────────────────────
 # Deliberately separate from Garmin data. Garmin (via H10 chest strap) remains
-# the sole source of truth for runs.csv/strength.csv — Frederik's Polar Loop
+# the sole source of truth for runs.csv/strength.csv — the athlete's Polar Loop
 # mis-tags H10-strap runs as "indoor" activities, so Polar exercise data is
 # NOT pulled or merged here. Polar is used only for:
 #   - sleep.csv   (Garmin doesn't provide this at all)
@@ -874,15 +874,15 @@ strength_per_week_ytd = round(
     summary.get('total_strength_this_year', 0) / max(today_date.timetuple().tm_yday / 7, 1), 1)
 
 # ── Build prompt ──────────────────────────────────────────────────────────────
-system_prompt = """You are an experienced hybrid performance coach with a strong sports science background working with Frederik, a Danish athlete with serious ultra-endurance and multi-sport capacity.
+system_prompt = """You are an experienced hybrid performance coach with a strong sports science background working with a Danish athlete with serious ultra-endurance and multi-sport capacity.
 
 Your role is to generate a short daily training status summary based on the data provided.
 
 ATHLETE IDENTITY:
-Frederik is not a one-dimensional runner. He trains for dual capacity: ultra-endurance readiness (long efforts, back-to-back durability, time on feet, trail) AND speed/explosive capacity (fast paces, sprint ability). These are complementary qualities within a broader athletic philosophy. He also trains strength seriously, and has broader athletic interests including bouldering, martial arts, swimming, and longevity/mobility work. His daily commute includes 8 km by bike on weekdays. Do not treat him as a runner who also lifts — treat him as a complete athlete.
+The athlete is not a one-dimensional runner. They train for dual capacity: ultra-endurance readiness (long efforts, back-to-back durability, time on feet, trail) AND speed/explosive capacity (fast paces, sprint ability). These are complementary qualities within a broader athletic philosophy. They also train strength seriously, and have broader athletic interests including bouldering, martial arts, swimming, and longevity/mobility work. Their daily commute includes 8 km by bike on weekdays. Do not treat them as a runner who also lifts — treat them as a complete athlete.
 
 STANDING PHILOSOPHY:
-Frederik's training orientation is long-term progression across endurance, speed, strength, mobility and athleticism. Recommendations should favour sustainable progression over short-term optimisation, while recognising his capacity and willingness to push hard when appropriate.
+The athlete's training orientation is long-term progression across endurance, speed, strength, mobility and athleticism. Recommendations should favour sustainable progression over short-term optimisation, while recognising their capacity and willingness to push hard when appropriate.
 
 Do not assume a consolidation or lower-volume week indicates regression. Interpret it in the context of long-term trends, consistency, performance, strength work, background activity and recovery.
 
@@ -910,7 +910,7 @@ Tone and style:
 - Data-anchored: root every observation in specific numbers from the data.
 - Tonally neutral: neither cheerleader nor alarm bell.
 - Conversational when flagging outliers or standout efforts — name them directly and briefly reflect on what they might signal.
-- Assume Frederik understands training concepts — no need to explain basics.
+- Assume the athlete understands training concepts — no need to explain basics.
 - No generic encouragement phrases.
 
 Output format — respond using exactly this structure, with these literal delimiter lines:

@@ -335,8 +335,10 @@ summary = {
     "longest_strength_weekly_streak": calc_longest_streak(weeks_with_strength)
 }
 
-with open("summary.json", "w", encoding="utf-8") as f:
-    json.dump(summary, f, indent=2)
+# NOTE: summary.json is no longer written as a separate file — its contents
+# are absorbed into dashboard_metrics.json below (single source of truth).
+# The `summary` dict itself stays in memory since several later computations
+# reuse it (e.g. reading current_weekly_streak for the digest/overview).
 
 # ── Lactate threshold ─────────────────────────────────────────────────────────
 lt_records = []
@@ -633,6 +635,449 @@ if os.path.exists(lt_file):
 latest_lt = lt_history[-1] if lt_history else None
 baseline_lt = next((r for r in reversed(lt_history)
     if datetime.strptime(r["date"], "%Y-%m-%d").date() <= today_date - timedelta(days=30)), None)
+
+# ── Dashboard metrics (single source of truth for index.html) ────────────────
+# Every derived number the dashboard displays is computed here, once, in
+# Python — index.html becomes a pure renderer reading dashboard_metrics.json
+# instead of recomputing the same 4-week blocks / streaks / deltas itself in
+# JS. This absorbs summary.json (no longer written separately) and eliminates
+# the class of bug where the JS and Python versions of "the same" calculation
+# quietly drifted apart (e.g. the July 3 steps-reconciliation mismatch between
+# the coach and the dashboard).
+#
+# Design line: Python computes every AGGREGATION/DERIVATION (sums, averages,
+# deltas, streaks, "is this a meaningful change" decisions, zone boundaries,
+# linear regression). Pure FORMATTING (turning a number of minutes into
+# "4h 8m", seconds into "4:24" pace, drawing a Chart.js chart) stays in JS —
+# those functions don't derive anything, they just format a value Python
+# already computed.
+
+def _iso_week_key(d):
+    iso_year, iso_week, _ = d.isocalendar()
+    return f"{iso_year}-W{iso_week:02d}"
+
+def _week_start_date(iso_key):
+    iso_year, iso_week = iso_key.split("-W")
+    return datetime.fromisocalendar(int(iso_year), int(iso_week), 1).date()
+
+def _shift_week_key(iso_key, weeks):
+    return _iso_week_key(_week_start_date(iso_key) + timedelta(weeks=weeks))
+
+def _week_range(start_key, end_key):
+    weeks, wk, guard = [], start_key, 0
+    while wk <= end_key and guard < 800:
+        weeks.append(wk)
+        wk = _shift_week_key(wk, 1)
+        guard += 1
+    return weeks
+
+def _run_mins(row):
+    parts = (row.get("moving_time") or "").split(":")
+    if len(parts) != 3:
+        return 0
+    h, m, s = (int(p) for p in parts)
+    return h * 60 + m + s / 60
+
+def _qual(delta, threshold):
+    """Direction word for a delta given a per-metric 'meaningful change'
+    threshold — value-neutral (no good/bad framing), matches the same
+    principle already used for the coach's evidence catalog."""
+    if delta is None:
+        return None
+    if abs(delta) <= threshold:
+        return "Stable"
+    return "Increased" if delta > 0 else "Decreased"
+
+this_year_str = str(today_date.year)
+prev_year_str = str(today_date.year - 1)
+this_month_short = today_date.strftime("%b")
+
+year_runs = [r for r in complete_run_rows if r.get("date", "").startswith(this_year_str)]
+year_sessions = [s for s in complete_strength_rows if s.get("date", "").startswith(this_year_str)]
+year_dist = sum(float(r.get("distance_km") or 0) for r in year_runs)
+total_strength_min_year = sum(float(s.get("duration_min") or 0) for s in year_sessions)
+
+run_weeks_year = {_iso_week_key(datetime.strptime(r["date"], "%Y-%m-%d").date()) for r in year_runs if r.get("date")}
+s_weeks_year = {_iso_week_key(datetime.strptime(s["date"], "%Y-%m-%d").date()) for s in year_sessions if s.get("date")}
+activity_weeks_year = run_weeks_year | s_weeks_year
+num_run_weeks = max(len(run_weeks_year), 1)
+num_s_weeks = max(len(s_weeks_year), 1)
+num_activity_weeks = max(len(activity_weeks_year), 1)
+
+avg_run_dist_per_week = year_dist / num_run_weeks
+avg_run_dist_per_run = year_dist / max(len(year_runs), 1)
+avg_sess_per_week = len(year_sessions) / num_s_weeks
+
+month_runs = [r for r in year_runs if datetime.strptime(r["date"], "%Y-%m-%d").date().strftime("%b") == this_month_short]
+month_sessions = [s for s in year_sessions if datetime.strptime(s["date"], "%Y-%m-%d").date().strftime("%b") == this_month_short]
+month_run_weeks = {_iso_week_key(datetime.strptime(r["date"], "%Y-%m-%d").date()) for r in month_runs}
+month_s_weeks = {_iso_week_key(datetime.strptime(s["date"], "%Y-%m-%d").date()) for s in month_sessions}
+month_activity_weeks = month_run_weeks | month_s_weeks
+num_month_run_weeks = max(len(month_run_weeks), 1)
+num_month_s_weeks = max(len(month_s_weeks), 1)
+num_month_activity_weeks = max(len(month_activity_weeks), 1)
+
+total_run_mins_year = sum(_run_mins(r) for r in year_runs)
+month_run_mins = sum(_run_mins(r) for r in month_runs)
+month_strength_mins = sum(float(s.get("duration_min") or 0) for s in month_sessions)
+total_activity_mins_year = total_run_mins_year + total_strength_min_year
+avg_activity_mins_per_week = total_activity_mins_year / num_activity_weeks
+avg_activity_mins_per_week_month = (month_run_mins + month_strength_mins) / num_month_activity_weeks
+
+# ── Running / Strength week-over-week deltas ──────────────────────────────────
+last_complete_week = _iso_week_key(last_complete_date)
+prev_complete_week = _shift_week_key(last_complete_week, -1)
+
+def _week_run_dist(wk):
+    return sum(float(r.get("distance_km") or 0) for r in complete_run_rows if r.get("date") and _iso_week_key(datetime.strptime(r["date"], "%Y-%m-%d").date()) == wk)
+
+def _week_strength_count(wk):
+    return sum(1 for s in complete_strength_rows if s.get("date") and _iso_week_key(datetime.strptime(s["date"], "%Y-%m-%d").date()) == wk)
+
+run_week_delta = _week_run_dist(last_complete_week) - _week_run_dist(prev_complete_week)
+strength_week_delta = _week_strength_count(last_complete_week) - _week_strength_count(prev_complete_week)
+
+RUN_STABLE_THRESHOLD = 1
+STRENGTH_STABLE_THRESHOLD = 1
+STEPS_STABLE_THRESHOLD_QUAL = 500
+INTENSITY_STABLE_THRESHOLD = 15
+RECOVERY_STABLE_THRESHOLD = 15
+
+# ── Steps overview (reuses the reconciled steps_data computed further below —
+# NOTE: this block runs AFTER steps_data is built, see placement check) ──────
+steps_complete = {d: v for d, v in steps_data.items() if v > 0 and d <= last_complete_str}
+cutoff_7d_date = today_date - timedelta(days=7)
+cutoff_30d_date = today_date - timedelta(days=30)
+steps_7d = [v for d, v in steps_data.items() if v > 0 and datetime.strptime(d, "%Y-%m-%d").date() >= cutoff_7d_date and datetime.strptime(d, "%Y-%m-%d").date() < today_date]
+steps_30d = [v for d, v in steps_complete.items() if datetime.strptime(d, "%Y-%m-%d").date() >= cutoff_30d_date]
+steps_avg_all = round(sum(steps_complete.values()) / len(steps_complete)) if steps_complete else None
+steps_avg_7d = round(sum(steps_7d) / len(steps_7d)) if steps_7d else None
+steps_avg_30d = round(sum(steps_30d) / len(steps_30d)) if steps_30d else None
+steps_delta_7v30 = (steps_avg_7d - steps_avg_30d) if (steps_avg_7d is not None and steps_avg_30d is not None) else None
+
+step_discrepancies_30d = []
+for d in set(list(iphone_steps_data.keys()) + list(polar_steps_data_for_coach.keys())):
+    iv, pv = iphone_steps_data.get(d), polar_steps_data_for_coach.get(d)
+    if iv and pv and datetime.strptime(d, "%Y-%m-%d").date() >= cutoff_30d_date and d <= last_complete_str:
+        step_discrepancies_30d.append(abs(iv - pv))
+steps_discrepancy_avg = round(sum(step_discrepancies_30d) / len(step_discrepancies_30d)) if step_discrepancies_30d else None
+
+# ── Recovery (sleep) overview ─────────────────────────────────────────────────
+def _sleep_avg(entries):
+    mins_vals = [float(v["total_sleep_min"]) for v in entries if v.get("total_sleep_min")]
+    score_vals = [float(v["sleep_score"]) for v in entries if v.get("sleep_score")]
+    return {
+        "mins": (sum(mins_vals) / len(mins_vals)) if mins_vals else None,
+        "score": (sum(score_vals) / len(score_vals)) if score_vals else None
+    }
+
+sleep_complete = {d: v for d, v in sleep_data.items() if float(v.get("total_sleep_min") or 0) > 0 and d <= str(today_date)}
+sleep_week_entries = [v for d, v in sleep_complete.items() if datetime.strptime(d, "%Y-%m-%d").date() >= cutoff_7d_date]
+sleep_month_entries = [v for d, v in sleep_complete.items() if datetime.strptime(d, "%Y-%m-%d").date() >= cutoff_30d_date]
+sleep_year_entries = [v for d, v in sleep_complete.items() if d.startswith(this_year_str)]
+recovery_week = _sleep_avg(sleep_week_entries)
+recovery_month = _sleep_avg(sleep_month_entries)
+recovery_year = _sleep_avg(sleep_year_entries)
+recovery_delta = (recovery_week["mins"] - recovery_month["mins"]) if (recovery_week["mins"] is not None and recovery_month["mins"] is not None) else None
+
+# ── Intensity streak vs 210min/week goal ──────────────────────────────────────
+INTENSITY_GOAL_MINS = 210
+week_min_map = {}
+for r in year_runs:
+    if r.get("date"):
+        wk = _iso_week_key(datetime.strptime(r["date"], "%Y-%m-%d").date())
+        week_min_map[wk] = week_min_map.get(wk, 0) + _run_mins(r)
+for s in year_sessions:
+    if s.get("date"):
+        wk = _iso_week_key(datetime.strptime(s["date"], "%Y-%m-%d").date())
+        week_min_map[wk] = week_min_map.get(wk, 0) + float(s.get("duration_min") or 0)
+
+sorted_week_keys = sorted(week_min_map.keys())
+current_week_complete = last_complete_date == (_week_start_date(last_complete_week) + timedelta(days=6))
+streak_anchor = last_complete_week if (week_min_map.get(last_complete_week, 0) >= INTENSITY_GOAL_MINS or current_week_complete) else _shift_week_key(last_complete_week, -1)
+intensity_week_keys = _week_range(sorted_week_keys[0], streak_anchor) if sorted_week_keys else []
+intensity_streak, best_intensity_streak, current_streak_count = 0, 0, 0
+for wk in intensity_week_keys:
+    if week_min_map.get(wk, 0) >= INTENSITY_GOAL_MINS:
+        current_streak_count += 1
+        best_intensity_streak = max(best_intensity_streak, current_streak_count)
+    else:
+        current_streak_count = 0
+for wk in reversed(intensity_week_keys):
+    if week_min_map.get(wk, 0) >= INTENSITY_GOAL_MINS:
+        intensity_streak += 1
+    else:
+        break
+
+# ── 16-week chart ──────────────────────────────────────────────────────────────
+week_map_16 = {}
+for r in complete_run_rows:
+    if r.get("date"):
+        wk = _iso_week_key(datetime.strptime(r["date"], "%Y-%m-%d").date())
+        week_map_16[wk] = week_map_16.get(wk, 0) + (float(r.get("distance_km") or 0))
+s_week_map_16 = {}
+for s in complete_strength_rows:
+    if s.get("date"):
+        wk = _iso_week_key(datetime.strptime(s["date"], "%Y-%m-%d").date())
+        s_week_map_16[wk] = s_week_map_16.get(wk, 0) + 1
+
+all_week_keys_16 = sorted(set(list(week_map_16.keys()) + list(s_week_map_16.keys())))[-16:]
+month_names_short = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+chart_16wk_month_boundaries = []
+chart_16wk_month_labels = []
+for i, wk in enumerate(all_week_keys_16):
+    wk_month = _week_start_date(wk).month
+    is_boundary = i > 0 and _week_start_date(all_week_keys_16[i - 1]).month != wk_month
+    chart_16wk_month_boundaries.append(is_boundary)
+    chart_16wk_month_labels.append(month_names_short[wk_month - 1])
+
+chart_16wk = {
+    "labels": [wk.split("-W")[1] for wk in all_week_keys_16],
+    "distance_km": [round(week_map_16.get(wk, 0), 1) for wk in all_week_keys_16],
+    "strength_sessions": [s_week_map_16.get(wk, 0) for wk in all_week_keys_16],
+    "month_boundaries": chart_16wk_month_boundaries,
+    "month_labels": chart_16wk_month_labels
+}
+
+# ── Annual progress chart ─────────────────────────────────────────────────────
+prev_year_dist = summary.get("total_distance_prev_year_km")
+target_km = prev_year_dist if (prev_year_dist and prev_year_dist > 0) else 2000
+target_label = f"vs {today_date.year - 1} total ({target_km:.0f} km)" if (prev_year_dist and prev_year_dist > 0) else "Progress to 2,000 km"
+raw_pct = (year_dist / target_km) * 100 if target_km else 0
+is_overflow = year_dist > target_km
+
+month_dist = [0.0] * 12
+for r in year_runs:
+    if r.get("date"):
+        month_dist[datetime.strptime(r["date"], "%Y-%m-%d").date().month - 1] += float(r.get("distance_km") or 0)
+current_month_idx = today_date.month - 1
+month_strength = [0] * 12
+for s in year_sessions:
+    if s.get("date"):
+        month_strength[datetime.strptime(s["date"], "%Y-%m-%d").date().month - 1] += 1
+
+total_strength_prev_year = sum(1 for s in all_strength_rows if s.get("date", "").startswith(prev_year_str))
+strength_pct = round((len(year_sessions) / total_strength_prev_year) * 100) if total_strength_prev_year > 0 else None
+strength_overflow = total_strength_prev_year > 0 and len(year_sessions) > total_strength_prev_year
+
+chart_annual = {
+    "target_label": target_label,
+    "target_km": round(target_km, 1),
+    "raw_pct": round(raw_pct, 1),
+    "display_pct": round(min(raw_pct, 130), 1),
+    "is_overflow": is_overflow,
+    "year_dist_km": round(year_dist, 1),
+    "km_to_target_km": round(abs(target_km - year_dist), 1),
+    "strength_target_label": (f"vs {prev_year_str} total ({total_strength_prev_year} sessions)" if total_strength_prev_year > 0 else "Sessions this year"),
+    "strength_pct": strength_pct,
+    "strength_display_pct": min(strength_pct, 130) if strength_pct is not None else 0,
+    "strength_overflow": strength_overflow,
+    "strength_sessions_done": len(year_sessions),
+    "strength_sessions_to_match": (total_strength_prev_year - len(year_sessions)) if total_strength_prev_year > 0 else None,
+    "month_labels": month_names_short[:current_month_idx + 1],
+    "month_distance_km": [round(v, 1) for v in month_dist[:current_month_idx + 1]],
+    "month_strength_sessions": month_strength[:current_month_idx + 1],
+    "current_month_index": current_month_idx
+}
+
+# ── LT card (zones + trend chart) ─────────────────────────────────────────────
+def _calc_zones(lt_pace_str, lt_hr):
+    lt_sec = parse_pace_sec(lt_pace_str)
+    if not lt_sec:
+        return None
+    z1 = round(lt_hr * 0.80) if lt_hr else None
+    z2 = round(lt_hr * 0.90) if lt_hr else None
+    z3 = round(lt_hr * 0.99) if lt_hr else None
+    z4 = round(lt_hr * 1.05) if lt_hr else None
+    return [
+        {"name": "Z1 EASY", "pace_label": f"> {sec_to_pace(lt_sec + 75)}", "hr_label": (f"< {z1} bpm" if z1 else ""), "color": "#4a9eff", "pct": 40},
+        {"name": "Z2 AEROBIC", "pace_label": f"{sec_to_pace(lt_sec + 45)}–{sec_to_pace(lt_sec + 74)}", "hr_label": (f"{z1}–{z2} bpm" if z1 else ""), "color": "#7bc67e", "pct": 60},
+        {"name": "Z3 TEMPO", "pace_label": f"{sec_to_pace(lt_sec + 10)}–{sec_to_pace(lt_sec + 44)}", "hr_label": (f"{z2}–{z3} bpm" if z2 else ""), "color": "#e8ff5a", "pct": 78},
+        {"name": "Z4 LT", "pace_label": f"{sec_to_pace(lt_sec - 10)}–{sec_to_pace(lt_sec + 9)}", "hr_label": (f"{z3}–{z4} bpm" if z3 else ""), "color": "#ff9f40", "pct": 90},
+        {"name": "Z5 HARD", "pace_label": f"< {sec_to_pace(lt_sec - 11)}", "hr_label": (f"> {z4} bpm" if z4 else ""), "color": "#ff6b35", "pct": 100},
+    ]
+
+def _linear_trend(values):
+    n = len(values)
+    valid = [(i, v) for i, v in enumerate(values) if v is not None]
+    if len(valid) < 2:
+        return [None] * n
+    x_mean = sum(i for i, _ in valid) / len(valid)
+    y_mean = sum(v for _, v in valid) / len(valid)
+    num = sum((i - x_mean) * (v - y_mean) for i, v in valid)
+    den = sum((i - x_mean) ** 2 for i, _ in valid)
+    slope = num / den if den != 0 else 0
+    intercept = y_mean - slope * x_mean
+    return [slope * i + intercept for i in range(n)]
+
+lt_zones = _calc_zones(latest_lt["lt_pace"], latest_lt.get("lt_hr")) if latest_lt else None
+lt_trend = None
+if len(lt_history) > 1:
+    lt_sorted = sorted(lt_history, key=lambda x: x["date"])
+    lt_secs = [parse_pace_sec(r["lt_pace"]) for r in lt_sorted]
+    lt_trend = {
+        "labels": [r["date"][5:] for r in lt_sorted],
+        "pace_sec": lt_secs,
+        "trend_sec": _linear_trend(lt_secs)
+    }
+
+# ── Personal bests (with LT gap for 10K/Half only) ────────────────────────────
+def _calc_best_efforts(runs):
+    cats = [("5 km", 4), ("10 km", 8), ("Half", 18), ("Marathon", 38), ("50 km", 45)]
+    results = []
+    for label, min_dist in cats:
+        eligible = [r for r in runs if float(r.get("distance_km") or 0) >= min_dist and r.get("avg_pace_min_km")]
+        if not eligible:
+            results.append({"label": label, "pace": None, "time": None, "dist": None, "date": None, "name": None})
+            continue
+        best = min(eligible, key=lambda r: parse_pace_sec(r["avg_pace_min_km"]) or 9999)
+        results.append({"label": label, "pace": best["avg_pace_min_km"], "time": best.get("moving_time"), "dist": round(float(best.get("distance_km") or 0), 1), "date": best.get("date"), "name": best.get("name", "")})
+    if runs:
+        longest = max(runs, key=lambda r: float(r.get("distance_km") or 0))
+        results.append({"label": "Longest", "pace": longest.get("avg_pace_min_km"), "time": longest.get("moving_time"), "dist": round(float(longest.get("distance_km") or 0), 1), "date": longest.get("date"), "name": longest.get("name", "")})
+    return results
+
+outdoor_complete_runs = [r for r in complete_run_rows if r.get("type") == "outdoor"]
+pbs = _calc_best_efforts(outdoor_complete_runs)
+lt_pace_sec_for_gap = parse_pace_sec(latest_lt["lt_pace"]) if latest_lt else None
+for pb in pbs:
+    pb["lt_gap_sec"] = None
+    if pb["label"] in ("10 km", "Half") and lt_pace_sec_for_gap and pb["pace"]:
+        pb_sec = parse_pace_sec(pb["pace"])
+        if pb_sec:
+            pb["lt_gap_sec"] = lt_pace_sec_for_gap - pb_sec
+
+# ── Calendar (all-history activity dates, compact) ────────────────────────────
+calendar_run_dates = sorted({r["date"] for r in all_run_rows if r.get("date")})
+calendar_strength_dates = sorted({s["date"] for s in all_strength_rows if s.get("date")})
+
+# ── What's Changed digest (reuses recent_dist/prior_dist/recent_strength/
+# prior_strength/latest_lt/baseline_lt already computed above for the coach's
+# own evidence catalog — same numbers, same source, guaranteed to agree) ──────
+digest_lines = []
+if latest_lt and baseline_lt:
+    d_sec = parse_pace_sec(baseline_lt["lt_pace"]) - parse_pace_sec(latest_lt["lt_pace"])
+    arrow = "▲" if d_sec > 1 else "▼" if d_sec < -1 else "➔"
+    word = "improved" if d_sec > 0 else "slowed" if d_sec < 0 else "unchanged"
+    digest_lines.append(f"{arrow} LT pace {word} {abs(d_sec)}s/km over 30 days ({baseline_lt['lt_pace']} → {latest_lt['lt_pace']}/km)")
+elif latest_lt:
+    digest_lines.append(f"➔ LT established at {latest_lt['lt_pace']}/km (baseline building)")
+else:
+    digest_lines.append("➔ No LT reading yet")
+
+vol_delta = recent_dist - prior_dist
+vol_arrow = "▲" if vol_delta > 3 else "▼" if vol_delta < -3 else "➔"
+vol_word = "building" if prior_dist <= 0 else ("unchanged" if abs(vol_delta) <= 3 else ("increased" if vol_delta > 0 else "reduced"))
+digest_lines.append(f"{vol_arrow} Weekly volume {vol_word} ({recent_dist:.0f} vs {prior_dist:.0f} km prior block)")
+
+str_delta = len(recent_strength) - len(prior_strength)
+str_arrow = "▲" if str_delta > 0.5 else "▼" if str_delta < -0.5 else "➔"
+digest_lines.append(f"{str_arrow} Strength frequency {len(recent_strength)} vs {len(prior_strength)} sessions prior block")
+
+steps_recent_4wk = [v for d, v in steps_data.items() if datetime.strptime(d, "%Y-%m-%d").date() >= cutoff_4wk and d <= last_complete_str]
+steps_prior_4wk = [v for d, v in steps_data.items() if cutoff_8wk <= datetime.strptime(d, "%Y-%m-%d").date() < cutoff_4wk]
+if steps_recent_4wk and steps_prior_4wk:
+    r_avg, p_avg = sum(steps_recent_4wk) / len(steps_recent_4wk), sum(steps_prior_4wk) / len(steps_prior_4wk)
+    d = r_avg - p_avg
+    arrow = "▲" if d > 300 else "▼" if d < -300 else "➔"
+    digest_lines.append(f"{arrow} Steps averaging {round(r_avg):,} vs {round(p_avg):,}/day prior block")
+else:
+    digest_lines.append("➔ Steps data still accumulating")
+
+sleep_recent_4wk = [float(v["total_sleep_min"]) for d, v in sleep_data.items() if v.get("total_sleep_min") and datetime.strptime(d, "%Y-%m-%d").date() >= cutoff_4wk and d <= str(today_date)]
+sleep_prior_4wk = [float(v["total_sleep_min"]) for d, v in sleep_data.items() if v.get("total_sleep_min") and cutoff_8wk <= datetime.strptime(d, "%Y-%m-%d").date() < cutoff_4wk]
+if sleep_recent_4wk and sleep_prior_4wk:
+    r_avg, p_avg = sum(sleep_recent_4wk) / len(sleep_recent_4wk), sum(sleep_prior_4wk) / len(sleep_prior_4wk)
+    d = r_avg - p_avg
+    arrow = "▲" if d > 5 else "▼" if d < -5 else "➔"
+    def _hm(mins):
+        return f"{int(mins) // 60}h{int(mins) % 60:02d}m"
+    digest_lines.append(f"{arrow} Sleep averaging {_hm(r_avg)} vs {_hm(p_avg)} prior block")
+else:
+    digest_lines.append("➔ Sleep data still accumulating")
+
+digest_lines.append(f"➔ Running streak: {summary.get('current_weekly_streak', '—')} wks (best: {summary.get('longest_weekly_streak', '—')})")
+
+# ── Assemble and write dashboard_metrics.json ─────────────────────────────────
+dashboard_metrics = {
+    "last_updated": today.strftime("%Y-%m-%d %H:%M UTC"),
+    "last_complete_date": last_complete_str,
+    "this_year": this_year_str,
+    "this_month_short": this_month_short,
+
+    "running": {
+        "avg_per_run_km": round(avg_run_dist_per_run, 1),
+        "runs_this_year": summary.get("total_runs_this_year", len(year_runs)),
+        "avg_per_week_km": round(avg_run_dist_per_week, 1),
+        "total_distance_this_year_km": summary.get("total_distance_this_year_km", round(year_dist, 1)),
+        "current_weekly_streak": summary.get("current_weekly_streak"),
+        "longest_weekly_streak": summary.get("longest_weekly_streak"),
+        "week_delta_km": round(run_week_delta, 1),
+        "week_qual": _qual(run_week_delta, RUN_STABLE_THRESHOLD)
+    },
+    "strength": {
+        "avg_sessions_per_week": round(avg_sess_per_week, 1),
+        "sessions_this_year": summary.get("total_strength_this_year", len(year_sessions)),
+        "avg_hours_per_week": round(total_strength_min_year / num_s_weeks / 60, 1),
+        "total_hours_this_year": round(total_strength_min_year / 60, 1),
+        "current_weekly_streak": summary.get("current_strength_weekly_streak"),
+        "longest_weekly_streak": summary.get("longest_strength_weekly_streak"),
+        "week_delta_sessions": strength_week_delta,
+        "week_qual": _qual(strength_week_delta, STRENGTH_STABLE_THRESHOLD)
+    },
+    "steps": {
+        "avg_all_time": steps_avg_all,
+        "avg_7d": steps_avg_7d,
+        "avg_30d": steps_avg_30d,
+        "delta_7d_vs_30d": steps_delta_7v30,
+        "qual": _qual(steps_delta_7v30, STEPS_STABLE_THRESHOLD_QUAL),
+        "discrepancy_avg": steps_discrepancy_avg,
+        "discrepancy_days": len(step_discrepancies_30d)
+    },
+    "intensity": {
+        "avg_week_year_mins": round(avg_activity_mins_per_week),
+        "avg_week_year_run_mins": round(total_run_mins_year / num_run_weeks),
+        "avg_week_year_lift_mins": round(total_strength_min_year / num_s_weeks),
+        "avg_week_month_mins": round(avg_activity_mins_per_week_month),
+        "avg_week_month_run_mins": round(month_run_mins / num_month_run_weeks),
+        "avg_week_month_lift_mins": round(month_strength_mins / num_month_s_weeks),
+        "delta_month_vs_year": round(avg_activity_mins_per_week_month - avg_activity_mins_per_week),
+        "qual": _qual(avg_activity_mins_per_week_month - avg_activity_mins_per_week, INTENSITY_STABLE_THRESHOLD),
+        "streak_weeks": intensity_streak,
+        "best_streak_weeks": best_intensity_streak,
+        "goal_mins": INTENSITY_GOAL_MINS
+    },
+    "recovery": {
+        "week": recovery_week,
+        "month": recovery_month,
+        "year": recovery_year,
+        "delta_week_vs_month": recovery_delta,
+        "qual": _qual(recovery_delta, RECOVERY_STABLE_THRESHOLD)
+    },
+
+    "chart_16wk": chart_16wk,
+    "chart_annual": chart_annual,
+
+    "lt": {
+        "latest": ({"lt_pace": latest_lt["lt_pace"], "lt_hr": latest_lt.get("lt_hr"), "source_date": latest_lt.get("lt_source_date", latest_lt.get("date"))} if latest_lt else None),
+        "zones": lt_zones,
+        "trend": lt_trend
+    },
+
+    "pbs": pbs,
+
+    "calendar": {
+        "run_dates": calendar_run_dates,
+        "strength_dates": calendar_strength_dates
+    },
+
+    "digest": digest_lines
+}
+
+with open("dashboard_metrics.json", "w", encoding="utf-8") as f:
+    json.dump(dashboard_metrics, f, indent=2)
+
+print(f"dashboard_metrics.json written ({len(calendar_run_dates)} run dates, {len(calendar_strength_dates)} strength dates)")
 
 # ── Data-confidence score ──────────────────────────────────────────────────────
 # Deliberately NOT generated by the LLM — a model has no real calibrated access

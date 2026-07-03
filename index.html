@@ -66,6 +66,12 @@
     .overview-divider { background: var(--border); width: 1px; }
     .coach-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.6rem; }
     .coach-header { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-dim); display: flex; align-items: center; gap: 0.5rem; }
+    .coach-headline { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; color: var(--text-hi); line-height: 1.35; margin: 0.1rem 0 0.3rem; }
+    .coach-watch { margin-top: 0.9rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+    .coach-watch-title { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 0.5rem; }
+    .coach-watch-item { font-family: var(--font-body); font-size: 12.5px; color: var(--text-dim); line-height: 1.5; padding-left: 1.1rem; position: relative; }
+    .coach-watch-item + .coach-watch-item { margin-top: 0.35rem; }
+    .coach-watch-item::before { content: '◦'; position: absolute; left: 0; color: var(--recovery); font-family: var(--font-mono); }
     .coach-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
     .coach-insight { font-family: var(--font-body); font-size: 13.5px; color: var(--text); line-height: 1.65; padding-left: 1.1rem; position: relative; }
     .coach-insight + .coach-insight { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
@@ -231,12 +237,15 @@ async function init() {
     const rawText = coachData.summary || coachData.insights.join('\n\n');
     const paragraphs = rawText.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
     const parasHtml = paragraphs.map(p => `<div class="coach-insight">${escapeHtml(p)}</div>`).join('');
+    const headlineHtml = coachData.headline ? `<div class="coach-headline">${escapeHtml(coachData.headline)}</div>` : '';
+    const watchItems = Array.isArray(coachData.watch_items) ? coachData.watch_items.filter(Boolean) : [];
+    const watchHtml = watchItems.length ? `<div class="coach-watch"><div class="coach-watch-title">Things to watch</div>${watchItems.map(w => `<div class="coach-watch-item">${escapeHtml(w)}</div>`).join('')}</div>` : '';
     function usageColor(usd) { if (usd < 0.004) return '#4a9eff'; if (usd < 0.008) return '#7bc67e'; if (usd < 0.015) return '#e8ff5a'; if (usd < 0.025) return '#ff9f40'; return '#ff6b35'; }
     function mtdColor(usd) { if (usd < 0.10) return '#4a9eff'; if (usd < 0.25) return '#7bc67e'; if (usd < 0.35) return '#e8ff5a'; if (usd < 0.42) return '#ff9f40'; return '#ff6b35'; }
     function ytdColor(usd) { if (usd < 1.00) return '#4a9eff'; if (usd < 2.50) return '#7bc67e'; if (usd < 3.50) return '#e8ff5a'; if (usd < 4.50) return '#ff9f40'; return '#ff6b35'; }
     const u = coachData.usage;
     const usageHtml = u ? (() => { const dc = usageColor(u.cost_usd); const mc = mtdColor(coachData.usage_mtd_usd || 0); const yc = ytdColor(coachData.usage_ytd_usd || 0); return `<div class="coach-usage"><div><span style="color:${dc}">${u.input_tokens.toLocaleString()} it · ${u.output_tokens.toLocaleString()} ot · $${u.cost_usd.toFixed(4)} / ${u.cost_dkk.toFixed(3)} kr</span></div><div><span style="color:${mc}">MTD $${(coachData.usage_mtd_usd || 0).toFixed(4)} / ${(coachData.usage_mtd_dkk || 0).toFixed(3)} kr</span></div><div><span style="color:${yc}">YTD $${(coachData.usage_ytd_usd || 0).toFixed(4)} / ${(coachData.usage_ytd_dkk || 0).toFixed(3)} kr</span></div><div class="coach-usage-scale"><div style="background:linear-gradient(to right,#4a9eff,#7bc67e,#e8ff5a,#ff9f40,#ff6b35);height:2px;border-radius:1px;margin-top:4px;opacity:0.5"></div><div style="display:flex;justify-content:space-between;font-size:8px;color:var(--muted);margin-top:2px"><span>min</span><span>normal</span><span>elevated</span><span>high</span><span>max</span></div></div></div>`; })() : '';
-    coachCard.innerHTML = `<div class="coach-header"><span class="coach-dot"></span>Training status</div>${parasHtml}<div class="coach-updated">Generated ${coachData.last_updated}</div>${usageHtml}`;
+    coachCard.innerHTML = `<div class="coach-header"><span class="coach-dot"></span>Training status</div>${headlineHtml}${parasHtml}${watchHtml}<div class="coach-updated">Generated ${coachData.last_updated}</div>${usageHtml}`;
     app.appendChild(coachCard);
   }
 
@@ -288,15 +297,39 @@ async function init() {
   for (const wk of intensityWeekKeys) { if ((weekMinMap[wk] || 0) >= INTENSITY_GOAL_MINS) { currentStreakCount++; bestIntensityStreak = Math.max(bestIntensityStreak, currentStreakCount); } else { currentStreakCount = 0; } }
   for (let i = intensityWeekKeys.length - 1; i >= 0; i--) { if ((weekMinMap[intensityWeekKeys[i]] || 0) >= INTENSITY_GOAL_MINS) intensityStreak++; else break; }
 
-  const stepsRow = stepsOverviewData ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avgAll?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avg7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avg30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div></div>` : '';
+  const stepsRow = stepsOverviewData ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avgAll?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avg7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps__STEPS_DELTA__</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avg30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div></div>` : '';
 
-  const recoveryTile = (label, data) => {
+  const recoveryTile = (label, data, deltaHtml) => {
     const durationStr = data && data.mins ? fmtHrs(data.mins) : '—';
     const scoreStr = data && data.score !== null && data.score !== undefined ? `Score: ${Math.round(data.score)}` : 'Score: —';
-    return `<div class="stat"><span class="stat-label">${label}</span><span class="stat-value" style="color:var(--recovery)">${durationStr}</span><span class="stat-sub">${scoreStr}</span></div>`;
+    return `<div class="stat"><span class="stat-label">${label}</span><span class="stat-value" style="color:var(--recovery)">${durationStr}</span><span class="stat-sub">${scoreStr}${deltaHtml || ''}</span></div>`;
   };
 
-  const recoveryRow = recoveryOverviewData ? `<div class="overview-full"><div class="overview-label recovery" style="grid-column:1/-1">Recovery</div>${recoveryTile('Avg / week', recoveryOverviewData.week)}${recoveryTile('Avg / month', recoveryOverviewData.month)}${recoveryTile('Avg / year', recoveryOverviewData.year)}</div>` : '';
+  const recoveryRow = recoveryOverviewData ? `<div class="overview-full"><div class="overview-label recovery" style="grid-column:1/-1">Recovery</div>${recoveryTile('Avg / week', recoveryOverviewData.week, '__RECOVERY_DELTA__')}${recoveryTile('Avg / month', recoveryOverviewData.month)}${recoveryTile('Avg / year', recoveryOverviewData.year)}</div>` : '';
+
+  // ── Change indicators (▲▼▬) — value-neutral, direction + magnitude only ───────
+  function deltaBadge(delta, formatFn) {
+    if (delta === null || delta === undefined || isNaN(delta)) return '';
+    const arrow = delta > 0.05 ? '▲' : delta < -0.05 ? '▼' : '▬';
+    return ` · <span style="color:var(--text-dim)">${arrow} ${formatFn(Math.abs(delta))}</span>`;
+  }
+  const prevCompleteWeek = shiftWeekKey(lastCompleteWeek, -1);
+  const weekRunDist = wk => runsComplete.filter(r => isoWeek(r.date) === wk).reduce((s, r) => s + (parseFloat(r.distance_km) || 0), 0);
+  const weekStrengthCount = wk => sessionsComplete.filter(s => isoWeek(s.date) === wk).length;
+  const runWeekDelta = weekRunDist(lastCompleteWeek) - weekRunDist(prevCompleteWeek);
+  const strengthWeekDelta = weekStrengthCount(lastCompleteWeek) - weekStrengthCount(prevCompleteWeek);
+  const stepsDelta = (stepsOverviewData && stepsOverviewData.avg7d !== null && stepsOverviewData.avg30d !== null) ? stepsOverviewData.avg7d - stepsOverviewData.avg30d : null;
+  const intensityDelta = avgActivityMinsPerWeekMonth - avgActivityMinsPerWeek;
+  const recoveryDelta = (recoveryOverviewData && recoveryOverviewData.week.mins !== null && recoveryOverviewData.month.mins !== null) ? recoveryOverviewData.week.mins - recoveryOverviewData.month.mins : null;
+
+  const runDeltaHtml = deltaBadge(runWeekDelta, v => `${v.toFixed(1)} km vs last wk`);
+  const strengthDeltaHtml = deltaBadge(strengthWeekDelta, v => `${Math.round(v)} vs last wk`);
+  const stepsDeltaHtml = deltaBadge(stepsDelta, v => `${Math.round(v).toLocaleString()} vs 30d avg`);
+  const intensityDeltaHtml = deltaBadge(intensityDelta, v => `${fmtHrs(v)} vs yr avg`);
+  const recoveryDeltaHtml = deltaBadge(recoveryDelta, v => `${fmtHrs(v)} vs mo avg`);
+
+  const stepsRowResolved = stepsRow.replace('__STEPS_DELTA__', stepsDeltaHtml);
+  const recoveryRowResolved = recoveryRow.replace('__RECOVERY_DELTA__', recoveryDeltaHtml);
 
   const overviewBlock = document.createElement('div');
   overviewBlock.className = 'overview-block';
@@ -304,23 +337,23 @@ async function init() {
     <div class="overview-full">
       <div class="overview-label run" style="grid-column:1/-1">Running</div>
       <div class="stat"><span class="stat-label">Avg / run</span><span class="stat-value accent">${fmt(avgRunDistPerRun, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${summary?.total_runs_this_year ?? yearRuns.length} runs ${thisYear}</span></div>
-      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(avgRunDistPerWeek, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${fmt(summary?.total_distance_this_year_km ?? yearDist, 0)} km ${thisYear}</span></div>
+      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(avgRunDistPerWeek, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${fmt(summary?.total_distance_this_year_km ?? yearDist, 0)} km ${thisYear}${runDeltaHtml}</span></div>
       <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value accent">${summary?.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${summary?.longest_weekly_streak ?? '—'} wks</span></div>
     </div>
     <div class="overview-full">
       <div class="overview-label lift" style="grid-column:1/-1">Strength</div>
-      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value blue">${fmt(avgSessPerWeek, 1)}</span><span class="stat-sub">${summary?.total_strength_this_year ?? yearSessions.length} sessions ${thisYear}</span></div>
+      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value blue">${fmt(avgSessPerWeek, 1)}</span><span class="stat-sub">${summary?.total_strength_this_year ?? yearSessions.length} sessions ${thisYear}${strengthDeltaHtml}</span></div>
       <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(totalStrengthMinYear / numSWeeks / 60, 1)} <small style="font-size:.9rem;color:var(--text-dim)">hrs</small></span><span class="stat-sub">${(totalStrengthMinYear / 60).toFixed(1)} hrs ${thisYear}</span></div>
       <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value blue">${summary?.current_strength_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${summary?.longest_strength_weekly_streak ?? '—'} wks</span></div>
     </div>
-    ${stepsRow}
+    ${stepsRowResolved}
     <div class="overview-full">
       <div class="overview-label intensity" style="grid-column:1/-1">Intensity Minutes</div>
       <div class="stat"><span class="stat-label">Avg / week (${thisYear})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(avgActivityMinsPerWeek)}</span><span class="stat-sub">${fmtHrs(totalRunMinsYear / numRunWeeks)} run · ${fmtHrs(totalStrengthMinYear / numSWeeks)} lift</span></div>
-      <div class="stat"><span class="stat-label">Avg / week (${thisMonth})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(avgActivityMinsPerWeekMonth)}</span><span class="stat-sub">${fmtHrs(monthRunMins / numMonthRunWeeks)} run · ${fmtHrs(monthStrengthMins / numMonthStrengthWeeks)} lift</span></div>
+      <div class="stat"><span class="stat-label">Avg / week (${thisMonth})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(avgActivityMinsPerWeekMonth)}</span><span class="stat-sub">${fmtHrs(monthRunMins / numMonthRunWeeks)} run · ${fmtHrs(monthStrengthMins / numMonthStrengthWeeks)} lift${intensityDeltaHtml}</span></div>
       <div class="stat"><span class="stat-label">Streak vs ${INTENSITY_GOAL_MINS}min goal</span><span class="stat-value" style="color:var(--intensity)">${intensityStreak} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${bestIntensityStreak} wks</span></div>
     </div>
-    ${recoveryRow}
+    ${recoveryRowResolved}
   `;
   app.appendChild(overviewBlock);
 

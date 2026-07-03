@@ -911,7 +911,7 @@ SUMMARY:
 1–3 short paragraphs — as many as the data genuinely warrants, no more. This section is your COACHING JUDGEMENT, not a restatement of numbers: the EVIDENCE section below will carry the specific figures, so do not repeat exact stats here (no "127 km vs 125 km", no "HR 161", no "Load 239" — that level of detail belongs in EVIDENCE only). Instead, lead with the conclusion and only add a sentence of plain-language reasoning if it materially changes how the reader should interpret the conclusion. Someone should be able to read this section alone, in under 30 seconds, and understand the coaching takeaway. No bullet points, no headers, no greeting, no sign-off. Write in second person ("your threshold...", "you've...").
 
 EVIDENCE:
-Select whichever items from the AVAILABLE EVIDENCE list (below, in the data section) genuinely support the headline and summary you wrote. Copy each selected item VERBATIM, one per line — do not reword, do not alter any number, do not invent additional evidence not present in that list. Select as many or as few as are genuinely relevant — there is no fixed count, and it is fine to select none if nothing in the list meaningfully supports today's story. If you select zero items, write a single line: "- None directly relevant today."
+The AVAILABLE EVIDENCE list below (in the data section) is numbered. Write ONLY the numbers of items that genuinely support the headline and summary you wrote — one number per line, nothing else on that line (no text, no restating the item). Select as many or as few as are genuinely relevant, in any order — there is no fixed count. If nothing in the list meaningfully supports today's story, write a single line: "0"
 
 WATCH:
 2–4 short bullet points (one per line, starting with "- ") naming specific things worth paying attention to over the coming week — not prescribed workouts or mileage targets, since the training programme is already structured elsewhere. Frame these as things to observe or monitor, e.g. "Watch whether easy-run HR continues to decline." / "Sleep quality may become more important after the long run." If there is nothing meaningfully worth flagging this week, write a single line: "- Nothing notable to flag this week — steady state."
@@ -972,8 +972,8 @@ SLEEP (last 4 weeks, from Polar Loop — supporting context only, do not let thi
 - Nights tracked: {len(recent_sleep)}
 {chr(10).join(sleep_lines) if sleep_lines else "  No sleep data in the last 4 weeks"}
 
-AVAILABLE EVIDENCE (for the EVIDENCE: section — select from this list only, copy verbatim, never invent new items):
-{chr(10).join(f"  {item}" for item in evidence_catalog) if evidence_catalog else "  No evidence items available today — write '- None directly relevant today.' in the EVIDENCE section."}
+AVAILABLE EVIDENCE (numbered — in the EVIDENCE: section, write only the numbers of items you select, not the text):
+{chr(10).join(f"  {i+1}. {item}" for i, item in enumerate(evidence_catalog)) if evidence_catalog else "  No evidence items available today — write \"0\" in the EVIDENCE section."}
 
 Generate the coaching summary now."""
 
@@ -1072,16 +1072,18 @@ def parse_coach_sections(text):
 
             if evidence_match:
                 evidence_raw = evidence_match.group(1).strip()
-                candidate_items = [
-                    line.strip().lstrip("- ").strip()
-                    for line in evidence_raw.split("\n")
-                    if line.strip().startswith("-")
-                ]
-                catalog_set = set(item.strip() for item in evidence_catalog)
-                verified_items = [item for item in candidate_items if item in catalog_set]
+                # Extract every integer the model wrote (defensive: handles "3",
+                # "3.", "- 3", "Item 3", etc. — whatever format it picks, as
+                # long as a number is somewhere on the line). "0" or no valid
+                # in-range numbers simply yields an empty selection.
+                selected_indices = sorted(set(
+                    int(n) for n in re.findall(r"\d+", evidence_raw)
+                    if 1 <= int(n) <= len(evidence_catalog)
+                ))
                 priority_order = {"High": 0, "Medium": 1, "Low": 2}
                 evidence_items = sorted(
-                    [{"text": item, "priority": evidence_priority_map.get(item, "Medium")} for item in verified_items],
+                    [{"text": evidence_catalog[i - 1], "priority": evidence_priority_map.get(evidence_catalog[i - 1], "Medium")}
+                     for i in selected_indices],
                     key=lambda x: priority_order.get(x["priority"], 1)
                 )
 

@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-03 22:57 UTC",
-  "headline": "A 35% volume step-up lands cleanly, with easy-run HR dropping markedly \u2014 aerobic efficiency is moving in the right direction.",
+  "last_updated": "2026-07-03 23:02 UTC",
+  "headline": "Easy-run cardiac drift has dropped meaningfully over the past month, pointing to genuine aerobic adaptation beneath a near-flat volume trend.",
   "confidence_pct": 84,
   "confidence_label": "Moderate data confidence",
   "confidence_reasons": [
@@ -11,44 +11,44 @@
     "Pipeline fetch completed on schedule",
     "Multiple data sources active in last 3 days"
   ],
-  "summary": "The recent block represents a meaningful load increase that the body appears to have absorbed well. Easy-run HR has dropped noticeably compared to the prior period on comparable efforts \u2014 that's a concrete aerobic adaptation signal, not noise. Combined with a substantial volume step-up and stronger strength consistency, this is a block where multiple markers are pointing the same direction.\n\nThe 20-week running streak ties your personal best, which is worth acknowledging not as a milestone for its own sake but as evidence of the structural consistency that underlies these adaptations. Streaks are a trailing indicator of discipline; the HR and volume data are the leading indicators that matter more.\n\nThe lactate threshold data point from yesterday \u2014 a single test, so treat it as a baseline anchor rather than a trend \u2014 gives you a reference to compare against as more history accumulates. Watch how easy-run HR continues to evolve over the coming weeks relative to it.",
+  "summary": "The volume numbers look almost identical across the two blocks, but the more interesting signal is what's happening inside those runs: your easy-run heart rate has fallen noticeably at comparable efforts, which is a cleaner marker of aerobic development than distance alone. That kind of shift doesn't happen by accident \u2014 it reflects accumulated adaptation from consistent work, including the June 27th threshold effort and the 44 km long run earlier in the month.\n\nThe 20-week streak is worth acknowledging not as a streak for its own sake, but because it represents a level of structural consistency that underpins adaptation. Volume can fluctuate; showing up doesn't. Strength frequency has dipped slightly this block, which is worth keeping an eye on but doesn't yet represent a meaningful trend \u2014 five sessions in four weeks is still a functional load for a hybrid athlete maintaining capacity rather than peaking.",
   "watch_items": [
-    "Monitor whether the easy-run HR decline continues at comparable paces, or stabilises \u2014 either outcome is informative",
-    "With a 35% volume step-up just completed, pay attention to how legs feel on the first long or quality effort of this new week",
-    "Lactate threshold is currently a single data point \u2014 note subjective feel and HR response on threshold-adjacent efforts so the picture builds faster",
-    "Strength streak is three weeks; watch whether session quality holds as running load remains elevated"
+    "Watch whether the easy-run HR decline continues or plateaus \u2014 further drops would confirm ongoing aerobic adaptation, a stall would suggest the current stimulus needs adjusting",
+    "Monitor whether strength frequency stabilises back toward the prior rhythm or continues to soften \u2014 one block is noise, two in a row starts to matter",
+    "After back-to-back easy days following the June 27th threshold session, observe how your legs feel on the next quality or long effort \u2014 useful signal for recovery rate at current load",
+    "The lactate threshold data point is brand new \u2014 worth watching whether repeat testing over coming weeks shows consistency or reveals the June 27th effort as an outlier"
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 4-week volume 168 km vs 125 km prior block (+35%)",
-      "priority": "High"
-    },
-    {
-      "text": "\u25b2 Strength consistency: 9 sessions vs 6 prior 4wk",
-      "priority": "High"
-    },
-    {
-      "text": "\u25bc Easy-run HR averaging 144 bpm vs 157 bpm prior period (comparable-effort runs, 9 vs 6 runs)",
+      "text": "\u25bc Easy-run HR averaging 147 bpm vs 157 bpm prior period (comparable-effort runs, 6 vs 6 runs)",
       "priority": "High"
     },
     {
       "text": "\u25ac 20-week running streak (best: 20 wks)",
       "priority": "Medium"
+    },
+    {
+      "text": "\u25bc Strength consistency: 5 sessions vs 6 prior 4wk",
+      "priority": "Medium"
+    },
+    {
+      "text": "\u25b2 4-week volume 127 km vs 125 km prior block (+2%)",
+      "priority": "Low"
     }
   ],
   "insights": [
-    "The recent block represents a meaningful load increase that the body appears to have absorbed well. Easy-run HR has dropped noticeably compared to the prior period on comparable efforts \u2014 that's a concrete aerobic adaptation signal, not noise. Combined with a substantial volume step-up and stronger strength consistency, this is a block where multiple markers are pointing the same direction.\n\nThe 20-week running streak ties your personal best, which is worth acknowledging not as a milestone for its own sake but as evidence of the structural consistency that underlies these adaptations. Streaks are a trailing indicator of discipline; the HR and volume data are the leading indicators that matter more.\n\nThe lactate threshold data point from yesterday \u2014 a single test, so treat it as a baseline anchor rather than a trend \u2014 gives you a reference to compare against as more history accumulates. Watch how easy-run HR continues to evolve over the coming weeks relative to it."
+    "The volume numbers look almost identical across the two blocks, but the more interesting signal is what's happening inside those runs: your easy-run heart rate has fallen noticeably at comparable efforts, which is a cleaner marker of aerobic development than distance alone. That kind of shift doesn't happen by accident \u2014 it reflects accumulated adaptation from consistent work, including the June 27th threshold effort and the 44 km long run earlier in the month.\n\nThe 20-week streak is worth acknowledging not as a streak for its own sake, but because it represents a level of structural consistency that underpins adaptation. Volume can fluctuate; showing up doesn't. Strength frequency has dipped slightly this block, which is worth keeping an eye on but doesn't yet represent a meaningful trend \u2014 five sessions in four weeks is still a functional load for a hybrid athlete maintaining capacity rather than peaking."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 2837,
-    "output_tokens": 357,
-    "cost_usd": 0.013866,
-    "cost_dkk": 0.09568,
+    "input_tokens": 2833,
+    "output_tokens": 381,
+    "cost_usd": 0.014214,
+    "cost_dkk": 0.09808,
     "date": "2026-07-03"
   },
-  "usage_mtd_usd": 0.03369,
-  "usage_mtd_dkk": 0.2325,
-  "usage_ytd_usd": 0.03369,
-  "usage_ytd_dkk": 0.2325
+  "usage_mtd_usd": 0.03404,
+  "usage_mtd_dkk": 0.2349,
+  "usage_ytd_usd": 0.03404,
+  "usage_ytd_dkk": 0.2349
 }

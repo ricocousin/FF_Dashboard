@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-03 16:48 UTC",
-  "headline": "Running streak ties personal best at 20 weeks while lactate threshold data points to strong aerobic ceiling.",
+  "last_updated": "2026-07-03 17:09 UTC",
+  "headline": "Running streak hits its longest-ever mark at 20 weeks, with aerobic efficiency visibly improving on easy efforts.",
   "confidence_pct": 83,
   "confidence_label": "Moderate data confidence",
   "confidence_reasons": [
@@ -11,27 +11,27 @@
     "Pipeline fetch completed on schedule",
     "Multiple data sources active in last 3 days"
   ],
-  "summary": "The 20-week streak is the headline structural achievement right now \u2014 not just as a number, but as evidence of sustained, consistent stimulus across a wide range of effort levels. Volume is essentially flat week-on-week, but flat volume with consistent execution across easy, moderate and threshold efforts is a productive state, not a plateau. The 44 km effort from mid-June is still influencing the picture here \u2014 that kind of load takes time to fully absorb, and the two recent easy runs sitting comfortably at sub-6:00 pace with modest HR suggest absorption is progressing well.\n\nThe lactate threshold marker from yesterday \u2014 4:24/km at 178 bpm \u2014 is the most meaningful single data point this week. Without sufficient history to contextualise it against a 30-day baseline yet, it can't be trended, but it aligns with your half-marathon PB trajectory and confirms the aerobic ceiling is operating at a high level. That's the kind of marker that validates the base you've been building across the streak, not just the recent weeks.\n\nStrength is the one area worth a quiet note \u2014 four sessions in the last four weeks against what appears to be a higher prior rate. Not a concern at this volume, and the current profile remains strong, but it's worth keeping the frequency up as weekly running load sustains or grows.",
+  "summary": "Your easy-run heart rate has dropped meaningfully compared to the prior period at comparable effort \u2014 that's a concrete aerobic adaptation signal, not noise. It aligns with what you'd expect from sustained, consistent training over a long block, and it shows the base is genuinely developing rather than just accumulating kilometres.\n\nVolume is essentially flat between the two four-week blocks, which in context is a positive. Holding near 32 km/week across 20 consecutive weeks of running \u2014 without a single dropped week \u2014 is the kind of structural consistency that builds durable fitness quietly. The 44 km long run from 25 June and the recent threshold effort at 4:24/km both confirm that the underlying capacity remains sharp; this isn't coasting volume.\n\nStrength has been lighter these past four weeks relative to the previous block. That's worth acknowledging, not as a red flag, but as something to keep an eye on if it continues \u2014 you're carrying real strength numbers and it's worth protecting that base.",
   "watch_items": [
-    "The lactate threshold figure will become much more valuable once a few more test points accumulate \u2014 worth noting whether pace at threshold continues to hold or improve across July.",
-    "Easy-run HR has dropped noticeably vs the prior period; watch whether this continues to trend down or stabilises, as it's one of the cleaner real-time fitness signals available.",
-    "Strength frequency has dipped \u2014 monitor whether it naturally recovers in the coming weeks or whether running load is consistently crowding it out.",
-    "The 20-week streak is now at its all-time best; no action required, but worth being attentive to any early signs of accumulated fatigue (motivation, sleep quality, unusual soreness) as you move into new territory."
+    "Monitor whether the easy-run HR trend continues downward \u2014 a sustained drop from 157 to 147 is meaningful; another 2\u20133 runs in the same zone will confirm whether this is a real shift or block-level variance.",
+    "Keep an eye on strength session frequency over the next two weeks \u2014 four sessions in four weeks is manageable, but a second consecutive light block would start to erode the base you've built.",
+    "The lactate threshold estimate is still accumulating history; watch whether repeat efforts at similar intensities start to show pace improving for the same HR, which would corroborate the aerobic efficiency signal.",
+    "With the streak now at its personal best length, note any accumulating fatigue signals in the legs \u2014 not to pull back necessarily, but to distinguish between productive load and early overreach."
   ],
   "evidence_items": [],
   "insights": [
-    "The 20-week streak is the headline structural achievement right now \u2014 not just as a number, but as evidence of sustained, consistent stimulus across a wide range of effort levels. Volume is essentially flat week-on-week, but flat volume with consistent execution across easy, moderate and threshold efforts is a productive state, not a plateau. The 44 km effort from mid-June is still influencing the picture here \u2014 that kind of load takes time to fully absorb, and the two recent easy runs sitting comfortably at sub-6:00 pace with modest HR suggest absorption is progressing well.\n\nThe lactate threshold marker from yesterday \u2014 4:24/km at 178 bpm \u2014 is the most meaningful single data point this week. Without sufficient history to contextualise it against a 30-day baseline yet, it can't be trended, but it aligns with your half-marathon PB trajectory and confirms the aerobic ceiling is operating at a high level. That's the kind of marker that validates the base you've been building across the streak, not just the recent weeks.\n\nStrength is the one area worth a quiet note \u2014 four sessions in the last four weeks against what appears to be a higher prior rate. Not a concern at this volume, and the current profile remains strong, but it's worth keeping the frequency up as weekly running load sustains or grows."
+    "Your easy-run heart rate has dropped meaningfully compared to the prior period at comparable effort \u2014 that's a concrete aerobic adaptation signal, not noise. It aligns with what you'd expect from sustained, consistent training over a long block, and it shows the base is genuinely developing rather than just accumulating kilometres.\n\nVolume is essentially flat between the two four-week blocks, which in context is a positive. Holding near 32 km/week across 20 consecutive weeks of running \u2014 without a single dropped week \u2014 is the kind of structural consistency that builds durable fitness quietly. The 44 km long run from 25 June and the recent threshold effort at 4:24/km both confirm that the underlying capacity remains sharp; this isn't coasting volume.\n\nStrength has been lighter these past four weeks relative to the previous block. That's worth acknowledging, not as a red flag, but as something to keep an eye on if it continues \u2014 you're carrying real strength numbers and it's worth protecting that base."
   ],
   "quiet": [],
   "usage": {
     "input_tokens": 2808,
-    "output_tokens": 599,
-    "cost_usd": 0.017409,
-    "cost_dkk": 0.12012,
+    "output_tokens": 545,
+    "cost_usd": 0.016599,
+    "cost_dkk": 0.11453,
     "date": "2026-07-03"
   },
-  "usage_mtd_usd": 0.03723,
-  "usage_mtd_dkk": 0.2569,
-  "usage_ytd_usd": 0.03723,
-  "usage_ytd_dkk": 0.2569
+  "usage_mtd_usd": 0.03642,
+  "usage_mtd_dkk": 0.2513,
+  "usage_ytd_usd": 0.03642,
+  "usage_ytd_dkk": 0.2513
 }

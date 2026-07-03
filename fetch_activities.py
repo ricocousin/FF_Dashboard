@@ -221,10 +221,22 @@ def _row_key(row):
 
 def merge(new_rows, existing_rows, key_fields=None):
     new_keys = {_row_key(n) for n in new_rows}
+    # One-time transition guard: rows written before activity_id existed have
+    # a blank activity_id and key as ("legacy", date, name) — that can never
+    # equal a freshly-fetched row's ("id", activity_id) key even when both
+    # represent the exact same real activity. Without this check, any
+    # activity inside the incremental fetch window that already existed as a
+    # legacy row survives merge() TWICE (once under each key type), silently
+    # doubling that activity's distance/duration in every weekly aggregate.
+    new_date_names = {(n.get("date", ""), n.get("name", "")) for n in new_rows}
     merged = list(new_rows)
     for r in existing_rows:
-        if _row_key(r) not in new_keys:
-            merged.append(r)
+        key = _row_key(r)
+        if key in new_keys:
+            continue
+        if key[0] == "legacy" and (r.get("date", ""), r.get("name", "")) in new_date_names:
+            continue  # same real activity as a newly-fetched id-keyed row — drop the legacy duplicate
+        merged.append(r)
     return sorted(merged, key=lambda x: x.get("date", ""), reverse=True)
 
 new_run_rows = [build_run_row(a) for a in new_running]

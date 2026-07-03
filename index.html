@@ -321,7 +321,9 @@ async function init() {
     const priorRuns4wk = runsComplete.filter(r => parseLocalDate(r.date) >= cutoff8wkD && parseLocalDate(r.date) < cutoff4wkD);
     const recentVol = recentRuns4wk.reduce((s, r) => s + (parseFloat(r.distance_km) || 0), 0);
     const priorVol = priorRuns4wk.reduce((s, r) => s + (parseFloat(r.distance_km) || 0), 0);
-    digestLines.push(`${digestArrow(recentVol - priorVol, 3)} Weekly volume ${priorVol > 0 ? (recentVol >= priorVol ? 'unchanged' : 'reduced') : 'building'} (${recentVol.toFixed(0)} vs ${priorVol.toFixed(0)} km prior block)`);
+    const volDelta = recentVol - priorVol;
+    const volWord = priorVol <= 0 ? 'building' : (Math.abs(volDelta) <= 3 ? 'unchanged' : volDelta > 0 ? 'increased' : 'reduced');
+    digestLines.push(`${digestArrow(volDelta, 3)} Weekly volume ${volWord} (${recentVol.toFixed(0)} vs ${priorVol.toFixed(0)} km prior block)`);
 
     // Strength frequency: recent 4wk vs prior 4wk
     const recentStr4wk = sessionsComplete.filter(s => parseLocalDate(s.date) >= cutoff4wkD).length;

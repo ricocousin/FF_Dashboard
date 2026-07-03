@@ -1,37 +1,54 @@
 {
-  "last_updated": "2026-07-03 17:09 UTC",
-  "headline": "Running streak hits its longest-ever mark at 20 weeks, with aerobic efficiency visibly improving on easy efforts.",
-  "confidence_pct": 83,
+  "last_updated": "2026-07-03 19:59 UTC",
+  "headline": "A freshly measured lactate threshold of 4:24/km confirms aerobic fitness remains sharp despite a week that deliberately stepped back from high-load work.",
+  "confidence_pct": 84,
   "confidence_label": "Moderate data confidence",
   "confidence_reasons": [
     "LT reading 0d old",
     "HR data on 7/8 recent runs",
     "Sleep tracked 1/14 nights",
-    "Steps tracked 6/7 days",
+    "Steps tracked 7/7 days",
     "Pipeline fetch completed on schedule",
     "Multiple data sources active in last 3 days"
   ],
-  "summary": "Your easy-run heart rate has dropped meaningfully compared to the prior period at comparable effort \u2014 that's a concrete aerobic adaptation signal, not noise. It aligns with what you'd expect from sustained, consistent training over a long block, and it shows the base is genuinely developing rather than just accumulating kilometres.\n\nVolume is essentially flat between the two four-week blocks, which in context is a positive. Holding near 32 km/week across 20 consecutive weeks of running \u2014 without a single dropped week \u2014 is the kind of structural consistency that builds durable fitness quietly. The 44 km long run from 25 June and the recent threshold effort at 4:24/km both confirm that the underlying capacity remains sharp; this isn't coasting volume.\n\nStrength has been lighter these past four weeks relative to the previous block. That's worth acknowledging, not as a red flag, but as something to keep an eye on if it continues \u2014 you're carrying real strength numbers and it's worth protecting that base.",
+  "summary": "The threshold test result is the headline data point this week \u2014 a demonstrated 4:24/km at 178 bpm is a concrete fitness marker that sits firmly in the context of your PB progression from 5K through half-marathon. It anchors any interpretation of recent volume movement: the modest week following the 27 June tempo effort is not a signal of regression, it's a normal load-response pattern. The 13+ km recovery run at controlled effort the day after the threshold test is coherent management.\n\nThe broader 4-week picture is quietly positive. Volume has grown 13% block-on-block, and the more meaningful signal is that your easy-run HR has dropped noticeably at comparable efforts \u2014 that kind of cardiac drift downward at similar paces reflects real aerobic adaptation, not a favourable condition on a single day. Strength consistency has ticked down slightly but remains well within normal variance for a multi-modal athlete in a running-heavy block.\n\nYour 20-week running streak has now matched your previous best. Whether you extend it or not is secondary to the quality of what's been built \u2014 but it's worth noting as a marker of structural consistency across the whole period.",
   "watch_items": [
-    "Monitor whether the easy-run HR trend continues downward \u2014 a sustained drop from 157 to 147 is meaningful; another 2\u20133 runs in the same zone will confirm whether this is a real shift or block-level variance.",
-    "Keep an eye on strength session frequency over the next two weeks \u2014 four sessions in four weeks is manageable, but a second consecutive light block would start to erode the base you've built.",
-    "The lactate threshold estimate is still accumulating history; watch whether repeat efforts at similar intensities start to show pace improving for the same HR, which would corroborate the aerobic efficiency signal.",
-    "With the streak now at its personal best length, note any accumulating fatigue signals in the legs \u2014 not to pull back necessarily, but to distinguish between productive load and early overreach."
+    "Track whether easy-run HR continues its downward trend over the next 2\u20133 sessions, or stabilises \u2014 either tells you something about where adaptation currently sits.",
+    "The threshold test provides a single reference point; note how it feels to run at or near 4:24/km in upcoming efforts to start building subjective calibration alongside the number.",
+    "Strength dropped to 5 sessions this block \u2014 worth observing whether the next 4 weeks recover toward 6\u20137 without competing with the run load that's now growing.",
+    "Back-to-back run durability (as on 2 July after 27 June) is relevant to your ultra capacity \u2014 notice how recovery quality between those efforts compares as volume continues to build."
   ],
-  "evidence_items": [],
+  "evidence_items": [
+    {
+      "text": "\u25bc Easy-run HR averaging 146 bpm vs 157 bpm prior period (comparable-effort runs, 7 vs 6 runs)",
+      "priority": "High"
+    },
+    {
+      "text": "\u25b2 4-week volume 141 km vs 125 km prior block (+13%)",
+      "priority": "Medium"
+    },
+    {
+      "text": "\u25ac 20-week running streak (best: 20 wks)",
+      "priority": "Medium"
+    },
+    {
+      "text": "\u25bc Strength consistency: 5 sessions vs 6 prior 4wk",
+      "priority": "Medium"
+    }
+  ],
   "insights": [
-    "Your easy-run heart rate has dropped meaningfully compared to the prior period at comparable effort \u2014 that's a concrete aerobic adaptation signal, not noise. It aligns with what you'd expect from sustained, consistent training over a long block, and it shows the base is genuinely developing rather than just accumulating kilometres.\n\nVolume is essentially flat between the two four-week blocks, which in context is a positive. Holding near 32 km/week across 20 consecutive weeks of running \u2014 without a single dropped week \u2014 is the kind of structural consistency that builds durable fitness quietly. The 44 km long run from 25 June and the recent threshold effort at 4:24/km both confirm that the underlying capacity remains sharp; this isn't coasting volume.\n\nStrength has been lighter these past four weeks relative to the previous block. That's worth acknowledging, not as a red flag, but as something to keep an eye on if it continues \u2014 you're carrying real strength numbers and it's worth protecting that base."
+    "The threshold test result is the headline data point this week \u2014 a demonstrated 4:24/km at 178 bpm is a concrete fitness marker that sits firmly in the context of your PB progression from 5K through half-marathon. It anchors any interpretation of recent volume movement: the modest week following the 27 June tempo effort is not a signal of regression, it's a normal load-response pattern. The 13+ km recovery run at controlled effort the day after the threshold test is coherent management.\n\nThe broader 4-week picture is quietly positive. Volume has grown 13% block-on-block, and the more meaningful signal is that your easy-run HR has dropped noticeably at comparable efforts \u2014 that kind of cardiac drift downward at similar paces reflects real aerobic adaptation, not a favourable condition on a single day. Strength consistency has ticked down slightly but remains well within normal variance for a multi-modal athlete in a running-heavy block.\n\nYour 20-week running streak has now matched your previous best. Whether you extend it or not is secondary to the quality of what's been built \u2014 but it's worth noting as a marker of structural consistency across the whole period."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 2808,
-    "output_tokens": 545,
-    "cost_usd": 0.016599,
-    "cost_dkk": 0.11453,
+    "input_tokens": 2793,
+    "output_tokens": 480,
+    "cost_usd": 0.015579,
+    "cost_dkk": 0.1075,
     "date": "2026-07-03"
   },
-  "usage_mtd_usd": 0.03642,
-  "usage_mtd_dkk": 0.2513,
-  "usage_ytd_usd": 0.03642,
-  "usage_ytd_dkk": 0.2513
+  "usage_mtd_usd": 0.0354,
+  "usage_mtd_dkk": 0.2443,
+  "usage_ytd_usd": 0.0354,
+  "usage_ytd_dkk": 0.2443
 }

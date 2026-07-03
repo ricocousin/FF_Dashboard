@@ -1,3 +1,14 @@
+"""
+Fred's Feats — daily data sync.
+
+Pulls runs/strength from Garmin Connect, sleep/steps from Polar AccessLink,
+computes aggregate stats and lactate threshold history, then calls Claude to
+generate a structured daily coaching briefing. Writes everything the
+dashboard (index.html) reads as static CSV/JSON files.
+
+Despite the filename, this is no longer Garmin-only — Polar AccessLink is a
+first-class data source here too (see the "Polar Accesslink" section below).
+"""
 import os
 import csv
 import json

@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fred's Feats</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
     :root {
@@ -60,10 +59,7 @@
     .streak-label { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
     main { max-width: 1400px; margin: 0 auto; padding: 2rem; display: grid; gap: 1.5rem; }
     .overview-block { border: 1px solid var(--border); background: var(--border); display: flex; flex-direction: column; gap: 1px; }
-    .overview { background: var(--border); display: grid; grid-template-columns: 1fr 1px 1fr; }
-    .overview-half { background: var(--border); display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1px; }
     .overview-full { background: var(--border); display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; }
-    .overview-divider { background: var(--border); width: 1px; }
     .coach-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.6rem; }
     .coach-header { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-dim); display: flex; align-items: center; gap: 0.5rem; }
     .coach-headline { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; color: var(--text-hi); line-height: 1.35; margin: 0.1rem 0 0.3rem; }
@@ -95,7 +91,6 @@
     .overview-label.steps { color: var(--steps); }
     .overview-label.intensity { color: var(--intensity); }
     .overview-label.recovery { color: var(--recovery); }
-    @media (max-width: 800px) { .overview { grid-template-columns: 1fr; } .overview-divider { display: none; } }
     .stat { background: var(--surface); padding: 1rem 1.5rem; display: flex; flex-direction: column; gap: 0.2rem; }
     .stat-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
     .stat-value { font-family: var(--font-display); font-size: clamp(1.3rem, 2.5vw, 1.9rem); font-weight: 700; color: var(--text-hi); line-height: 1; }
@@ -104,9 +99,6 @@
     .stat-sub { font-size: 11px; color: var(--text-dim); font-family: var(--font-mono); }
     .section-heading { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-dim); display: flex; align-items: center; gap: 0.75rem; margin-top: 0.25rem; }
     .section-heading::before { content: ''; width: 3px; height: 12px; background: var(--accent); border-radius: 2px; }
-    .section-heading.lift::before { background: var(--strength); }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-    @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
     .card { background: var(--surface); border: 1px solid var(--border); padding: 1.5rem; }
     .card-title { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
     .card-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
@@ -149,140 +141,40 @@
 </main>
 <script>
 const $ = id => document.getElementById(id);
+
+// ── Pure formatting helpers — these format Python-supplied numbers, they
+// don't derive/aggregate anything themselves. ─────────────────────────────────
 function fmt(n, dec = 1) { if (n === null || n === undefined || n === '') return '—'; return Number(n).toFixed(dec); }
-function localDate(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
-function parseLocalDate(dateStr) { const [y, m, d] = dateStr.split('-').map(Number); return new Date(y, m - 1, d); }
 function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch])); }
-function isoWeek(dateStr) { const d = parseLocalDate(dateStr); d.setHours(0, 0, 0, 0); const thursday = new Date(d); thursday.setDate(d.getDate() + 4 - (d.getDay() || 7)); const isoYear = thursday.getFullYear(); const yearStart = new Date(isoYear, 0, 1); const week = Math.ceil((((thursday - yearStart) / 86400000) + 1) / 7); return `${isoYear}-W${String(week).padStart(2, '0')}`; }
-function weekStartDate(isoWk) { const [y, w] = isoWk.split('-W').map(Number); const jan4 = new Date(y, 0, 4); const dayOfWeek = jan4.getDay() || 7; const week1Mon = new Date(jan4); week1Mon.setDate(jan4.getDate() - dayOfWeek + 1); const result = new Date(week1Mon); result.setDate(week1Mon.getDate() + (w - 1) * 7); return result; }
-function shiftWeekKey(isoWk, weeks) { const d = weekStartDate(isoWk); d.setDate(d.getDate() + weeks * 7); return isoWeek(localDate(d)); }
-function weekRange(startKey, endKey) { const weeks = []; if (!startKey || !endKey) return weeks; for (let wk = startKey, guard = 0; wk <= endKey && guard < 800; wk = shiftWeekKey(wk, 1), guard++) weeks.push(wk); return weeks; }
-function paceToSec(p) { if (!p) return null; const [m, s] = p.split(':').map(Number); return m * 60 + (s || 0); }
-function secToPace(s) { if (!s || s <= 0 || !isFinite(s)) return '—'; const total = Math.round(s); return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`; }
+function secToPace(s) { if (s === null || s === undefined || s <= 0 || !isFinite(s)) return '—'; const total = Math.round(s); return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`; }
 function fmtHrs(mins) { if (!mins || mins <= 0) return '—'; const h = Math.floor(mins / 60); const m = Math.round(mins % 60); return h > 0 ? `${h}h ${m}m` : `${m}m`; }
 function fmtDuration(timeStr) { if (!timeStr) return '—'; const parts = timeStr.split(':').map(Number); if (parts.length === 3) { const [h, m, s] = parts; if (h > 0) return `${h}h ${m}m`; return `${m}m ${s}s`; } return timeStr; }
-function linearTrend(values) { const n = values.length; if (n < 2) return values.map(() => null); const xs = values.map((_, i) => i); const validPairs = xs.map((x, i) => [x, values[i]]).filter(([,v]) => v !== null && v !== undefined && !isNaN(v)); if (validPairs.length < 2) return values.map(() => null); const xMean = validPairs.reduce((s, [x]) => s + x, 0) / validPairs.length; const yMean = validPairs.reduce((s, [,y]) => s + y, 0) / validPairs.length; let num = 0, den = 0; validPairs.forEach(([x, y]) => { num += (x - xMean) * (y - yMean); den += (x - xMean) ** 2; }); const slope = den !== 0 ? num / den : 0; const intercept = yMean - slope * xMean; return xs.map(x => slope * x + intercept); }
-Chart.defaults.color = '#6b6b78'; Chart.defaults.borderColor = '#1f1f24'; Chart.defaults.font.family = "'DM Mono', monospace"; Chart.defaults.font.size = 10;
+function arrowFor(qual, delta) { if (qual === 'Stable' || qual === null || qual === undefined) return '▬'; if (qual === 'Increased') return '▲'; if (qual === 'Decreased') return '▼'; return delta > 0 ? '▲' : delta < 0 ? '▼' : '▬'; }
+Chart.defaults.color = '#6b6b78'; Chart.defaults.borderColor = '#1f1f24'; Chart.defaults.font.family = "'DM Mono', monospace";
 function chartOpts(extra = {}) { return { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1, titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 10 } }, scales: { x: { grid: { color: '#1f1f24' }, ticks: { maxRotation: 0 } }, y: { grid: { color: '#1f1f24' } } }, ...extra }; }
-function calcBestEfforts(runs) { const cats = [{ label: '5 km', min: 4 }, { label: '10 km', min: 8 }, { label: 'Half', min: 18 }, { label: 'Marathon', min: 38 }, { label: '50 km', min: 45 }]; const results = cats.map(cat => { const eligible = runs.filter(r => parseFloat(r.distance_km) >= cat.min && r.avg_pace_min_km); if (!eligible.length) return { label: cat.label, pace: '—', time: '—', dist: '—', date: null, name: 'no data yet' }; const best = eligible.reduce((a, b) => paceToSec(a.avg_pace_min_km) < paceToSec(b.avg_pace_min_km) ? a : b); return { label: cat.label, pace: best.avg_pace_min_km + ' /km', time: fmtDuration(best.moving_time), dist: fmt(best.distance_km, 1) + ' km', date: best.date, name: best.name || '' }; }); const longest = runs.reduce((a, b) => (parseFloat(a.distance_km) || 0) > (parseFloat(b.distance_km) || 0) ? a : b, runs[0]); results.push({ label: 'Longest', pace: longest?.avg_pace_min_km ? longest.avg_pace_min_km + ' /km' : '—', time: fmtDuration(longest?.moving_time), dist: fmt(longest?.distance_km, 1) + ' km', date: longest?.date, name: longest?.name || '' }); return results; }
-function calcZones(ltPaceStr, ltHr) { const ltSec = paceToSec(ltPaceStr); if (!ltSec) return null; const z1HrMax = ltHr ? Math.round(ltHr * 0.80) : null; const z2HrMax = ltHr ? Math.round(ltHr * 0.90) : null; const z3HrMax = ltHr ? Math.round(ltHr * 0.99) : null; const z4HrMax = ltHr ? Math.round(ltHr * 1.05) : null; return [ { name: 'Z1 EASY', pace: `> ${secToPace(ltSec + 75)}`, hr: ltHr ? `< ${z1HrMax} bpm` : '', color: '#4a9eff', pct: 40 }, { name: 'Z2 AEROBIC', pace: `${secToPace(ltSec + 45)}–${secToPace(ltSec + 74)}`, hr: ltHr ? `${z1HrMax}–${z2HrMax} bpm` : '', color: '#7bc67e', pct: 60 }, { name: 'Z3 TEMPO', pace: `${secToPace(ltSec + 10)}–${secToPace(ltSec + 44)}`, hr: ltHr ? `${z2HrMax}–${z3HrMax} bpm` : '', color: '#e8ff5a', pct: 78 }, { name: 'Z4 LT', pace: `${secToPace(ltSec - 10)}–${secToPace(ltSec + 9)}`, hr: ltHr ? `${z3HrMax}–${z4HrMax} bpm` : '', color: '#ff9f40', pct: 90 }, { name: 'Z5 HARD', pace: `< ${secToPace(ltSec - 11)}`, hr: ltHr ? `> ${z4HrMax} bpm` : '', color: '#ff6b35', pct: 100 } ]; }
 
 async function init() {
   const fileStatus = {};
-  const safeFetch = (name, url, parseFn) =>
+  const safeFetch = (name, url) =>
     fetch(url)
-      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return parseFn(r); })
+      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then(data => { fileStatus[name] = 'ok'; return data; })
-      .catch(e => { fileStatus[name] = `failed: ${e.message}`; return name === 'runs' ? null : (name === 'lactate' ? [] : null); });
+      .catch(e => { fileStatus[name] = `failed: ${e.message}`; return null; });
 
-  const [runsRaw, strengthRaw, summary, ltDataRaw, coachData, stepsRaw, sleepRaw, polarStepsRaw] = await Promise.all([
-    safeFetch('runs', 'runs.csv', r => r.text()),
-    safeFetch('strength', 'strength.csv', r => r.text()),
-    safeFetch('summary', 'summary.json', r => r.json()),
-    safeFetch('lactate', 'lactate.json', r => r.json()),
-    safeFetch('coach', 'coach_summary.json', r => r.json()),
-    safeFetch('steps', 'steps.csv', r => r.text()),
-    safeFetch('sleep', 'sleep.csv', r => r.text()),
-    safeFetch('polarSteps', 'polar_steps.csv', r => r.text())
+  const [m, coachData] = await Promise.all([
+    safeFetch('metrics', 'dashboard_metrics.json'),
+    safeFetch('coach', 'coach_summary.json')
   ]);
 
-  if (!runsRaw) {
+  if (!m) {
     const statusLines = Object.entries(fileStatus).map(([name, status]) => `${name}: ${status}`).join('<br>');
-    document.getElementById('app').innerHTML = `<div class="loading">Failed to load core data (runs.csv).<br><small>${statusLines}</small></div>`;
+    document.getElementById('app').innerHTML = `<div class="loading">Failed to load core data (dashboard_metrics.json).<br><small>${statusLines}</small></div>`;
     return;
   }
 
-  const { data: runRows } = Papa.parse(runsRaw, { header: true, skipEmptyLines: true });
-  const runs = runRows.filter(r => r.date);
-  let sessions = [];
-  if (strengthRaw) { const { data: sRows } = Papa.parse(strengthRaw, { header: true, skipEmptyLines: true }); sessions = sRows.filter(r => r.date); }
-  const ltData = (ltDataRaw || []).filter(r => { const sec = paceToSec(r.lt_pace); return sec && sec > 90 && sec < 900; });
-  if (summary) $('last-updated').textContent = `Updated ${summary.last_updated}`;
-
+  $('last-updated').textContent = `Updated ${m.last_updated}`;
   const app = $('app');
   app.innerHTML = '';
-
-  const today = new Date();
-  const todayIso = localDate(today);
-  const lastCompleteDay = new Date(today);
-  lastCompleteDay.setDate(today.getDate() - 1);
-  const lastCompleteDate = localDate(lastCompleteDay);
-  const thisYear = today.getFullYear().toString();
-  const thisMonth = today.toLocaleString('en', { month: 'short' });
-
-  const runsComplete = runs.filter(r => r.date <= lastCompleteDate);
-  const sessionsComplete = sessions.filter(s => s.date <= lastCompleteDate);
-  const yearRuns = runsComplete.filter(r => r.date.startsWith(thisYear));
-  const yearDist = yearRuns.reduce((s, r) => s + (parseFloat(r.distance_km) || 0), 0);
-  const yearSessions = sessionsComplete.filter(s => s.date.startsWith(thisYear));
-  const totalStrengthMinYear = yearSessions.reduce((s, r) => s + (parseFloat(r.duration_min) || 0), 0);
-  const runWeeksYear = new Set(yearRuns.map(r => isoWeek(r.date)));
-  const sWeeksYear = new Set(yearSessions.map(s => isoWeek(s.date)));
-  const activityWeeksYear = new Set([...runWeeksYear, ...sWeeksYear]);
-  const numRunWeeks = Math.max(runWeeksYear.size, 1);
-  const numSWeeks = Math.max(sWeeksYear.size, 1);
-  const numActivityWeeks = Math.max(activityWeeksYear.size, 1);
-  const avgRunDistPerWeek = yearDist / numRunWeeks;
-  const avgRunDistPerRun = yearDist / Math.max(yearRuns.length, 1);
-  const avgSessPerWeek = yearSessions.length / numSWeeks;
-  const monthRuns = yearRuns.filter(r => parseLocalDate(r.date).toLocaleString('en', { month: 'short' }) === thisMonth);
-  const monthSessions = yearSessions.filter(s => parseLocalDate(s.date).toLocaleString('en', { month: 'short' }) === thisMonth);
-  const monthRunWeeks = new Set(monthRuns.map(r => isoWeek(r.date)));
-  const monthStrengthWeeks = new Set(monthSessions.map(s => isoWeek(s.date)));
-  const monthActivityWeeks = new Set([...monthRunWeeks, ...monthStrengthWeeks]);
-  const numMonthRunWeeks = Math.max(monthRunWeeks.size, 1);
-  const numMonthStrengthWeeks = Math.max(monthStrengthWeeks.size, 1);
-  const numMonthActivityWeeks = Math.max(monthActivityWeeks.size, 1);
-  const totalRunMinsYear = yearRuns.reduce((s, r) => { const parts = (r.moving_time || '').split(':').map(Number); return s + (parts[0] * 60 + (parts[1] || 0) + (parts[2] || 0) / 60); }, 0);
-  const monthRunMins = monthRuns.reduce((s, r) => { const parts = (r.moving_time || '').split(':').map(Number); return s + (parts[0] * 60 + (parts[1] || 0) + (parts[2] || 0) / 60); }, 0);
-  const monthStrengthMins = monthSessions.reduce((s, r) => s + (parseFloat(r.duration_min) || 0), 0);
-  const totalActivityMinsYear = totalRunMinsYear + totalStrengthMinYear;
-  const avgActivityMinsPerWeek = totalActivityMinsYear / numActivityWeeks;
-  const avgActivityMinsPerWeekMonth = (monthRunMins + monthStrengthMins) / numMonthActivityWeeks;
-  const latestLT = ltData.length > 0 ? ltData[ltData.length - 1] : null;
-  const zones = latestLT ? calcZones(latestLT.lt_pace, latestLT.lt_hr) : null;
-
-  let stepsData = {};
-  if (stepsRaw) { const { data: stepsRows } = Papa.parse(stepsRaw, { header: true, skipEmptyLines: true }); stepsRows.forEach(r => { if (r.date) stepsData[r.date] = parseInt(r.steps) || 0; }); }
-
-  let polarStepsData = {};
-  if (polarStepsRaw) { const { data: polarStepsRows } = Papa.parse(polarStepsRaw, { header: true, skipEmptyLines: true }); polarStepsRows.forEach(r => { if (r.date) polarStepsData[r.date] = parseInt(r.steps) || 0; }); }
-
-  // Reconciled daily steps: average of both sources when both report that day
-  // (smooths device-specific counting quirks), falls back to whichever single
-  // source is present when the other device wasn't worn/synced that day.
-  // If the two disagree by more than 50%, averaging produces a number that
-  // represents neither reading well — likely one device wasn't worn the full
-  // day — so use the larger (more complete) reading instead. Threshold must
-  // match the Python side (fetch_activities.py) so the coach's own step
-  // commentary agrees with what the dashboard shows.
-  const STEPS_DISAGREEMENT_THRESHOLD = 0.5;
-  const reconciledStepsData = {};
-  const stepDiscrepancies = [];
-  new Set([...Object.keys(stepsData), ...Object.keys(polarStepsData)]).forEach(date => {
-    const iphone = stepsData[date];
-    const polar = polarStepsData[date];
-    if (iphone && polar) {
-      const larger = Math.max(iphone, polar);
-      const disagreement = larger ? Math.abs(iphone - polar) / larger : 0;
-      reconciledStepsData[date] = disagreement > STEPS_DISAGREEMENT_THRESHOLD ? larger : Math.round((iphone + polar) / 2);
-      stepDiscrepancies.push({ date, diff: Math.abs(iphone - polar) });
-    } else if (iphone) {
-      reconciledStepsData[date] = iphone;
-    } else if (polar) {
-      reconciledStepsData[date] = polar;
-    }
-  });
-  const STEP_GOAL = 10000;
-
-  // ── Sleep data (Recovery row) ──────────────────────────────────────────────────
-  let sleepData = {};
-  if (sleepRaw) {
-    const { data: sleepRows } = Papa.parse(sleepRaw, { header: true, skipEmptyLines: true });
-    sleepRows.forEach(r => {
-      if (r.date) sleepData[r.date] = { minutes: parseFloat(r.total_sleep_min) || 0, score: r.sleep_score !== '' && r.sleep_score !== undefined ? parseFloat(r.sleep_score) : null };
-    });
-  }
 
   // ── Coach card ────────────────────────────────────────────────────────────────
   if (coachData && (coachData.summary || (coachData.insights && coachData.insights.length > 0))) {
@@ -301,82 +193,16 @@ async function init() {
     })() : '';
     const evidenceItems = Array.isArray(coachData.evidence_items) ? coachData.evidence_items.filter(Boolean) : [];
     const evidenceHtml = evidenceItems.length ? `<div class="coach-evidence"><div class="coach-evidence-title">Evidence supporting today's assessment</div>${evidenceItems.map(e => {
-      // Backward-compatible: older coach_summary.json versions stored plain strings
       const text = typeof e === 'string' ? e : e.text;
       const priority = typeof e === 'string' ? 'Medium' : (e.priority || 'Medium');
-      const cls = priority === 'Low' ? ' priority-low' : priority === 'High' ? '' : '';
+      const cls = priority === 'Low' ? ' priority-low' : '';
       const style = priority === 'High' ? ' style="color:var(--text-hi);font-weight:500"' : '';
       return `<div class="coach-evidence-item${cls}"${style}>${escapeHtml(text)}</div>`;
     }).join('')}</div>` : '';
     const watchItems = Array.isArray(coachData.watch_items) ? coachData.watch_items.filter(Boolean) : [];
     const watchHtml = watchItems.length ? `<div class="coach-watch"><div class="coach-watch-title">Things to watch</div>${watchItems.map(w => `<div class="coach-watch-item">${escapeHtml(w)}</div>`).join('')}</div>` : '';
 
-    // ── "What's Changed" digest — fixed set, always shown, ➔ for stable ─────────
-    // Deliberately pure JS/deterministic, zero LLM involvement — reuses the same
-    // recent-vs-prior-4wk pattern already established for the coach's evidence
-    // catalog and the dashboard's own delta indicators, so the numbers here will
-    // always agree with what's shown elsewhere on the page.
-    const digestArrow = (delta, threshold) => delta > threshold ? '▲' : delta < -threshold ? '▼' : '➔';
-    const digestLines = [];
-
-    // LT vs ~30 days ago
-    if (ltData.length > 0) {
-      const sortedLt = [...ltData].sort((a, b) => a.date.localeCompare(b.date));
-      const latest = sortedLt[sortedLt.length - 1];
-      const cutoff30 = new Date(); cutoff30.setDate(cutoff30.getDate() - 30);
-      const baseline = [...sortedLt].reverse().find(r => parseLocalDate(r.date) <= cutoff30);
-      if (baseline) {
-        const deltaSec = paceToSec(baseline.lt_pace) - paceToSec(latest.lt_pace);
-        digestLines.push(`${digestArrow(deltaSec, 1)} LT pace ${baseline.lt_pace} → ${latest.lt_pace}/km`);
-      } else {
-        digestLines.push(`➔ LT established at ${latest.lt_pace}/km (baseline building)`);
-      }
-    } else {
-      digestLines.push('➔ No LT reading yet');
-    }
-
-    // Weekly volume: recent 4wk vs prior 4wk
-    const cutoff4wkD = new Date(); cutoff4wkD.setDate(cutoff4wkD.getDate() - 28);
-    const cutoff8wkD = new Date(); cutoff8wkD.setDate(cutoff8wkD.getDate() - 56);
-    const recentRuns4wk = runsComplete.filter(r => parseLocalDate(r.date) >= cutoff4wkD);
-    const priorRuns4wk = runsComplete.filter(r => parseLocalDate(r.date) >= cutoff8wkD && parseLocalDate(r.date) < cutoff4wkD);
-    const recentVol = recentRuns4wk.reduce((s, r) => s + (parseFloat(r.distance_km) || 0), 0);
-    const priorVol = priorRuns4wk.reduce((s, r) => s + (parseFloat(r.distance_km) || 0), 0);
-    const volDelta = recentVol - priorVol;
-    const volWord = priorVol <= 0 ? 'building' : (Math.abs(volDelta) <= 3 ? 'unchanged' : volDelta > 0 ? 'increased' : 'reduced');
-    digestLines.push(`${digestArrow(volDelta, 3)} Weekly volume ${volWord} (${recentVol.toFixed(0)} vs ${priorVol.toFixed(0)} km prior block)`);
-
-    // Strength frequency: recent 4wk vs prior 4wk
-    const recentStr4wk = sessionsComplete.filter(s => parseLocalDate(s.date) >= cutoff4wkD).length;
-    const priorStr4wk = sessionsComplete.filter(s => parseLocalDate(s.date) >= cutoff8wkD && parseLocalDate(s.date) < cutoff4wkD).length;
-    digestLines.push(`${digestArrow(recentStr4wk - priorStr4wk, 0.5)} Strength frequency ${recentStr4wk} vs ${priorStr4wk} sessions prior block`);
-
-    // Steps: recent 4wk avg vs prior 4wk avg (reconciled series)
-    const stepsEntries4wk = Object.entries(reconciledStepsData).filter(([d]) => parseLocalDate(d) >= cutoff4wkD && d <= lastCompleteDate);
-    const stepsEntriesPrior = Object.entries(reconciledStepsData).filter(([d]) => parseLocalDate(d) >= cutoff8wkD && parseLocalDate(d) < cutoff4wkD);
-    const recentStepsAvg = stepsEntries4wk.length ? stepsEntries4wk.reduce((s, [, v]) => s + v, 0) / stepsEntries4wk.length : null;
-    const priorStepsAvg = stepsEntriesPrior.length ? stepsEntriesPrior.reduce((s, [, v]) => s + v, 0) / stepsEntriesPrior.length : null;
-    if (recentStepsAvg !== null && priorStepsAvg !== null) {
-      digestLines.push(`${digestArrow(recentStepsAvg - priorStepsAvg, 300)} Steps averaging ${Math.round(recentStepsAvg).toLocaleString()} vs ${Math.round(priorStepsAvg).toLocaleString()}/day prior block`);
-    } else {
-      digestLines.push('➔ Steps data still accumulating');
-    }
-
-    // Sleep: recent avg duration vs prior avg duration
-    const sleepEntries4wk = Object.entries(sleepData).filter(([d, v]) => v.minutes > 0 && parseLocalDate(d) >= cutoff4wkD && d <= todayIso);
-    const sleepEntriesPrior = Object.entries(sleepData).filter(([d, v]) => v.minutes > 0 && parseLocalDate(d) >= cutoff8wkD && parseLocalDate(d) < cutoff4wkD);
-    if (sleepEntries4wk.length && sleepEntriesPrior.length) {
-      const recentSleepAvg = sleepEntries4wk.reduce((s, [, v]) => s + v.minutes, 0) / sleepEntries4wk.length;
-      const priorSleepAvg = sleepEntriesPrior.reduce((s, [, v]) => s + v.minutes, 0) / sleepEntriesPrior.length;
-      digestLines.push(`${digestArrow(recentSleepAvg - priorSleepAvg, 5)} Sleep averaging ${fmtHrs(recentSleepAvg)} vs ${fmtHrs(priorSleepAvg)} prior block`);
-    } else {
-      digestLines.push('➔ Sleep data still accumulating');
-    }
-
-    // Weekly running streak — informational, not a before/after comparison
-    digestLines.push(`➔ Running streak: ${summary?.current_weekly_streak ?? '—'} wks (best: ${summary?.longest_weekly_streak ?? '—'})`);
-
-    const digestHtml = `<div class="coach-digest"><div class="coach-digest-title">What's changed this block</div>${digestLines.map(l => `<div class="coach-digest-item">${escapeHtml(l)}</div>`).join('')}</div>`;
+    const digestHtml = (Array.isArray(m.digest) && m.digest.length) ? `<div class="coach-digest"><div class="coach-digest-title">What's changed this block</div>${m.digest.map(l => `<div class="coach-digest-item">${escapeHtml(l)}</div>`).join('')}</div>` : '';
 
     function usageColor(usd) { if (usd < 0.004) return '#4a9eff'; if (usd < 0.008) return '#7bc67e'; if (usd < 0.015) return '#e8ff5a'; if (usd < 0.025) return '#ff9f40'; return '#ff6b35'; }
     function mtdColor(usd) { if (usd < 0.10) return '#4a9eff'; if (usd < 0.25) return '#7bc67e'; if (usd < 0.35) return '#e8ff5a'; if (usd < 0.42) return '#ff9f40'; return '#ff6b35'; }
@@ -388,195 +214,64 @@ async function init() {
   }
 
   // ── Overview block ────────────────────────────────────────────────────────────
-  const stepsOverviewData = (() => {
-    if (!Object.keys(reconciledStepsData || {}).length) return null;
-    const allVals = Object.entries(reconciledStepsData).filter(([d, v]) => v > 0 && d <= lastCompleteDate);
-    const avg7d = (() => { const days = []; for (let i = 1; i <= 7; i++) { const d = new Date(); d.setDate(d.getDate() - i); const ds = localDate(d); if (reconciledStepsData[ds]) days.push(reconciledStepsData[ds]); } return days.length ? Math.round(days.reduce((s, v) => s + v, 0) / days.length) : null; })();
-    const cutoff30d = new Date(); cutoff30d.setDate(cutoff30d.getDate() - 30);
-    const last30d = allVals.filter(([d]) => parseLocalDate(d) >= cutoff30d);
-    const avg30d = last30d.length ? Math.round(last30d.reduce((s, [, v]) => s + v, 0) / last30d.length) : null;
-    const avgAll = allVals.length ? Math.round(allVals.reduce((s, [, v]) => s + v, 0) / allVals.length) : null;
-
-    // Discrepancy between sources, over days where both actually reported (last 30d)
-    const cutoff30dDisc = new Date(); cutoff30dDisc.setDate(cutoff30dDisc.getDate() - 30);
-    const recentDiscrepancies = stepDiscrepancies.filter(d => parseLocalDate(d.date) >= cutoff30dDisc && d.date <= lastCompleteDate);
-    const avgDiscrepancy = recentDiscrepancies.length ? Math.round(recentDiscrepancies.reduce((s, d) => s + d.diff, 0) / recentDiscrepancies.length) : null;
-
-    return { avgAll, avg7d, avg30d, avgDiscrepancy, discrepancyDays: recentDiscrepancies.length };
-  })();
-
-  // ── Recovery (sleep) overview data ─────────────────────────────────────────────
-  const recoveryOverviewData = (() => {
-    const entries = Object.entries(sleepData).filter(([d, v]) => v.minutes > 0 && d <= todayIso);
-    if (!entries.length) return null;
-
-    const avgOf = (pairs) => {
-      const mins = pairs.filter(([, v]) => v.minutes > 0);
-      const scores = pairs.filter(([, v]) => v.score !== null && !isNaN(v.score));
-      return {
-        mins: mins.length ? mins.reduce((s, [, v]) => s + v.minutes, 0) / mins.length : null,
-        score: scores.length ? scores.reduce((s, [, v]) => s + v.score, 0) / scores.length : null
-      };
-    };
-
-    const cutoff7d = new Date(); cutoff7d.setDate(cutoff7d.getDate() - 7);
-    const cutoff30d = new Date(); cutoff30d.setDate(cutoff30d.getDate() - 30);
-    const last7d = entries.filter(([d]) => parseLocalDate(d) >= cutoff7d);
-    const last30d = entries.filter(([d]) => parseLocalDate(d) >= cutoff30d);
-    const yearEntries = entries.filter(([d]) => d.startsWith(thisYear));
-
-    return { week: avgOf(last7d), month: avgOf(last30d), year: avgOf(yearEntries) };
-  })();
-
-  const INTENSITY_GOAL_MINS = 210;
-  const weekMinMap = {};
-  yearRuns.forEach(r => { const wk = isoWeek(r.date); const parts = (r.moving_time || '').split(':').map(Number); const mins = parts[0] * 60 + (parts[1] || 0) + (parts[2] || 0) / 60; weekMinMap[wk] = (weekMinMap[wk] || 0) + mins; });
-  yearSessions.forEach(s => { const wk = isoWeek(s.date); weekMinMap[wk] = (weekMinMap[wk] || 0) + (parseFloat(s.duration_min) || 0); });
-  const sortedWeekKeys = Object.keys(weekMinMap).sort();
-  const lastCompleteWeek = isoWeek(lastCompleteDate);
-  const currentWeekComplete = lastCompleteDate === localDate(new Date(weekStartDate(lastCompleteWeek).getFullYear(), weekStartDate(lastCompleteWeek).getMonth(), weekStartDate(lastCompleteWeek).getDate() + 6));
-  const streakAnchor = weekMinMap[lastCompleteWeek] >= INTENSITY_GOAL_MINS || currentWeekComplete ? lastCompleteWeek : shiftWeekKey(lastCompleteWeek, -1);
-  const intensityWeekKeys = sortedWeekKeys.length ? weekRange(sortedWeekKeys[0], streakAnchor) : [];
-  let intensityStreak = 0, bestIntensityStreak = 0, currentStreakCount = 0;
-  for (const wk of intensityWeekKeys) { if ((weekMinMap[wk] || 0) >= INTENSITY_GOAL_MINS) { currentStreakCount++; bestIntensityStreak = Math.max(bestIntensityStreak, currentStreakCount); } else { currentStreakCount = 0; } }
-  for (let i = intensityWeekKeys.length - 1; i >= 0; i--) { if ((weekMinMap[intensityWeekKeys[i]] || 0) >= INTENSITY_GOAL_MINS) intensityStreak++; else break; }
-
-  const stepsDiscrepancyHtml = (stepsOverviewData && stepsOverviewData.avgDiscrepancy !== null) ? `<br><span style="color:var(--text-dim)">Polar vs iPhone: ±${stepsOverviewData.avgDiscrepancy.toLocaleString()}/day (${stepsOverviewData.discrepancyDays}d overlap)</span>` : '';
-  const stepsRow = stepsOverviewData ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avgAll?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avg7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps__STEPS_DELTA__</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${stepsOverviewData.avg30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsDiscrepancyHtml}</span></div></div>` : '';
-
-  const recoveryTile = (label, data, deltaHtml) => {
-    const durationStr = data && data.mins ? fmtHrs(data.mins) : '—';
-    const scoreStr = data && data.score !== null && data.score !== undefined ? `Score: ${Math.round(data.score)}` : 'Score: —';
-    return `<div class="stat"><span class="stat-label">${label}</span><span class="stat-value" style="color:var(--recovery)">${durationStr}</span><span class="stat-sub">${scoreStr}${deltaHtml || ''}</span></div>`;
+  const deltaBadge = (delta, qual, formatFn) => {
+    if (delta === null || delta === undefined) return '';
+    return ` · <span style="color:var(--text-dim)">${arrowFor(qual, delta)} ${formatFn(Math.abs(delta))}</span>`;
+  };
+  const qualLine = (qual, compareLabel) => {
+    if (!qual) return '';
+    const text = qual === 'Stable' ? `Stable — no meaningful change vs ${compareLabel}` : `${qual} vs ${compareLabel}`;
+    return `<br><span style="color:var(--text-dim)">${text}</span>`;
   };
 
-  const recoveryRow = recoveryOverviewData ? `<div class="overview-full"><div class="overview-label recovery" style="grid-column:1/-1">Recovery</div>${recoveryTile('Avg / week', recoveryOverviewData.week, '__RECOVERY_DELTA__')}${recoveryTile('Avg / month', recoveryOverviewData.month)}${recoveryTile('Avg / year', recoveryOverviewData.year)}</div>` : '';
+  const r = m.running, st = m.strength, sp = m.steps, iv = m.intensity, rc = m.recovery;
 
-  // ── Change indicators (▲▼▬) — value-neutral, direction + magnitude only ───────
-  function deltaBadge(delta, formatFn, threshold = 0.05) {
-    if (delta === null || delta === undefined || isNaN(delta)) return '';
-    const arrow = delta > threshold ? '▲' : delta < -threshold ? '▼' : '▬';
-    return ` · <span style="color:var(--text-dim)">${arrow} ${formatFn(Math.abs(delta))}</span>`;
-  }
-  const prevCompleteWeek = shiftWeekKey(lastCompleteWeek, -1);
-  const weekRunDist = wk => runsComplete.filter(r => isoWeek(r.date) === wk).reduce((s, r) => s + (parseFloat(r.distance_km) || 0), 0);
-  const weekStrengthCount = wk => sessionsComplete.filter(s => isoWeek(s.date) === wk).length;
-  const runWeekDelta = weekRunDist(lastCompleteWeek) - weekRunDist(prevCompleteWeek);
-  const strengthWeekDelta = weekStrengthCount(lastCompleteWeek) - weekStrengthCount(prevCompleteWeek);
-  const stepsDelta = (stepsOverviewData && stepsOverviewData.avg7d !== null && stepsOverviewData.avg30d !== null) ? stepsOverviewData.avg7d - stepsOverviewData.avg30d : null;
-  const intensityDelta = avgActivityMinsPerWeekMonth - avgActivityMinsPerWeek;
-  const recoveryDelta = (recoveryOverviewData && recoveryOverviewData.week.mins !== null && recoveryOverviewData.month.mins !== null) ? recoveryOverviewData.week.mins - recoveryOverviewData.month.mins : null;
+  const runDeltaHtml = deltaBadge(r.week_delta_km, r.week_qual, v => `${v.toFixed(1)} km vs last wk`);
+  const runQualHtml = qualLine(r.week_qual, 'last week');
+  const strengthDeltaHtml = deltaBadge(st.week_delta_sessions, st.week_qual, v => `${Math.round(v)} vs last wk`);
+  const strengthQualHtml = qualLine(st.week_qual, 'last week');
+  const stepsDeltaHtml = sp.avg_7d !== null ? deltaBadge(sp.delta_7d_vs_30d, sp.qual, v => `${Math.round(v).toLocaleString()} vs 30d avg`) : '';
+  const stepsQualHtml = qualLine(sp.qual, '30d average');
+  const stepsDiscrepancyHtml = sp.discrepancy_avg !== null ? `<br><span style="color:var(--text-dim)">Polar vs iPhone: ±${sp.discrepancy_avg.toLocaleString()}/day (${sp.discrepancy_days}d overlap)</span>` : '';
+  const intensityDeltaHtml = deltaBadge(iv.delta_month_vs_year, iv.qual, v => `${fmtHrs(v)} vs yr avg`);
+  const intensityQualHtml = qualLine(iv.qual, 'year average');
+  const recoveryDeltaHtml = deltaBadge(rc.delta_week_vs_month, rc.qual, v => `${fmtHrs(v)} vs mo avg`);
+  const recoveryQualHtml = qualLine(rc.qual, 'month average');
 
-  // Thresholds here MUST match qualLabel's thresholds below — these two lines
-  // sit right next to each other on the dashboard, so using different cutoffs
-  // produces contradictory text (e.g. "▲ 1 vs last wk" next to "Stable — no
-  // meaningful change"). Single source of truth per metric, used by both.
-  const RUN_STABLE_THRESHOLD = 1;
-  const STRENGTH_STABLE_THRESHOLD = 1;
-  const STEPS_STABLE_THRESHOLD = 500;
-  const INTENSITY_STABLE_THRESHOLD = 15;
-  const RECOVERY_STABLE_THRESHOLD = 15;
+  const stepsRow = (sp.avg_all_time !== null) ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_all_time?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsDeltaHtml}${stepsQualHtml}</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsDiscrepancyHtml}</span></div></div>` : '';
 
-  const runDeltaHtml = deltaBadge(runWeekDelta, v => `${v.toFixed(1)} km vs last wk`, RUN_STABLE_THRESHOLD);
-  const strengthDeltaHtml = deltaBadge(strengthWeekDelta, v => `${Math.round(v)} vs last wk`, STRENGTH_STABLE_THRESHOLD);
-  const stepsDeltaHtml = deltaBadge(stepsDelta, v => `${Math.round(v).toLocaleString()} vs 30d avg`, STEPS_STABLE_THRESHOLD);
-  const intensityDeltaHtml = deltaBadge(intensityDelta, v => `${fmtHrs(v)} vs yr avg`, INTENSITY_STABLE_THRESHOLD);
-  const recoveryDeltaHtml = deltaBadge(recoveryDelta, v => `${fmtHrs(v)} vs mo avg`, RECOVERY_STABLE_THRESHOLD);
-
-  // ── Qualitative "so what" labels ─────────────────────────────────────────────
-  // Thresholds chosen per-metric for what a "meaningful" change actually looks
-  // like on that scale (e.g. 1km on a ~23km/wk base is noise; 500 steps/day on
-  // a ~14000 base is noise) — not a single generic percentage across all five.
-  // Same value-neutral spirit as the delta badges: describes direction, not a
-  // good/bad judgment (e.g. "Decreased" for strength frequency isn't framed as
-  // bad, since a deliberate deload is a legitimate reason for that direction).
-  function qualLabel(delta, threshold, risingWord, fallingWord, compareLabel) {
-    if (delta === null || delta === undefined || isNaN(delta)) return '';
-    if (Math.abs(delta) <= threshold) {
-      return `<br><span style="color:var(--text-dim)">Stable — no meaningful change vs ${compareLabel}</span>`;
-    }
-    const word = delta > 0 ? risingWord : fallingWord;
-    return `<br><span style="color:var(--text-dim)">${word} vs ${compareLabel}</span>`;
-  }
-
-  const runQualHtml = qualLabel(runWeekDelta, RUN_STABLE_THRESHOLD, 'Increased', 'Decreased', 'last week');
-  const strengthQualHtml = qualLabel(strengthWeekDelta, STRENGTH_STABLE_THRESHOLD, 'Increased', 'Decreased', 'last week');
-  const stepsQualHtml = qualLabel(stepsDelta, STEPS_STABLE_THRESHOLD, 'Increased', 'Decreased', '30d average');
-  const intensityQualHtml = qualLabel(intensityDelta, INTENSITY_STABLE_THRESHOLD, 'Increased', 'Decreased', 'year average');
-  const recoveryQualHtml = qualLabel(recoveryDelta, RECOVERY_STABLE_THRESHOLD, 'Increased', 'Decreased', 'month average');
-
-  const stepsRowResolved = stepsRow.replace('__STEPS_DELTA__', stepsDeltaHtml + stepsQualHtml);
-  const recoveryRowResolved = recoveryRow.replace('__RECOVERY_DELTA__', recoveryDeltaHtml + recoveryQualHtml);
+  const recoveryTile = (label, data, deltaHtml, qualHtml) => {
+    const durationStr = data && data.mins ? fmtHrs(data.mins) : '—';
+    const scoreStr = data && data.score !== null && data.score !== undefined ? `Score: ${Math.round(data.score)}` : 'Score: —';
+    return `<div class="stat"><span class="stat-label">${label}</span><span class="stat-value" style="color:var(--recovery)">${durationStr}</span><span class="stat-sub">${scoreStr}${deltaHtml || ''}${qualHtml || ''}</span></div>`;
+  };
+  const recoveryRow = (rc.week.mins !== null || rc.month.mins !== null || rc.year.mins !== null) ? `<div class="overview-full"><div class="overview-label recovery" style="grid-column:1/-1">Recovery</div>${recoveryTile('Avg / week', rc.week, recoveryDeltaHtml, recoveryQualHtml)}${recoveryTile('Avg / month', rc.month)}${recoveryTile('Avg / year', rc.year)}</div>` : '';
 
   const overviewBlock = document.createElement('div');
   overviewBlock.className = 'overview-block';
   overviewBlock.innerHTML = `
     <div class="overview-full">
       <div class="overview-label run" style="grid-column:1/-1">Running</div>
-      <div class="stat"><span class="stat-label">Avg / run</span><span class="stat-value accent">${fmt(avgRunDistPerRun, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${summary?.total_runs_this_year ?? yearRuns.length} runs ${thisYear}</span></div>
-      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(avgRunDistPerWeek, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${fmt(summary?.total_distance_this_year_km ?? yearDist, 0)} km ${thisYear}${runDeltaHtml}${runQualHtml}</span></div>
-      <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value accent">${summary?.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${summary?.longest_weekly_streak ?? '—'} wks</span></div>
+      <div class="stat"><span class="stat-label">Avg / run</span><span class="stat-value accent">${fmt(r.avg_per_run_km, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${r.runs_this_year} runs ${m.this_year}</span></div>
+      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(r.avg_per_week_km, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${fmt(r.total_distance_this_year_km, 0)} km ${m.this_year}${runDeltaHtml}${runQualHtml}</span></div>
+      <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value accent">${r.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${r.longest_weekly_streak ?? '—'} wks</span></div>
     </div>
     <div class="overview-full">
       <div class="overview-label lift" style="grid-column:1/-1">Strength</div>
-      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value blue">${fmt(avgSessPerWeek, 1)}</span><span class="stat-sub">${summary?.total_strength_this_year ?? yearSessions.length} sessions ${thisYear}${strengthDeltaHtml}${strengthQualHtml}</span></div>
-      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(totalStrengthMinYear / numSWeeks / 60, 1)} <small style="font-size:.9rem;color:var(--text-dim)">hrs</small></span><span class="stat-sub">${(totalStrengthMinYear / 60).toFixed(1)} hrs ${thisYear}</span></div>
-      <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value blue">${summary?.current_strength_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${summary?.longest_strength_weekly_streak ?? '—'} wks</span></div>
+      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value blue">${fmt(st.avg_sessions_per_week, 1)}</span><span class="stat-sub">${st.sessions_this_year} sessions ${m.this_year}${strengthDeltaHtml}${strengthQualHtml}</span></div>
+      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(st.avg_hours_per_week, 1)} <small style="font-size:.9rem;color:var(--text-dim)">hrs</small></span><span class="stat-sub">${fmt(st.total_hours_this_year, 1)} hrs ${m.this_year}</span></div>
+      <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value blue">${st.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${st.longest_weekly_streak ?? '—'} wks</span></div>
     </div>
-    ${stepsRowResolved}
+    ${stepsRow}
     <div class="overview-full">
       <div class="overview-label intensity" style="grid-column:1/-1">Intensity Minutes</div>
-      <div class="stat"><span class="stat-label">Avg / week (${thisYear})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(avgActivityMinsPerWeek)}</span><span class="stat-sub">${fmtHrs(totalRunMinsYear / numRunWeeks)} run · ${fmtHrs(totalStrengthMinYear / numSWeeks)} lift</span></div>
-      <div class="stat"><span class="stat-label">Avg / week (${thisMonth})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(avgActivityMinsPerWeekMonth)}</span><span class="stat-sub">${fmtHrs(monthRunMins / numMonthRunWeeks)} run · ${fmtHrs(monthStrengthMins / numMonthStrengthWeeks)} lift${intensityDeltaHtml}${intensityQualHtml}</span></div>
-      <div class="stat"><span class="stat-label">Streak vs ${INTENSITY_GOAL_MINS}min goal</span><span class="stat-value" style="color:var(--intensity)">${intensityStreak} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${bestIntensityStreak} wks</span></div>
+      <div class="stat"><span class="stat-label">Avg / week (${m.this_year})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(iv.avg_week_year_mins)}</span><span class="stat-sub">${fmtHrs(iv.avg_week_year_run_mins)} run · ${fmtHrs(iv.avg_week_year_lift_mins)} lift</span></div>
+      <div class="stat"><span class="stat-label">Avg / week (${m.this_month_short})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(iv.avg_week_month_mins)}</span><span class="stat-sub">${fmtHrs(iv.avg_week_month_run_mins)} run · ${fmtHrs(iv.avg_week_month_lift_mins)} lift${intensityDeltaHtml}${intensityQualHtml}</span></div>
+      <div class="stat"><span class="stat-label">Streak vs ${iv.goal_mins}min goal</span><span class="stat-value" style="color:var(--intensity)">${iv.streak_weeks} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${iv.best_streak_weeks} wks</span></div>
     </div>
-    ${recoveryRowResolved}
+    ${recoveryRow}
   `;
   app.appendChild(overviewBlock);
-
-  // ── Week map (needed before charts) ──────────────────────────────────────────
-  const weekMap = {};
-  runsComplete.forEach(r => { const wk = isoWeek(r.date); if (!weekMap[wk]) weekMap[wk] = { dist: 0 }; weekMap[wk].dist += parseFloat(r.distance_km) || 0; });
-  const weekKeys = Object.keys(weekMap).sort().slice(-16);
-  const monthNamesShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-  // ── sWeekMap (needed before charts) ──────────────────────────────────────────
-  const sWeekMap = {};
-  sessionsComplete.forEach(s => { const wk = isoWeek(s.date); if (!sWeekMap[wk]) sWeekMap[wk] = { count: 0 }; sWeekMap[wk].count++; });
-
-  // ── Combined week data ────────────────────────────────────────────────────────
-  const allWeekSet = new Set([...Object.keys(weekMap), ...Object.keys(sWeekMap)]);
-  const combinedWeekKeys = [...allWeekSet].sort().slice(-16);
-  const combinedRunDist = combinedWeekKeys.map(k => parseFloat((weekMap[k]?.dist || 0).toFixed(1)));
-  const combinedStrSess = combinedWeekKeys.map(k => sWeekMap[k]?.count || 0);
-  const combinedLabels = combinedWeekKeys.map(k => k.split('-')[1]);
-  const combinedMonthBoundary = combinedWeekKeys.map((k, i) => { if (i === 0) return false; return weekStartDate(k).getMonth() !== weekStartDate(combinedWeekKeys[i-1]).getMonth(); });
-  const combinedMonthLabel = combinedWeekKeys.map(k => monthNamesShort[weekStartDate(k).getMonth()]);
-  const maxDist = Math.max(...combinedRunDist, 1);
-  const maxSess = Math.max(...combinedStrSess, 1);
-
-  // ── Annual data (needed before charts) ───────────────────────────────────────
-  const prevYearDist = summary?.total_distance_prev_year_km ?? null;
-  const targetKm = prevYearDist && prevYearDist > 0 ? prevYearDist : 2000;
-  const targetLabel = prevYearDist && prevYearDist > 0 ? `vs ${today.getFullYear() - 1} total (${fmt(targetKm, 0)} km)` : 'Progress to 2,000 km';
-  const rawPct = (yearDist / targetKm) * 100;
-  const displayPct = Math.min(rawPct, 130);
-  const isOverflow = yearDist > targetKm;
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const monthDist = Array(12).fill(0);
-  yearRuns.forEach(r => { const mo = parseLocalDate(r.date).getMonth(); monthDist[mo] += parseFloat(r.distance_km) || 0; });
-  const currentMonth = today.getMonth();
-  const monthLabels = months.slice(0, currentMonth + 1);
-  const monthData = monthDist.slice(0, currentMonth + 1);
-  const prevYear = (today.getFullYear() - 1).toString();
-  const monthStrength = Array(12).fill(0);
-  yearSessions.forEach(s => { const mo = parseLocalDate(s.date).getMonth(); monthStrength[mo]++; });
-  const monthStrengthData = monthStrength.slice(0, currentMonth + 1);
-  const totalStrengthThisYear = yearSessions.length;
-  const totalStrengthPrevYear = sessions.filter(s => s.date.startsWith(prevYear)).length;
-  const strengthPct = totalStrengthPrevYear > 0 ? Math.round((totalStrengthThisYear / totalStrengthPrevYear) * 100) : null;
-  const strengthOverflow = totalStrengthPrevYear > 0 && totalStrengthThisYear > totalStrengthPrevYear;
-  const strengthDisplayPct = strengthPct !== null ? Math.min(strengthPct, 130) : 0;
 
   // ── 16-week chart card ────────────────────────────────────────────────────────
   const comparisonGrid = document.createElement('div');
@@ -584,39 +279,41 @@ async function init() {
   comparisonGrid.innerHTML = `<div class="card-title">Weekly distance & strength — last 16 weeks</div><div class="chart-wrap"><canvas id="optionAChart"></canvas></div>`;
   app.appendChild(comparisonGrid);
 
-  // ── Annual chart card (right after 16-week) ───────────────────────────────────
+  // ── Annual chart card ────────────────────────────────────────────────────────
+  const ca = m.chart_annual;
   const grid1 = document.createElement('div');
   grid1.className = 'card';
   grid1.innerHTML = `
-    <div class="card-title">Distance & strength sessions ${thisYear}</div>
+    <div class="card-title">Distance & strength sessions ${m.this_year}</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
       <div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.25rem">
-          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">${targetLabel}</span>
-          <span style="font-family:var(--font-display);font-size:1.4rem;color:${isOverflow ? 'var(--accent2)' : 'var(--accent)'}">${fmt(rawPct, 0)}%</span>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">${ca.target_label}</span>
+          <span style="font-family:var(--font-display);font-size:1.4rem;color:${ca.is_overflow ? 'var(--accent2)' : 'var(--accent)'}">${fmt(ca.raw_pct, 0)}%</span>
         </div>
-        <div class="year-bar-track"><div class="year-bar-fill${isOverflow ? ' overflow' : ''}" style="width:${displayPct}%"></div></div>
-        <div class="year-bar-labels"><span>${fmt(yearDist, 0)} km done</span><span>${isOverflow ? '+' + fmt(yearDist - targetKm, 0) + ' km ahead' : fmt(targetKm - yearDist, 0) + ' km to go'}</span></div>
+        <div class="year-bar-track"><div class="year-bar-fill${ca.is_overflow ? ' overflow' : ''}" style="width:${ca.display_pct}%"></div></div>
+        <div class="year-bar-labels"><span>${fmt(ca.year_dist_km, 0)} km done</span><span>${ca.is_overflow ? '+' + fmt(ca.km_to_target_km, 0) + ' km ahead' : fmt(ca.km_to_target_km, 0) + ' km to go'}</span></div>
       </div>
       <div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.25rem">
-          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">${totalStrengthPrevYear > 0 ? `vs ${prevYear} total (${totalStrengthPrevYear} sessions)` : 'Sessions this year'}</span>
-          <span style="font-family:var(--font-display);font-size:1.4rem;color:${strengthOverflow ? 'var(--accent2)' : 'var(--strength)'}">${strengthPct !== null ? strengthPct + '%' : totalStrengthThisYear}</span>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">${ca.strength_target_label}</span>
+          <span style="font-family:var(--font-display);font-size:1.4rem;color:${ca.strength_overflow ? 'var(--accent2)' : 'var(--strength)'}">${ca.strength_pct !== null ? ca.strength_pct + '%' : ca.strength_sessions_done}</span>
         </div>
-        <div class="year-bar-track"><div class="year-bar-fill${strengthOverflow ? ' overflow' : ''}" style="width:${strengthDisplayPct}%;background:var(--strength)"></div></div>
-        <div class="year-bar-labels"><span>${totalStrengthThisYear} sessions done</span><span>${totalStrengthPrevYear > 0 ? (strengthOverflow ? '+' + (totalStrengthThisYear - totalStrengthPrevYear) + ' ahead' : (totalStrengthPrevYear - totalStrengthThisYear) + ' to match') : ''}</span></div>
+        <div class="year-bar-track"><div class="year-bar-fill${ca.strength_overflow ? ' overflow' : ''}" style="width:${ca.strength_display_pct}%;background:var(--strength)"></div></div>
+        <div class="year-bar-labels"><span>${ca.strength_sessions_done} sessions done</span><span>${ca.strength_sessions_to_match !== null ? (ca.strength_overflow ? '+' + Math.abs(ca.strength_sessions_to_match) + ' ahead' : ca.strength_sessions_to_match + ' to match') : ''}</span></div>
       </div>
     </div>
     <div class="chart-wrap" style="height:200px"><canvas id="monthChart"></canvas></div>
   `;
   app.appendChild(grid1);
 
+  // ── LT card ───────────────────────────────────────────────────────────────────
   const ltCard = document.createElement('div');
   ltCard.className = 'card';
-  if (latestLT) {
-    const zonesHtml = zones ? zones.map(z => `<div class="zone"><span class="zone-name">${z.name}</span><div class="zone-bar-track"><div class="zone-bar-fill" style="width:${z.pct}%;background:${z.color}"></div></div><span class="zone-pace">${z.pace}${z.hr ? ' · ' + z.hr : ''}</span></div>`).join('') : '';
-    const ltTrendHtml = ltData.length > 1 ? `<div class="chart-wrap" style="height:100px;margin-top:1rem"><canvas id="ltChart"></canvas></div>` : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:1rem">Trend builds daily — check back soon.</p>`;
-    ltCard.innerHTML = `<div class="card-title">Lactate threshold</div><div class="lt-grid"><div class="lt-values"><div class="lt-main"><span class="lt-label">LT pace</span><span class="lt-pace">${latestLT.lt_pace} /km</span><span class="lt-hr">@ ${latestLT.lt_hr} bpm · ${latestLT.lt_source_date ?? latestLT.date}</span></div></div><div><div class="lt-label" style="margin-bottom:0.75rem">Training zones</div><div class="zones">${zonesHtml}</div></div></div>${ltTrendHtml}`;
+  if (m.lt.latest) {
+    const zonesHtml = m.lt.zones ? m.lt.zones.map(z => `<div class="zone"><span class="zone-name">${z.name}</span><div class="zone-bar-track"><div class="zone-bar-fill" style="width:${z.pct}%;background:${z.color}"></div></div><span class="zone-pace">${z.pace_label}${z.hr_label ? ' · ' + z.hr_label : ''}</span></div>`).join('') : '';
+    const ltTrendHtml = m.lt.trend ? `<div class="chart-wrap" style="height:100px;margin-top:1rem"><canvas id="ltChart"></canvas></div>` : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:1rem">Trend builds daily — check back soon.</p>`;
+    ltCard.innerHTML = `<div class="card-title">Lactate threshold</div><div class="lt-grid"><div class="lt-values"><div class="lt-main"><span class="lt-label">LT pace</span><span class="lt-pace">${m.lt.latest.lt_pace} /km</span><span class="lt-hr">@ ${m.lt.latest.lt_hr} bpm · ${m.lt.latest.source_date}</span></div></div><div><div class="lt-label" style="margin-bottom:0.75rem">Training zones</div><div class="zones">${zonesHtml}</div></div></div>${ltTrendHtml}`;
   } else {
     ltCard.innerHTML = `<div class="card-title">Lactate threshold</div><p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">No valid LT reading yet — recalibrating after a data fix.</p>`;
   }
@@ -628,32 +325,32 @@ async function init() {
   calCard.id = 'calCard';
   app.appendChild(calCard);
 
+  const runDatesSet = new Set(m.calendar.run_dates);
+  const strengthDatesSet = new Set(m.calendar.strength_dates);
+
+  function localDateStr(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
+
   function renderCalendar(year, month) {
-    const runDates = new Set(runs.map(r => r.date));
-    const strengthDates = new Set(sessions.map(s => s.date));
     const now = new Date();
     const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     const dayLabels = ['M','T','W','T','F','S','S'];
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const startDow = (firstDay.getDay() + 6) % 7;
-    const todayStr = localDate(now);
+    const todayStr = localDateStr(now);
     const runIcon = (color = '#e8ff5a') => `<svg class="cal-icon" viewBox="0 0 14 14" fill="none"><circle cx="10" cy="3" r="1.5" fill="${color}"/><path d="M7 5.5l1.5-2 2 1-1 2.5-2.5 1L5 11H3" stroke="${color}" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 8l-2 3" stroke="${color}" stroke-width="1.2" stroke-linecap="round"/></svg>`;
     const strengthIcon = (color = '#4a9eff') => `<svg class="cal-icon" viewBox="0 0 14 14" fill="none"><rect x="1" y="6" width="2" height="3" rx="0.5" fill="${color}"/><rect x="11" y="6" width="2" height="3" rx="0.5" fill="${color}"/><rect x="3" y="5" width="2" height="5" rx="0.5" fill="${color}"/><rect x="9" y="5" width="2" height="5" rx="0.5" fill="${color}"/><rect x="5" y="6.5" width="4" height="2" rx="0.5" fill="${color}"/></svg>`;
     let dayCells = '';
-    // Leading blank cells so day 1 lands in the correct weekday column.
-    for (let i = 0; i < startDow; i++) {
-      dayCells += `<div class="cal-day"></div>`;
-    }
+    for (let i = 0; i < startDow; i++) dayCells += `<div class="cal-day"></div>`;
     const calRows = [];
     let currentRow = [];
     for (let i = 0; i < startDow; i++) currentRow.push(null);
     for (let d = 1; d <= lastDay.getDate(); d++) {
-      const dateStr = localDate(new Date(year, month, d));
+      const dateStr = localDateStr(new Date(year, month, d));
       const isToday = dateStr === todayStr;
       const isFuture = dateStr > todayStr;
-      const hasRun = runDates.has(dateStr);
-      const hasStrength = strengthDates.has(dateStr);
+      const hasRun = runDatesSet.has(dateStr);
+      const hasStrength = strengthDatesSet.has(dateStr);
       const hasActivity = hasRun || hasStrength;
       const cls = ['cal-day', isToday ? 'today' : '', isFuture ? 'future' : '', hasActivity ? 'has-activity' : ''].filter(Boolean).join(' ');
       dayCells += `<div class="${cls}"><div class="cal-day-num">${d}</div>${hasActivity ? `<div class="cal-icons">${hasRun ? runIcon() : ''}${hasStrength ? strengthIcon() : ''}</div>` : ''}</div>`;
@@ -661,72 +358,72 @@ async function init() {
       if (currentRow.length === 7) { calRows.push([...currentRow]); currentRow = []; }
     }
     if (currentRow.length > 0) { while (currentRow.length < 7) currentRow.push(null); calRows.push([...currentRow]); }
-    const streakCol = calRows.map(row => row.filter(Boolean).some(d => runDates.has(d)));
+    const streakCol = calRows.map(row => row.filter(Boolean).some(d => runDatesSet.has(d)));
     const todayRowIdx = calRows.findIndex(row => row.includes(todayStr));
-    const currentStreak = summary?.current_weekly_streak ?? 0;
+    const currentStreak = m.running.current_weekly_streak ?? 0;
     const rowsHtml = calRows.map((row, ri) => { const isCurrentRow = ri === todayRowIdx; const done = streakCol[ri]; const streakCell = isCurrentRow ? `<div class="streak-week current-fire">🔥</div>` : `<div class="streak-week ${done ? 'done' : 'empty'}">${done ? '✓' : ''}</div>`; return `<div class="cal-row-wrap">${streakCell}</div>`; }).join('');
     calCard.innerHTML = `<div class="card-title">Activity calendar</div><div class="cal-header"><div class="cal-title">${monthNames[month]} ${year}</div><div class="cal-nav"><button id="calPrev">‹</button><button id="calNext">›</button></div></div><div class="cal-with-streak"><div class="cal-grid">${dayLabels.map(l => `<div class="cal-day-label">${l}</div>`).join('')}${dayCells}</div><div class="streak-col"><div class="streak-col-spacer"></div>${rowsHtml}<div class="streak-total"><div class="streak-count">${currentStreak}</div><div class="streak-label">wks</div></div></div></div>`;
     $('calPrev').onclick = () => { if (month === 0) renderCalendar(year - 1, 11); else renderCalendar(year, month - 1); };
     $('calNext').onclick = () => { const n = new Date(); const maxY = n.getFullYear(), maxM = n.getMonth(); if (year < maxY || (year === maxY && month < maxM)) month === 11 ? renderCalendar(year + 1, 0) : renderCalendar(year, month + 1); };
   }
-  renderCalendar(today.getFullYear(), today.getMonth());
+  const todayForCal = new Date();
+  renderCalendar(todayForCal.getFullYear(), todayForCal.getMonth());
 
-  // ── Running section ───────────────────────────────────────────────────────────
+  // ── Running section: PBs ─────────────────────────────────────────────────────
   const runHeading = document.createElement('div');
   runHeading.className = 'section-heading';
   runHeading.textContent = 'Running';
   app.appendChild(runHeading);
 
-  const efforts = calcBestEfforts(runsComplete.filter(r => r.type === 'outdoor'));
   const effortsCard = document.createElement('div');
   effortsCard.className = 'card';
-  const ltGapCategories = new Set(['10 km', 'Half']);
-  const ltPaceSecForGap = latestLT ? paceToSec(latestLT.lt_pace) : null;
-  effortsCard.innerHTML = `<div class="card-title">Personal bests — by distance category</div><div class="efforts-grid">${efforts.map(e => {
+  effortsCard.innerHTML = `<div class="card-title">Personal bests — by distance category</div><div class="efforts-grid">${m.pbs.map(pb => {
     let gapHtml = '';
-    if (ltGapCategories.has(e.label) && ltPaceSecForGap && e.pace !== '—') {
-      const pbSec = paceToSec(e.pace.replace(' /km', ''));
-      if (pbSec) {
-        const gapSec = ltPaceSecForGap - pbSec; // positive: PB faster than current threshold (expected/normal)
-        const gapHtml_ = `${gapSec >= 0 ? '+' : ''}${gapSec}s/km`;
-        gapHtml = `<div class="effort-sub" style="margin-top:0.2rem">Current LT: ${latestLT.lt_pace}/km · Gap: ${gapHtml_}</div>`;
-      }
+    if (pb.lt_gap_sec !== null && pb.lt_gap_sec !== undefined && m.lt.latest) {
+      const sign = pb.lt_gap_sec >= 0 ? '+' : '';
+      gapHtml = `<div class="effort-sub" style="margin-top:0.2rem">Current LT: ${m.lt.latest.lt_pace}/km · Gap: ${sign}${pb.lt_gap_sec}s/km</div>`;
     }
-    return `<div class="effort"><div class="effort-label">${e.label}</div><div class="effort-value">${e.pace}</div><div class="effort-detail">${e.time} · ${e.dist}</div><div class="effort-sub">${escapeHtml(e.name)}</div><div class="effort-date">${e.date ?? ''}</div>${gapHtml}</div>`;
+    const paceLabel = pb.pace ? `${pb.pace} /km` : '—';
+    const timeLabel = fmtDuration(pb.time);
+    const distLabel = pb.dist !== null && pb.dist !== undefined ? `${fmt(pb.dist, 1)} km` : '—';
+    return `<div class="effort"><div class="effort-label">${pb.label}</div><div class="effort-value">${paceLabel}</div><div class="effort-detail">${timeLabel} · ${distLabel}</div><div class="effort-sub">${escapeHtml(pb.name || (pb.pace ? '' : 'no data yet'))}</div><div class="effort-date">${pb.date ?? ''}</div>${gapHtml}</div>`;
   }).join('')}</div>`;
   app.appendChild(effortsCard);
 
   // ── Render charts ─────────────────────────────────────────────────────────────
   requestAnimationFrame(() => {
+    const monthData = ca.month_distance_km;
+    const monthStrengthData = ca.month_strength_sessions;
     const maxMonthDist = Math.max(...monthData, 1);
     const maxMonthStr = Math.max(...monthStrengthData, 1);
 
     new Chart($('monthChart'), {
       type: 'bar',
-      data: { labels: monthLabels, datasets: [
-        { type: 'line', label: 'Distance (km)', data: monthData.map(v => parseFloat(v.toFixed(1))), borderColor: 'rgba(232,255,90,0.9)', backgroundColor: 'rgba(232,255,90,0.08)', pointBackgroundColor: monthData.map((_, i) => i === currentMonth ? 'rgba(255,107,53,1)' : 'rgba(232,255,90,0.9)'), pointBorderColor: 'transparent', pointRadius: 4, borderWidth: 2, tension: 0.35, fill: true, yAxisID: 'yDist', order: 1 },
-        { type: 'bar', label: 'Strength sessions', data: monthStrengthData, backgroundColor: monthStrengthData.map((_, i) => i === currentMonth ? 'rgba(74,158,255,0.7)' : 'rgba(74,158,255,0.25)'), borderRadius: 2, yAxisID: 'yStr', order: 2 }
+      data: { labels: ca.month_labels, datasets: [
+        { type: 'line', label: 'Distance (km)', data: monthData, borderColor: 'rgba(232,255,90,0.9)', backgroundColor: 'rgba(232,255,90,0.08)', pointBackgroundColor: monthData.map((_, i) => i === ca.current_month_index ? 'rgba(255,107,53,1)' : 'rgba(232,255,90,0.9)'), pointBorderColor: 'transparent', pointRadius: 4, borderWidth: 2, tension: 0.35, fill: true, yAxisID: 'yDist', order: 1 },
+        { type: 'bar', label: 'Strength sessions', data: monthStrengthData, backgroundColor: monthStrengthData.map((_, i) => i === ca.current_month_index ? 'rgba(74,158,255,0.7)' : 'rgba(74,158,255,0.25)'), borderRadius: 2, yAxisID: 'yStr', order: 2 }
       ] },
       options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 14 } }, scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, yDist: { type: 'linear', position: 'left', grid: { color: '#1f1f24' }, ticks: { color: '#e8ff5a', callback: v => `${v}km` }, min: 0, max: Math.ceil(maxMonthDist * 1.2) }, yStr: { type: 'linear', position: 'right', grid: { display: false }, ticks: { color: '#4a9eff', stepSize: 1, callback: v => Number.isInteger(v) ? `${v}s` : '' }, min: 0, max: Math.max(maxMonthStr + 1, 4) } }, plugins: { legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1, titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 10, callbacks: { label: ctx => ctx.dataset.yAxisID === 'yDist' ? ` ${ctx.parsed.y} km` : ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}` } } } }
     });
 
+    const c16 = m.chart_16wk;
+    const maxDist = Math.max(...c16.distance_km, 1);
+    const maxSess = Math.max(...c16.strength_sessions, 1);
     const makeMonthPlugin = (id, boundaries, labels) => ({ id, afterDraw(chart) { const { ctx, chartArea, scales } = chart; ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.setLineDash([3,3]); ctx.font = '9px "DM Mono", monospace'; ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.textAlign = 'left'; boundaries.forEach((isBoundary, i) => { if (isBoundary) { const x = scales.x.getPixelForValue(i) - (scales.x.getPixelForValue(1) - scales.x.getPixelForValue(0)) / 2; ctx.beginPath(); ctx.moveTo(x, chartArea.top); ctx.lineTo(x, chartArea.bottom); ctx.stroke(); ctx.setLineDash([]); ctx.fillText(labels[i], x + 4, chartArea.top + 10); ctx.setLineDash([3,3]); } }); ctx.restore(); } });
 
     new Chart($('optionAChart'), {
       type: 'bar',
-      data: { labels: combinedLabels, datasets: [
-        { type: 'line', label: 'Distance (km)', data: combinedRunDist, borderColor: 'rgba(232,255,90,0.9)', backgroundColor: 'rgba(232,255,90,0.12)', pointBackgroundColor: combinedRunDist.map((_, i) => i === combinedRunDist.length-1 ? 'rgba(255,107,53,1)' : 'rgba(232,255,90,0.9)'), pointBorderColor: 'transparent', pointRadius: 3, borderWidth: 2, tension: 0.35, fill: true, yAxisID: 'yRun', order: 1 },
-        { type: 'bar', label: 'Strength sessions', data: combinedStrSess, backgroundColor: combinedStrSess.map((_, i) => i === combinedStrSess.length-1 ? 'rgba(74,158,255,0.7)' : 'rgba(74,158,255,0.3)'), borderRadius: 2, yAxisID: 'yStr', order: 2 }
+      data: { labels: c16.labels, datasets: [
+        { type: 'line', label: 'Distance (km)', data: c16.distance_km, borderColor: 'rgba(232,255,90,0.9)', backgroundColor: 'rgba(232,255,90,0.12)', pointBackgroundColor: c16.distance_km.map((_, i) => i === c16.distance_km.length-1 ? 'rgba(255,107,53,1)' : 'rgba(232,255,90,0.9)'), pointBorderColor: 'transparent', pointRadius: 3, borderWidth: 2, tension: 0.35, fill: true, yAxisID: 'yRun', order: 1 },
+        { type: 'bar', label: 'Strength sessions', data: c16.strength_sessions, backgroundColor: c16.strength_sessions.map((_, i) => i === c16.strength_sessions.length-1 ? 'rgba(74,158,255,0.7)' : 'rgba(74,158,255,0.3)'), borderRadius: 2, yAxisID: 'yStr', order: 2 }
       ] },
       options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 14 } }, scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, yRun: { type: 'linear', position: 'left', grid: { color: '#1f1f24' }, ticks: { color: '#e8ff5a', callback: v => `${v}km` }, min: 0, max: Math.ceil(maxDist * 1.15) }, yStr: { type: 'linear', position: 'right', grid: { display: false }, ticks: { color: '#4a9eff', stepSize: 1, callback: v => Number.isInteger(v) ? `${v}s` : '' }, min: 0, max: Math.max(maxSess + 1, 4) } }, plugins: { legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1, titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 10, callbacks: { label: ctx => ctx.dataset.yAxisID === 'yRun' ? ` ${ctx.parsed.y} km` : ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}` } } } },
-      plugins: [makeMonthPlugin('optionAMonthLines', combinedMonthBoundary, combinedMonthLabel)]
+      plugins: [makeMonthPlugin('optionAMonthLines', c16.month_boundaries, c16.month_labels)]
     });
 
-    if ($('ltChart') && ltData.length > 1) {
-      const ltSorted = [...ltData].sort((a, b) => a.date.localeCompare(b.date));
-      const ltSecs = ltSorted.map(r => paceToSec(r.lt_pace));
-      const ltTrend = linearTrend(ltSecs);
-      new Chart($('ltChart'), { type: 'line', data: { labels: ltSorted.map(r => r.date.slice(5)), datasets: [ { data: ltSecs, borderColor: 'rgba(232,255,90,0.8)', backgroundColor: 'rgba(232,255,90,0.06)', pointBackgroundColor: 'rgba(232,255,90,0.9)', pointRadius: 4, tension: 0.3, fill: true }, { data: ltTrend, borderColor: 'rgba(255,107,53,0.7)', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0 } ] }, options: { ...chartOpts(), scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, y: { reverse: true, grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', callback: v => secToPace(v) } } }, plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` LT pace: ${secToPace(ctx.parsed.y)} /km` : ` Trend` } } } } });
+    if ($('ltChart') && m.lt.trend) {
+      const t = m.lt.trend;
+      new Chart($('ltChart'), { type: 'line', data: { labels: t.labels, datasets: [ { data: t.pace_sec, borderColor: 'rgba(232,255,90,0.8)', backgroundColor: 'rgba(232,255,90,0.06)', pointBackgroundColor: 'rgba(232,255,90,0.9)', pointRadius: 4, tension: 0.3, fill: true }, { data: t.trend_sec, borderColor: 'rgba(255,107,53,0.7)', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0 } ] }, options: { ...chartOpts(), scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, y: { reverse: true, grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', callback: v => secToPace(v) } } }, plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` LT pace: ${secToPace(ctx.parsed.y)} /km` : ` Trend` } } } } });
     }
   });
 }

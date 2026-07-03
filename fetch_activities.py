@@ -473,6 +473,12 @@ if polar_token and polar_user_id:
             if e.code == 204:
                 print("Polar steps: no new activity data since last sync")
             else:
+                error_body = ""
+                try:
+                    error_body = e.read().decode("utf-8", errors="replace")
+                except Exception:
+                    pass
+                print(f"Polar steps: transaction creation failed — HTTP {e.code}: {error_body[:300]}")
                 raise
 
         if transaction_id:

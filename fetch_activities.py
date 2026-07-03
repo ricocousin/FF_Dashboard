@@ -360,10 +360,15 @@ with open(lt_file, "w", encoding="utf-8") as f:
 #   - polar_steps.csv (kept separate from iPhone-derived steps.csv so wrist
 #     vs. phone step counts can be compared on the dashboard, not silently merged)
 #
-# NOTE: Accesslink v3 endpoints below are correct as of setup (July 2026), but
-# Polar has been known to adjust response shapes — if fields come back empty,
-# check https://www.polar.com/accesslink-api/ for the current schema before
-# assuming the fetch is broken.
+# Both use simple non-transactional GET requests (token-scoped, no user-id in
+# path). The older activity-transactions create/list/commit flow is listed as
+# deprecated in Polar's current docs (polar.com/accesslink-api) and was the
+# source of repeated, unexplained HTTP 405 errors — switched away from it
+# July 2026 in favor of GET /v3/users/activities.
+#
+# NOTE: Polar has been known to adjust response shapes over time — if fields
+# come back empty, check https://www.polar.com/accesslink-api/ for the
+# current schema before assuming the fetch is broken.
 
 polar_token = os.environ.get("POLAR_ACCESS_TOKEN", "")
 polar_user_id = os.environ.get("POLAR_USER_ID", "")
@@ -408,18 +413,6 @@ def polar_get(url):
         _log_polar_http_error(f"GET {url}", e)
         raise
 
-def polar_delete(url):
-    req = urllib.request.Request(
-        url,
-        headers={"Authorization": f"Bearer {polar_token}"},
-        method="DELETE"
-    )
-    try:
-        urllib.request.urlopen(req, timeout=30)
-    except urllib.error.HTTPError as e:
-        _log_polar_http_error(f"DELETE {url}", e)
-        raise
-
 if polar_token and polar_user_id:
     # ── Sleep ──────────────────────────────────────────────────────────────
     try:
@@ -457,7 +450,11 @@ if polar_token and polar_user_id:
     except Exception as e:
         print(f"Polar sleep fetch skipped: {e}")
 
-    # ── Steps (via activity transactions) ─────────────────────────────────
+    # ── Steps (via /v3/users/activities — non-transactional) ────────────────
+    # NOTE: the old create/list/commit "activity-transactions" flow is listed
+    # as deprecated in Polar's current API docs (polar.com/accesslink-api) and
+    # was the source of repeated, unexplained 405 errors. This endpoint mirrors
+    # the sleep fetch above — simple GET, token-scoped, no transaction needed.
     try:
         existing_polar_steps = {}
         if os.path.exists("polar_steps.csv"):
@@ -466,58 +463,16 @@ if polar_token and polar_user_id:
                     if row.get("date"):
                         existing_polar_steps[row["date"]] = int(row.get("steps") or 0)
 
-        tx_url = f"https://www.polaraccesslink.com/v3/users/{polar_user_id}/activity-transactions"
-        req = urllib.request.Request(
-            tx_url,
-            data=b"",
-            headers={
-                "Authorization": f"Bearer {polar_token}",
-                "Accept": "application/json",
-                "Content-Length": "0"
-            },
-            method="POST"
-        )
-        transaction_id = None
-        try:
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                if resp.status == 201:
-                    tx_data = json.loads(resp.read().decode("utf-8"))
-                    transaction_id = tx_data.get("transaction-id")
-                    print(f"Polar steps: transaction created ({transaction_id})")
-                elif resp.status == 204:
-                    print("Polar steps: no new activity data available (204 — device may not have synced recently)")
-        except urllib.error.HTTPError as e:
-            if e.code == 204:
-                print("Polar steps: no new activity data since last sync")
-            else:
-                error_body = ""
-                try:
-                    error_body = e.read().decode("utf-8", errors="replace")
-                except Exception:
-                    pass
-                print(f"Polar steps: transaction creation failed — HTTP {e.code}: {error_body[:300]}")
-                raise
+        activities = polar_get("https://www.polaraccesslink.com/v3/users/activities") or []
 
-        if transaction_id:
-            tx_detail_url = f"{tx_url}/{transaction_id}"
-            tx_detail = polar_get(tx_detail_url) or {}
-            activity_urls = tx_detail.get("activity-log", [])
-
-            new_step_count = 0
-            for act_url in activity_urls:
-                try:
-                    day = polar_get(act_url) or {}
-                    date = day.get("date", "")
-                    steps = day.get("active-steps", day.get("steps"))
-                    if date and steps is not None:
-                        existing_polar_steps[date] = int(steps)
-                        new_step_count += 1
-                except Exception as inner_e:
-                    print(f"  Skipped one Polar activity record: {inner_e}")
-
-            # Commit the transaction so these records aren't re-served next run
-            polar_delete(tx_detail_url)
-            print(f"Polar steps: {new_step_count} day(s) updated via transaction {transaction_id}")
+        new_step_count = 0
+        for act in activities:
+            start_time = act.get("start_time", "")
+            date = start_time[:10] if start_time else ""
+            steps = act.get("steps")
+            if date and steps is not None:
+                existing_polar_steps[date] = int(steps)
+                new_step_count += 1
 
         with open("polar_steps.csv", "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=["date", "steps"])
@@ -525,7 +480,7 @@ if polar_token and polar_user_id:
             for date in sorted(existing_polar_steps.keys(), reverse=True):
                 writer.writerow({"date": date, "steps": existing_polar_steps[date]})
 
-        print(f"polar_steps.csv: {len(existing_polar_steps)} total days")
+        print(f"Polar steps: {new_step_count} day(s) fetched, {len(existing_polar_steps)} total in polar_steps.csv")
     except Exception as e:
         print(f"Polar steps fetch skipped: {e}")
 else:
@@ -923,3 +878,4 @@ print(f"  MTD: ${mtd_cost_usd:.5f} / {mtd_cost_dkk:.4f} kr")
 print(f"  YTD: ${ytd_cost_usd:.5f} / {ytd_cost_dkk:.4f} kr")
 print(f"  Headline: {coach_headline[:120]}")
 print(f"  Watch items: {len(coach_watch_items)}")
+

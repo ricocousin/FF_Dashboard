@@ -569,11 +569,22 @@ if os.path.exists("polar_steps.csv"):
                 polar_steps_data_for_coach[row["date"]] = int(row.get("steps") or 0)
 
 steps_data = {}
+# If the two sources disagree by more than 50%, blindly averaging produces a
+# number that doesn't represent either reading well — most likely one device
+# wasn't worn for the full day (left charging, forgotten, etc.) rather than
+# both being equally valid partial counts. Use the larger (more complete)
+# reading instead of averaging on those days.
+STEPS_DISAGREEMENT_THRESHOLD = 0.5
 for d in set(list(iphone_steps_data.keys()) + list(polar_steps_data_for_coach.keys())):
     iphone_val = iphone_steps_data.get(d)
     polar_val = polar_steps_data_for_coach.get(d)
     if iphone_val and polar_val:
-        steps_data[d] = round((iphone_val + polar_val) / 2)
+        larger = max(iphone_val, polar_val)
+        disagreement = abs(iphone_val - polar_val) / larger if larger else 0
+        if disagreement > STEPS_DISAGREEMENT_THRESHOLD:
+            steps_data[d] = larger
+        else:
+            steps_data[d] = round((iphone_val + polar_val) / 2)
     elif iphone_val:
         steps_data[d] = iphone_val
     elif polar_val:
@@ -925,7 +936,7 @@ EVIDENCE:
 The AVAILABLE EVIDENCE list below (in the data section) is numbered. Write ONLY the numbers of items that genuinely support the headline and summary you wrote — one number per line, nothing else on that line (no text, no restating the item). Select as many or as few as are genuinely relevant, in any order — there is no fixed count. If nothing in the list meaningfully supports today's story, write a single line: "0"
 
 WATCH:
-2–4 short bullet points (one per line, starting with "- ") naming specific things worth paying attention to over the coming week — not prescribed workouts or mileage targets, since the training programme is already structured elsewhere. Frame these as things to observe or monitor, e.g. "Watch whether easy-run HR continues to decline." / "Sleep quality may become more important after the long run." If there is nothing meaningfully worth flagging this week, write a single line: "- Nothing notable to flag this week — steady state."
+2–4 short bullet points (one per line, starting with "- ") naming specific things worth paying attention to over the coming week — not prescribed workouts or mileage targets, since the training programme is already structured elsewhere. Frame these as things to observe or monitor, e.g. "Watch whether easy-run HR continues to decline." / "Sleep quality may become more important after the long run." Do NOT cite specific numbers here (no "157 to 147", no "4:24/km") — WATCH items are directional and forward-looking only; exact figures belong in EVIDENCE. If there is nothing meaningfully worth flagging this week, write a single line: "- Nothing notable to flag this week — steady state."
 
 Do not add any text outside these four sections, and use the exact delimiter labels (HEADLINE:, SUMMARY:, EVIDENCE:, WATCH:) on their own lines."""
 

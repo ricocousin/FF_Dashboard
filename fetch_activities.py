@@ -382,6 +382,14 @@ def _sleep_duration_min(start_iso, end_iso):
     except Exception:
         return ""
 
+def _log_polar_http_error(context, e):
+    error_body = ""
+    try:
+        error_body = e.read().decode("utf-8", errors="replace")
+    except Exception:
+        pass
+    print(f"Polar {context} failed — HTTP {e.code}: {error_body[:300]}")
+
 def polar_get(url):
     req = urllib.request.Request(
         url,
@@ -391,10 +399,14 @@ def polar_get(url):
         },
         method="GET"
     )
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        if resp.status == 204:
-            return None
-        return json.loads(resp.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            if resp.status == 204:
+                return None
+            return json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        _log_polar_http_error(f"GET {url}", e)
+        raise
 
 def polar_delete(url):
     req = urllib.request.Request(
@@ -402,7 +414,11 @@ def polar_delete(url):
         headers={"Authorization": f"Bearer {polar_token}"},
         method="DELETE"
     )
-    urllib.request.urlopen(req, timeout=30)
+    try:
+        urllib.request.urlopen(req, timeout=30)
+    except urllib.error.HTTPError as e:
+        _log_polar_http_error(f"DELETE {url}", e)
+        raise
 
 if polar_token and polar_user_id:
     # ── Sleep ──────────────────────────────────────────────────────────────
@@ -467,6 +483,7 @@ if polar_token and polar_user_id:
                 if resp.status == 201:
                     tx_data = json.loads(resp.read().decode("utf-8"))
                     transaction_id = tx_data.get("transaction-id")
+                    print(f"Polar steps: transaction created ({transaction_id})")
                 elif resp.status == 204:
                     print("Polar steps: no new activity data available (204 — device may not have synced recently)")
         except urllib.error.HTTPError as e:
@@ -906,4 +923,3 @@ print(f"  MTD: ${mtd_cost_usd:.5f} / {mtd_cost_dkk:.4f} kr")
 print(f"  YTD: ${ytd_cost_usd:.5f} / {ytd_cost_dkk:.4f} kr")
 print(f"  Headline: {coach_headline[:120]}")
 print(f"  Watch items: {len(coach_watch_items)}")
-

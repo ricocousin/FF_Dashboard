@@ -401,6 +401,17 @@ async function init() {
   `;
   app.appendChild(grid1);
 
+  const ltCard = document.createElement('div');
+  ltCard.className = 'card';
+  if (latestLT) {
+    const zonesHtml = zones ? zones.map(z => `<div class="zone"><span class="zone-name">${z.name}</span><div class="zone-bar-track"><div class="zone-bar-fill" style="width:${z.pct}%;background:${z.color}"></div></div><span class="zone-pace">${z.pace}${z.hr ? ' · ' + z.hr : ''}</span></div>`).join('') : '';
+    const ltTrendHtml = ltData.length > 1 ? `<div class="chart-wrap" style="height:100px;margin-top:1rem"><canvas id="ltChart"></canvas></div>` : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:1rem">Trend builds daily — check back soon.</p>`;
+    ltCard.innerHTML = `<div class="card-title">Lactate threshold</div><div class="lt-grid"><div class="lt-values"><div class="lt-main"><span class="lt-label">LT pace</span><span class="lt-pace">${latestLT.lt_pace} /km</span><span class="lt-hr">@ ${latestLT.lt_hr} bpm · ${latestLT.lt_source_date ?? latestLT.date}</span></div></div><div><div class="lt-label" style="margin-bottom:0.75rem">Training zones</div><div class="zones">${zonesHtml}</div></div></div>${ltTrendHtml}`;
+  } else {
+    ltCard.innerHTML = `<div class="card-title">Lactate threshold</div><p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">No valid LT reading yet — recalibrating after a data fix.</p>`;
+  }
+  app.appendChild(ltCard);
+
   // ── Activity calendar ─────────────────────────────────────────────────────────
   const calCard = document.createElement('div');
   calCard.className = 'card';
@@ -461,17 +472,6 @@ async function init() {
   effortsCard.className = 'card';
   effortsCard.innerHTML = `<div class="card-title">Personal bests — by distance category</div><div class="efforts-grid">${efforts.map(e => `<div class="effort"><div class="effort-label">${e.label}</div><div class="effort-value">${e.pace}</div><div class="effort-detail">${e.time} · ${e.dist}</div><div class="effort-sub">${escapeHtml(e.name)}</div><div class="effort-date">${e.date ?? ''}</div></div>`).join('')}</div>`;
   app.appendChild(effortsCard);
-
-  const ltCard = document.createElement('div');
-  ltCard.className = 'card';
-  if (latestLT) {
-    const zonesHtml = zones ? zones.map(z => `<div class="zone"><span class="zone-name">${z.name}</span><div class="zone-bar-track"><div class="zone-bar-fill" style="width:${z.pct}%;background:${z.color}"></div></div><span class="zone-pace">${z.pace}${z.hr ? ' · ' + z.hr : ''}</span></div>`).join('') : '';
-    const ltTrendHtml = ltData.length > 1 ? `<div class="chart-wrap" style="height:100px;margin-top:1rem"><canvas id="ltChart"></canvas></div>` : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:1rem">Trend builds daily — check back soon.</p>`;
-    ltCard.innerHTML = `<div class="card-title">Lactate threshold</div><div class="lt-grid"><div class="lt-values"><div class="lt-main"><span class="lt-label">LT pace</span><span class="lt-pace">${latestLT.lt_pace} /km</span><span class="lt-hr">@ ${latestLT.lt_hr} bpm · ${latestLT.lt_source_date ?? latestLT.date}</span></div></div><div><div class="lt-label" style="margin-bottom:0.75rem">Training zones</div><div class="zones">${zonesHtml}</div></div></div>${ltTrendHtml}`;
-  } else {
-    ltCard.innerHTML = `<div class="card-title">Lactate threshold</div><p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">No valid LT reading yet — recalibrating after a data fix.</p>`;
-  }
-  app.appendChild(ltCard);
 
   // ── Render charts ─────────────────────────────────────────────────────────────
   requestAnimationFrame(() => {

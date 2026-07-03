@@ -679,7 +679,22 @@ def _trend_arrow(delta, threshold=0.0001):
         return "▼"
     return "▬"
 
+def _priority_tier(abs_delta, high, medium):
+    """Magnitude-based tier, computed purely from the delta size — not the LLM.
+    Same reasoning as the confidence score: no calibrated self-rating available,
+    so 'importance' is inferred deterministically from how large the change
+    actually is on that metric's own scale."""
+    if abs_delta >= high:
+        return "High"
+    elif abs_delta >= medium:
+        return "Medium"
+    return "Low"
+
 def build_evidence_catalog():
+    # Each item: (text, priority). Priority thresholds are per-metric because
+    # "meaningful" looks different on each scale (5s/km on LT vs 5 steps/day
+    # are not comparable magnitudes) — same principle as the dashboard's
+    # qualitative-label thresholds.
     items = []
 
     # LT pace vs 30 days ago
@@ -689,20 +704,24 @@ def build_evidence_catalog():
         if latest_sec is not None and baseline_sec is not None:
             delta_sec = baseline_sec - latest_sec  # positive = faster (fewer seconds)
             arrow = _trend_arrow(delta_sec)
-            items.append(f"{arrow} LT pace {'improved' if delta_sec > 0 else 'slowed' if delta_sec < 0 else 'unchanged'} "
-                         f"{abs(delta_sec)}s/km over 30 days ({baseline_lt['lt_pace']} → {latest_lt['lt_pace']}/km)")
+            text = (f"{arrow} LT pace {'improved' if delta_sec > 0 else 'slowed' if delta_sec < 0 else 'unchanged'} "
+                    f"{abs(delta_sec)}s/km over 30 days ({baseline_lt['lt_pace']} → {latest_lt['lt_pace']}/km)")
+            items.append((text, _priority_tier(abs(delta_sec), high=5, medium=2)))
 
     # Weekly volume vs prior 4-week block
     if prior_dist > 0:
         vol_delta_pct = ((recent_dist - prior_dist) / prior_dist) * 100
         arrow = _trend_arrow(recent_dist - prior_dist, threshold=1)
-        items.append(f"{arrow} 4-week volume {recent_dist:.0f} km vs {prior_dist:.0f} km prior block "
-                     f"({vol_delta_pct:+.0f}%)")
+        text = (f"{arrow} 4-week volume {recent_dist:.0f} km vs {prior_dist:.0f} km prior block "
+                f"({vol_delta_pct:+.0f}%)")
+        items.append((text, _priority_tier(abs(vol_delta_pct), high=15, medium=5)))
 
-    # Current weekly streak length
+    # Current weekly streak length — informational, not a magnitude-of-change
+    # metric in the same sense, so always Medium rather than High/Low.
     current_streak = summary.get("current_weekly_streak")
     if current_streak:
-        items.append(f"▬ {current_streak}-week running streak (best: {summary.get('longest_weekly_streak', '?')} wks)")
+        text = f"▬ {current_streak}-week running streak (best: {summary.get('longest_weekly_streak', '?')} wks)"
+        items.append((text, "Medium"))
 
     # Sleep avg vs prior period
     prior_sleep = {d: s for d, s in sleep_data.items()
@@ -711,15 +730,19 @@ def build_evidence_catalog():
     if sleep_durations and prior_sleep_durations:
         avg_prior_sleep = sum(prior_sleep_durations) / len(prior_sleep_durations)
         avg_recent_sleep = sum(sleep_durations) / len(sleep_durations)
-        arrow = _trend_arrow(avg_recent_sleep - avg_prior_sleep, threshold=5)
+        delta_sleep = avg_recent_sleep - avg_prior_sleep
+        arrow = _trend_arrow(delta_sleep, threshold=5)
         def _fmt_hm(mins):
             return f"{int(mins) // 60}h{int(mins) % 60:02d}m"
-        items.append(f"{arrow} Sleep averaging {_fmt_hm(avg_recent_sleep)} vs {_fmt_hm(avg_prior_sleep)} prior period")
+        text = f"{arrow} Sleep averaging {_fmt_hm(avg_recent_sleep)} vs {_fmt_hm(avg_prior_sleep)} prior period"
+        items.append((text, _priority_tier(abs(delta_sleep), high=30, medium=10)))
 
     # Strength session consistency vs prior period
     if len(recent_strength) or len(prior_strength):
-        arrow = _trend_arrow(len(recent_strength) - len(prior_strength))
-        items.append(f"{arrow} Strength consistency: {len(recent_strength)} sessions vs {len(prior_strength)} prior 4wk")
+        delta_strength = len(recent_strength) - len(prior_strength)
+        arrow = _trend_arrow(delta_strength)
+        text = f"{arrow} Strength consistency: {len(recent_strength)} sessions vs {len(prior_strength)} prior 4wk"
+        items.append((text, _priority_tier(abs(delta_strength), high=2, medium=1)))
 
     # HR trend on comparable-effort runs (easy/aerobic pace band only, so it's
     # a genuine like-for-like comparison rather than mixing easy and hard efforts)
@@ -736,13 +759,17 @@ def build_evidence_catalog():
             if len(recent_easy_hr) >= 2 and len(prior_easy_hr) >= 2:
                 avg_recent_hr = sum(recent_easy_hr) / len(recent_easy_hr)
                 avg_prior_hr = sum(prior_easy_hr) / len(prior_easy_hr)
-                arrow = _trend_arrow(avg_recent_hr - avg_prior_hr, threshold=1)
-                items.append(f"{arrow} Easy-run HR averaging {avg_recent_hr:.0f} bpm vs {avg_prior_hr:.0f} bpm prior period "
-                             f"(comparable-effort runs, {len(recent_easy_hr)} vs {len(prior_easy_hr)} runs)")
+                delta_hr = avg_recent_hr - avg_prior_hr
+                arrow = _trend_arrow(delta_hr, threshold=1)
+                text = (f"{arrow} Easy-run HR averaging {avg_recent_hr:.0f} bpm vs {avg_prior_hr:.0f} bpm prior period "
+                        f"(comparable-effort runs, {len(recent_easy_hr)} vs {len(prior_easy_hr)} runs)")
+                items.append((text, _priority_tier(abs(delta_hr), high=5, medium=2)))
 
     return items
 
-evidence_catalog = build_evidence_catalog()
+evidence_catalog_tiered = build_evidence_catalog()
+evidence_catalog = [text for text, _priority in evidence_catalog_tiered]
+evidence_priority_map = {text: priority for text, priority in evidence_catalog_tiered}
 
 # YoY
 try:
@@ -1011,7 +1038,12 @@ def parse_coach_sections(text):
                     if line.strip().startswith("-")
                 ]
                 catalog_set = set(item.strip() for item in evidence_catalog)
-                evidence_items = [item for item in candidate_items if item in catalog_set]
+                verified_items = [item for item in candidate_items if item in catalog_set]
+                priority_order = {"High": 0, "Medium": 1, "Low": 2}
+                evidence_items = sorted(
+                    [{"text": item, "priority": evidence_priority_map.get(item, "Medium")} for item in verified_items],
+                    key=lambda x: priority_order.get(x["priority"], 1)
+                )
 
             if watch_match:
                 watch_raw = watch_match.group(1).strip()

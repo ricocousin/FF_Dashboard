@@ -214,7 +214,19 @@ def _row_key(row):
         return ("id", aid)
     return ("legacy", row.get("date", ""), row.get("name", ""))
 
+def _dedup_new_rows(rows):
+    # Garmin's paginated get_activities() can return the same activity twice
+    # across overlapping batches. Without this, merge() (and the full-refresh
+    # path below, which skips merge() entirely) would carry both copies
+    # straight through, silently doubling that activity's distance/duration —
+    # this was the cause of the July 2026 same-week-only doubling bug.
+    seen = {}
+    for r in rows:
+        seen.setdefault(_row_key(r), r)
+    return list(seen.values())
+
 def merge(new_rows, existing_rows):
+    new_rows = _dedup_new_rows(new_rows)
     new_keys = {_row_key(n) for n in new_rows}
     # Permanent transition guard: rows written before activity_id existed key
     # as ("legacy", date, name) — that can never equal a freshly-fetched
@@ -233,8 +245,8 @@ def merge(new_rows, existing_rows):
         merged.append(r)
     return sorted(merged, key=lambda x: x.get("date", ""), reverse=True)
 
-new_run_rows = [build_run_row(a) for a in new_running]
-new_strength_rows = [build_strength_row(a) for a in new_strength]
+new_run_rows = _dedup_new_rows([build_run_row(a) for a in new_running])
+new_strength_rows = _dedup_new_rows([build_strength_row(a) for a in new_strength])
 
 if is_full_refresh:
     all_run_rows = sorted(new_run_rows, key=lambda x: x.get("date", ""), reverse=True)

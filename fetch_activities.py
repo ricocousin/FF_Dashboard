@@ -504,3 +504,99 @@ with open("fetch_status.json", "w", encoding="utf-8") as f:
     }, f, indent=2)
 
 print("fetch_activities.py complete — raw data written.")
+
+# ── Per-run HR detail (via Garmin's get_activity_details) ────────────────────
+# Pulls raw per-activity HR time series for recent runs, so build_dashboard.py
+# can eventually bin actual time-in-zone using our own LT zone boundaries,
+# rather than relying only on a single avg_hr per run. Uses Garmin (H10-
+# sourced) as the authoritative HR source for runs — kept DELIBERATELY
+# separate from polar_hr.csv (Loop-sourced), so the two can be compared
+# against each other for the same run window later, the same way steps.csv
+# (iPhone) and polar_steps.csv (Polar) are reconciled/compared today. Neither
+# source is being discarded in favor of the other.
+#
+# Confirmed via direct inspection of the installed garminconnect library
+# source (July 2026): get_activity_details(activity_id, maxchart, maxpoly)
+# calls GET {activity}/{activity_id}/details. The exact response JSON shape
+# was NOT independently verified against a real payload before this commit —
+# same situation polar_hr.csv was in before its shape bug was found and
+# fixed. Parsing below is defensive (searches metricDescriptors for anything
+# heart-rate-like and a matching timestamp/elapsed-duration field, rather
+# than assuming exact key names) and includes a one-time debug print of the
+# first real response's metricDescriptors so the actual shape can be
+# confirmed or corrected after the first live run, same as was done for
+# polar_hr.csv.
+RUN_HR_DETAIL_WINDOW_DAYS = 8
+
+def _find_metric_index(descriptors, keywords):
+    """Find the index of a metric whose key/name contains any of the given
+    keywords (case-insensitive). Returns None if not found. Defensive against
+    not knowing Garmin's exact field naming without a confirmed real payload."""
+    for d in descriptors or []:
+        key = str(d.get("key", "") or d.get("metricName", "") or "").lower()
+        idx = d.get("metricsIndex", d.get("index"))
+        if idx is not None and any(kw in key for kw in keywords):
+            return idx
+    return None
+
+existing_run_hr_activity_ids = set()
+if os.path.exists("run_hr_samples.csv"):
+    with open("run_hr_samples.csv", "r", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            if row.get("activity_id"):
+                existing_run_hr_activity_ids.add(row["activity_id"])
+
+hr_detail_cutoff = (today.date() - timedelta(days=RUN_HR_DETAIL_WINDOW_DAYS)).isoformat()
+runs_needing_hr_detail = [
+    r for r in new_run_rows
+    if r.get("activity_id")
+    and r.get("date", "") >= hr_detail_cutoff
+    and r["activity_id"] not in existing_run_hr_activity_ids
+]
+
+new_hr_sample_rows = []
+_debug_printed_once = False
+for r in runs_needing_hr_detail:
+    aid = r["activity_id"]
+    try:
+        details = client.get_activity_details(aid)
+        descriptors = details.get("metricDescriptors", [])
+
+        if not _debug_printed_once:
+            print(f"DEBUG run_hr_samples metricDescriptors for activity {aid}: {descriptors}")
+            _debug_printed_once = True
+
+        hr_idx = _find_metric_index(descriptors, ["heartrate", "heart_rate"])
+        time_idx = _find_metric_index(descriptors, ["timestamp", "elapsedduration", "elapsed_duration", "sumduration"])
+
+        if hr_idx is None or time_idx is None:
+            print(f"Run HR detail: could not identify HR/time columns for activity {aid} — skipping")
+            continue
+
+        metrics_list = (details.get("activityDetailMetrics") or [])
+        for entry in metrics_list:
+            values = entry.get("metrics", [])
+            if len(values) > max(hr_idx, time_idx):
+                hr_val = values[hr_idx]
+                t_val = values[time_idx]
+                if hr_val is not None and t_val is not None:
+                    new_hr_sample_rows.append({
+                        "activity_id": aid,
+                        "date": r.get("date", ""),
+                        "elapsed_seconds": t_val,
+                        "heart_rate": hr_val
+                    })
+        print(f"Run HR detail: {len(metrics_list)} sample(s) processed for activity {aid} ({r.get('date','')})")
+    except Exception as e:
+        print(f"Run HR detail fetch skipped for activity {aid}: {e}")
+
+if new_hr_sample_rows:
+    file_exists = os.path.exists("run_hr_samples.csv")
+    with open("run_hr_samples.csv", "a" if file_exists else "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["activity_id", "date", "elapsed_seconds", "heart_rate"])
+        if not file_exists:
+            writer.writeheader()
+        writer.writerows(new_hr_sample_rows)
+    print(f"run_hr_samples.csv: appended {len(new_hr_sample_rows)} sample(s) across {len(runs_needing_hr_detail)} run(s)")
+else:
+    print(f"run_hr_samples.csv: no new samples this run ({len(runs_needing_hr_detail)} run(s) attempted)")

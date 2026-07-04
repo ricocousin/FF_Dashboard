@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-04 23:01 UTC",
-  "headline": "A +31% volume jump over four weeks is landing well \u2014 easy-run HR has dropped meaningfully, suggesting the additional load is being absorbed rather than accumulated as fatigue.",
+  "last_updated": "2026-07-04 23:23 UTC",
+  "headline": "A 45% volume surge over the past four weeks is landing well \u2014 today's 18 km easy run at HR 140 continues a pattern of aerobic efficiency improving alongside rising load.",
   "confidence_pct": 85,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,20 +12,20 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 2/14 nights",
-  "summary": "The volume increase this block is substantial by any measure, and the aerobic response is the key signal here: your easy-run heart rate has fallen noticeably compared to the prior period at comparable efforts and paces. That's the kind of efficiency gain you'd expect to see when a training load increase is being handled well \u2014 not suppressed by fatigue. The June 27th threshold session stands apart as the hardest effort of the recent period, and the three runs since have all been appropriately controlled in intensity. The pattern reads as a well-structured load-and-absorb sequence.\n\nYour running streak has matched its all-time best at 20 weeks, and strength volume has held steady across both blocks. The combination of rising mileage, maintained strength work, and improving aerobic efficiency at easy paces is about as positive a multi-metric picture as this data can offer.\n\nThe one thing worth naming plainly: a +31% four-week jump is meaningful, and while the HR data suggests absorption is going well so far, the next few weeks will reveal whether that adaptation is consolidating or whether cumulative fatigue starts to surface. The data supports continuing to push \u2014 but this is the window to pay attention to.",
+  "summary": "The most meaningful signal right now is that you're absorbing a significant volume increase without apparent cardiac drift. Easy-run heart rate has dropped substantially across comparable efforts even as weekly distance has climbed \u2014 that combination suggests genuine aerobic adaptation rather than accumulation stress. The 4-week block is the strongest in recent history by volume, and today's session fits cleanly within that pattern.\n\nThe 20-week running streak is worth naming directly: you've matched your best-ever streak today. That's not a milestone to chase for its own sake, but it reflects a quality of consistency that is genuinely load-relevant \u2014 the base underneath the recent volume surge is real and continuous.\n\nStrength work has kept pace with the endurance uptick, which matters for a training philosophy built on hybrid capacity. Seven sessions in four weeks is a solid cadence given the running load increase. The primary thing to monitor now is whether this volume plateau, consolidates, or you absorb another step up \u2014 the aerobic indicators suggest room exists, but a 45% block-on-block increase warrants watching recovery quality over the coming week.",
   "watch_items": [
-    "Monitor whether easy-run HR continues its downward trend or begins to creep back up as cumulative load adds up",
-    "Watch for any change in how the legs feel on back-to-back run days \u2014 durability across consecutive efforts is a key signal at this volume",
-    "The 20-week streak milestone is a natural inflection point; notice whether motivation and freshness remain high or whether any subtle staleness is emerging",
-    "Strength consistency has held well through a volume spike \u2014 worth tracking whether session quality holds as weekly mileage stays elevated"
+    "Monitor whether easy-run HR continues its downward trend or plateaus \u2014 a plateau here would signal the current load is being absorbed at ceiling rather than building further aerobic headroom.",
+    "Watch for any signs of accumulated fatigue in the back half of this week \u2014 a 45% volume jump followed by continued high-frequency running is where residual tiredness tends to surface with a delay.",
+    "Track whether strength quality (effort, feel, performance) holds steady over the next two sessions \u2014 this is often the first place load-related fatigue shows up in hybrid athletes before it registers in running metrics.",
+    "The streak is now at its all-time best \u2014 worth staying conscious of not letting streak preservation subtly override session quality or recovery decisions."
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 4-week volume 163 km vs 125 km prior block (+31%)",
+      "text": "\u25b2 4-week volume 181 km vs 125 km prior block (+45%)",
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 145 bpm vs 157 bpm prior period (comparable-effort runs, 8 vs 6 runs)",
+      "text": "\u25bc Easy-run HR averaging 145 bpm vs 157 bpm prior period (comparable-effort runs, 9 vs 6 runs)",
       "priority": "High"
     },
     {
@@ -33,23 +33,23 @@
       "priority": "Medium"
     },
     {
-      "text": "\u25ac Strength consistency: 6 sessions vs 6 prior 4wk",
-      "priority": "Low"
+      "text": "\u25b2 Strength consistency: 7 sessions vs 6 prior 4wk",
+      "priority": "Medium"
     }
   ],
   "insights": [
-    "The volume increase this block is substantial by any measure, and the aerobic response is the key signal here: your easy-run heart rate has fallen noticeably compared to the prior period at comparable efforts and paces. That's the kind of efficiency gain you'd expect to see when a training load increase is being handled well \u2014 not suppressed by fatigue. The June 27th threshold session stands apart as the hardest effort of the recent period, and the three runs since have all been appropriately controlled in intensity. The pattern reads as a well-structured load-and-absorb sequence.\n\nYour running streak has matched its all-time best at 20 weeks, and strength volume has held steady across both blocks. The combination of rising mileage, maintained strength work, and improving aerobic efficiency at easy paces is about as positive a multi-metric picture as this data can offer.\n\nThe one thing worth naming plainly: a +31% four-week jump is meaningful, and while the HR data suggests absorption is going well so far, the next few weeks will reveal whether that adaptation is consolidating or whether cumulative fatigue starts to surface. The data supports continuing to push \u2014 but this is the window to pay attention to."
+    "The most meaningful signal right now is that you're absorbing a significant volume increase without apparent cardiac drift. Easy-run heart rate has dropped substantially across comparable efforts even as weekly distance has climbed \u2014 that combination suggests genuine aerobic adaptation rather than accumulation stress. The 4-week block is the strongest in recent history by volume, and today's session fits cleanly within that pattern.\n\nThe 20-week running streak is worth naming directly: you've matched your best-ever streak today. That's not a milestone to chase for its own sake, but it reflects a quality of consistency that is genuinely load-relevant \u2014 the base underneath the recent volume surge is real and continuous.\n\nStrength work has kept pace with the endurance uptick, which matters for a training philosophy built on hybrid capacity. Seven sessions in four weeks is a solid cadence given the running load increase. The primary thing to monitor now is whether this volume plateau, consolidates, or you absorb another step up \u2014 the aerobic indicators suggest room exists, but a 45% block-on-block increase warrants watching recovery quality over the coming week."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 2848,
-    "output_tokens": 438,
-    "cost_usd": 0.015114,
-    "cost_dkk": 0.10429,
+    "input_tokens": 2844,
+    "output_tokens": 459,
+    "cost_usd": 0.015417,
+    "cost_dkk": 0.10638,
     "date": "2026-07-04"
   },
-  "usage_mtd_usd": 0.04915,
-  "usage_mtd_dkk": 0.3391,
-  "usage_ytd_usd": 0.04915,
-  "usage_ytd_dkk": 0.3391
+  "usage_mtd_usd": 0.04945,
+  "usage_mtd_dkk": 0.3412,
+  "usage_ytd_usd": 0.04945,
+  "usage_ytd_dkk": 0.3412
 }

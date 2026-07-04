@@ -424,4 +424,17 @@ if polar_token:
 else:
     print("POLAR_ACCESS_TOKEN not set — skipping Polar fetch")
 
+# ── Fetch status (for build_dashboard.py's confidence score) ─────────────────
+# Written last, only on successful completion of this whole script. If Garmin
+# login or activity fetch throws above, this file never gets written/updated —
+# build_dashboard.py can then see the timestamp is stale (or missing entirely)
+# and score pipeline freshness honestly instead of assuming success just
+# because it happened to run in the same job.
+with open("fetch_status.json", "w", encoding="utf-8") as f:
+    json.dump({
+        "last_success_utc": today.strftime("%Y-%m-%d %H:%M UTC"),
+        "last_success_date": str(today.date()),
+        "mode": "full_refresh" if is_full_refresh else "incremental"
+    }, f, indent=2)
+
 print("fetch_activities.py complete — raw data written.")

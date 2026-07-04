@@ -515,29 +515,33 @@ print("fetch_activities.py complete — raw data written.")
 # (iPhone) and polar_steps.csv (Polar) are reconciled/compared today. Neither
 # source is being discarded in favor of the other.
 #
-# Confirmed via direct inspection of the installed garminconnect library
-# source (July 2026): get_activity_details(activity_id, maxchart, maxpoly)
-# calls GET {activity}/{activity_id}/details. The exact response JSON shape
-# was NOT independently verified against a real payload before this commit —
-# same situation polar_hr.csv was in before its shape bug was found and
-# fixed. Parsing below is defensive (searches metricDescriptors for anything
-# heart-rate-like and a matching timestamp/elapsed-duration field, rather
-# than assuming exact key names) and includes a one-time debug print of the
-# first real response's metricDescriptors so the actual shape can be
-# confirmed or corrected after the first live run, same as was done for
-# polar_hr.csv.
+# Response shape CONFIRMED (July 2026, via live debug output) from
+# get_activity_details(activity_id): a dict with "metricDescriptors" (list of
+# {metricsIndex, key, unit: {id, key, factor}}) and "activityDetailMetrics"
+# (list of {"metrics": [...]}, one entry per sample, values ordered to match
+# metricsIndex). Confirmed real keys used here: "directHeartRate" (unit bpm,
+# factor 1.0 — no scaling needed) and "sumElapsedDuration" (unit second,
+# factor 1000.0 — raw values are in MILLISECONDS, must divide by factor to
+# get real seconds; this was initially missed and would have made every
+# elapsed_seconds value 1000x too large). Real Garmin activities also expose
+# a "directTimestamp" (unit gmt) field, but sumElapsedDuration is preferred
+# since it's already relative to activity start, matching this file's
+# elapsed_seconds column directly with no further conversion needed.
 RUN_HR_DETAIL_WINDOW_DAYS = 8
 
-def _find_metric_index(descriptors, keywords):
-    """Find the index of a metric whose key/name contains any of the given
-    keywords (case-insensitive). Returns None if not found. Defensive against
-    not knowing Garmin's exact field naming without a confirmed real payload."""
+def _find_metric(descriptors, keywords):
+    """Find (index, factor) for the first metric whose key contains any of
+    the given keywords (case-insensitive), searched in descriptor list order
+    — order matters here since e.g. "sumElapsedDuration" and "directTimestamp"
+    can both match a broad keyword set; list order determines which wins.
+    Returns (None, None) if nothing matches."""
     for d in descriptors or []:
-        key = str(d.get("key", "") or d.get("metricName", "") or "").lower()
-        idx = d.get("metricsIndex", d.get("index"))
+        key = str(d.get("key", "") or "").lower()
+        idx = d.get("metricsIndex")
+        factor = (d.get("unit") or {}).get("factor", 1.0)
         if idx is not None and any(kw in key for kw in keywords):
-            return idx
-    return None
+            return idx, (factor if factor else 1.0)
+    return None, None
 
 existing_run_hr_activity_ids = set()
 if os.path.exists("run_hr_samples.csv"):
@@ -555,19 +559,14 @@ runs_needing_hr_detail = [
 ]
 
 new_hr_sample_rows = []
-_debug_printed_once = False
 for r in runs_needing_hr_detail:
     aid = r["activity_id"]
     try:
         details = client.get_activity_details(aid)
         descriptors = details.get("metricDescriptors", [])
 
-        if not _debug_printed_once:
-            print(f"DEBUG run_hr_samples metricDescriptors for activity {aid}: {descriptors}")
-            _debug_printed_once = True
-
-        hr_idx = _find_metric_index(descriptors, ["heartrate", "heart_rate"])
-        time_idx = _find_metric_index(descriptors, ["timestamp", "elapsedduration", "elapsed_duration", "sumduration"])
+        hr_idx, hr_factor = _find_metric(descriptors, ["heartrate", "heart_rate"])
+        time_idx, time_factor = _find_metric(descriptors, ["elapsedduration", "elapsed_duration", "timestamp"])
 
         if hr_idx is None or time_idx is None:
             print(f"Run HR detail: could not identify HR/time columns for activity {aid} — skipping")
@@ -577,14 +576,14 @@ for r in runs_needing_hr_detail:
         for entry in metrics_list:
             values = entry.get("metrics", [])
             if len(values) > max(hr_idx, time_idx):
-                hr_val = values[hr_idx]
-                t_val = values[time_idx]
-                if hr_val is not None and t_val is not None:
+                hr_raw = values[hr_idx]
+                t_raw = values[time_idx]
+                if hr_raw is not None and t_raw is not None:
                     new_hr_sample_rows.append({
                         "activity_id": aid,
                         "date": r.get("date", ""),
-                        "elapsed_seconds": t_val,
-                        "heart_rate": hr_val
+                        "elapsed_seconds": round(t_raw / time_factor, 1),
+                        "heart_rate": round(hr_raw / hr_factor)
                     })
         print(f"Run HR detail: {len(metrics_list)} sample(s) processed for activity {aid} ({r.get('date','')})")
     except Exception as e:

@@ -63,9 +63,10 @@
     .coach-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.6rem; }
     .coach-header { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-dim); display: flex; align-items: center; gap: 0.5rem; }
     .coach-headline { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; color: var(--text-hi); line-height: 1.35; margin: 0.1rem 0 0.3rem; }
-    .coach-confidence { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.4rem; }
+    .coach-confidence { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.4rem; }
     .coach-confidence-bar { width: 40px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
     .coach-confidence-fill { height: 100%; border-radius: 2px; }
+    .coach-confidence-attention { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); margin-bottom: 0.6rem; }
     .coach-watch { margin-top: 0.9rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
     .coach-watch-title { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 0.5rem; }
     .coach-watch-item { font-family: var(--font-body); font-size: 12.5px; color: var(--text-dim); line-height: 1.5; padding-left: 1.1rem; position: relative; }
@@ -188,8 +189,10 @@ async function init() {
       const pct = coachData.confidence_pct;
       const label = coachData.confidence_label || '';
       const reasons = Array.isArray(coachData.confidence_reasons) ? coachData.confidence_reasons.join(' · ') : '';
+      const attention = coachData.confidence_attention || '';
       const barColor = pct >= 85 ? '#7bc67e' : pct >= 65 ? '#e8ff5a' : '#ff9f40';
-      return `<div class="coach-confidence" title="${escapeHtml(reasons)}"><div class="coach-confidence-bar"><div class="coach-confidence-fill" style="width:${pct}%;background:${barColor}"></div></div><span>${pct}% · ${escapeHtml(label)}</span></div>`;
+      const attentionHtml = attention ? `<div class="coach-confidence-attention">${escapeHtml(attention)}</div>` : '';
+      return `<div class="coach-confidence" title="${escapeHtml(reasons)}"><div class="coach-confidence-bar"><div class="coach-confidence-fill" style="width:${pct}%;background:${barColor}"></div></div><span>${pct}% · ${escapeHtml(label)}</span></div>${attentionHtml}`;
     })() : '';
     const evidenceItems = Array.isArray(coachData.evidence_items) ? coachData.evidence_items.filter(Boolean) : [];
     const evidenceHtml = evidenceItems.length ? `<div class="coach-evidence"><div class="coach-evidence-title">Evidence supporting today's assessment</div>${evidenceItems.map(e => {

@@ -39,6 +39,25 @@ def _load_csv(path):
 all_run_rows = sorted(_load_csv("runs.csv"), key=lambda x: x.get("date", ""), reverse=True)
 all_strength_rows = sorted(_load_csv("strength.csv"), key=lambda x: x.get("date", ""), reverse=True)
 
+# Strength session duration sanity cap (added July 2026, same principle as
+# the existing LT pace sanity filter). A watch left running (forgot to stop
+# the timer) can report an implausible duration_min — e.g. one real session
+# observed at 875.8 min (14.6 hours) for what was actually a normal workout.
+# Capped rather than deleted/zeroed: the session still happened and should
+# still count toward frequency/streaks, but its reported duration shouldn't
+# be trusted beyond a sane ceiling for any hours-based total. Mutates the
+# dicts in place, before any filtering — every downstream subset (
+# complete_strength_rows, year_sessions, month_sessions, etc.) references
+# these same dict objects, so the cap applies everywhere automatically.
+STRENGTH_DURATION_SANITY_CAP_MIN = 240  # 4 hours
+for _row in all_strength_rows:
+    try:
+        _dur = float(_row.get("duration_min") or 0)
+        if _dur > STRENGTH_DURATION_SANITY_CAP_MIN:
+            _row["duration_min"] = str(STRENGTH_DURATION_SANITY_CAP_MIN)
+    except (ValueError, TypeError):
+        pass
+
 # polar_hr.csv — written by fetch_activities.py (8-day rolling window,
 # 5-minute-interval continuous HR). Loaded here for the strength-session HR
 # overlay below. Indexed by date -> list of (time_str, heart_rate) for fast

@@ -153,7 +153,7 @@ run_fieldnames = [
     "min_elevation_m", "max_elevation_m", "avg_pace_min_km", "max_pace_min_km",
     "avg_cadence", "calories", "training_load",
     "aerobic_training_effect", "anaerobic_training_effect", "vo2max_estimate",
-    "activity_id"
+    "activity_id", "start_time"
 ]
 
 def build_run_row(a):
@@ -187,7 +187,8 @@ def build_run_row(a):
         "aerobic_training_effect": a.get("aerobicTrainingEffect", ""),
         "anaerobic_training_effect": a.get("anaerobicTrainingEffect", ""),
         "vo2max_estimate": a.get("vO2MaxValue", ""),
-        "activity_id": a.get("activityId", "")
+        "activity_id": a.get("activityId", ""),
+        "start_time": a.get("startTimeLocal", "")
     }
 
 # ── Build strength records ────────────────────────────────────────────────────

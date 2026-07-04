@@ -460,19 +460,13 @@ if polar_token:
         hr_resp = polar_get(
             f"https://www.polaraccesslink.com/v3/users/continuous-heart-rate?from={hr_window_start}&to={hr_window_end}"
         )
-        # TEMPORARY DIAGNOSTIC (July 2026) — remove once response shape is
-        # confirmed. Prints the raw response's Python type and a truncated
-        # preview so we can see exactly what Polar actually returned, rather
-        # than continuing to guess at the shape blindly. A prior run returned
-        # 0 samples with no exception, which could mean either "no data yet"
-        # or "response shape doesn't match the parsing below" — this line
-        # distinguishes between those two cases.
-        print(f"DEBUG polar_hr raw response type: {type(hr_resp)}")
-        print(f"DEBUG polar_hr raw response preview: {str(hr_resp)[:1000]}")
-        # Response shape: a list of per-day objects, each with "date" and
-        # "heart_rate_samples" (list of {"heart_rate": int, "sample_time": "HH:MM:SS"}).
-        # Handled defensively since this is unverified against a real payload yet.
-        hr_days = hr_resp if isinstance(hr_resp, list) else ((hr_resp or {}).get("days") or [])
+        # Response shape CONFIRMED (July 2026, via live debug output): a dict
+        # with key "heart_rates", a list of per-day objects each with "date"
+        # and "heart_rate_samples" (list of {"heart_rate": int, "sample_time":
+        # "HH:MM:SS"}). Sample spacing is NOT a clean 5-minute grid in
+        # practice — can cluster tightly (several samples one minute apart)
+        # then gap widely; treat as event-driven, not fixed-interval.
+        hr_days = (hr_resp or {}).get("heart_rates", [])
         new_hr_count = 0
         for day in hr_days:
             hr_date = day.get("date", "")

@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-04 22:03 UTC",
-  "headline": "Four-week volume is up 16% and easy-run cardiac drift is moving in the right direction, suggesting genuine aerobic adaptation is underway.",
+  "last_updated": "2026-07-04 23:01 UTC",
+  "headline": "A +31% volume jump over four weeks is landing well \u2014 easy-run HR has dropped meaningfully, suggesting the additional load is being absorbed rather than accumulated as fatigue.",
   "confidence_pct": 85,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,20 +12,20 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 2/14 nights",
-  "summary": "The most meaningful signal this week isn't the volume increase itself \u2014 it's that heart rate on comparable easy efforts has dropped noticeably since the prior block. That kind of HR shift at similar paces points to real aerobic adaptation, not just accumulated fatigue from higher load. The 20-week running streak hitting its all-time high reinforces that the consistency driving this adaptation has been sustained without interruption.\n\nThe one thing worth holding in view: strength frequency has dipped slightly relative to the prior block. Given that strength is a genuine pillar of your training \u2014 not a supplement to it \u2014 a quiet drift downward in session count is worth catching early rather than after it compounds. Nothing alarming yet, but it's the kind of thing that tends to slip further if unaddressed.",
+  "summary": "The volume increase this block is substantial by any measure, and the aerobic response is the key signal here: your easy-run heart rate has fallen noticeably compared to the prior period at comparable efforts and paces. That's the kind of efficiency gain you'd expect to see when a training load increase is being handled well \u2014 not suppressed by fatigue. The June 27th threshold session stands apart as the hardest effort of the recent period, and the three runs since have all been appropriately controlled in intensity. The pattern reads as a well-structured load-and-absorb sequence.\n\nYour running streak has matched its all-time best at 20 weeks, and strength volume has held steady across both blocks. The combination of rising mileage, maintained strength work, and improving aerobic efficiency at easy paces is about as positive a multi-metric picture as this data can offer.\n\nThe one thing worth naming plainly: a +31% four-week jump is meaningful, and while the HR data suggests absorption is going well so far, the next few weeks will reveal whether that adaptation is consolidating or whether cumulative fatigue starts to surface. The data supports continuing to push \u2014 but this is the window to pay attention to.",
   "watch_items": [
-    "Watch whether easy-run HR continues to decline as volume holds or builds \u2014 sustained improvement here would be a strong aerobic fitness signal.",
-    "Monitor strength session frequency over the coming fortnight; the dip is minor but worth actively countering rather than letting it drift.",
-    "After several consecutive weeks of building, pay attention to how your legs feel on back-to-back run days \u2014 cumulative fatigue can lag the acute load signal.",
-    "The lactate threshold test is recent and singular \u2014 notice whether tempo efforts feel consistent with that benchmark as more data points accumulate."
+    "Monitor whether easy-run HR continues its downward trend or begins to creep back up as cumulative load adds up",
+    "Watch for any change in how the legs feel on back-to-back run days \u2014 durability across consecutive efforts is a key signal at this volume",
+    "The 20-week streak milestone is a natural inflection point; notice whether motivation and freshness remain high or whether any subtle staleness is emerging",
+    "Strength consistency has held well through a volume spike \u2014 worth tracking whether session quality holds as weekly mileage stays elevated"
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 4-week volume 145 km vs 125 km prior block (+16%)",
+      "text": "\u25b2 4-week volume 163 km vs 125 km prior block (+31%)",
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 146 bpm vs 157 bpm prior period (comparable-effort runs, 7 vs 6 runs)",
+      "text": "\u25bc Easy-run HR averaging 145 bpm vs 157 bpm prior period (comparable-effort runs, 8 vs 6 runs)",
       "priority": "High"
     },
     {
@@ -33,23 +33,23 @@
       "priority": "Medium"
     },
     {
-      "text": "\u25bc Strength consistency: 5 sessions vs 6 prior 4wk",
-      "priority": "Medium"
+      "text": "\u25ac Strength consistency: 6 sessions vs 6 prior 4wk",
+      "priority": "Low"
     }
   ],
   "insights": [
-    "The most meaningful signal this week isn't the volume increase itself \u2014 it's that heart rate on comparable easy efforts has dropped noticeably since the prior block. That kind of HR shift at similar paces points to real aerobic adaptation, not just accumulated fatigue from higher load. The 20-week running streak hitting its all-time high reinforces that the consistency driving this adaptation has been sustained without interruption.\n\nThe one thing worth holding in view: strength frequency has dipped slightly relative to the prior block. Given that strength is a genuine pillar of your training \u2014 not a supplement to it \u2014 a quiet drift downward in session count is worth catching early rather than after it compounds. Nothing alarming yet, but it's the kind of thing that tends to slip further if unaddressed."
+    "The volume increase this block is substantial by any measure, and the aerobic response is the key signal here: your easy-run heart rate has fallen noticeably compared to the prior period at comparable efforts and paces. That's the kind of efficiency gain you'd expect to see when a training load increase is being handled well \u2014 not suppressed by fatigue. The June 27th threshold session stands apart as the hardest effort of the recent period, and the three runs since have all been appropriately controlled in intensity. The pattern reads as a well-structured load-and-absorb sequence.\n\nYour running streak has matched its all-time best at 20 weeks, and strength volume has held steady across both blocks. The combination of rising mileage, maintained strength work, and improving aerobic efficiency at easy paces is about as positive a multi-metric picture as this data can offer.\n\nThe one thing worth naming plainly: a +31% four-week jump is meaningful, and while the HR data suggests absorption is going well so far, the next few weeks will reveal whether that adaptation is consolidating or whether cumulative fatigue starts to surface. The data supports continuing to push \u2014 but this is the window to pay attention to."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 2852,
-    "output_tokens": 344,
-    "cost_usd": 0.013716,
-    "cost_dkk": 0.09464,
+    "input_tokens": 2848,
+    "output_tokens": 438,
+    "cost_usd": 0.015114,
+    "cost_dkk": 0.10429,
     "date": "2026-07-04"
   },
-  "usage_mtd_usd": 0.04775,
-  "usage_mtd_dkk": 0.3295,
-  "usage_ytd_usd": 0.04775,
-  "usage_ytd_dkk": 0.3295
+  "usage_mtd_usd": 0.04915,
+  "usage_mtd_dkk": 0.3391,
+  "usage_ytd_usd": 0.04915,
+  "usage_ytd_dkk": 0.3391
 }

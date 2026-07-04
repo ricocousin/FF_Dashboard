@@ -435,6 +435,55 @@ if polar_token:
         print(f"Polar steps: {new_step_count} day(s) fetched, {len(existing_polar_steps)} total in polar_steps.csv")
     except Exception as e:
         print(f"Polar steps fetch skipped: {e}")
+    # ── Continuous heart rate (via /v3/users/continuous-heart-rate) ─────────
+    # NOTE: per Polar's own docs, this resource does NOT include heart rate
+    # from training sessions (those come from a separate training-data
+    # resource, not implemented here). This is 5-minute-interval all-day HR —
+    # useful as general context, but NOT the source for the strength-session
+    # HR overlay (see Other Pending) once that's built; that will need the
+    # training-session-specific resource, a separate future addition.
+    #
+    # Rolling 8-day window rather than full history: keeps each run's fetch
+    # small, and Polar's 24/7 data endpoints only guarantee ~90 days lookback
+    # anyway. Merged into existing polar_hr.csv by (date, time) so re-running
+    # the same window twice doesn't duplicate rows.
+    try:
+        existing_hr = {}
+        if os.path.exists("polar_hr.csv"):
+            with open("polar_hr.csv", "r", encoding="utf-8") as f:
+                for row in csv.DictReader(f):
+                    if row.get("date") and row.get("time"):
+                        existing_hr[(row["date"], row["time"])] = row.get("heart_rate", "")
+
+        hr_window_start = (today.date() - timedelta(days=8)).isoformat()
+        hr_window_end = today.date().isoformat()
+        hr_resp = polar_get(
+            f"https://www.polaraccesslink.com/v3/users/continuous-heart-rate?from={hr_window_start}&to={hr_window_end}"
+        )
+        # Response shape: a list of per-day objects, each with "date" and
+        # "heart_rate_samples" (list of {"heart_rate": int, "sample_time": "HH:MM:SS"}).
+        # Handled defensively since this is unverified against a real payload yet.
+        hr_days = hr_resp if isinstance(hr_resp, list) else ((hr_resp or {}).get("days") or [])
+        new_hr_count = 0
+        for day in hr_days:
+            hr_date = day.get("date", "")
+            for sample in day.get("heart_rate_samples", []):
+                sample_time = sample.get("sample_time", "")
+                hr_val = sample.get("heart_rate")
+                if hr_date and sample_time and hr_val is not None:
+                    existing_hr[(hr_date, sample_time)] = hr_val
+                    new_hr_count += 1
+
+        hr_fieldnames = ["date", "time", "heart_rate"]
+        with open("polar_hr.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=hr_fieldnames)
+            writer.writeheader()
+            for (d, t) in sorted(existing_hr.keys(), reverse=True):
+                writer.writerow({"date": d, "time": t, "heart_rate": existing_hr[(d, t)]})
+
+        print(f"Polar continuous HR: {new_hr_count} sample(s) fetched this window, {len(existing_hr)} total in polar_hr.csv")
+    except Exception as e:
+        print(f"Polar continuous HR fetch skipped: {e}")
 else:
     print("POLAR_ACCESS_TOKEN not set — skipping Polar fetch")
 

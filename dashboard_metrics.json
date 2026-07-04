@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-04 17:41 UTC",
+  "last_updated": "2026-07-04 21:28 UTC",
   "last_complete_date": "2026-07-03",
   "this_year": "2026",
   "this_month_short": "Jul",
@@ -609,7 +609,8 @@
       "2026-06-24",
       "2026-06-27",
       "2026-06-30",
-      "2026-07-02"
+      "2026-07-02",
+      "2026-07-04"
     ],
     "strength_dates": [
       "2024-07-01",
@@ -754,9 +755,10 @@
       "2026-07-03"
     ]
   },
+  "strength_hr_overlay": [],
   "digest": [
     "\u2794 LT established at 4:24/km (baseline building)",
-    "\u25b2 4-week volume increased (127 vs 125 km prior block)",
+    "\u25b2 4-week volume increased (145 vs 125 km prior block)",
     "\u25bc Strength frequency 5 vs 6 sessions prior block",
     "\u25b2 Steps averaging 14,344 vs 13,294/day prior block",
     "\u2794 Sleep data still accumulating",

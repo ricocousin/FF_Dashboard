@@ -70,6 +70,23 @@ for row in _load_csv("polar_hr.csv"):
     if d and t and hr not in (None, ""):
         _polar_hr_by_date.setdefault(d, []).append((t, hr))
 
+# run_hr_samples.csv — written by fetch_activities.py via Garmin's
+# get_activity_details() (H10-sourced, per-run). Indexed by activity_id ->
+# list of (elapsed_seconds, heart_rate), used for the RUN ZONE-TIME PROJECT's
+# zone-binning below.
+_run_hr_by_activity = {}
+for row in _load_csv("run_hr_samples.csv"):
+    aid = row.get("activity_id")
+    es = row.get("elapsed_seconds")
+    hr = row.get("heart_rate")
+    if aid and es not in (None, "") and hr not in (None, ""):
+        try:
+            _run_hr_by_activity.setdefault(aid, []).append((float(es), float(hr)))
+        except (ValueError, TypeError):
+            continue
+for _aid in _run_hr_by_activity:
+    _run_hr_by_activity[_aid].sort(key=lambda x: x[0])
+
 # ── Helpers (shared formatting/parsing — kept identical to fetch_activities.py
 # so pace strings etc. round-trip consistently between the two scripts) ──────
 def sec_to_pace(seconds):
@@ -663,6 +680,186 @@ def build_strength_hr_overlay():
 
 strength_hr_overlay = build_strength_hr_overlay()
 
+# ── RUN ZONE-TIME PROJECT (July 2026) ─────────────────────────────────────────
+# Quantifies actual time-in-physiological-zone (using the same Z1-Z5 HR
+# boundaries as the LT card, NOT Garmin's own zone definitions) across both
+# running and strength, so the dashboard's numbers are comparable to real
+# training-science recommendations rather than just flat duration totals.
+#
+# Framework: Dr. Peter Attia's Zone 2 / polarized model — 80% of cardio time
+# in Zone 2, 20% in Zone 5, Zone 2 target 180-240 min/week, Zone 3-4 ("grey
+# zone") explicitly something to minimize rather than a neutral bucket.
+#
+# Source split: running uses Garmin/H10 raw per-second HR (run_hr_samples.csv)
+# as authoritative for zone classification. Strength uses Polar continuous HR
+# (already computed above as strength_hr_overlay's avg_hr) since Garmin has
+# no HR data for strength at all. Polar's continuous HR for RUNS is NOT
+# discarded despite Garmin being authoritative there — it's kept separately
+# and compared against Garmin for the same run window (see
+# run_hr_source_comparison below), mirroring the existing steps.csv vs
+# polar_steps.csv reconciliation pattern. Neither source replaces the other.
+
+def _hr_zone_bounds(lt_hr):
+    """Returns (z1, z2, z3, z4) HR boundaries, same formula as _calc_zones()
+    above — kept separate so classification logic doesn't need the
+    display-string building _calc_zones() does."""
+    if not lt_hr:
+        return None
+    return (
+        round(lt_hr * 0.80),
+        round(lt_hr * 0.90),
+        round(lt_hr * 0.99),
+        round(lt_hr * 1.05)
+    )
+
+def _classify_hr_zone(hr, bounds):
+    if bounds is None or hr is None:
+        return None
+    z1, z2, z3, z4 = bounds
+    if hr < z1:
+        return "Z1"
+    elif hr < z2:
+        return "Z2"
+    elif hr < z3:
+        return "Z3"
+    elif hr < z4:
+        return "Z4"
+    else:
+        return "Z5"
+
+_lt_hr_bounds = _hr_zone_bounds(latest_lt.get("lt_hr")) if latest_lt else None
+
+# Zone-minutes window: last 7 days, matching the Attia weekly target framing.
+ZONE_TIME_WINDOW_DAYS = 7
+zone_time_cutoff = today_date - timedelta(days=ZONE_TIME_WINDOW_DAYS)
+zone_minutes = {"Z1": 0.0, "Z2": 0.0, "Z3": 0.0, "Z4": 0.0, "Z5": 0.0}
+running_sessions_with_zone_data = 0
+strength_sessions_with_zone_data = 0
+
+# Running: step-function attribution — the time between two consecutive
+# samples is credited to the zone of the EARLIER sample's HR. With ~1700
+# samples over a ~65min run (roughly 1 sample per 2-3 seconds), this is a
+# close approximation of true continuous zone-time, not a coarse average.
+if _lt_hr_bounds:
+    runs_in_window = [r for r in all_run_rows
+        if r.get("date") and datetime.strptime(r["date"], "%Y-%m-%d").date() >= zone_time_cutoff
+        and r.get("activity_id") in _run_hr_by_activity]
+    for r in runs_in_window:
+        samples = _run_hr_by_activity[r["activity_id"]]
+        if len(samples) < 2:
+            continue
+        running_sessions_with_zone_data += 1
+        for i in range(len(samples) - 1):
+            t0, hr0 = samples[i]
+            t1, _ = samples[i + 1]
+            delta_sec = t1 - t0
+            if delta_sec <= 0 or delta_sec > 60:
+                continue  # skip implausible gaps (sensor dropout) rather than misattribute
+            zone = _classify_hr_zone(hr0, _lt_hr_bounds)
+            if zone:
+                zone_minutes[zone] += delta_sec / 60
+
+    # Strength: coarser — one avg_hr per session, full session duration
+    # attributed to that single zone. No per-sample data exists for strength
+    # (Polar continuous HR is 5-min-interval-ish, not fine enough for a
+    # step-function approach the way Garmin's run data is).
+    strength_in_window = [s for s in strength_hr_overlay
+        if s.get("date") and datetime.strptime(s["date"], "%Y-%m-%d").date() >= zone_time_cutoff]
+    for s in strength_in_window:
+        # Find the matching strength.csv row for its duration_min
+        match = next((row for row in all_strength_rows
+            if row.get("date") == s["date"] and row.get("name") == s["name"]), None)
+        if not match:
+            continue
+        try:
+            dur_min = float(match.get("duration_min") or 0)
+        except (ValueError, TypeError):
+            continue
+        if dur_min <= 0:
+            continue
+        zone = _classify_hr_zone(s.get("avg_hr"), _lt_hr_bounds)
+        if zone:
+            zone_minutes[zone] += dur_min
+            strength_sessions_with_zone_data += 1
+
+total_zone_minutes = sum(zone_minutes.values())
+
+# Attia-target comparison. Z2 target 180-240 min/week (his stated 3-4 hrs).
+# "Grey zone" = Z3+Z4 combined (his framework treats moderate-hard as one
+# thing to minimize, not two separate zones) — Z5 = his VO2max/hard zone.
+ATTIA_Z2_TARGET_MIN = 180
+ATTIA_Z2_TARGET_MAX = 240
+
+zone_time = {
+    "window_days": ZONE_TIME_WINDOW_DAYS,
+    "minutes": {k: round(v, 1) for k, v in zone_minutes.items()},
+    "total_minutes": round(total_zone_minutes, 1),
+    "z2_pct": round((zone_minutes["Z2"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None,
+    "grey_pct": round(((zone_minutes["Z3"] + zone_minutes["Z4"]) / total_zone_minutes) * 100, 1) if total_zone_minutes else None,
+    "z5_pct": round((zone_minutes["Z5"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None,
+    "z2_target_min": ATTIA_Z2_TARGET_MIN,
+    "z2_target_max": ATTIA_Z2_TARGET_MAX,
+    "z2_vs_target_pct": round((zone_minutes["Z2"] / ATTIA_Z2_TARGET_MIN) * 100) if ATTIA_Z2_TARGET_MIN else None,
+    "running_sessions_with_data": running_sessions_with_zone_data,
+    "strength_sessions_with_data": strength_sessions_with_zone_data,
+    "has_lt_data": _lt_hr_bounds is not None
+}
+
+# ── Garmin-vs-Polar run HR comparison ─────────────────────────────────────────
+# For runs with BOTH a start_time (added to runs.csv same round as this
+# feature — existing rows before that will simply be skipped, same
+# backfill-via-FULL_REFRESH pattern already used for strength.csv) and
+# polar_hr.csv coverage for that date, compares Garmin's own avg_hr (H10,
+# already stored per run) against Polar's avg HR over the same time window —
+# mirrors the existing steps.csv vs polar_steps.csv reconciliation. Neither
+# source is treated as "correct" here — this is presented as a comparison,
+# not a discrepancy to resolve.
+def build_run_hr_source_comparison():
+    comparison = []
+    for r in all_run_rows:
+        start_time_full = r.get("start_time", "")
+        if not start_time_full or not r.get("avg_hr"):
+            continue
+        run_date = start_time_full[:10]
+        if run_date not in _polar_hr_by_date:
+            continue
+        try:
+            run_start_sec = _time_to_seconds(start_time_full[11:19])
+            moving_parts = (r.get("moving_time") or "").split(":")
+            if len(moving_parts) != 3:
+                continue
+            h, m, s = (int(p) for p in moving_parts)
+            duration_sec = h * 3600 + m * 60 + s
+        except Exception:
+            continue
+        if run_start_sec is None or duration_sec <= 0:
+            continue
+        run_end_sec = run_start_sec + duration_sec
+
+        matched_polar_hrs = []
+        for (t, hr) in _polar_hr_by_date[run_date]:
+            t_sec = _time_to_seconds(t)
+            if t_sec is not None and run_start_sec <= t_sec <= run_end_sec:
+                try:
+                    matched_polar_hrs.append(float(hr))
+                except (ValueError, TypeError):
+                    continue
+
+        if matched_polar_hrs:
+            garmin_avg = float(r["avg_hr"])
+            polar_avg = sum(matched_polar_hrs) / len(matched_polar_hrs)
+            comparison.append({
+                "date": run_date,
+                "name": r.get("name", ""),
+                "garmin_avg_hr": round(garmin_avg),
+                "polar_avg_hr": round(polar_avg),
+                "diff": round(polar_avg - garmin_avg, 1),
+                "polar_sample_count": len(matched_polar_hrs)
+            })
+    return sorted(comparison, key=lambda x: x["date"], reverse=True)
+
+run_hr_source_comparison = build_run_hr_source_comparison()
+
 # ── What's Changed digest ─────────────────────────────────────────────────────
 # Volume threshold/label kept aligned with the evidence catalog's own
 # "4-week volume" item (both threshold=1) so the two sections can never
@@ -785,6 +982,9 @@ dashboard_metrics = {
     },
 
     "strength_hr_overlay": strength_hr_overlay,
+
+    "zone_time": zone_time,
+    "run_hr_source_comparison": run_hr_source_comparison,
 
     "digest": digest_lines
 }

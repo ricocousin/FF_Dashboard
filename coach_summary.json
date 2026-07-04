@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-04 23:23 UTC",
-  "headline": "A 45% volume surge over the past four weeks is landing well \u2014 today's 18 km easy run at HR 140 continues a pattern of aerobic efficiency improving alongside rising load.",
+  "last_updated": "2026-07-04 23:40 UTC",
+  "headline": "Four weeks of progressive volume gain are confirmed, but today's aerobic efficiency \u2014 easy effort at notably lower HR than the prior block \u2014 is the real signal worth tracking.",
   "confidence_pct": 85,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,20 +12,20 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 2/14 nights",
-  "summary": "The most meaningful signal right now is that you're absorbing a significant volume increase without apparent cardiac drift. Easy-run heart rate has dropped substantially across comparable efforts even as weekly distance has climbed \u2014 that combination suggests genuine aerobic adaptation rather than accumulation stress. The 4-week block is the strongest in recent history by volume, and today's session fits cleanly within that pattern.\n\nThe 20-week running streak is worth naming directly: you've matched your best-ever streak today. That's not a milestone to chase for its own sake, but it reflects a quality of consistency that is genuinely load-relevant \u2014 the base underneath the recent volume surge is real and continuous.\n\nStrength work has kept pace with the endurance uptick, which matters for a training philosophy built on hybrid capacity. Seven sessions in four weeks is a solid cadence given the running load increase. The primary thing to monitor now is whether this volume plateau, consolidates, or you absorb another step up \u2014 the aerobic indicators suggest room exists, but a 45% block-on-block increase warrants watching recovery quality over the coming week.",
+  "summary": "Your aerobic base is responding. Easy-run HR has dropped meaningfully across comparable efforts over the last four weeks, which is a concrete physiological marker \u2014 not noise. That shift, combined with a sustained volume increase, suggests the recent training block is having the intended effect. The 20-week streak matching your personal best is context, but the efficiency data is the more useful signal right now.\n\nThe June 27th threshold effort remains the standout data point from the recent window \u2014 a genuinely high-quality session that anchors your current fitness ceiling. Today's 18 km at easy effort lands well as a volume accumulation run: distance without unnecessary cost. The pattern of mixing one hard effort per week with aerobic volume work is producing coherent load distribution.\n\nStrength frequency dropped slightly in the recent block. Not a concern at this stage, but worth keeping an eye on \u2014 five sessions across four weeks is on the lower end of what this athlete typically sustains, and strength continuity matters for injury resilience at the distances you're building toward.",
   "watch_items": [
-    "Monitor whether easy-run HR continues its downward trend or plateaus \u2014 a plateau here would signal the current load is being absorbed at ceiling rather than building further aerobic headroom.",
-    "Watch for any signs of accumulated fatigue in the back half of this week \u2014 a 45% volume jump followed by continued high-frequency running is where residual tiredness tends to surface with a delay.",
-    "Track whether strength quality (effort, feel, performance) holds steady over the next two sessions \u2014 this is often the first place load-related fatigue shows up in hybrid athletes before it registers in running metrics.",
-    "The streak is now at its all-time best \u2014 worth staying conscious of not letting streak preservation subtly override session quality or recovery decisions."
+    "Watch whether the easy-run HR trend continues downward \u2014 if so, it confirms genuine aerobic adaptation rather than day-to-day variance",
+    "Monitor whether strength frequency recovers to its prior level over the coming two weeks",
+    "Pay attention to how back-to-back run days feel as weekly volume continues building \u2014 durability under fatigue is the relevant test now, not single-session performance",
+    "The threshold session from late June set a high bar \u2014 notice whether efforts at similar intensity feel harder or easier as the block progresses"
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 4-week volume 181 km vs 125 km prior block (+45%)",
+      "text": "\u25b2 4-week volume 145 km vs 125 km prior block (+16%)",
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 145 bpm vs 157 bpm prior period (comparable-effort runs, 9 vs 6 runs)",
+      "text": "\u25bc Easy-run HR averaging 146 bpm vs 157 bpm prior period (comparable-effort runs, 7 vs 6 runs)",
       "priority": "High"
     },
     {
@@ -33,23 +33,23 @@
       "priority": "Medium"
     },
     {
-      "text": "\u25b2 Strength consistency: 7 sessions vs 6 prior 4wk",
+      "text": "\u25bc Strength consistency: 5 sessions vs 6 prior 4wk",
       "priority": "Medium"
     }
   ],
   "insights": [
-    "The most meaningful signal right now is that you're absorbing a significant volume increase without apparent cardiac drift. Easy-run heart rate has dropped substantially across comparable efforts even as weekly distance has climbed \u2014 that combination suggests genuine aerobic adaptation rather than accumulation stress. The 4-week block is the strongest in recent history by volume, and today's session fits cleanly within that pattern.\n\nThe 20-week running streak is worth naming directly: you've matched your best-ever streak today. That's not a milestone to chase for its own sake, but it reflects a quality of consistency that is genuinely load-relevant \u2014 the base underneath the recent volume surge is real and continuous.\n\nStrength work has kept pace with the endurance uptick, which matters for a training philosophy built on hybrid capacity. Seven sessions in four weeks is a solid cadence given the running load increase. The primary thing to monitor now is whether this volume plateau, consolidates, or you absorb another step up \u2014 the aerobic indicators suggest room exists, but a 45% block-on-block increase warrants watching recovery quality over the coming week."
+    "Your aerobic base is responding. Easy-run HR has dropped meaningfully across comparable efforts over the last four weeks, which is a concrete physiological marker \u2014 not noise. That shift, combined with a sustained volume increase, suggests the recent training block is having the intended effect. The 20-week streak matching your personal best is context, but the efficiency data is the more useful signal right now.\n\nThe June 27th threshold effort remains the standout data point from the recent window \u2014 a genuinely high-quality session that anchors your current fitness ceiling. Today's 18 km at easy effort lands well as a volume accumulation run: distance without unnecessary cost. The pattern of mixing one hard effort per week with aerobic volume work is producing coherent load distribution.\n\nStrength frequency dropped slightly in the recent block. Not a concern at this stage, but worth keeping an eye on \u2014 five sessions across four weeks is on the lower end of what this athlete typically sustains, and strength continuity matters for injury resilience at the distances you're building toward."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 2844,
-    "output_tokens": 459,
-    "cost_usd": 0.015417,
-    "cost_dkk": 0.10638,
+    "input_tokens": 2852,
+    "output_tokens": 393,
+    "cost_usd": 0.014451,
+    "cost_dkk": 0.09971,
     "date": "2026-07-04"
   },
-  "usage_mtd_usd": 0.04945,
-  "usage_mtd_dkk": 0.3412,
-  "usage_ytd_usd": 0.04945,
-  "usage_ytd_dkk": 0.3412
+  "usage_mtd_usd": 0.04849,
+  "usage_mtd_dkk": 0.3346,
+  "usage_ytd_usd": 0.04849,
+  "usage_ytd_dkk": 0.3346
 }

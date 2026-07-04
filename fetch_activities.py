@@ -997,10 +997,10 @@ elif latest_lt:
 else:
     digest_lines.append("➔ No LT reading yet")
 
-vol_delta = recent_dist - prior_dist
-vol_arrow = "▲" if vol_delta > 3 else "▼" if vol_delta < -3 else "➔"
-vol_word = "building" if prior_dist <= 0 else ("unchanged" if abs(vol_delta) <= 3 else ("increased" if vol_delta > 0 else "reduced"))
-digest_lines.append(f"{vol_arrow} Weekly volume {vol_word} ({recent_dist:.0f} vs {prior_dist:.0f} km prior block)")
+vol_delta = recent_dist - prior_dis
+vol_arrow = "▲" if vol_delta > 1 else "▼" if vol_delta < -1 else "➔"
+vol_word = "building" if prior_dist <= 0 else ("unchanged" if abs(vol_delta) <= 1 else ("increased" if vol_delta > 0 else "reduced"))
+digest_lines.append(f"{vol_arrow} 4-week volume {vol_word} ({recent_dist:.0f} vs {prior_dist:.0f} km prior block)")
 
 str_delta = len(recent_strength) - len(prior_strength)
 str_arrow = "▲" if str_delta > 0.5 else "▼" if str_delta < -0.5 else "➔"

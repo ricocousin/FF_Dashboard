@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-04 17:29 UTC",
-  "headline": "A 24% volume increase delivered without HR elevation on easy runs suggests aerobic adaptation is keeping pace with load.",
+  "last_updated": "2026-07-04 17:41 UTC",
+  "headline": "Easy-run cardiac drift is dropping meaningfully \u2014 aerobic efficiency is visibly improving over the recent block.",
   "confidence_pct": 85,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,20 +12,16 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 2/14 nights",
-  "summary": "Your easy-run cardiac drift is moving in the right direction \u2014 HR is notably lower on comparable efforts than in the prior block, which means the volume increase has landed well without accumulating fatigue or compressing recovery. That's a meaningful signal: load went up, intensity stayed controlled, and the aerobic system absorbed it.\n\nThe 20-week running streak is worth acknowledging not as a number to protect for its own sake, but as evidence of structural consistency \u2014 the kind that compounds quietly. Paired with a strengthening strength block and high background daily activity, you're carrying genuine readiness into the coming weeks.\n\nThe June 27th effort stands out from the recent window \u2014 a substantially higher intensity and load than anything else in the cluster. Worth tracking whether that session's recovery has fully cleared, particularly if the programme now brings another quality session soon.",
+  "summary": "The most notable signal in today's data isn't volume \u2014 it's the shift in how hard your heart is working at easy paces. Average HR on comparable easy efforts has dropped noticeably over the last four weeks relative to the prior block, which at steady pace suggests genuine aerobic adaptation rather than reduced effort. This is the kind of quiet, unglamorous progress that compounds well over time.\n\nVolume is effectively flat \u2014 two almost identical four-week blocks back-to-back \u2014 which in the context of a 20-week unbroken streak reads as intentional consolidation rather than stagnation. You're absorbing a sustained load, not drifting. The 44 km long run from late June remains a meaningful anchor in the background: that kind of durability effort takes weeks to fully integrate, and the steady easy running since then is appropriate.\n\nStrength frequency has ticked down slightly versus the prior block, which is worth noticing but not concerning at this level \u2014 five sessions in four weeks still represents consistent exposure. The bigger picture is that you're maintaining a full hybrid training load across running, strength, commuting, and background activity simultaneously, and the aerobic markers are moving in the right direction.",
   "watch_items": [
-    "Watch whether easy-run HR continues to hold at current lower levels or creeps back up under increased volume \u2014 that's the clearest real-time aerobic adaptation signal available right now.",
-    "Monitor how you respond to the next quality or threshold session given the high-load effort from late June \u2014 recovery quality after hard days is worth noting even if it doesn't change the plan.",
-    "Strength frequency has been solid but the streak is only 3 weeks \u2014 worth tracking whether it holds as running volume stays elevated.",
-    "Step data suggests high daily activity even on rest days; note whether non-training load is adding to accumulated fatigue across the week."
+    "Watch whether the easy-run HR trend continues to decline as the 44 km effort fully integrates \u2014 a further drop would confirm real aerobic adaptation rather than session-to-session variance.",
+    "Monitor whether strength frequency stabilises or drops further across the next block \u2014 five sessions is fine, but a continued downward drift would be worth addressing.",
+    "The lactate threshold test from July 2nd is the first data point in a new baseline series \u2014 pay attention to whether subsequent tests show progression, stability, or noise as the history accumulates.",
+    "Running streak is now tied at your personal best \u2014 whether you extend or reset, notice how you feel about continuity versus flexibility, since that tension can inform how you structure recovery going forward."
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 4-week volume 155 km vs 125 km prior block (+24%)",
-      "priority": "High"
-    },
-    {
-      "text": "\u25bc Easy-run HR averaging 144 bpm vs 157 bpm prior period (comparable-effort runs, 8 vs 6 runs)",
+      "text": "\u25bc Easy-run HR averaging 147 bpm vs 157 bpm prior period (comparable-effort runs, 6 vs 6 runs)",
       "priority": "High"
     },
     {
@@ -33,23 +29,27 @@
       "priority": "Medium"
     },
     {
-      "text": "\u25b2 Strength consistency: 7 sessions vs 6 prior 4wk",
+      "text": "\u25bc Strength consistency: 5 sessions vs 6 prior 4wk",
       "priority": "Medium"
+    },
+    {
+      "text": "\u25b2 4-week volume 127 km vs 125 km prior block (+2%)",
+      "priority": "Low"
     }
   ],
   "insights": [
-    "Your easy-run cardiac drift is moving in the right direction \u2014 HR is notably lower on comparable efforts than in the prior block, which means the volume increase has landed well without accumulating fatigue or compressing recovery. That's a meaningful signal: load went up, intensity stayed controlled, and the aerobic system absorbed it.\n\nThe 20-week running streak is worth acknowledging not as a number to protect for its own sake, but as evidence of structural consistency \u2014 the kind that compounds quietly. Paired with a strengthening strength block and high background daily activity, you're carrying genuine readiness into the coming weeks.\n\nThe June 27th effort stands out from the recent window \u2014 a substantially higher intensity and load than anything else in the cluster. Worth tracking whether that session's recovery has fully cleared, particularly if the programme now brings another quality session soon."
+    "The most notable signal in today's data isn't volume \u2014 it's the shift in how hard your heart is working at easy paces. Average HR on comparable easy efforts has dropped noticeably over the last four weeks relative to the prior block, which at steady pace suggests genuine aerobic adaptation rather than reduced effort. This is the kind of quiet, unglamorous progress that compounds well over time.\n\nVolume is effectively flat \u2014 two almost identical four-week blocks back-to-back \u2014 which in the context of a 20-week unbroken streak reads as intentional consolidation rather than stagnation. You're absorbing a sustained load, not drifting. The 44 km long run from late June remains a meaningful anchor in the background: that kind of durability effort takes weeks to fully integrate, and the steady easy running since then is appropriate.\n\nStrength frequency has ticked down slightly versus the prior block, which is worth noticing but not concerning at this level \u2014 five sessions in four weeks still represents consistent exposure. The bigger picture is that you're maintaining a full hybrid training load across running, strength, commuting, and background activity simultaneously, and the aerobic markers are moving in the right direction."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 2856,
-    "output_tokens": 365,
-    "cost_usd": 0.014043,
-    "cost_dkk": 0.0969,
+    "input_tokens": 2852,
+    "output_tokens": 459,
+    "cost_usd": 0.015441,
+    "cost_dkk": 0.10654,
     "date": "2026-07-04"
   },
-  "usage_mtd_usd": 0.04808,
-  "usage_mtd_dkk": 0.3318,
-  "usage_ytd_usd": 0.04808,
-  "usage_ytd_dkk": 0.3318
+  "usage_mtd_usd": 0.04948,
+  "usage_mtd_dkk": 0.3414,
+  "usage_ytd_usd": 0.04948,
+  "usage_ytd_dkk": 0.3414
 }

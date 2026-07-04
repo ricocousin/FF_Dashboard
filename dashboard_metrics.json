@@ -1,62 +1,62 @@
 {
-  "last_updated": "2026-07-03 23:02 UTC",
-  "last_complete_date": "2026-07-02",
+  "last_updated": "2026-07-04 12:57 UTC",
+  "last_complete_date": "2026-07-03",
   "this_year": "2026",
   "this_month_short": "Jul",
   "running": {
     "avg_per_run_km": 11.0,
-    "runs_this_year": 49,
-    "avg_per_week_km": 23.4,
-    "total_distance_this_year_km": 537.9,
+    "runs_this_year": 50,
+    "avg_per_week_km": 24.0,
+    "total_distance_this_year_km": 551.7,
     "current_weekly_streak": 20,
     "longest_weekly_streak": 20,
-    "week_delta_km": -4.9,
-    "week_qual": "Decreased"
+    "week_delta_km": 8.8,
+    "week_qual": "Increased"
   },
   "strength": {
-    "avg_sessions_per_week": 1.8,
-    "sessions_this_year": 34,
-    "avg_hours_per_week": 2.4,
-    "total_hours_this_year": 46.1,
+    "avg_sessions_per_week": 1.9,
+    "sessions_this_year": 36,
+    "avg_hours_per_week": 2.5,
+    "total_hours_this_year": 48.3,
     "current_weekly_streak": 3,
     "longest_weekly_streak": 23,
-    "week_delta_sessions": 1,
-    "week_qual": "Stable"
+    "week_delta_sessions": 3,
+    "week_qual": "Increased"
   },
   "steps": {
     "avg_all_time": 11640,
-    "avg_7d": 13876,
-    "avg_30d": 14179,
-    "delta_7d_vs_30d": -303,
-    "qual": "Stable",
+    "avg_7d": 13331,
+    "avg_30d": 14268,
+    "delta_7d_vs_30d": -937,
+    "qual": "Decreased",
     "discrepancy_avg": null,
     "discrepancy_days": 0
   },
   "intensity": {
-    "avg_week_year_mins": 248,
-    "avg_week_year_run_mins": 138,
-    "avg_week_year_lift_mins": 146,
-    "avg_week_month_mins": 145,
-    "avg_week_month_run_mins": 80,
-    "avg_week_month_lift_mins": 65,
-    "delta_month_vs_year": -103,
-    "qual": "Decreased",
+    "avg_week_year_mins": 257,
+    "avg_week_year_run_mins": 142,
+    "avg_week_year_lift_mins": 153,
+    "avg_week_month_mins": 357,
+    "avg_week_month_run_mins": 160,
+    "avg_week_month_lift_mins": 197,
+    "delta_month_vs_year": 100,
+    "qual": "Increased",
     "streak_weeks": 1,
     "best_streak_weeks": 6,
     "goal_mins": 210
   },
   "recovery": {
     "week": {
-      "mins": 406.0,
-      "score": 60.5
+      "mins": 395.6666666666667,
+      "score": 57.333333333333336
     },
     "month": {
-      "mins": 406.0,
-      "score": 60.5
+      "mins": 395.6666666666667,
+      "score": 57.333333333333336
     },
     "year": {
-      "mins": 406.0,
-      "score": 60.5
+      "mins": 395.6666666666667,
+      "score": 57.333333333333336
     },
     "delta_week_vs_month": 0.0,
     "qual": "Stable"
@@ -96,7 +96,7 @@
       47.8,
       12.6,
       30.4,
-      25.5
+      39.3
     ],
     "strength_sessions": [
       0,
@@ -114,7 +114,7 @@
       0,
       1,
       1,
-      2
+      4
     ],
     "month_boundaries": [
       false,
@@ -156,17 +156,17 @@
   "chart_annual": {
     "target_label": "vs 2025 total (490 km)",
     "target_km": 490.0,
-    "raw_pct": 109.8,
-    "display_pct": 109.8,
+    "raw_pct": 112.6,
+    "display_pct": 112.6,
     "is_overflow": true,
-    "year_dist_km": 537.9,
-    "km_to_target_km": 47.9,
+    "year_dist_km": 551.7,
+    "km_to_target_km": 61.7,
     "strength_target_label": "vs 2025 total (51 sessions)",
-    "strength_pct": 67,
-    "strength_display_pct": 67,
+    "strength_pct": 71,
+    "strength_display_pct": 71,
     "strength_overflow": false,
-    "strength_sessions_done": 34,
-    "strength_sessions_to_match": 17,
+    "strength_sessions_done": 36,
+    "strength_sessions_to_match": 15,
     "month_labels": [
       "Jan",
       "Feb",
@@ -183,7 +183,7 @@
       124.1,
       148.7,
       113.2,
-      13.8
+      27.5
     ],
     "month_strength_sessions": [
       3,
@@ -192,7 +192,7 @@
       7,
       6,
       5,
-      1
+      3
     ],
     "current_month_index": 6
   },
@@ -756,9 +756,9 @@
   },
   "digest": [
     "\u2794 LT established at 4:24/km (baseline building)",
-    "\u2794 Weekly volume unchanged (127 vs 125 km prior block)",
-    "\u25bc Strength frequency 5 vs 6 sessions prior block",
-    "\u25b2 Steps averaging 14,652 vs 12,952/day prior block",
+    "\u25b2 4-week volume increased (141 vs 125 km prior block)",
+    "\u2794 Strength frequency 6 vs 6 sessions prior block",
+    "\u25b2 Steps averaging 14,344 vs 13,294/day prior block",
     "\u2794 Sleep data still accumulating",
     "\u2794 Running streak: 20 wks (best: 20)"
   ]

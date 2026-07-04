@@ -39,6 +39,18 @@ def _load_csv(path):
 all_run_rows = sorted(_load_csv("runs.csv"), key=lambda x: x.get("date", ""), reverse=True)
 all_strength_rows = sorted(_load_csv("strength.csv"), key=lambda x: x.get("date", ""), reverse=True)
 
+# polar_hr.csv — written by fetch_activities.py (8-day rolling window,
+# 5-minute-interval continuous HR). Loaded here for the strength-session HR
+# overlay below. Indexed by date -> list of (time_str, heart_rate) for fast
+# per-session lookup.
+_polar_hr_by_date = {}
+for row in _load_csv("polar_hr.csv"):
+    d = row.get("date")
+    t = row.get("time")
+    hr = row.get("heart_rate")
+    if d and t and hr not in (None, ""):
+        _polar_hr_by_date.setdefault(d, []).append((t, hr))
+
 # ── Helpers (shared formatting/parsing — kept identical to fetch_activities.py
 # so pace strings etc. round-trip consistently between the two scripts) ──────
 def sec_to_pace(seconds):
@@ -574,6 +586,64 @@ for pb in pbs:
 calendar_run_dates = sorted({r["date"] for r in all_run_rows if r.get("date")})
 calendar_strength_dates = sorted({s["date"] for s in all_strength_rows if s.get("date")})
 
+# ── Strength-session HR overlay (first build, July 2026) ─────────────────────
+# Matches polar_hr.csv's continuous 5-min-interval samples against each
+# strength session's [start_time, start_time + duration_min] window, using
+# the start_time field added to strength.csv for exactly this purpose.
+# Only produces an entry for sessions that both (a) have a start_time (i.e.
+# were fetched/refreshed after start_time was added) and (b) fall on a date
+# present in polar_hr.csv (i.e. within the last ~8 days the Loop was worn
+# and fetched). Silently skips everything else — this is expected to be
+# sparse at first and will naturally fill in as more overlapping days
+# accumulate. NOT yet using Polar's exercise list (/v3/exercises) for a
+# possible finer-sampled auto-detected-session HR — continuous HR only,
+# per the "start simple" plan; see PROJECT CONTEXT for the fuller plan.
+def _time_to_seconds(t):
+    try:
+        h, m, s = (int(p) for p in t.split(":"))
+        return h * 3600 + m * 60 + s
+    except Exception:
+        return None
+
+def build_strength_hr_overlay():
+    overlay = []
+    for s in all_strength_rows:
+        start_time_full = s.get("start_time", "")
+        duration_min = s.get("duration_min", "")
+        if not start_time_full or not duration_min:
+            continue
+        try:
+            session_date = start_time_full[:10]
+            session_start_sec = _time_to_seconds(start_time_full[11:19])
+            duration_sec = float(duration_min) * 60
+        except Exception:
+            continue
+        if session_start_sec is None:
+            continue
+        session_end_sec = session_start_sec + duration_sec
+
+        day_samples = _polar_hr_by_date.get(session_date, [])
+        matched_hrs = []
+        for (t, hr) in day_samples:
+            t_sec = _time_to_seconds(t)
+            if t_sec is not None and session_start_sec <= t_sec <= session_end_sec:
+                try:
+                    matched_hrs.append(float(hr))
+                except (ValueError, TypeError):
+                    continue
+
+        if matched_hrs:
+            overlay.append({
+                "date": session_date,
+                "name": s.get("name", ""),
+                "avg_hr": round(sum(matched_hrs) / len(matched_hrs)),
+                "max_hr": round(max(matched_hrs)),
+                "sample_count": len(matched_hrs)
+            })
+    return sorted(overlay, key=lambda x: x["date"], reverse=True)
+
+strength_hr_overlay = build_strength_hr_overlay()
+
 # ── What's Changed digest ─────────────────────────────────────────────────────
 # Volume threshold/label kept aligned with the evidence catalog's own
 # "4-week volume" item (both threshold=1) so the two sections can never
@@ -694,6 +764,8 @@ dashboard_metrics = {
         "run_dates": calendar_run_dates,
         "strength_dates": calendar_strength_dates
     },
+
+    "strength_hr_overlay": strength_hr_overlay,
 
     "digest": digest_lines
 }

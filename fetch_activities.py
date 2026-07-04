@@ -191,16 +191,18 @@ def build_run_row(a):
     }
 
 # ── Build strength records ────────────────────────────────────────────────────
-strength_fieldnames = ["date", "name", "elapsed_time", "duration_min", "activity_id"]
+strength_fieldnames = ["date", "name", "elapsed_time", "duration_min", "activity_id", "start_time"]
 
 def build_strength_row(a):
     duration_s = a.get("duration", 0)
+    full_start = a.get("startTimeLocal", "")
     return {
-        "date": a.get("startTimeLocal", "")[:10],
+        "date": full_start[:10],
         "name": a.get("activityName", ""),
         "elapsed_time": fmt_time(duration_s),
         "duration_min": round(duration_s / 60, 1) if duration_s else "",
-        "activity_id": a.get("activityId", "")
+        "activity_id": a.get("activityId", ""),
+        "start_time": full_start
     }
 
 # ── Merge new + existing, deduplicate ─────────────────────────────────────────

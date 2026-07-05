@@ -560,6 +560,7 @@ runs_needing_hr_detail = [
 ]
 
 new_hr_sample_rows = []
+_debug_printed_once = False
 for r in runs_needing_hr_detail:
     aid = r["activity_id"]
     try:
@@ -568,6 +569,12 @@ for r in runs_needing_hr_detail:
 
         hr_idx, hr_factor = _find_metric(descriptors, ["heartrate", "heart_rate"])
         time_idx, time_factor = _find_metric(descriptors, ["elapsedduration", "elapsed_duration", "timestamp"])
+
+        if not _debug_printed_once:
+            hr_key = descriptors[hr_idx]["key"] if hr_idx is not None else None
+            time_key = descriptors[time_idx]["key"] if time_idx is not None else None
+            print(f"DEBUG resolved columns for activity {aid}: hr_idx={hr_idx} key={hr_key} factor={hr_factor} | time_idx={time_idx} key={time_key} factor={time_factor}")
+            _debug_printed_once = True
 
         if hr_idx is None or time_idx is None:
             print(f"Run HR detail: could not identify HR/time columns for activity {aid} — skipping")

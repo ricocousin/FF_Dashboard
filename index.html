@@ -232,7 +232,7 @@ async function init() {
 
   // ── Overview block ────────────────────────────────────────────────────────────
   const deltaBadge = (delta, qual, formatFn) => {
-    if (delta === null || delta === undefined) return '';
+    if (delta === null || delta === undefined || delta === 0) return '';
     return ` · <span style="color:var(--text-dim)">${arrowFor(qual, delta)} ${formatFn(Math.abs(delta))}</span>`;
   };
   const qualLine = (qual, compareLabel) => {

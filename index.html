@@ -130,6 +130,20 @@
     .loading { text-align: center; padding: 4rem 2rem; font-family: var(--font-mono); color: var(--text-dim); font-size: 12px; letter-spacing: 0.1em; }
     .pulse { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 1.2s ease-in-out infinite; margin-right: 0.5rem; vertical-align: middle; }
     @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.6); } }
+    .ztime-stack { display: flex; height: 28px; border-radius: 4px; overflow: hidden; background: var(--border); }
+    .ztime-seg { height: 100%; min-width: 0; }
+    .ztime-legend { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.75rem; }
+    .ztime-legend-row { display: grid; grid-template-columns: 16px 1fr auto auto; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: 11px; }
+    .ztime-dot { width: 10px; height: 10px; border-radius: 2px; }
+    .ztime-name { color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+    .ztime-mins { color: var(--text); text-align: right; }
+    .ztime-pct { color: var(--text-dim); text-align: right; min-width: 40px; }
+    .ztime-callout { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-top: 0.9rem; padding-top: 0.75rem; border-top: 1px solid var(--border); line-height: 1.7; }
+    .ztime-callout strong { color: var(--text-hi); font-weight: 500; }
+    .hr-source-item { font-family: var(--font-mono); font-size: 11.5px; color: var(--text); padding: 0.5rem 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+    .hr-source-item:last-child { border-bottom: none; }
+    .hr-source-date { color: var(--text-dim); min-width: 70px; }
+    .hr-source-vals { text-align: right; color: var(--text-dim); font-size: 10.5px; }
   </style>
 </head>
 <body>
@@ -321,6 +335,70 @@ async function init() {
     ltCard.innerHTML = `<div class="card-title">Lactate threshold</div><p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">No valid LT reading yet — recalibrating after a data fix.</p>`;
   }
   app.appendChild(ltCard);
+
+  // ── Zone Time / HR Sources card ────────────────────────────────────────────
+  // Renders m.zone_time (Attia Zone 2 / polarized model comparison),
+  // m.strength_hr_overlay (Polar continuous HR matched to strength sessions),
+  // and m.run_hr_source_comparison (Garmin/H10 vs Polar Loop for the same
+  // run window) — all computed in build_dashboard.py, none previously
+  // rendered. Zone colors reused from m.lt.zones so this reads as part of
+  // the same system as the LT card, not a separate visual language.
+  const zoneColorMap = { Z1: '#4a9eff', Z2: '#7bc67e', Z3: '#e8ff5a', Z4: '#ff9f40', Z5: '#ff6b35' };
+  const zoneLabelMap = { Z1: 'Z1 EASY', Z2: 'Z2 AEROBIC', Z3: 'Z3 TEMPO', Z4: 'Z4 LT', Z5: 'Z5 HARD' };
+
+  if (m.zone_time && m.zone_time.has_lt_data && m.zone_time.total_minutes > 0) {
+    const zt = m.zone_time;
+    const zoneOrder = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5'];
+    const segsHtml = zoneOrder.map(z => {
+      const mins = zt.minutes[z] || 0;
+      const pct = (mins / zt.total_minutes) * 100;
+      return pct > 0 ? `<div class="ztime-seg" style="width:${pct}%;background:${zoneColorMap[z]}"></div>` : '';
+    }).join('');
+    const legendHtml = zoneOrder.map(z => {
+      const mins = zt.minutes[z] || 0;
+      const pct = zt.total_minutes ? Math.round((mins / zt.total_minutes) * 100) : 0;
+      return `<div class="ztime-legend-row"><div class="ztime-dot" style="background:${zoneColorMap[z]}"></div><span class="ztime-name">${zoneLabelMap[z]}</span><span class="ztime-mins">${fmtHrs(mins)}</span><span class="ztime-pct">${pct}%</span></div>`;
+    }).join('');
+
+    const z2Ratio = zt.z2_vs_target_pct;
+    const z2Color = z2Ratio >= 100 ? '#7bc67e' : z2Ratio >= 65 ? '#e8ff5a' : '#ff9f40';
+    const greyColor = zt.grey_pct > 20 ? '#ff9f40' : 'var(--text-dim)';
+
+    const ztimeCard = document.createElement('div');
+    ztimeCard.className = 'card';
+    ztimeCard.innerHTML = `
+      <div class="card-title">Time in zone — last ${zt.window_days} days <span style="font-weight:400;opacity:0.6">(Attia Zone 2 model)</span></div>
+      <div class="ztime-stack">${segsHtml}</div>
+      <div class="ztime-legend">${legendHtml}</div>
+      <div class="ztime-callout">
+        <strong style="color:${z2Color}">Zone 2: ${fmtHrs(zt.minutes.Z2)}</strong> vs ${zt.z2_target_min}-${zt.z2_target_max} min/week target (${z2Ratio}% of minimum) ·
+        <span style="color:${greyColor}">Grey zone (Z3+Z4): ${zt.grey_pct}%</span> — Attia's model treats this as time to minimize, not a neutral zone ·
+        Z5 (hard): ${zt.z5_pct}%<br>
+        <span style="opacity:0.7">${zt.running_sessions_with_data} run(s), ${zt.strength_sessions_with_data} strength session(s) contributing data this window</span>
+      </div>
+    `;
+    app.appendChild(ztimeCard);
+  }
+
+  const hasStrengthHr = Array.isArray(m.strength_hr_overlay) && m.strength_hr_overlay.length > 0;
+  const hasHrComparison = Array.isArray(m.run_hr_source_comparison) && m.run_hr_source_comparison.length > 0;
+  if (hasStrengthHr || hasHrComparison) {
+    const hrSourcesCard = document.createElement('div');
+    hrSourcesCard.className = 'card';
+    const strengthHtml = hasStrengthHr ? `
+      <div class="card-title" style="margin-bottom:0.75rem">Strength session HR <span style="font-weight:400;opacity:0.6">(Polar Loop overlay)</span></div>
+      ${m.strength_hr_overlay.slice(0, 8).map(s => `<div class="hr-source-item"><span class="hr-source-date">${s.date}</span><span>${escapeHtml(s.name)}</span><span class="hr-source-vals">avg ${s.avg_hr} · max ${s.max_hr} bpm · ${s.sample_count} samples</span></div>`).join('')}
+    ` : '';
+    const comparisonHtml = hasHrComparison ? `
+      <div class="card-title" style="margin-top:${hasStrengthHr ? '1.25rem' : '0'};margin-bottom:0.75rem">Garmin vs Polar <span style="font-weight:400;opacity:0.6">(same run window)</span></div>
+      ${m.run_hr_source_comparison.slice(0, 8).map(c => {
+        const diffColor = c.diff < 0 ? '#4a9eff' : '#ff9f40';
+        return `<div class="hr-source-item"><span class="hr-source-date">${c.date}</span><span>${escapeHtml(c.name)}</span><span class="hr-source-vals">Garmin ${c.garmin_avg_hr} · Polar ${c.polar_avg_hr} bpm · <span style="color:${diffColor}">Δ${c.diff > 0 ? '+' : ''}${c.diff}</span></span></div>`;
+      }).join('')}
+    ` : '';
+    hrSourcesCard.innerHTML = strengthHtml + comparisonHtml;
+    app.appendChild(hrSourcesCard);
+  }
 
   // ── Activity calendar ─────────────────────────────────────────────────────────
   const calCard = document.createElement('div');

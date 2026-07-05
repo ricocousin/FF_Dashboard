@@ -1329,6 +1329,7 @@ COACHING PRINCIPLES:
 - Avoid confirmation bias. If the data contradicts prior assumptions about the athlete, favour the data.
 - When uncertainty exists, acknowledge it rather than inventing certainty.
 - Do not infer causation unless the supplied data directly supports it. Prefer "is consistent with" over "because" — e.g. "the pace improvement is consistent with the added strength volume" rather than "the pace improved because of the added strength volume," unless the data actually demonstrates that causal link.
+- You will be given a RECENT COACHING HISTORY block showing your last few days' headlines and the most recent WATCH items. Use it only for continuity — to avoid reusing the same framing two days running, and to notice if something previously flagged has resolved, worsened, or changed. Never treat it as evidence, never quote it back verbatim, and never let it substitute for today's actual data.
 - Sleep data (from Polar Loop) is supporting context only. Note it when relevant, but do not change training recommendations or caution level based on sleep — this data stream is new and not yet validated enough to drive advice.
 
 DECISION FRAMEWORK — ask these questions before writing:
@@ -1361,7 +1362,42 @@ WATCH:
 
 Do not add any text outside these four sections, and use the exact delimiter labels (HEADLINE:, SUMMARY:, EVIDENCE:, WATCH:) on their own lines."""
 
+# ── Coach memory (coach_context.json) ─────────────────────────────────────────
+# Short rolling memory only — last MEMORY_HISTORY_MAX days' headline + that
+# day's WATCH items. Deliberately NOT block-phase-aware (considered and
+# dropped — the coach doesn't prescribe training, so which week of a 16-week
+# block it is has no clear effect on anything the coach actually says, per
+# athlete's own pushback). Purpose: let the coach avoid repeating the same
+# framing two days running, and notice when a previously-flagged WATCH item
+# has resolved or changed — not to accumulate a full history (that's what
+# the CSVs/dashboard are for).
+MEMORY_HISTORY_MAX = 5
+coach_context_history = []
+if os.path.exists("coach_context.json"):
+    try:
+        with open("coach_context.json", "r", encoding="utf-8") as f:
+            coach_context_history = json.load(f).get("history", [])
+    except Exception:
+        coach_context_history = []
+
+if coach_context_history:
+    _recent_headlines = "\n".join(
+        f"  {h.get('date', '?')}: {h.get('headline', '')}" for h in coach_context_history[-MEMORY_HISTORY_MAX:]
+    )
+    _last_entry = coach_context_history[-1]
+    _last_watch = _last_entry.get("watch_items", [])
+    _last_watch_text = "\n".join(f"  - {w}" for w in _last_watch) if _last_watch else "  (none flagged)"
+    memory_summary_text = f"""RECENT COACHING HISTORY (last {min(len(coach_context_history), MEMORY_HISTORY_MAX)} days — for continuity only; do not repeat these verbatim, and do not treat them as new evidence. Use only to avoid reusing the same framing two days running, and to notice whether something flagged last time has since resolved, changed, or is still relevant):
+{_recent_headlines}
+
+Things flagged to watch as of {_last_entry.get('date', '?')}:
+{_last_watch_text}"""
+else:
+    memory_summary_text = "RECENT COACHING HISTORY: none yet (first run, or history not yet accumulated)."
+
 user_prompt = f"""Today: {today_date} (week {today_date.isocalendar()[1]} of {today_date.year})
+
+{memory_summary_text}
 
 ATHLETE PROFILE:
 - Experienced hybrid athlete: ultra-endurance durability, speed development, strength, and long-term athleticism
@@ -1520,6 +1556,25 @@ def parse_coach_sections(text):
     return headline, summary_text, evidence_items, watch_items
 
 coach_headline, coach_summary_text, coach_evidence_items, coach_watch_items = parse_coach_sections(coach_text)
+
+# ── Write coach memory (coach_context.json) ───────────────────────────────────
+# Only appends a real entry if the coach actually produced a headline this run
+# (i.e. parsing succeeded and the API call didn't fall back to the static
+# "unavailable today" message) — a failed/fallback day shouldn't pollute
+# tomorrow's continuity context with an empty or generic headline.
+if coach_headline:
+    coach_context_history = [h for h in coach_context_history if h.get("date") != str(today_date)]
+    coach_context_history.append({
+        "date": str(today_date),
+        "headline": coach_headline,
+        "watch_items": coach_watch_items
+    })
+    coach_context_history = coach_context_history[-MEMORY_HISTORY_MAX:]
+    with open("coach_context.json", "w", encoding="utf-8") as f:
+        json.dump({"history": coach_context_history}, f, indent=2)
+    print(f"coach_context.json: {len(coach_context_history)} day(s) in rolling history")
+else:
+    print("coach_context.json: skipped (no headline produced this run — fallback/failed day)")
 
 # ── Accumulate usage history ──────────────────────────────────────────────────
 usage_file = "api_usage.json"

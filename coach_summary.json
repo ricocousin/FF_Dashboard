@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-05 13:56 UTC",
-  "headline": "Back-to-back long runs across 48 hours cap a +16% volume block, while aerobic efficiency at easy effort continues to improve meaningfully.",
+  "last_updated": "2026-07-05 18:31 UTC",
+  "headline": "Volume is building meaningfully and aerobic efficiency is improving \u2014 a strong foundation entering the second half of the year.",
   "confidence_pct": 86,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,12 +12,12 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 3/14 nights",
-  "summary": "The two-day sequence finishing today \u2014 a moderate aerobic run followed by an 18 km effort the next morning \u2014 is the most relevant data point right now. Back-to-back durability is a core ultra competency, and completing that kind of stacked load on the tail end of a volume block that's already up significantly on the prior four weeks signals genuine readiness, not just accumulated mileage. The fact that easy-run HR has dropped noticeably across comparable efforts over the same period reinforces that this volume increase is being absorbed, not just survived.\n\nThe June 27th threshold effort sits clearly apart from everything else in recent weeks \u2014 a hard, fast session that demonstrated the speed end of your capacity is still sharp. That session combined with the current aerobic efficiency trend suggests both ends of your range are in good shape simultaneously, which is the defining characteristic of functional hybrid fitness.\n\nStrength frequency has dipped slightly relative to the prior block, which is worth noting but not alarming given the running load increase. The two qualities are genuinely competing for recovery resource right now, and the running side has clearly been prioritised. The 20-week running streak \u2014 now matching your all-time best \u2014 is a marker of consistency worth recognising without over-indexing on it.",
+  "summary": "The 16% volume step-up over the last four weeks is real and well-distributed across multiple runs, not inflated by one outlier effort. What's more notable is that this increased volume is coming at lower average heart rate on comparable easy runs \u2014 suggesting your aerobic base is absorbing the load rather than being stressed by it. That combination of rising output and improving efficiency is the clearest positive signal in today's data.\n\nThe 20-week running streak reaching its all-time best is worth acknowledging not as a vanity metric, but as evidence of structural consistency \u2014 the kind that underpins both ultra durability and speed development. The recent back-to-back long efforts across consecutive days further reinforce that durability capacity is active and functioning.\n\nOne area worth keeping an eye on: strength frequency has dipped slightly relative to the prior block, and with running volume climbing, the balance between the two modalities deserves attention. Nothing alarming yet, but it's worth being deliberate about not letting strength work quietly compress as running load grows.",
   "watch_items": [
-    "Monitor whether easy-run HR continues its downward trend or plateaus \u2014 a plateau here after this volume block would be normal and expected",
-    "Watch how strength sessions feel over the next 1\u20132 weeks given the accumulated running load; quality of movement is a more useful signal than session count",
-    "Pay attention to how quickly you recover from the back-to-back \u2014 the recovery arc after stacked efforts is informative data for future ultra pacing strategy",
-    "If volume consolidates slightly this week, treat it as part of the block structure rather than a break in momentum"
+    "Watch whether easy-run HR continues to trend down as volume holds or increases \u2014 this is the key aerobic efficiency signal to track over the next few weeks.",
+    "Monitor how strength session frequency responds to the elevated running block \u2014 a gradual squeeze is worth catching early.",
+    "The back-to-back long run pattern is valuable for ultra durability; notice how recovery quality holds if this structure repeats.",
+    "Sleep tracking is still sparse \u2014 as more nights accumulate, watch for any patterns between shorter sleep and next-day HR or perceived effort."
   ],
   "evidence_items": [
     {
@@ -38,18 +38,18 @@
     }
   ],
   "insights": [
-    "The two-day sequence finishing today \u2014 a moderate aerobic run followed by an 18 km effort the next morning \u2014 is the most relevant data point right now. Back-to-back durability is a core ultra competency, and completing that kind of stacked load on the tail end of a volume block that's already up significantly on the prior four weeks signals genuine readiness, not just accumulated mileage. The fact that easy-run HR has dropped noticeably across comparable efforts over the same period reinforces that this volume increase is being absorbed, not just survived.\n\nThe June 27th threshold effort sits clearly apart from everything else in recent weeks \u2014 a hard, fast session that demonstrated the speed end of your capacity is still sharp. That session combined with the current aerobic efficiency trend suggests both ends of your range are in good shape simultaneously, which is the defining characteristic of functional hybrid fitness.\n\nStrength frequency has dipped slightly relative to the prior block, which is worth noting but not alarming given the running load increase. The two qualities are genuinely competing for recovery resource right now, and the running side has clearly been prioritised. The 20-week running streak \u2014 now matching your all-time best \u2014 is a marker of consistency worth recognising without over-indexing on it."
+    "The 16% volume step-up over the last four weeks is real and well-distributed across multiple runs, not inflated by one outlier effort. What's more notable is that this increased volume is coming at lower average heart rate on comparable easy runs \u2014 suggesting your aerobic base is absorbing the load rather than being stressed by it. That combination of rising output and improving efficiency is the clearest positive signal in today's data.\n\nThe 20-week running streak reaching its all-time best is worth acknowledging not as a vanity metric, but as evidence of structural consistency \u2014 the kind that underpins both ultra durability and speed development. The recent back-to-back long efforts across consecutive days further reinforce that durability capacity is active and functioning.\n\nOne area worth keeping an eye on: strength frequency has dipped slightly relative to the prior block, and with running volume climbing, the balance between the two modalities deserves attention. Nothing alarming yet, but it's worth being deliberate about not letting strength work quietly compress as running load grows."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 2871,
-    "output_tokens": 450,
-    "cost_usd": 0.015363,
-    "cost_dkk": 0.106,
+    "input_tokens": 3132,
+    "output_tokens": 388,
+    "cost_usd": 0.015216,
+    "cost_dkk": 0.10499,
     "date": "2026-07-05"
   },
-  "usage_mtd_usd": 0.06385,
-  "usage_mtd_dkk": 0.4406,
-  "usage_ytd_usd": 0.06385,
-  "usage_ytd_dkk": 0.4406
+  "usage_mtd_usd": 0.0637,
+  "usage_mtd_dkk": 0.4396,
+  "usage_ytd_usd": 0.0637,
+  "usage_ytd_dkk": 0.4396
 }

@@ -568,12 +568,22 @@ for r in runs_needing_hr_detail:
         descriptors = details.get("metricDescriptors", [])
 
         hr_idx, hr_factor = _find_metric(descriptors, ["heartrate", "heart_rate"])
-        time_idx, time_factor = _find_metric(descriptors, ["elapsedduration", "elapsed_duration", "timestamp"])
+        # CHANGED (July 2026, after a real observed failure): Garmin's
+        # metricsIndex is NOT a stable identifier for a given metric type —
+        # the same activity_id returned hr_idx=17/time_idx=16 on one call and
+        # hr_idx=16/time_idx=10 on another. Rather than trust a shifting
+        # index or guess which of several time-like fields ("sumElapsedDuration"
+        # vs "directTimestamp") is actually present and correctly scaled this
+        # time, we now ALWAYS lock onto whichever field contains "timestamp"
+        # (confirmed present in every response seen so far, just at varying
+        # positions) and derive elapsed time ourselves via subtraction below —
+        # removing any dependence on Garmin's duration-field semantics/factor.
+        time_idx, _ = _find_metric(descriptors, ["timestamp"])
 
         if not _debug_printed_once:
             hr_key = descriptors[hr_idx]["key"] if hr_idx is not None else None
             time_key = descriptors[time_idx]["key"] if time_idx is not None else None
-            print(f"DEBUG resolved columns for activity {aid}: hr_idx={hr_idx} key={hr_key} factor={hr_factor} | time_idx={time_idx} key={time_key} factor={time_factor}")
+            print(f"DEBUG resolved columns for activity {aid}: hr_idx={hr_idx} key={hr_key} factor={hr_factor} | time_idx={time_idx} key={time_key} (self-normalized, factor ignored)")
             _debug_printed_once = True
 
         if hr_idx is None or time_idx is None:
@@ -581,18 +591,24 @@ for r in runs_needing_hr_detail:
             continue
 
         metrics_list = (details.get("activityDetailMetrics") or [])
+        raw_pairs = []
         for entry in metrics_list:
             values = entry.get("metrics", [])
             if len(values) > max(hr_idx, time_idx):
                 hr_raw = values[hr_idx]
                 t_raw = values[time_idx]
                 if hr_raw is not None and t_raw is not None:
-                    new_hr_sample_rows.append({
-                        "activity_id": aid,
-                        "date": r.get("date", ""),
-                        "elapsed_seconds": round(t_raw / time_factor, 1),
-                        "heart_rate": round(hr_raw / hr_factor)
-                    })
+                    raw_pairs.append((t_raw, hr_raw))
+
+        if raw_pairs:
+            min_t = min(t for t, _ in raw_pairs)
+            for t_raw, hr_raw in raw_pairs:
+                new_hr_sample_rows.append({
+                    "activity_id": aid,
+                    "date": r.get("date", ""),
+                    "elapsed_seconds": round((t_raw - min_t) / 1000, 1),
+                    "heart_rate": round(hr_raw / hr_factor)
+                })
         print(f"Run HR detail: {len(metrics_list)} sample(s) processed for activity {aid} ({r.get('date','')})")
     except Exception as e:
         print(f"Run HR detail fetch skipped for activity {aid}: {e}")

@@ -418,21 +418,28 @@ async function init() {
   const hasStrengthHr = Array.isArray(m.strength_hr_overlay) && m.strength_hr_overlay.length > 0;
   const hasHrComparison = Array.isArray(m.run_hr_source_comparison) && m.run_hr_source_comparison.length > 0;
   if (hasStrengthHr || hasHrComparison) {
-    const hrSourcesCard = document.createElement('div');
-    hrSourcesCard.className = 'card';
-    const strengthHtml = hasStrengthHr ? `
-      <div class="card-title" style="margin-bottom:0.75rem">Strength session HR <span style="font-weight:400;opacity:0.6">(Polar Loop overlay)</span></div>
-      ${m.strength_hr_overlay.slice(0, 8).map(s => `<div class="hr-source-item"><span class="hr-source-date">${s.date}</span><span>${escapeHtml(s.name)}</span><span class="hr-source-vals">avg ${s.avg_hr} · max ${s.max_hr} bpm · ${s.sample_count} samples</span></div>`).join('')}
+    // Chart-based, not list-based — a growing list of rows can't show whether
+    // Polar's under-read vs Garmin is consistent over time, or whether
+    // strength-session effort is trending up/down across the block. A trend
+    // line answers exactly that. Each chart individually falls back to a
+    // "trend builds daily" message below 2 points, same pattern as the LT
+    // trend chart — a single point can't show a trend either way.
+    const hrTrendCard = document.createElement('div');
+    hrTrendCard.className = 'card';
+    const comparisonChartHtml = hasHrComparison ? `
+      <div class="card-title" style="margin-bottom:0.75rem">Run HR: Garmin vs Polar <span style="font-weight:400;opacity:0.6">(same run window)</span></div>
+      ${m.run_hr_source_comparison.length >= 2
+        ? `<div class="chart-wrap" style="height:140px"><canvas id="hrComparisonChart"></canvas></div>`
+        : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">Trend builds daily — check back soon (${m.run_hr_source_comparison.length} day${m.run_hr_source_comparison.length === 1 ? '' : 's'} so far).</p>`}
     ` : '';
-    const comparisonHtml = hasHrComparison ? `
-      <div class="card-title" style="margin-top:${hasStrengthHr ? '1.25rem' : '0'};margin-bottom:0.75rem">Garmin vs Polar <span style="font-weight:400;opacity:0.6">(same run window)</span></div>
-      ${m.run_hr_source_comparison.slice(0, 8).map(c => {
-        const diffColor = c.diff < 0 ? '#4a9eff' : '#ff9f40';
-        return `<div class="hr-source-item"><span class="hr-source-date">${c.date}</span><span>${escapeHtml(c.name)}</span><span class="hr-source-vals">Garmin ${c.garmin_avg_hr} · Polar ${c.polar_avg_hr} bpm · <span style="color:${diffColor}">Δ${c.diff > 0 ? '+' : ''}${c.diff}</span></span></div>`;
-      }).join('')}
+    const strengthChartHtml = hasStrengthHr ? `
+      <div class="card-title" style="margin-top:${hasHrComparison ? '1.5rem' : '0'};margin-bottom:0.75rem">Strength session HR <span style="font-weight:400;opacity:0.6">(Polar Loop overlay)</span></div>
+      ${m.strength_hr_overlay.length >= 2
+        ? `<div class="chart-wrap" style="height:140px"><canvas id="strengthHrChart"></canvas></div>`
+        : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">Trend builds daily — check back soon (${m.strength_hr_overlay.length} session${m.strength_hr_overlay.length === 1 ? '' : 's'} so far).</p>`}
     ` : '';
-    hrSourcesCard.innerHTML = strengthHtml + comparisonHtml;
-    app.appendChild(hrSourcesCard);
+    hrTrendCard.innerHTML = comparisonChartHtml + strengthChartHtml;
+    app.appendChild(hrTrendCard);
   }
 
   // ── Activity calendar ─────────────────────────────────────────────────────────
@@ -540,6 +547,39 @@ async function init() {
     if ($('ltChart') && m.lt.trend) {
       const t = m.lt.trend;
       new Chart($('ltChart'), { type: 'line', data: { labels: t.labels, datasets: [ { data: t.pace_sec, borderColor: 'rgba(232,255,90,0.8)', backgroundColor: 'rgba(232,255,90,0.06)', pointBackgroundColor: 'rgba(232,255,90,0.9)', pointRadius: 4, tension: 0.3, fill: true }, { data: t.trend_sec, borderColor: 'rgba(255,107,53,0.7)', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0 } ] }, options: { ...chartOpts(), scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, y: { reverse: true, grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', callback: v => secToPace(v) } } }, plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` LT pace: ${secToPace(ctx.parsed.y)} /km` : ` Trend` } } } } });
+    }
+
+    if ($('hrComparisonChart') && m.run_hr_source_comparison && m.run_hr_source_comparison.length >= 2) {
+      // Chronological order for a trend line — run_hr_source_comparison is
+      // stored newest-first (matching every other list in this dashboard),
+      // so reverse for charting.
+      const hrc = [...m.run_hr_source_comparison].reverse();
+      new Chart($('hrComparisonChart'), {
+        type: 'line',
+        data: {
+          labels: hrc.map(c => c.date.slice(5)),
+          datasets: [
+            { label: 'Garmin', data: hrc.map(c => c.garmin_avg_hr), borderColor: 'rgba(232,255,90,0.85)', backgroundColor: 'rgba(232,255,90,0.06)', pointRadius: 3, tension: 0.3, fill: false },
+            { label: 'Polar', data: hrc.map(c => c.polar_avg_hr), borderColor: 'rgba(74,158,255,0.85)', backgroundColor: 'rgba(74,158,255,0.06)', pointRadius: 3, tension: 0.3, fill: false }
+          ]
+        },
+        options: { ...chartOpts(), plugins: { ...chartOpts().plugins, legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} bpm` } } }, scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, y: { grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', callback: v => `${v} bpm` } } } }
+      });
+    }
+
+    if ($('strengthHrChart') && m.strength_hr_overlay && m.strength_hr_overlay.length >= 2) {
+      const shr = [...m.strength_hr_overlay].reverse();
+      new Chart($('strengthHrChart'), {
+        type: 'line',
+        data: {
+          labels: shr.map(s => s.date.slice(5)),
+          datasets: [
+            { label: 'Avg HR', data: shr.map(s => s.avg_hr), borderColor: 'rgba(74,158,255,0.85)', backgroundColor: 'rgba(74,158,255,0.08)', pointRadius: 3, tension: 0.3, fill: true },
+            { label: 'Max HR', data: shr.map(s => s.max_hr), borderColor: 'rgba(255,107,53,0.6)', borderWidth: 1.5, borderDash: [4, 3], pointRadius: 2, tension: 0.3, fill: false }
+          ]
+        },
+        options: { ...chartOpts(), plugins: { ...chartOpts().plugins, legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} bpm` } } }, scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, y: { grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', callback: v => `${v} bpm` } } } }
+      });
     }
   });
 }

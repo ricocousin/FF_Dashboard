@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-05 09:31 UTC",
-  "headline": "Back-to-back long aerobic days close out a +16% volume block while easy-run cardiac drift continues to trend downward \u2014 aerobic efficiency is moving in the right direction.",
+  "last_updated": "2026-07-05 09:40 UTC",
+  "headline": "Easy-run cardiac drift has dropped meaningfully while weekly volume continues to build \u2014 aerobic efficiency is visibly improving.",
   "confidence_pct": 86,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,12 +12,12 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 3/14 nights",
-  "summary": "Your aerobic system is responding. Easy-run heart rate has dropped meaningfully compared to the prior block at comparable paces, which is a concrete signal that the training load is converting to fitness rather than just accumulating fatigue. The 20-week running streak \u2014 now matching your personal best \u2014 is the structural foundation behind that, and yesterday's 18 km following Thursday's long effort shows your back-to-back durability is in good shape.\n\nThe volume step-up this block is meaningful but not aggressive, and the pacing across your recent easy days looks appropriate for absorbing it. Your threshold data point from earlier this week places your lactate threshold in genuinely strong territory \u2014 that figure sits well above your marathon PB pace, which confirms the endurance base is currently supporting faster-end capacity, not just easy-zone volume.\n\nStrength work dropped slightly against the prior block. It's not alarming at this volume level, but worth keeping an eye on across the next few weeks \u2014 the hybrid profile depends on both sides of the equation staying consistent.",
+  "summary": "Your aerobic system is responding. Easy-run heart rate has fallen noticeably across comparable efforts compared to the prior period, which \u2014 alongside continued volume growth \u2014 is one of the clearest in-training signals of genuine aerobic adaptation rather than just accumulated mileage. The 18 km effort on July 4th slots in as your longest recent run and contributes to a block that's now running meaningfully ahead of the prior four weeks, without any apparent cost to recovery quality or pace.\n\nThe lactate threshold test from July 2nd gives a useful anchor point. With only one test in the current 30-day window, it's a single data point rather than a trend \u2014 but the pace is credible relative to your half-marathon and 10K history, and worth treating as a working baseline to track against.\n\nStrength frequency has edged slightly lower this block. Not a concern in isolation, but worth keeping an eye on as running volume builds \u2014 your strength profile is a genuine asset and the two qualities are complementary rather than competing.",
   "watch_items": [
-    "Watch whether the easy-run HR trend continues downward, or whether it flattens as weekly load stays elevated \u2014 a plateau here would suggest the body is absorbing rather than adapting.",
-    "Monitor how quickly you recover between longer efforts; back-to-back durability is a strength right now, but stacking more of them as volume grows warrants attention.",
-    "Track whether strength session frequency recovers to prior-block levels \u2014 a second consecutive lower week would be worth addressing deliberately.",
-    "Notice whether threshold pace holds or improves on the next comparable effort \u2014 one data point is promising, but the trend matters more."
+    "Watch whether easy-run HR continues its downward trend or plateaus \u2014 a further drop would confirm the adaptation is consolidating",
+    "Monitor how strength session frequency holds up as running load increases heading into the next block",
+    "The lactate threshold test is currently a single reference point \u2014 note whether threshold-adjacent efforts feel easier or harder relative to July 2nd",
+    "With the running streak now matching your personal best at 20 weeks, observe how freshness and motivation track over the coming 7\u201310 days"
   ],
   "evidence_items": [
     {
@@ -38,18 +38,18 @@
     }
   ],
   "insights": [
-    "Your aerobic system is responding. Easy-run heart rate has dropped meaningfully compared to the prior block at comparable paces, which is a concrete signal that the training load is converting to fitness rather than just accumulating fatigue. The 20-week running streak \u2014 now matching your personal best \u2014 is the structural foundation behind that, and yesterday's 18 km following Thursday's long effort shows your back-to-back durability is in good shape.\n\nThe volume step-up this block is meaningful but not aggressive, and the pacing across your recent easy days looks appropriate for absorbing it. Your threshold data point from earlier this week places your lactate threshold in genuinely strong territory \u2014 that figure sits well above your marathon PB pace, which confirms the endurance base is currently supporting faster-end capacity, not just easy-zone volume.\n\nStrength work dropped slightly against the prior block. It's not alarming at this volume level, but worth keeping an eye on across the next few weeks \u2014 the hybrid profile depends on both sides of the equation staying consistent."
+    "Your aerobic system is responding. Easy-run heart rate has fallen noticeably across comparable efforts compared to the prior period, which \u2014 alongside continued volume growth \u2014 is one of the clearest in-training signals of genuine aerobic adaptation rather than just accumulated mileage. The 18 km effort on July 4th slots in as your longest recent run and contributes to a block that's now running meaningfully ahead of the prior four weeks, without any apparent cost to recovery quality or pace.\n\nThe lactate threshold test from July 2nd gives a useful anchor point. With only one test in the current 30-day window, it's a single data point rather than a trend \u2014 but the pace is credible relative to your half-marathon and 10K history, and worth treating as a working baseline to track against.\n\nStrength frequency has edged slightly lower this block. Not a concern in isolation, but worth keeping an eye on as running volume builds \u2014 your strength profile is a genuine asset and the two qualities are complementary rather than competing."
   ],
   "quiet": [],
   "usage": {
     "input_tokens": 2871,
-    "output_tokens": 420,
-    "cost_usd": 0.014913,
-    "cost_dkk": 0.1029,
+    "output_tokens": 380,
+    "cost_usd": 0.014313,
+    "cost_dkk": 0.09876,
     "date": "2026-07-05"
   },
-  "usage_mtd_usd": 0.0634,
-  "usage_mtd_dkk": 0.4375,
-  "usage_ytd_usd": 0.0634,
-  "usage_ytd_dkk": 0.4375
+  "usage_mtd_usd": 0.0628,
+  "usage_mtd_dkk": 0.4333,
+  "usage_ytd_usd": 0.0628,
+  "usage_ytd_dkk": 0.4333
 }

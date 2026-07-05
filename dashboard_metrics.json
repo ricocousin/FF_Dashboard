@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-05 09:31 UTC",
+  "last_updated": "2026-07-05 09:40 UTC",
   "last_complete_date": "2026-07-04",
   "this_year": "2026",
   "this_month_short": "Jul",
@@ -767,19 +767,19 @@
   "zone_time": {
     "window_days": 7,
     "minutes": {
-      "Z1": 65.8,
-      "Z2": 0.1,
-      "Z3": 0.0,
+      "Z1": 214.5,
+      "Z2": 117.6,
+      "Z3": 1.7,
       "Z4": 0.0,
       "Z5": 0.0
     },
-    "total_minutes": 65.9,
-    "z2_pct": 0.1,
-    "grey_pct": 0.0,
+    "total_minutes": 333.8,
+    "z2_pct": 35.2,
+    "grey_pct": 0.5,
     "z5_pct": 0.0,
     "z2_target_min": 180,
     "z2_target_max": 240,
-    "z2_vs_target_pct": 0,
+    "z2_vs_target_pct": 65,
     "running_sessions_with_data": 3,
     "strength_sessions_with_data": 1,
     "has_lt_data": true

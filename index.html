@@ -337,21 +337,31 @@ async function init() {
   app.appendChild(ltCard);
 
   // ── Zone Time / HR Sources card ────────────────────────────────────────────
-  // Renders m.zone_time (Attia Zone 2 / polarized model comparison),
-  // m.strength_hr_overlay (Polar continuous HR matched to strength sessions),
-  // and m.run_hr_source_comparison (Garmin/H10 vs Polar Loop for the same
-  // run window) — all computed in build_dashboard.py, none previously
-  // rendered. Zone colors reused from m.lt.zones so this reads as part of
-  // the same system as the LT card, not a separate visual language.
+  // Renders m.zone_time (Attia Zone 2 / polarized model comparison, now with
+  // TWO precomputed windows — .rolling (last 7 days, default) and
+  // .last_completed_week (Mon-Sun, matching the athlete's actual training
+  // blocks) — toggled client-side with no rebuild needed), m.strength_hr_overlay
+  // (Polar continuous HR matched to strength sessions), and
+  // m.run_hr_source_comparison (Garmin/H10 vs Polar Loop for the same run
+  // window). Zone colors reused from m.lt.zones so this reads as part of the
+  // same system as the LT card, not a separate visual language.
+  //
+  // Rolling vs last-completed-week is a deliberate choice, not a gimmick to
+  // toggle everywhere: rolling answers "am I on pace right now" (always a
+  // full week of context, never misleadingly low mid-week); last-completed-
+  // week answers "how did that finished training block actually go" (aligns
+  // with the athlete's real weekly blocks and existing streak/delta logic).
+  // Only zone_time has this toggle — other tiles (steps, sleep, intensity
+  // averages) don't have a real target to hit, so the same distinction
+  // wouldn't add anything there.
   const zoneColorMap = { Z1: '#4a9eff', Z2: '#7bc67e', Z3: '#e8ff5a', Z4: '#ff9f40', Z5: '#ff6b35' };
   const zoneLabelMap = { Z1: 'Z1 EASY', Z2: 'Z2 AEROBIC', Z3: 'Z3 TEMPO', Z4: 'Z4 LT', Z5: 'Z5 HARD' };
 
-  if (m.zone_time && m.zone_time.has_lt_data && m.zone_time.total_minutes > 0) {
-    const zt = m.zone_time;
+  function renderZoneTimeBody(zt) {
     const zoneOrder = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5'];
     const segsHtml = zoneOrder.map(z => {
       const mins = zt.minutes[z] || 0;
-      const pct = (mins / zt.total_minutes) * 100;
+      const pct = zt.total_minutes ? (mins / zt.total_minutes) * 100 : 0;
       return pct > 0 ? `<div class="ztime-seg" style="width:${pct}%;background:${zoneColorMap[z]}"></div>` : '';
     }).join('');
     const legendHtml = zoneOrder.map(z => {
@@ -360,23 +370,48 @@ async function init() {
       return `<div class="ztime-legend-row"><div class="ztime-dot" style="background:${zoneColorMap[z]}"></div><span class="ztime-name">${zoneLabelMap[z]}</span><span class="ztime-mins">${fmtHrs(mins)}</span><span class="ztime-pct">${pct}%</span></div>`;
     }).join('');
 
-    const z2Ratio = zt.z2_vs_target_pct;
+    if (zt.total_minutes === 0) {
+      return `<div class="ztime-callout" style="border-top:none;padding-top:0;margin-top:0">No zone data for this window yet.</div>`;
+    }
+
+    const z2Ratio = zt.z2_vs_target_pct ?? 0;
     const z2Color = z2Ratio >= 100 ? '#7bc67e' : z2Ratio >= 65 ? '#e8ff5a' : '#ff9f40';
     const greyColor = zt.grey_pct > 20 ? '#ff9f40' : 'var(--text-dim)';
 
-    const ztimeCard = document.createElement('div');
-    ztimeCard.className = 'card';
-    ztimeCard.innerHTML = `
-      <div class="card-title">Time in zone — last ${zt.window_days} days <span style="font-weight:400;opacity:0.6">(Attia Zone 2 model)</span></div>
+    return `
       <div class="ztime-stack">${segsHtml}</div>
       <div class="ztime-legend">${legendHtml}</div>
       <div class="ztime-callout">
         <strong style="color:${z2Color}">Zone 2: ${fmtHrs(zt.minutes.Z2)}</strong> vs ${zt.z2_target_min}-${zt.z2_target_max} min/week target (${z2Ratio}% of minimum) ·
-        <span style="color:${greyColor}">Grey zone (Z3+Z4): ${zt.grey_pct}%</span> — Attia's model treats this as time to minimize, not a neutral zone ·
-        Z5 (hard): ${zt.z5_pct}%<br>
-        <span style="opacity:0.7">${zt.running_sessions_with_data} run(s), ${zt.strength_sessions_with_data} strength session(s) contributing data this window</span>
+        <span style="color:${greyColor}">Grey zone (Z3+Z4): ${zt.grey_pct ?? 0}%</span> — Attia's model treats this as time to minimize, not a neutral zone ·
+        Z5 (hard): ${zt.z5_pct ?? 0}%<br>
+        <span style="opacity:0.7">${zt.window_start} to ${zt.window_end} · ${zt.running_sessions_with_data} run(s), ${zt.strength_sessions_with_data} strength session(s) contributing data</span>
       </div>
     `;
+  }
+
+  if (m.zone_time && m.zone_time.rolling && m.zone_time.rolling.has_lt_data) {
+    let currentView = m.zone_time.default_view || 'rolling';
+    const ztimeCard = document.createElement('div');
+    ztimeCard.className = 'card';
+
+    function renderZtimeCard() {
+      const zt = currentView === 'rolling' ? m.zone_time.rolling : m.zone_time.last_completed_week;
+      ztimeCard.innerHTML = `
+        <div class="card-title" style="margin-bottom:0.5rem">
+          Time in zone <span style="font-weight:400;opacity:0.6">(Attia Zone 2 model)</span>
+        </div>
+        <div style="display:flex;gap:0.4rem;margin-bottom:1rem">
+          <button class="ztime-toggle-btn" data-view="rolling" style="flex:1;padding:0.4rem;border-radius:4px;border:1px solid var(--border);background:${currentView === 'rolling' ? 'var(--border)' : 'transparent'};color:${currentView === 'rolling' ? 'var(--text-hi)' : 'var(--text-dim)'};font-family:var(--font-mono);font-size:10.5px;cursor:pointer">This week (rolling 7d)</button>
+          <button class="ztime-toggle-btn" data-view="last_completed_week" style="flex:1;padding:0.4rem;border-radius:4px;border:1px solid var(--border);background:${currentView === 'last_completed_week' ? 'var(--border)' : 'transparent'};color:${currentView === 'last_completed_week' ? 'var(--text-hi)' : 'var(--text-dim)'};font-family:var(--font-mono);font-size:10.5px;cursor:pointer">Last completed week</button>
+        </div>
+        ${renderZoneTimeBody(zt)}
+      `;
+      ztimeCard.querySelectorAll('.ztime-toggle-btn').forEach(btn => {
+        btn.onclick = () => { currentView = btn.dataset.view; renderZtimeCard(); };
+      });
+    }
+    renderZtimeCard();
     app.appendChild(ztimeCard);
   }
 

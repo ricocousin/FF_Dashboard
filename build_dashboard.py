@@ -729,80 +729,109 @@ def _classify_hr_zone(hr, bounds):
 
 _lt_hr_bounds = _hr_zone_bounds(latest_lt.get("lt_hr")) if latest_lt else None
 
-# Zone-minutes window: last 7 days, matching the Attia weekly target framing.
-ZONE_TIME_WINDOW_DAYS = 7
-zone_time_cutoff = today_date - timedelta(days=ZONE_TIME_WINDOW_DAYS)
-zone_minutes = {"Z1": 0.0, "Z2": 0.0, "Z3": 0.0, "Z4": 0.0, "Z5": 0.0}
-running_sessions_with_zone_data = 0
-strength_sessions_with_zone_data = 0
-
-# Running: step-function attribution — the time between two consecutive
-# samples is credited to the zone of the EARLIER sample's HR. With ~1700
-# samples over a ~65min run (roughly 1 sample per 2-3 seconds), this is a
-# close approximation of true continuous zone-time, not a coarse average.
-if _lt_hr_bounds:
-    runs_in_window = [r for r in all_run_rows
-        if r.get("date") and datetime.strptime(r["date"], "%Y-%m-%d").date() >= zone_time_cutoff
-        and r.get("activity_id") in _run_hr_by_activity]
-    for r in runs_in_window:
-        samples = _run_hr_by_activity[r["activity_id"]]
-        if len(samples) < 2:
-            continue
-        running_sessions_with_zone_data += 1
-        for i in range(len(samples) - 1):
-            t0, hr0 = samples[i]
-            t1, _ = samples[i + 1]
-            delta_sec = t1 - t0
-            if delta_sec <= 0 or delta_sec > 60:
-                continue  # skip implausible gaps (sensor dropout) rather than misattribute
-            zone = _classify_hr_zone(hr0, _lt_hr_bounds)
-            if zone:
-                zone_minutes[zone] += delta_sec / 60
-
-    # Strength: coarser — one avg_hr per session, full session duration
-    # attributed to that single zone. No per-sample data exists for strength
-    # (Polar continuous HR is 5-min-interval-ish, not fine enough for a
-    # step-function approach the way Garmin's run data is).
-    strength_in_window = [s for s in strength_hr_overlay
-        if s.get("date") and datetime.strptime(s["date"], "%Y-%m-%d").date() >= zone_time_cutoff]
-    for s in strength_in_window:
-        # Find the matching strength.csv row for its duration_min
-        match = next((row for row in all_strength_rows
-            if row.get("date") == s["date"] and row.get("name") == s["name"]), None)
-        if not match:
-            continue
-        try:
-            dur_min = float(match.get("duration_min") or 0)
-        except (ValueError, TypeError):
-            continue
-        if dur_min <= 0:
-            continue
-        zone = _classify_hr_zone(s.get("avg_hr"), _lt_hr_bounds)
-        if zone:
-            zone_minutes[zone] += dur_min
-            strength_sessions_with_zone_data += 1
-
-total_zone_minutes = sum(zone_minutes.values())
-
 # Attia-target comparison. Z2 target 180-240 min/week (his stated 3-4 hrs).
 # "Grey zone" = Z3+Z4 combined (his framework treats moderate-hard as one
 # thing to minimize, not two separate zones) — Z5 = his VO2max/hard zone.
 ATTIA_Z2_TARGET_MIN = 180
 ATTIA_Z2_TARGET_MAX = 240
 
+def _compute_zone_time(window_start, window_end, window_label, window_days):
+    """Computes zone-minutes and the Attia comparison for a given inclusive
+    date range [window_start, window_end]. Factored out so the same logic
+    can be run for both the rolling-7-day window (default, always full,
+    good for live pace-tracking against the weekly target) and the last
+    COMPLETED calendar week (Mon-Sun, matching the athlete's actual training
+    blocks — always requested only once a week is fully over, so it's never
+    partial/misleadingly low the way a live current-calendar-week view
+    would be)."""
+    zone_minutes = {"Z1": 0.0, "Z2": 0.0, "Z3": 0.0, "Z4": 0.0, "Z5": 0.0}
+    running_sessions_with_zone_data = 0
+    strength_sessions_with_zone_data = 0
+
+    if _lt_hr_bounds:
+        runs_in_window = [r for r in all_run_rows
+            if r.get("date") and window_start <= datetime.strptime(r["date"], "%Y-%m-%d").date() <= window_end
+            and r.get("activity_id") in _run_hr_by_activity]
+        for r in runs_in_window:
+            samples = _run_hr_by_activity[r["activity_id"]]
+            if len(samples) < 2:
+                continue
+            running_sessions_with_zone_data += 1
+            for i in range(len(samples) - 1):
+                t0, hr0 = samples[i]
+                t1, _ = samples[i + 1]
+                delta_sec = t1 - t0
+                if delta_sec <= 0 or delta_sec > 60:
+                    continue  # skip implausible gaps (sensor dropout) rather than misattribute
+                zone = _classify_hr_zone(hr0, _lt_hr_bounds)
+                if zone:
+                    zone_minutes[zone] += delta_sec / 60
+
+        strength_in_window = [s for s in strength_hr_overlay
+            if s.get("date") and window_start <= datetime.strptime(s["date"], "%Y-%m-%d").date() <= window_end]
+        for s in strength_in_window:
+            match = next((row for row in all_strength_rows
+                if row.get("date") == s["date"] and row.get("name") == s["name"]), None)
+            if not match:
+                continue
+            try:
+                dur_min = float(match.get("duration_min") or 0)
+            except (ValueError, TypeError):
+                continue
+            if dur_min <= 0:
+                continue
+            zone = _classify_hr_zone(s.get("avg_hr"), _lt_hr_bounds)
+            if zone:
+                zone_minutes[zone] += dur_min
+                strength_sessions_with_zone_data += 1
+
+    total_zone_minutes = sum(zone_minutes.values())
+
+    return {
+        "label": window_label,
+        "window_days": window_days,
+        "window_start": window_start.isoformat(),
+        "window_end": window_end.isoformat(),
+        "minutes": {k: round(v, 1) for k, v in zone_minutes.items()},
+        "total_minutes": round(total_zone_minutes, 1),
+        "z2_pct": round((zone_minutes["Z2"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None,
+        "grey_pct": round(((zone_minutes["Z3"] + zone_minutes["Z4"]) / total_zone_minutes) * 100, 1) if total_zone_minutes else None,
+        "z5_pct": round((zone_minutes["Z5"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None,
+        "z2_target_min": ATTIA_Z2_TARGET_MIN,
+        "z2_target_max": ATTIA_Z2_TARGET_MAX,
+        "z2_vs_target_pct": round((zone_minutes["Z2"] / ATTIA_Z2_TARGET_MIN) * 100) if ATTIA_Z2_TARGET_MIN else None,
+        "running_sessions_with_data": running_sessions_with_zone_data,
+        "strength_sessions_with_data": strength_sessions_with_zone_data,
+        "has_lt_data": _lt_hr_bounds is not None
+    }
+
+# Rolling 7-day window (default view): today minus 7 days through today.
+_rolling_start = today_date - timedelta(days=7)
+zone_time_rolling = _compute_zone_time(_rolling_start, today_date, "This week (rolling 7d)", 7)
+
+# Last COMPLETED calendar week (Mon-Sun), reusing the same ISO-week helpers
+# already built for the streak/delta logic elsewhere in this file — this is
+# always a full week (never partial), matching the athlete's actual
+# training blocks rather than an arbitrary rolling window.
+#
+# IMPORTANT: last_complete_week (yesterday's ISO week) is only a genuinely
+# FINISHED week if yesterday was a Sunday (i.e. today is Monday) — every
+# other day of the week, last_complete_week is still the in-progress CURRENT
+# week, and using it directly here would have mislabeled an unfinished week
+# as "completed." Caught via a runtime test before shipping, not assumed.
+if last_complete_date.weekday() == 6:  # Sunday=6 in Python's date.weekday()
+    _true_last_completed_week = last_complete_week
+else:
+    _true_last_completed_week = _shift_week_key(last_complete_week, -1)
+
+_last_week_monday = _week_start_date(_true_last_completed_week)
+_last_week_sunday = _last_week_monday + timedelta(days=6)
+zone_time_last_completed_week = _compute_zone_time(_last_week_monday, _last_week_sunday, "Last completed week", 7)
+
 zone_time = {
-    "window_days": ZONE_TIME_WINDOW_DAYS,
-    "minutes": {k: round(v, 1) for k, v in zone_minutes.items()},
-    "total_minutes": round(total_zone_minutes, 1),
-    "z2_pct": round((zone_minutes["Z2"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None,
-    "grey_pct": round(((zone_minutes["Z3"] + zone_minutes["Z4"]) / total_zone_minutes) * 100, 1) if total_zone_minutes else None,
-    "z5_pct": round((zone_minutes["Z5"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None,
-    "z2_target_min": ATTIA_Z2_TARGET_MIN,
-    "z2_target_max": ATTIA_Z2_TARGET_MAX,
-    "z2_vs_target_pct": round((zone_minutes["Z2"] / ATTIA_Z2_TARGET_MIN) * 100) if ATTIA_Z2_TARGET_MIN else None,
-    "running_sessions_with_data": running_sessions_with_zone_data,
-    "strength_sessions_with_data": strength_sessions_with_zone_data,
-    "has_lt_data": _lt_hr_bounds is not None
+    "rolling": zone_time_rolling,
+    "last_completed_week": zone_time_last_completed_week,
+    "default_view": "rolling"
 }
 
 # ── Garmin-vs-Polar run HR comparison ─────────────────────────────────────────

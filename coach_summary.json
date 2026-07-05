@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-05 18:31 UTC",
-  "headline": "Volume is building meaningfully and aerobic efficiency is improving \u2014 a strong foundation entering the second half of the year.",
+  "last_updated": "2026-07-05 18:52 UTC",
+  "headline": "Aerobic efficiency gain is now confirmed by HR data \u2014 easy-run HR has dropped meaningfully on comparable efforts.",
   "confidence_pct": 86,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,12 +12,12 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 3/14 nights",
-  "summary": "The 16% volume step-up over the last four weeks is real and well-distributed across multiple runs, not inflated by one outlier effort. What's more notable is that this increased volume is coming at lower average heart rate on comparable easy runs \u2014 suggesting your aerobic base is absorbing the load rather than being stressed by it. That combination of rising output and improving efficiency is the clearest positive signal in today's data.\n\nThe 20-week running streak reaching its all-time best is worth acknowledging not as a vanity metric, but as evidence of structural consistency \u2014 the kind that underpins both ultra durability and speed development. The recent back-to-back long efforts across consecutive days further reinforce that durability capacity is active and functioning.\n\nOne area worth keeping an eye on: strength frequency has dipped slightly relative to the prior block, and with running volume climbing, the balance between the two modalities deserves attention. Nothing alarming yet, but it's worth being deliberate about not letting strength work quietly compress as running load grows.",
+  "summary": "The HR trend flagged last time has resolved clearly in your favour. Easy-run HR on comparable efforts has dropped substantially over the recent block, which is a concrete signal that aerobic adaptation is tracking the volume increase rather than just absorbing it. That's the most meaningful single datapoint right now.\n\nVolume continues to build at a controlled rate, and the 20-week running streak \u2014 now matching your personal best \u2014 reflects the consistency that underpins both of those. The streak itself isn't the goal, but unbroken structural habit at this volume is exactly the kind of base that compounds into ultra durability.\n\nThe one thing worth holding in view: strength session frequency has nudged slightly lower in the recent block. A small dip during a volume-building phase is unremarkable, but it's worth keeping an eye on whether that pattern continues as running load holds elevated.",
   "watch_items": [
-    "Watch whether easy-run HR continues to trend down as volume holds or increases \u2014 this is the key aerobic efficiency signal to track over the next few weeks.",
-    "Monitor how strength session frequency responds to the elevated running block \u2014 a gradual squeeze is worth catching early.",
-    "The back-to-back long run pattern is valuable for ultra durability; notice how recovery quality holds if this structure repeats.",
-    "Sleep tracking is still sparse \u2014 as more nights accumulate, watch for any patterns between shorter sleep and next-day HR or perceived effort."
+    "Watch whether the easy-run HR improvement continues to hold as weekly volume stays elevated \u2014 a plateau here would be informative.",
+    "Monitor strength session frequency over the coming weeks to catch any further drift while running load is high.",
+    "Zone 2 volume is sitting well below the target range \u2014 worth noticing whether this is a structural gap or a consequence of how sessions are being distributed.",
+    "Sleep data is too sparse to draw conclusions yet, but as tracking accumulates, watch for any pattern between low-score nights and next-day aerobic HR."
   ],
   "evidence_items": [
     {
@@ -38,18 +38,18 @@
     }
   ],
   "insights": [
-    "The 16% volume step-up over the last four weeks is real and well-distributed across multiple runs, not inflated by one outlier effort. What's more notable is that this increased volume is coming at lower average heart rate on comparable easy runs \u2014 suggesting your aerobic base is absorbing the load rather than being stressed by it. That combination of rising output and improving efficiency is the clearest positive signal in today's data.\n\nThe 20-week running streak reaching its all-time best is worth acknowledging not as a vanity metric, but as evidence of structural consistency \u2014 the kind that underpins both ultra durability and speed development. The recent back-to-back long efforts across consecutive days further reinforce that durability capacity is active and functioning.\n\nOne area worth keeping an eye on: strength frequency has dipped slightly relative to the prior block, and with running volume climbing, the balance between the two modalities deserves attention. Nothing alarming yet, but it's worth being deliberate about not letting strength work quietly compress as running load grows."
+    "The HR trend flagged last time has resolved clearly in your favour. Easy-run HR on comparable efforts has dropped substantially over the recent block, which is a concrete signal that aerobic adaptation is tracking the volume increase rather than just absorbing it. That's the most meaningful single datapoint right now.\n\nVolume continues to build at a controlled rate, and the 20-week running streak \u2014 now matching your personal best \u2014 reflects the consistency that underpins both of those. The streak itself isn't the goal, but unbroken structural habit at this volume is exactly the kind of base that compounds into ultra durability.\n\nThe one thing worth holding in view: strength session frequency has nudged slightly lower in the recent block. A small dip during a volume-building phase is unremarkable, but it's worth keeping an eye on whether that pattern continues as running load holds elevated."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 3132,
-    "output_tokens": 388,
-    "cost_usd": 0.015216,
-    "cost_dkk": 0.10499,
+    "input_tokens": 3350,
+    "output_tokens": 351,
+    "cost_usd": 0.015315,
+    "cost_dkk": 0.10567,
     "date": "2026-07-05"
   },
-  "usage_mtd_usd": 0.0637,
-  "usage_mtd_dkk": 0.4396,
-  "usage_ytd_usd": 0.0637,
-  "usage_ytd_dkk": 0.4396
+  "usage_mtd_usd": 0.0638,
+  "usage_mtd_dkk": 0.4402,
+  "usage_ytd_usd": 0.0638,
+  "usage_ytd_dkk": 0.4402
 }

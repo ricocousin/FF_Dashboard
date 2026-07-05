@@ -1181,6 +1181,36 @@ def build_evidence_catalog():
         text = f"{arrow} Sleep averaging {_fmt_hm(avg_recent_sleep)} vs {_fmt_hm(avg_prior_sleep)} prior period"
         items.append((text, _priority_tier(abs(delta_sleep), high=30, medium=10)))
 
+    # Sleep SCORE trend (added — was computed as avg_sleep_score for the coach
+    # prompt's supporting-metrics text but never fed into the evidence catalog
+    # itself; audit gap closed here). Same threshold-tier pattern as duration.
+    prior_sleep_scores = [float(s["sleep_score"]) for s in prior_sleep.values() if s.get("sleep_score")]
+    if sleep_scores and prior_sleep_scores:
+        avg_prior_score = sum(prior_sleep_scores) / len(prior_sleep_scores)
+        avg_recent_score = sum(sleep_scores) / len(sleep_scores)
+        delta_score = avg_recent_score - avg_prior_score
+        arrow = _trend_arrow(delta_score, threshold=3)
+        text = f"{arrow} Sleep score averaging {avg_recent_score:.0f} vs {avg_prior_score:.0f} prior period"
+        items.append((text, _priority_tier(abs(delta_score), high=10, medium=4)))
+
+    # Zone 2 / Attia-target comparison (added — zone_time was fully built and
+    # rendered on the dashboard but never surfaced to the coach; audit gap
+    # closed here). Uses the rolling 7-day window (current-status framing,
+    # not a vs-prior-period trend) since that's what the coach is assessing
+    # "right now," matching the dashboard's default view. Priority tiered by
+    # shortfall from target rather than a delta, since this is a target
+    # comparison, not a trend.
+    zt = zone_time.get("rolling", {})
+    if zt.get("has_lt_data") and zt.get("total_minutes", 0) > 0:
+        z2_min = zt["minutes"]["Z2"]
+        z2_ratio = zt.get("z2_vs_target_pct") or 0
+        grey_pct = zt.get("grey_pct") or 0
+        arrow = "▲" if z2_ratio >= 100 else "▼" if z2_ratio < 65 else "▬"
+        text = (f"{arrow} Zone 2: {z2_min:.0f} min vs {zt['z2_target_min']}-{zt['z2_target_max']} min/week target "
+                f"({z2_ratio:.0f}% of minimum); grey zone (Z3+Z4): {grey_pct:.1f}%")
+        priority = "High" if z2_ratio < 50 else "Medium" if z2_ratio < 100 else "Low"
+        items.append((text, priority))
+
     if len(recent_strength) or len(prior_strength):
         delta_strength = len(recent_strength) - len(prior_strength)
         arrow = _trend_arrow(delta_strength)

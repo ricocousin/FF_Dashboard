@@ -276,6 +276,39 @@ if os.path.exists("strength_tests.csv"):
     for ex in strength_test_history:
         strength_test_history[ex].sort(key=lambda r: r["date"])
 
+# ── Upcoming events (manually maintained) ─────────────────────────────────────
+# upcoming_events.csv is edited directly via GitHub whenever a race/event is
+# planned — same low-friction manual pattern as strength_tests.csv, NOT
+# written by fetch_activities.py, never goes through that script's
+# resilient-commit loop. Fields: date, event_name, distance_km, notes.
+# Purpose: give the coach forward-looking awareness (e.g. an upcoming ultra)
+# that it previously had zero access to — the coach was 100% backward-looking
+# before this. Deliberately NOT evidence (no fabricated periodization
+# commentary) — just context, same spirit as the RECENT COACHING HISTORY
+# memory block: informs tone/awareness, never cited as a numbered evidence
+# item. Past events (date < today) are excluded — only genuinely upcoming
+# ones are relevant context. Nearest UPCOMING_EVENTS_MAX=3 events included,
+# soonest first, so a long list doesn't bloat the prompt.
+UPCOMING_EVENTS_MAX = 3
+upcoming_events = []
+if os.path.exists("upcoming_events.csv"):
+    with open("upcoming_events.csv", "r", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            if row.get("date") and row.get("event_name"):
+                try:
+                    event_date = datetime.strptime(row["date"], "%Y-%m-%d").date()
+                except ValueError:
+                    continue
+                if event_date >= today_date:
+                    upcoming_events.append({
+                        "date": row["date"],
+                        "event_name": row["event_name"],
+                        "distance_km": row.get("distance_km", ""),
+                        "notes": row.get("notes", "")
+                    })
+    upcoming_events.sort(key=lambda e: e["date"])
+    upcoming_events = upcoming_events[:UPCOMING_EVENTS_MAX]
+
 # ── AI Coach data context ─────────────────────────────────────────────────────
 all_runs_sorted = sorted(all_run_rows, key=lambda x: x.get("date", ""))
 all_strength_sorted = sorted(all_strength_rows, key=lambda x: x.get("date", ""))
@@ -1413,6 +1446,9 @@ ATHLETE PROFILE:
 
 STANDING TRAINING FOCUS:
 Long-term progression across ultra-endurance, speed capacity, strength, mobility and broad athletic readiness. Not strictly periodising toward a single event — building and maintaining durable hybrid capacity year-round.
+
+UPCOMING EVENTS (context only — do not prescribe training toward these, the training programme is already structured elsewhere; mention only if genuinely relevant to today's story, e.g. proximity might explain a deliberate taper or volume choice):
+{chr(10).join(f"  {e['date']}: {e['event_name']}" + (f" ({e['distance_km']} km)" if e['distance_km'] else "") + (f" — {e['notes']}" if e['notes'] else "") for e in upcoming_events) if upcoming_events else "  None logged."}
 
 THIS YEAR VS LAST:
 - Distance to date {today_date.year}: {dist_ytd:.0f} km

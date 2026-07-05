@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-05 11:32 UTC",
-  "headline": "Aerobic efficiency is measurably improving \u2014 easy-run HR has dropped significantly at comparable efforts while volume continues to build.",
+  "last_updated": "2026-07-05 13:56 UTC",
+  "headline": "Back-to-back long runs across 48 hours cap a +16% volume block, while aerobic efficiency at easy effort continues to improve meaningfully.",
   "confidence_pct": 86,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,12 +12,12 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 3/14 nights",
-  "summary": "The most meaningful signal in your current data is the drop in easy-run heart rate at similar paces and effort levels. This isn't noise \u2014 it represents a genuine shift in aerobic efficiency, likely reflecting the cumulative effect of sustained volume over a 20-week unbroken streak combined with the recent block increase. You're doing more work and it's costing less cardiovascularly.\n\nVolume is progressing sensibly. The current four-week block is up meaningfully on the prior one, and the back-to-back structure of your recent runs \u2014 including a solid long effort yesterday \u2014 is directly relevant to ultra durability. The 4:24/km lactate threshold logged earlier this week adds a useful reference point as that dataset starts to build; contextualised against your half-marathon PB pace, it suggests threshold fitness is sitting in a strong position.\n\nStrength slightly tapered this block at five sessions versus six prior, which is worth noting but not concerning in isolation \u2014 especially given running volume and streak length. The 3-week strength streak suggests you're re-establishing consistency there, which is worth protecting as volume climbs.",
+  "summary": "The two-day sequence finishing today \u2014 a moderate aerobic run followed by an 18 km effort the next morning \u2014 is the most relevant data point right now. Back-to-back durability is a core ultra competency, and completing that kind of stacked load on the tail end of a volume block that's already up significantly on the prior four weeks signals genuine readiness, not just accumulated mileage. The fact that easy-run HR has dropped noticeably across comparable efforts over the same period reinforces that this volume increase is being absorbed, not just survived.\n\nThe June 27th threshold effort sits clearly apart from everything else in recent weeks \u2014 a hard, fast session that demonstrated the speed end of your capacity is still sharp. That session combined with the current aerobic efficiency trend suggests both ends of your range are in good shape simultaneously, which is the defining characteristic of functional hybrid fitness.\n\nStrength frequency has dipped slightly relative to the prior block, which is worth noting but not alarming given the running load increase. The two qualities are genuinely competing for recovery resource right now, and the running side has clearly been prioritised. The 20-week running streak \u2014 now matching your all-time best \u2014 is a marker of consistency worth recognising without over-indexing on it.",
   "watch_items": [
-    "Monitor whether easy-run HR continues its downward trend or stabilises \u2014 a plateau would still confirm adaptation, while further drift could indicate accumulated fatigue",
-    "After back-to-back long runs this weekend, observe how quickly your legs feel recovered over the next 48\u201372 hours \u2014 this is useful durability data for ultra preparation",
-    "The lactate threshold reference is new and accumulating \u2014 track whether threshold sessions feel sustainably repeatable or if RPE creeps up disproportionately at that pace",
-    "Strength consistency is worth guarding as the running block grows \u2014 watch whether session quality holds even on higher-volume running weeks"
+    "Monitor whether easy-run HR continues its downward trend or plateaus \u2014 a plateau here after this volume block would be normal and expected",
+    "Watch how strength sessions feel over the next 1\u20132 weeks given the accumulated running load; quality of movement is a more useful signal than session count",
+    "Pay attention to how quickly you recover from the back-to-back \u2014 the recovery arc after stacked efforts is informative data for future ultra pacing strategy",
+    "If volume consolidates slightly this week, treat it as part of the block structure rather than a break in momentum"
   ],
   "evidence_items": [
     {
@@ -38,18 +38,18 @@
     }
   ],
   "insights": [
-    "The most meaningful signal in your current data is the drop in easy-run heart rate at similar paces and effort levels. This isn't noise \u2014 it represents a genuine shift in aerobic efficiency, likely reflecting the cumulative effect of sustained volume over a 20-week unbroken streak combined with the recent block increase. You're doing more work and it's costing less cardiovascularly.\n\nVolume is progressing sensibly. The current four-week block is up meaningfully on the prior one, and the back-to-back structure of your recent runs \u2014 including a solid long effort yesterday \u2014 is directly relevant to ultra durability. The 4:24/km lactate threshold logged earlier this week adds a useful reference point as that dataset starts to build; contextualised against your half-marathon PB pace, it suggests threshold fitness is sitting in a strong position.\n\nStrength slightly tapered this block at five sessions versus six prior, which is worth noting but not concerning in isolation \u2014 especially given running volume and streak length. The 3-week strength streak suggests you're re-establishing consistency there, which is worth protecting as volume climbs."
+    "The two-day sequence finishing today \u2014 a moderate aerobic run followed by an 18 km effort the next morning \u2014 is the most relevant data point right now. Back-to-back durability is a core ultra competency, and completing that kind of stacked load on the tail end of a volume block that's already up significantly on the prior four weeks signals genuine readiness, not just accumulated mileage. The fact that easy-run HR has dropped noticeably across comparable efforts over the same period reinforces that this volume increase is being absorbed, not just survived.\n\nThe June 27th threshold effort sits clearly apart from everything else in recent weeks \u2014 a hard, fast session that demonstrated the speed end of your capacity is still sharp. That session combined with the current aerobic efficiency trend suggests both ends of your range are in good shape simultaneously, which is the defining characteristic of functional hybrid fitness.\n\nStrength frequency has dipped slightly relative to the prior block, which is worth noting but not alarming given the running load increase. The two qualities are genuinely competing for recovery resource right now, and the running side has clearly been prioritised. The 20-week running streak \u2014 now matching your all-time best \u2014 is a marker of consistency worth recognising without over-indexing on it."
   ],
   "quiet": [],
   "usage": {
     "input_tokens": 2871,
-    "output_tokens": 428,
-    "cost_usd": 0.015033,
-    "cost_dkk": 0.10373,
+    "output_tokens": 450,
+    "cost_usd": 0.015363,
+    "cost_dkk": 0.106,
     "date": "2026-07-05"
   },
-  "usage_mtd_usd": 0.06352,
-  "usage_mtd_dkk": 0.4383,
-  "usage_ytd_usd": 0.06352,
-  "usage_ytd_dkk": 0.4383
+  "usage_mtd_usd": 0.06385,
+  "usage_mtd_dkk": 0.4406,
+  "usage_ytd_usd": 0.06385,
+  "usage_ytd_dkk": 0.4406
 }

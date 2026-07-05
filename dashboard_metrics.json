@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-05 09:40 UTC",
+  "last_updated": "2026-07-05 11:32 UTC",
   "last_complete_date": "2026-07-04",
   "this_year": "2026",
   "this_month_short": "Jul",
@@ -765,24 +765,53 @@
     }
   ],
   "zone_time": {
-    "window_days": 7,
-    "minutes": {
-      "Z1": 214.5,
-      "Z2": 117.6,
-      "Z3": 1.7,
-      "Z4": 0.0,
-      "Z5": 0.0
+    "rolling": {
+      "label": "This week (rolling 7d)",
+      "window_days": 7,
+      "window_start": "2026-06-28",
+      "window_end": "2026-07-05",
+      "minutes": {
+        "Z1": 214.5,
+        "Z2": 117.6,
+        "Z3": 1.7,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "total_minutes": 333.8,
+      "z2_pct": 35.2,
+      "grey_pct": 0.5,
+      "z5_pct": 0.0,
+      "z2_target_min": 180,
+      "z2_target_max": 240,
+      "z2_vs_target_pct": 65,
+      "running_sessions_with_data": 3,
+      "strength_sessions_with_data": 1,
+      "has_lt_data": true
     },
-    "total_minutes": 333.8,
-    "z2_pct": 35.2,
-    "grey_pct": 0.5,
-    "z5_pct": 0.0,
-    "z2_target_min": 180,
-    "z2_target_max": 240,
-    "z2_vs_target_pct": 65,
-    "running_sessions_with_data": 3,
-    "strength_sessions_with_data": 1,
-    "has_lt_data": true
+    "last_completed_week": {
+      "label": "Last completed week",
+      "window_days": 7,
+      "window_start": "2026-06-22",
+      "window_end": "2026-06-28",
+      "minutes": {
+        "Z1": 8.7,
+        "Z2": 21.7,
+        "Z3": 35.3,
+        "Z4": 11.1,
+        "Z5": 0.0
+      },
+      "total_minutes": 76.8,
+      "z2_pct": 28.2,
+      "grey_pct": 60.5,
+      "z5_pct": 0.0,
+      "z2_target_min": 180,
+      "z2_target_max": 240,
+      "z2_vs_target_pct": 12,
+      "running_sessions_with_data": 1,
+      "strength_sessions_with_data": 0,
+      "has_lt_data": true
+    },
+    "default_view": "rolling"
   },
   "run_hr_source_comparison": [
     {

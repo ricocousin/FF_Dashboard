@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-06 12:46 UTC",
-  "headline": "Easy-run HR is holding low into a third block while volume stays nearly doubled and strength frequency hasn't slipped.",
+  "last_updated": "2026-07-06 13:52 UTC",
+  "headline": "Aerobic base is deepening through the volume ramp, with easy-run HR settled low and time-in-zone almost entirely aerobic.",
   "confidence_pct": 89,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,12 +12,12 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 4/14 nights",
-  "summary": "The aerobic efficiency story has now stabilised rather than just appeared \u2014 comparable easy efforts continue to sit at a lower heart rate than the prior period, and this is happening while your running load is still carried near the top of your recent range. That combination is the meaningful part: adaptation that persists under sustained volume is more trustworthy than a single good block, and it suggests the elevated load is being absorbed rather than merely tolerated.\n\nEqually worth noting is that strength frequency has held flat rather than dropping off, which is the usual casualty when running volume jumps this sharply. Keeping both channels running simultaneously is exactly the hybrid balance you're aiming for, and it means the volume increase isn't costing you elsewhere.\n\nWith the St. Olavsleden multi-day effort roughly a month out, this consolidation of aerobic durability at higher load is well-timed \u2014 but the cleaner confirmation still comes if easy paces drift back toward previous levels while HR stays down. Right now the evidence supports genuine efficiency gain; keep watching whether the pace side of the trade-off follows.",
+  "summary": "The picture is clean right now: you've held a near-doubled running block while easy-effort heart rate has settled lower on comparable runs, and the grey-zone share is essentially nil. That combination \u2014 more volume, lower cost, disciplined intensity distribution \u2014 is exactly the aerobic durability signal you want with a long self-supported effort roughly a month out. This isn't a one-off; it's the third block showing it, so treat it as confirmed rather than provisional.\n\nStrength frequency has held flat across the ramp rather than being sacrificed to running load, which matters more than usual given the pack-carry demands ahead. Keeping that steady while volume climbs is the harder thing to protect, and so far you've done it.\n\nNothing in today's data pushes toward more caution or a change of direction \u2014 the trend is consolidating in a good place. The main open question is durability under load rather than aerobic economy, which the numbers already speak to well.",
   "watch_items": [
-    "Watch whether easy paces begin creeping back up while HR stays low \u2014 that's the stronger confirmation of the adaptation.",
-    "Keep an eye on strength frequency holding as running load stays elevated into the pre-event month.",
-    "Note whether durability and time-on-feet feel steady as St. Olavsleden approaches, given the pack-carry demands ahead.",
-    "As sleep tracking accumulates, watch for any link between low-score nights and next-day aerobic HR."
+    "Watch whether easy paces start drifting quicker at the same low HR \u2014 that would firm up the economy gain beyond the HR drop alone.",
+    "Note how back-to-back and longer efforts feel with a loaded pack, since that specific demand isn't yet reflected in recent runs.",
+    "Keep an eye on strength holding through the pre-event weeks as running volume stays elevated.",
+    "As more sleep nights accumulate, watch for any pattern between low-score nights and next-day aerobic HR."
   ],
   "evidence_items": [
     {
@@ -38,18 +38,18 @@
     }
   ],
   "insights": [
-    "The aerobic efficiency story has now stabilised rather than just appeared \u2014 comparable easy efforts continue to sit at a lower heart rate than the prior period, and this is happening while your running load is still carried near the top of your recent range. That combination is the meaningful part: adaptation that persists under sustained volume is more trustworthy than a single good block, and it suggests the elevated load is being absorbed rather than merely tolerated.\n\nEqually worth noting is that strength frequency has held flat rather than dropping off, which is the usual casualty when running volume jumps this sharply. Keeping both channels running simultaneously is exactly the hybrid balance you're aiming for, and it means the volume increase isn't costing you elsewhere.\n\nWith the St. Olavsleden multi-day effort roughly a month out, this consolidation of aerobic durability at higher load is well-timed \u2014 but the cleaner confirmation still comes if easy paces drift back toward previous levels while HR stays down. Right now the evidence supports genuine efficiency gain; keep watching whether the pace side of the trade-off follows."
+    "The picture is clean right now: you've held a near-doubled running block while easy-effort heart rate has settled lower on comparable runs, and the grey-zone share is essentially nil. That combination \u2014 more volume, lower cost, disciplined intensity distribution \u2014 is exactly the aerobic durability signal you want with a long self-supported effort roughly a month out. This isn't a one-off; it's the third block showing it, so treat it as confirmed rather than provisional.\n\nStrength frequency has held flat across the ramp rather than being sacrificed to running load, which matters more than usual given the pack-carry demands ahead. Keeping that steady while volume climbs is the harder thing to protect, and so far you've done it.\n\nNothing in today's data pushes toward more caution or a change of direction \u2014 the trend is consolidating in a good place. The main open question is durability under load rather than aerobic economy, which the numbers already speak to well."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 4814,
-    "output_tokens": 589,
-    "cost_usd": 0.038795,
-    "cost_dkk": 0.26769,
+    "input_tokens": 4928,
+    "output_tokens": 542,
+    "cost_usd": 0.03819,
+    "cost_dkk": 0.26351,
     "date": "2026-07-06"
   },
-  "usage_mtd_usd": 0.1026,
-  "usage_mtd_dkk": 0.7079,
-  "usage_ytd_usd": 0.1026,
-  "usage_ytd_dkk": 0.7079
+  "usage_mtd_usd": 0.10199,
+  "usage_mtd_dkk": 0.7038,
+  "usage_ytd_usd": 0.10199,
+  "usage_ytd_dkk": 0.7038
 }

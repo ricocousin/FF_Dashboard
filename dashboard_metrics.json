@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-06 12:46 UTC",
+  "last_updated": "2026-07-06 13:52 UTC",
   "last_complete_date": "2026-07-05",
   "this_year": "2026",
   "this_month_short": "Jul",
@@ -7,6 +7,7 @@
     "avg_per_run_km": 11.3,
     "runs_this_year": 53,
     "avg_per_week_km": 26.0,
+    "avg_runs_per_week": 2.3,
     "total_distance_this_year_km": 598.1,
     "current_weekly_streak": 20,
     "longest_weekly_streak": 20,
@@ -225,7 +226,7 @@
         "pct": 78
       },
       {
-        "name": "Z4 LT",
+        "name": "Z4 LTHR",
         "pace_label": "4:14\u20134:33",
         "hr_label": "176\u2013187 bpm",
         "color": "#ff9f40",
@@ -754,7 +755,13 @@
       "2026-06-29",
       "2026-07-01",
       "2026-07-03"
-    ]
+    ],
+    "commentary": "20-week streak \u2014 currently matching your all-time best. Keep it going."
+  },
+  "data_freshness": {
+    "status": "fresh",
+    "last_success_date": "2026-07-06",
+    "age_days": 0
   },
   "strength_hr_overlay": [
     {
@@ -786,12 +793,21 @@
         "Z5": 0.0
       },
       "total_minutes": 646.3,
+      "z1_pct": 67.0,
       "z2_pct": 32.7,
       "grey_pct": 0.3,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
       "z2_vs_target_pct": 117,
+      "z1_target_min_pct": 75,
+      "z1_target_max_pct": 80,
+      "z1_vs_target_pct": 89,
+      "grey_ceiling_pct": 10,
+      "grey_vs_ceiling_pct": 3,
+      "z5_target_min_pct": 15,
+      "z5_target_max_pct": 20,
+      "z5_vs_target_pct": 0,
       "running_sessions_with_data": 6,
       "strength_sessions_with_data": 2,
       "has_lt_data": true
@@ -809,12 +825,21 @@
         "Z5": 0.0
       },
       "total_minutes": 646.3,
+      "z1_pct": 67.0,
       "z2_pct": 32.7,
       "grey_pct": 0.3,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
       "z2_vs_target_pct": 117,
+      "z1_target_min_pct": 75,
+      "z1_target_max_pct": 80,
+      "z1_vs_target_pct": 89,
+      "grey_ceiling_pct": 10,
+      "grey_vs_ceiling_pct": 3,
+      "z5_target_min_pct": 15,
+      "z5_target_max_pct": 20,
+      "z5_vs_target_pct": 0,
       "running_sessions_with_data": 6,
       "strength_sessions_with_data": 2,
       "has_lt_data": true

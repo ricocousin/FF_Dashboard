@@ -410,6 +410,7 @@ num_s_weeks = max(len(s_weeks_year), 1)
 num_activity_weeks = max(len(activity_weeks_year), 1)
 
 avg_run_dist_per_week = year_dist / num_run_weeks
+avg_runs_per_week = len(year_runs) / num_run_weeks
 avg_run_dist_per_run = year_dist / max(len(year_runs), 1)
 avg_sess_per_week = len(year_sessions) / num_s_weeks
 
@@ -597,7 +598,7 @@ def _calc_zones(lt_pace_str, lt_hr):
         {"name": "Z1 EASY", "pace_label": f"> {sec_to_pace(lt_sec + 75)}", "hr_label": (f"< {z1} bpm" if z1 else ""), "color": "#4a9eff", "pct": 40},
         {"name": "Z2 AEROBIC", "pace_label": f"{sec_to_pace(lt_sec + 45)}–{sec_to_pace(lt_sec + 74)}", "hr_label": (f"{z1}–{z2} bpm" if z1 else ""), "color": "#7bc67e", "pct": 60},
         {"name": "Z3 TEMPO", "pace_label": f"{sec_to_pace(lt_sec + 10)}–{sec_to_pace(lt_sec + 44)}", "hr_label": (f"{z2}–{z3} bpm" if z2 else ""), "color": "#e8ff5a", "pct": 78},
-        {"name": "Z4 LT", "pace_label": f"{sec_to_pace(lt_sec - 10)}–{sec_to_pace(lt_sec + 9)}", "hr_label": (f"{z3}–{z4} bpm" if z3 else ""), "color": "#ff9f40", "pct": 90},
+        {"name": "Z4 LTHR", "pace_label": f"{sec_to_pace(lt_sec - 10)}–{sec_to_pace(lt_sec + 9)}", "hr_label": (f"{z3}–{z4} bpm" if z3 else ""), "color": "#ff9f40", "pct": 90},
         {"name": "Z5 HARD", "pace_label": f"< {sec_to_pace(lt_sec - 11)}", "hr_label": (f"> {z4} bpm" if z4 else ""), "color": "#ff6b35", "pct": 100},
     ]
 
@@ -768,6 +769,23 @@ _lt_hr_bounds = _hr_zone_bounds(latest_lt.get("lt_hr")) if latest_lt else None
 ATTIA_Z2_TARGET_MIN = 180
 ATTIA_Z2_TARGET_MAX = 240
 
+# Percentage-of-total-time targets for the OTHER zones (Z2 keeps its own
+# absolute-minutes target above — these are a different kind of target).
+# Sourced from Stephen Seiler's polarized-training research (the scientist
+# whose work Attia's own "80/20" framing is popularized from), consistently
+# replicated across elite endurance athletes (rowing, cycling, running,
+# cross-country skiing): ~75-80% Zone 1 (low intensity, below first
+# threshold), ~5-10% "grey"/middle zone, ~15-20% Zone 3 (high intensity,
+# above second threshold) — commonly cited as an "80-5-15" or "75-5-20"
+# split. Mapped onto this dashboard's 5-zone system: Seiler's Zone 1 ≈ our
+# Z1, Seiler's grey/middle zone ≈ our Z3+Z4 combined (already treated as one
+# concept elsewhere on this dashboard), Seiler's Zone 3 ≈ our Z5.
+Z1_TARGET_MIN_PCT = 75
+Z1_TARGET_MAX_PCT = 80
+GREY_CEILING_PCT = 10  # a ceiling to stay UNDER, not a floor to reach
+Z5_TARGET_MIN_PCT = 15
+Z5_TARGET_MAX_PCT = 20
+
 def _compute_zone_time(window_start, window_end, window_label, window_days):
     """Computes zone-minutes and the Attia comparison for a given inclusive
     date range [window_start, window_end]. Factored out so the same logic
@@ -819,6 +837,9 @@ def _compute_zone_time(window_start, window_end, window_label, window_days):
                 strength_sessions_with_zone_data += 1
 
     total_zone_minutes = sum(zone_minutes.values())
+    z1_pct = round((zone_minutes["Z1"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None
+    grey_pct_val = round(((zone_minutes["Z3"] + zone_minutes["Z4"]) / total_zone_minutes) * 100, 1) if total_zone_minutes else None
+    z5_pct_val = round((zone_minutes["Z5"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None
 
     return {
         "label": window_label,
@@ -827,12 +848,21 @@ def _compute_zone_time(window_start, window_end, window_label, window_days):
         "window_end": window_end.isoformat(),
         "minutes": {k: round(v, 1) for k, v in zone_minutes.items()},
         "total_minutes": round(total_zone_minutes, 1),
+        "z1_pct": z1_pct,
         "z2_pct": round((zone_minutes["Z2"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None,
-        "grey_pct": round(((zone_minutes["Z3"] + zone_minutes["Z4"]) / total_zone_minutes) * 100, 1) if total_zone_minutes else None,
-        "z5_pct": round((zone_minutes["Z5"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None,
+        "grey_pct": grey_pct_val,
+        "z5_pct": z5_pct_val,
         "z2_target_min": ATTIA_Z2_TARGET_MIN,
         "z2_target_max": ATTIA_Z2_TARGET_MAX,
         "z2_vs_target_pct": round((zone_minutes["Z2"] / ATTIA_Z2_TARGET_MIN) * 100) if ATTIA_Z2_TARGET_MIN else None,
+        "z1_target_min_pct": Z1_TARGET_MIN_PCT,
+        "z1_target_max_pct": Z1_TARGET_MAX_PCT,
+        "z1_vs_target_pct": round((z1_pct / Z1_TARGET_MIN_PCT) * 100) if (z1_pct is not None and Z1_TARGET_MIN_PCT) else None,
+        "grey_ceiling_pct": GREY_CEILING_PCT,
+        "grey_vs_ceiling_pct": round((grey_pct_val / GREY_CEILING_PCT) * 100) if (grey_pct_val is not None and GREY_CEILING_PCT) else None,
+        "z5_target_min_pct": Z5_TARGET_MIN_PCT,
+        "z5_target_max_pct": Z5_TARGET_MAX_PCT,
+        "z5_vs_target_pct": round((z5_pct_val / Z5_TARGET_MIN_PCT) * 100) if (z5_pct_val is not None and Z5_TARGET_MIN_PCT) else None,
         "running_sessions_with_data": running_sessions_with_zone_data,
         "strength_sessions_with_data": strength_sessions_with_zone_data,
         "has_lt_data": _lt_hr_bounds is not None
@@ -971,6 +1001,41 @@ else:
 digest_lines.append(f"➔ Running streak: {summary.get('current_weekly_streak', '—')} wks (best: {summary.get('longest_weekly_streak', '—')})")
 
 # ── Assemble and write dashboard_metrics.json ─────────────────────────────────
+# ── Calendar commentary (deterministic, rule-based — no LLM) ──────────────────
+# Simple streak-aware line for the Activity Calendar card. Same philosophy as
+# the digest[] field: cheap, deterministic, Python-computed, never fabricated.
+def _calendar_commentary():
+    streak = summary.get("current_weekly_streak") or 0
+    best = summary.get("longest_weekly_streak") or 0
+    if streak == 0:
+        return "No active running streak right now — a session this week starts a new one."
+    elif streak >= best and streak > 0:
+        return f"{streak}-week streak — currently matching your all-time best. Keep it going."
+    else:
+        return f"{streak}-week streak going (best: {best}). Consistency is compounding."
+
+# ── Data freshness indicator (for the overview panel) ─────────────────────────
+# Reads fetch_status.json independently of compute_confidence()'s own local
+# read (kept decoupled deliberately — this exposes freshness to the frontend
+# directly, rather than only feeding into the confidence score). Three states:
+# "fresh" (today/yesterday), "stale" (2-3 days), "failed" (>3 days or file
+# missing/unreadable) — mirrors the same age thresholds already used in
+# compute_confidence()'s pipeline-freshness scoring, for consistency.
+def _data_freshness():
+    if not os.path.exists("fetch_status.json"):
+        return {"status": "failed", "last_success_date": None, "age_days": None}
+    try:
+        with open("fetch_status.json", "r", encoding="utf-8") as f:
+            fs = json.load(f)
+        last_date = fs.get("last_success_date")
+        if not last_date:
+            return {"status": "failed", "last_success_date": None, "age_days": None}
+        age_days = (today_date - datetime.strptime(last_date, "%Y-%m-%d").date()).days
+        status = "fresh" if age_days <= 1 else "stale" if age_days <= 3 else "failed"
+        return {"status": status, "last_success_date": last_date, "age_days": age_days}
+    except Exception:
+        return {"status": "failed", "last_success_date": None, "age_days": None}
+
 dashboard_metrics = {
     "last_updated": today.strftime("%Y-%m-%d %H:%M UTC"),
     "last_complete_date": last_complete_str,
@@ -981,6 +1046,7 @@ dashboard_metrics = {
         "avg_per_run_km": round(avg_run_dist_per_run, 1),
         "runs_this_year": summary.get("total_runs_this_year", len(year_runs)),
         "avg_per_week_km": round(avg_run_dist_per_week, 1),
+        "avg_runs_per_week": round(avg_runs_per_week, 1),
         "total_distance_this_year_km": summary.get("total_distance_this_year_km", round(year_dist, 1)),
         "current_weekly_streak": summary.get("current_weekly_streak"),
         "longest_weekly_streak": summary.get("longest_weekly_streak"),
@@ -1040,8 +1106,11 @@ dashboard_metrics = {
 
     "calendar": {
         "run_dates": calendar_run_dates,
-        "strength_dates": calendar_strength_dates
+        "strength_dates": calendar_strength_dates,
+        "commentary": _calendar_commentary()
     },
+
+    "data_freshness": _data_freshness(),
 
     "strength_hr_overlay": strength_hr_overlay,
 
@@ -1391,7 +1460,7 @@ EVIDENCE:
 The AVAILABLE EVIDENCE list below (in the data section) is numbered. Write ONLY the numbers of items that genuinely support the headline and summary you wrote — one number per line, nothing else on that line (no text, no restating the item). Select as many or as few as are genuinely relevant, in any order — there is no fixed count, but prefer fewer, stronger items over many weak ones; comprehensiveness is not the goal. If nothing in the list meaningfully supports today's story, write a single line: "0"
 
 WATCH:
-2–4 short bullet points (one per line, starting with "- ") naming specific things worth paying attention to over the coming week — not prescribed workouts or mileage targets, since the training programme is already structured elsewhere. Frame these as things to observe or monitor, e.g. "Watch whether easy-run HR continues to decline." / "Sleep quality may become more important after the long run." Do NOT cite specific numbers here (no "157 to 147", no "4:24/km") — WATCH items are directional and forward-looking only; exact figures belong in EVIDENCE. If there is nothing meaningfully worth flagging this week, write a single line: "- Nothing notable to flag this week — steady state."
+2–4 short bullet points (one per line, starting with "- ") naming specific things worth paying attention to over the coming week — not prescribed workouts or mileage targets, since the training programme is already structured elsewhere. Frame these as things to observe or monitor, e.g. "Watch whether easy-run HR continues to decline." / "Sleep quality may become more important after the long run." Do NOT cite specific numbers here (no "157 to 147", no "4:24/km") — WATCH items are directional and forward-looking only; exact figures belong in EVIDENCE. CRITICAL: do not restate or lightly rephrase anything already covered in SUMMARY — if a point from SUMMARY has nothing new to add as a forward-looking watch item, drop it rather than repeating it in different words. Each WATCH item must add a genuinely new angle not already said above, or be omitted. If there is nothing meaningfully worth flagging this week, write a single line: "- Nothing notable to flag this week — steady state."
 
 Do not add any text outside these four sections, and use the exact delimiter labels (HEADLINE:, SUMMARY:, EVIDENCE:, WATCH:) on their own lines."""
 

@@ -246,6 +246,18 @@ def merge(new_rows, existing_rows):
         if key[0] == "legacy" and (r.get("date", ""), r.get("name", "")) in new_date_names:
             continue  # same real activity as a newly-fetched id-keyed row — drop the legacy duplicate
         merged.append(r)
+    # Final whole-list dedup pass (added July 2026, after a real duplicate
+    # was found in committed data — exact-duplicate activity_id rows for
+    # both a run and a strength session, most likely from two overlapping/
+    # near-simultaneous workflow runs each independently seeing the same
+    # activity as "new" before the other's commit landed). Prior to this,
+    # merge() only checked new-vs-existing and within-new — it never checked
+    # whether EXISTING rows were already duplicated against EACH OTHER. Any
+    # duplicate that reached disk by ANY means would then persist forever,
+    # since neither existing check compares two existing rows to each other.
+    # This pass makes the pipeline self-healing regardless of how a
+    # duplicate got introduced, not just the two previously-patched causes.
+    merged = _dedup_new_rows(merged)
     return sorted(merged, key=lambda x: x.get("date", ""), reverse=True)
 
 new_run_rows = _dedup_new_rows([build_run_row(a) for a in new_running])

@@ -1,55 +1,55 @@
 {
-  "last_updated": "2026-07-05 18:52 UTC",
-  "headline": "Aerobic efficiency gain is now confirmed by HR data \u2014 easy-run HR has dropped meaningfully on comparable efforts.",
-  "confidence_pct": 86,
+  "last_updated": "2026-07-06 07:38 UTC",
+  "headline": "Easy-run HR improvement has held for a second block while volume stayed sharply elevated.",
+  "confidence_pct": 87,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
-    "LT reading 2d old",
+    "LT reading 3d old",
     "HR data on 7/8 recent runs",
-    "Sleep tracked 3/14 nights",
+    "Sleep tracked 4/14 nights",
     "Steps tracked 7/7 days",
     "Data fetch up to date",
     "Multiple data sources active in last 3 days"
   ],
-  "confidence_attention": "Sleep tracked 3/14 nights",
-  "summary": "The HR trend flagged last time has resolved clearly in your favour. Easy-run HR on comparable efforts has dropped substantially over the recent block, which is a concrete signal that aerobic adaptation is tracking the volume increase rather than just absorbing it. That's the most meaningful single datapoint right now.\n\nVolume continues to build at a controlled rate, and the 20-week running streak \u2014 now matching your personal best \u2014 reflects the consistency that underpins both of those. The streak itself isn't the goal, but unbroken structural habit at this volume is exactly the kind of base that compounds into ultra durability.\n\nThe one thing worth holding in view: strength session frequency has nudged slightly lower in the recent block. A small dip during a volume-building phase is unremarkable, but it's worth keeping an eye on whether that pattern continues as running load holds elevated.",
+  "confidence_attention": "Sleep tracked 4/14 nights",
+  "summary": "The aerobic efficiency gain flagged yesterday isn't a one-day artefact \u2014 it's holding across a run of comparable easy efforts even as your 4-week volume sits well above the prior block. That combination is the meaningful signal today: normally a large volume jump pushes easy HR up, and instead it's settled lower. This is consistent with a genuine aerobic adaptation rather than a favourable sampling of easy days.\n\nWorth noticing that recent easy paces have drifted a touch slower even as HR dropped, which is a reasonable trade-off while you're absorbing a big load \u2014 you're banking durability and time on feet rather than chasing pace right now. Your fast end is still demonstrated (the late-June threshold-type effort), so this isn't a loss of speed, just a deliberate skew toward the endurance side ahead of a long self-supported stretch in August.\n\nStrength frequency has stabilised at the same level as the prior block rather than drifting further, which resolves part of what was flagged last week \u2014 the running load hasn't crowded it out. Zone 2 has also climbed back to the bottom of the target band, so the earlier gap looks more like distribution than a structural hole.",
   "watch_items": [
-    "Watch whether the easy-run HR improvement continues to hold as weekly volume stays elevated \u2014 a plateau here would be informative.",
-    "Monitor strength session frequency over the coming weeks to catch any further drift while running load is high.",
-    "Zone 2 volume is sitting well below the target range \u2014 worth noticing whether this is a structural gap or a consequence of how sessions are being distributed.",
-    "Sleep data is too sparse to draw conclusions yet, but as tracking accumulates, watch for any pattern between low-score nights and next-day aerobic HR."
+    "Watch whether easy-run HR stays low if easy paces start creeping back toward previous levels \u2014 that's the cleaner confirmation of the adaptation.",
+    "Note whether the pace-for-HR trade-off shifts as this volume block matures or you back off slightly.",
+    "Keep an eye on strength frequency holding steady rather than slipping now that running load is high.",
+    "As sleep tracking accumulates, watch for any link between low-score nights and next-day aerobic HR."
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 4-week volume 145 km vs 125 km prior block (+16%)",
+      "text": "\u25b2 4-week volume 164 km vs 92 km prior block (+79%)",
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 146 bpm vs 157 bpm prior period (comparable-effort runs, 7 vs 6 runs)",
+      "text": "\u25bc Easy-run HR averaging 143 bpm vs 155 bpm prior period (comparable-effort runs, 8 vs 6 runs)",
       "priority": "High"
     },
     {
-      "text": "\u25ac 20-week running streak (best: 20 wks)",
-      "priority": "Medium"
+      "text": "\u25b2 Zone 2: 189 min vs 180-240 min/week target (105% of minimum); grey zone (Z3+Z4): 0.3%",
+      "priority": "Low"
     },
     {
-      "text": "\u25bc Strength consistency: 5 sessions vs 6 prior 4wk",
-      "priority": "Medium"
+      "text": "\u25ac Strength consistency: 6 sessions vs 6 prior 4wk",
+      "priority": "Low"
     }
   ],
   "insights": [
-    "The HR trend flagged last time has resolved clearly in your favour. Easy-run HR on comparable efforts has dropped substantially over the recent block, which is a concrete signal that aerobic adaptation is tracking the volume increase rather than just absorbing it. That's the most meaningful single datapoint right now.\n\nVolume continues to build at a controlled rate, and the 20-week running streak \u2014 now matching your personal best \u2014 reflects the consistency that underpins both of those. The streak itself isn't the goal, but unbroken structural habit at this volume is exactly the kind of base that compounds into ultra durability.\n\nThe one thing worth holding in view: strength session frequency has nudged slightly lower in the recent block. A small dip during a volume-building phase is unremarkable, but it's worth keeping an eye on whether that pattern continues as running load holds elevated."
+    "The aerobic efficiency gain flagged yesterday isn't a one-day artefact \u2014 it's holding across a run of comparable easy efforts even as your 4-week volume sits well above the prior block. That combination is the meaningful signal today: normally a large volume jump pushes easy HR up, and instead it's settled lower. This is consistent with a genuine aerobic adaptation rather than a favourable sampling of easy days.\n\nWorth noticing that recent easy paces have drifted a touch slower even as HR dropped, which is a reasonable trade-off while you're absorbing a big load \u2014 you're banking durability and time on feet rather than chasing pace right now. Your fast end is still demonstrated (the late-June threshold-type effort), so this isn't a loss of speed, just a deliberate skew toward the endurance side ahead of a long self-supported stretch in August.\n\nStrength frequency has stabilised at the same level as the prior block rather than drifting further, which resolves part of what was flagged last week \u2014 the running load hasn't crowded it out. Zone 2 has also climbed back to the bottom of the target band, so the earlier gap looks more like distribution than a structural hole."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 3350,
-    "output_tokens": 351,
-    "cost_usd": 0.015315,
-    "cost_dkk": 0.10567,
-    "date": "2026-07-05"
+    "input_tokens": 4793,
+    "output_tokens": 603,
+    "cost_usd": 0.03904,
+    "cost_dkk": 0.26938,
+    "date": "2026-07-06"
   },
-  "usage_mtd_usd": 0.0638,
-  "usage_mtd_dkk": 0.4402,
-  "usage_ytd_usd": 0.0638,
-  "usage_ytd_dkk": 0.4402
+  "usage_mtd_usd": 0.10284,
+  "usage_mtd_dkk": 0.7096,
+  "usage_ytd_usd": 0.10284,
+  "usage_ytd_dkk": 0.7096
 }

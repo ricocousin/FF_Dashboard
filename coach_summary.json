@@ -1,55 +1,55 @@
 {
-  "last_updated": "2026-07-06 13:52 UTC",
-  "headline": "Aerobic base is deepening through the volume ramp, with easy-run HR settled low and time-in-zone almost entirely aerobic.",
-  "confidence_pct": 89,
+  "last_updated": "2026-07-06 17:52 UTC",
+  "headline": "Volume has ramped nearly 60% over the prior block while easy-run HR sits meaningfully lower on comparable efforts.",
+  "confidence_pct": 87,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
     "LT reading 3d old",
-    "HR data on 8/8 recent runs",
+    "HR data on 7/8 recent runs",
     "Sleep tracked 4/14 nights",
     "Steps tracked 7/7 days",
     "Data fetch up to date",
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 4/14 nights",
-  "summary": "The picture is clean right now: you've held a near-doubled running block while easy-effort heart rate has settled lower on comparable runs, and the grey-zone share is essentially nil. That combination \u2014 more volume, lower cost, disciplined intensity distribution \u2014 is exactly the aerobic durability signal you want with a long self-supported effort roughly a month out. This isn't a one-off; it's the third block showing it, so treat it as confirmed rather than provisional.\n\nStrength frequency has held flat across the ramp rather than being sacrificed to running load, which matters more than usual given the pack-carry demands ahead. Keeping that steady while volume climbs is the harder thing to protect, and so far you've done it.\n\nNothing in today's data pushes toward more caution or a change of direction \u2014 the trend is consolidating in a good place. The main open question is durability under load rather than aerobic economy, which the numbers already speak to well.",
+  "summary": "The story remains the aerobic response to your volume increase, but the angle worth naming today is the durability of that response as the load keeps stacking. You've held a steadily rising block without easy-effort HR creeping back up \u2014 the drift is going the other way. That combination, more kilometres at lower cardiac cost, is the clearest signal that the base is genuinely absorbing the ramp rather than just tolerating it.\n\nWhat's less settled is whether that HR gain has yet converted into faster paces at the same effort. So far the evidence is a cleaner heart rate, not obviously quicker easy running \u2014 a distinction worth staying honest about before calling it an economy gain outright.\n\nStrength volume has ticked down slightly against the prior block. Not a concern in isolation, but with running load elevated it's the balancing item to keep honest, especially given the loaded-pack demands of the trail crossing next month.",
   "watch_items": [
-    "Watch whether easy paces start drifting quicker at the same low HR \u2014 that would firm up the economy gain beyond the HR drop alone.",
-    "Note how back-to-back and longer efforts feel with a loaded pack, since that specific demand isn't yet reflected in recent runs.",
-    "Keep an eye on strength holding through the pre-event weeks as running volume stays elevated.",
-    "As more sleep nights accumulate, watch for any pattern between low-score nights and next-day aerobic HR."
+    "Watch whether easy pace at the same low HR starts drifting quicker \u2014 that would firm the economy interpretation beyond the HR drop alone.",
+    "Note how longer and back-to-back efforts sit under a loaded pack, since that specific demand still isn't reflected in recent runs.",
+    "Keep strength frequency from sliding further as running volume stays high through the pre-event weeks.",
+    "Zone 2 minutes are sitting below the weekly floor while grey-zone time is near zero \u2014 worth watching that easy volume doesn't get squeezed as total load rises."
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 4-week volume 177 km vs 92 km prior block (+92%)",
+      "text": "\u25b2 4-week volume 146 km vs 92 km prior block (+59%)",
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 142 bpm vs 155 bpm prior period (comparable-effort runs, 9 vs 6 runs)",
+      "text": "\u25bc Easy-run HR averaging 143 bpm vs 155 bpm prior period (comparable-effort runs, 7 vs 6 runs)",
       "priority": "High"
     },
     {
-      "text": "\u25b2 Zone 2: 211 min vs 180-240 min/week target (117% of minimum); grey zone (Z3+Z4): 0.3%",
-      "priority": "Low"
+      "text": "\u25ac 20-week running streak (best: 20 wks)",
+      "priority": "Medium"
     },
     {
-      "text": "\u25ac Strength consistency: 6 sessions vs 6 prior 4wk",
-      "priority": "Low"
+      "text": "\u25bc Strength consistency: 5 sessions vs 6 prior 4wk",
+      "priority": "Medium"
     }
   ],
   "insights": [
-    "The picture is clean right now: you've held a near-doubled running block while easy-effort heart rate has settled lower on comparable runs, and the grey-zone share is essentially nil. That combination \u2014 more volume, lower cost, disciplined intensity distribution \u2014 is exactly the aerobic durability signal you want with a long self-supported effort roughly a month out. This isn't a one-off; it's the third block showing it, so treat it as confirmed rather than provisional.\n\nStrength frequency has held flat across the ramp rather than being sacrificed to running load, which matters more than usual given the pack-carry demands ahead. Keeping that steady while volume climbs is the harder thing to protect, and so far you've done it.\n\nNothing in today's data pushes toward more caution or a change of direction \u2014 the trend is consolidating in a good place. The main open question is durability under load rather than aerobic economy, which the numbers already speak to well."
+    "The story remains the aerobic response to your volume increase, but the angle worth naming today is the durability of that response as the load keeps stacking. You've held a steadily rising block without easy-effort HR creeping back up \u2014 the drift is going the other way. That combination, more kilometres at lower cardiac cost, is the clearest signal that the base is genuinely absorbing the ramp rather than just tolerating it.\n\nWhat's less settled is whether that HR gain has yet converted into faster paces at the same effort. So far the evidence is a cleaner heart rate, not obviously quicker easy running \u2014 a distinction worth staying honest about before calling it an economy gain outright.\n\nStrength volume has ticked down slightly against the prior block. Not a concern in isolation, but with running load elevated it's the balancing item to keep honest, especially given the loaded-pack demands of the trail crossing next month."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 4928,
-    "output_tokens": 542,
-    "cost_usd": 0.03819,
-    "cost_dkk": 0.26351,
+    "input_tokens": 4933,
+    "output_tokens": 548,
+    "cost_usd": 0.038365,
+    "cost_dkk": 0.26472,
     "date": "2026-07-06"
   },
-  "usage_mtd_usd": 0.10199,
-  "usage_mtd_dkk": 0.7038,
-  "usage_ytd_usd": 0.10199,
-  "usage_ytd_dkk": 0.7038
+  "usage_mtd_usd": 0.10217,
+  "usage_mtd_dkk": 0.705,
+  "usage_ytd_usd": 0.10217,
+  "usage_ytd_dkk": 0.705
 }

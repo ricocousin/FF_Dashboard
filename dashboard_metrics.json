@@ -1,16 +1,16 @@
 {
-  "last_updated": "2026-07-06 07:38 UTC",
+  "last_updated": "2026-07-06 12:46 UTC",
   "last_complete_date": "2026-07-05",
   "this_year": "2026",
   "this_month_short": "Jul",
   "running": {
     "avg_per_run_km": 11.3,
-    "runs_this_year": 52,
-    "avg_per_week_km": 25.5,
-    "total_distance_this_year_km": 586.1,
+    "runs_this_year": 53,
+    "avg_per_week_km": 26.0,
+    "total_distance_this_year_km": 598.1,
     "current_weekly_streak": 20,
     "longest_weekly_streak": 20,
-    "week_delta_km": 43.2,
+    "week_delta_km": 55.2,
     "week_qual": "Increased"
   },
   "strength": {
@@ -33,13 +33,13 @@
     "discrepancy_days": 0
   },
   "intensity": {
-    "avg_week_year_mins": 239,
-    "avg_week_year_run_mins": 151,
+    "avg_week_year_mins": 242,
+    "avg_week_year_run_mins": 154,
     "avg_week_year_lift_mins": 119,
-    "avg_week_month_mins": 568,
-    "avg_week_month_run_mins": 372,
+    "avg_week_month_mins": 634,
+    "avg_week_month_run_mins": 437,
     "avg_week_month_lift_mins": 197,
-    "delta_month_vs_year": 330,
+    "delta_month_vs_year": 392,
     "qual": "Increased",
     "streak_weeks": 1,
     "best_streak_weeks": 6,
@@ -96,7 +96,7 @@
       47.8,
       12.6,
       30.4,
-      73.7
+      85.7
     ],
     "strength_sessions": [
       0,
@@ -156,11 +156,11 @@
   "chart_annual": {
     "target_label": "vs 2025 total (490 km)",
     "target_km": 490.0,
-    "raw_pct": 119.6,
-    "display_pct": 119.6,
+    "raw_pct": 122.1,
+    "display_pct": 122.1,
     "is_overflow": true,
-    "year_dist_km": 586.1,
-    "km_to_target_km": 96.1,
+    "year_dist_km": 598.1,
+    "km_to_target_km": 108.1,
     "strength_target_label": "vs 2025 total (51 sessions)",
     "strength_pct": 71,
     "strength_display_pct": 71,
@@ -183,7 +183,7 @@
       124.1,
       148.7,
       113.2,
-      61.9
+      73.9
     ],
     "month_strength_sessions": [
       3,
@@ -779,20 +779,20 @@
       "window_start": "2026-06-29",
       "window_end": "2026-07-06",
       "minutes": {
-        "Z1": 389.3,
-        "Z2": 189.4,
+        "Z1": 433.3,
+        "Z2": 211.3,
         "Z3": 1.7,
         "Z4": 0.0,
         "Z5": 0.0
       },
-      "total_minutes": 580.4,
-      "z2_pct": 32.6,
+      "total_minutes": 646.3,
+      "z2_pct": 32.7,
       "grey_pct": 0.3,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
-      "z2_vs_target_pct": 105,
-      "running_sessions_with_data": 5,
+      "z2_vs_target_pct": 117,
+      "running_sessions_with_data": 6,
       "strength_sessions_with_data": 2,
       "has_lt_data": true
     },
@@ -802,26 +802,34 @@
       "window_start": "2026-06-29",
       "window_end": "2026-07-05",
       "minutes": {
-        "Z1": 389.3,
-        "Z2": 189.4,
+        "Z1": 433.3,
+        "Z2": 211.3,
         "Z3": 1.7,
         "Z4": 0.0,
         "Z5": 0.0
       },
-      "total_minutes": 580.4,
-      "z2_pct": 32.6,
+      "total_minutes": 646.3,
+      "z2_pct": 32.7,
       "grey_pct": 0.3,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
-      "z2_vs_target_pct": 105,
-      "running_sessions_with_data": 5,
+      "z2_vs_target_pct": 117,
+      "running_sessions_with_data": 6,
       "strength_sessions_with_data": 2,
       "has_lt_data": true
     },
     "default_view": "rolling"
   },
   "run_hr_source_comparison": [
+    {
+      "date": "2026-07-05",
+      "name": "Copenhagen Running",
+      "garmin_avg_hr": 135,
+      "polar_avg_hr": 120,
+      "diff": -15.2,
+      "polar_sample_count": 781
+    },
     {
       "date": "2026-07-05",
       "name": "Copenhagen Running",
@@ -857,7 +865,7 @@
   ],
   "digest": [
     "\u2794 LT established at 4:24/km (baseline building)",
-    "\u25b2 4-week volume increased (164 vs 92 km prior block)",
+    "\u25b2 4-week volume increased (177 vs 92 km prior block)",
     "\u2794 Strength frequency 6 vs 6 sessions prior block",
     "\u25b2 Steps averaging 15,908 vs 12,002/day prior block",
     "\u2794 Sleep data still accumulating",

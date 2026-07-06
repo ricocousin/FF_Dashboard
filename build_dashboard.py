@@ -1499,18 +1499,25 @@ token_usage = None
 
 # ── API pricing ───────────────────────────────────────────────────────────────
 # WARNING: hardcoded, must be updated manually if Anthropic changes pricing.
-# Last verified: 2026-07-01. Model: claude-sonnet-4-6.
-PRICE_INPUT_PER_M  = 3.00
-PRICE_OUTPUT_PER_M = 15.00
+# Last verified: 2026-07-06. Model: claude-opus-4-8 (migrated from
+# claude-sonnet-4-6 same day — see MODEL VERSION in PROJECT CONTEXT for the
+# full evaluation: cost is irrelevant at this project's actual daily volume
+# in either case, ~$5-6/year delta; Opus 4.8 chosen over Sonnet 5 or Fable 5
+# since this is a low-volume, judgment-heavy task rather than agentic/coding
+# work, and Fable 5 carries real recent reliability history (an 18-day
+# global suspension, June 12-30 2026) unsuited to an unattended daily cron).
+PRICE_INPUT_PER_M  = 5.00
+PRICE_OUTPUT_PER_M = 25.00
 USD_TO_DKK = 6.90  # fixed rate — approximate, update manually if needed
 
 if api_key:
     try:
         payload = json.dumps({
-            "model": "claude-sonnet-4-6",
+            "model": "claude-opus-4-8",
             "max_tokens": 700,
             "system": system_prompt,
-            "messages": [{"role": "user", "content": user_prompt}]
+            "messages": [{"role": "user", "content": user_prompt}],
+            "thinking": {"type": "disabled"}
         }).encode("utf-8")
 
         req = urllib.request.Request(

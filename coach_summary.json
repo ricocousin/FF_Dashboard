@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-09 15:18 UTC",
-  "headline": "The lower easy-run HR now holds across a full block of comparable efforts, no longer a single reading.",
+  "last_updated": "2026-07-09 15:22 UTC",
+  "headline": "St. Olavsleden is a month out, yet no loaded or back-to-back durability work has surfaced in the recent block.",
   "confidence_pct": 92,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,11 +12,11 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 7/14 nights",
-  "summary": "The aerobic efficiency shift you've been showing is no longer a one-off \u2014 it's now consistent across a full block of comparable-effort runs, with easy paces sitting at a meaningfully lower heart rate than the prior period. That's the kind of within-athlete signal that matters more than any single session, and it's held while your running frequency and pacing stayed in your normal range. This is the confirmation of a genuine adaptation, not variance.\n\nThe slight dip in four-week volume is well within consolidation territory and shouldn't be read as anything else \u2014 your strength work has actually doubled over the same window, so the total system load is broadly maintained rather than reduced. The picture is one of an athlete redistributing effort across modalities, not backing off.\n\nWhat's still absent, with the St. Olavsleden crossing approaching, is loaded back-to-back durability \u2014 the one demand closest to what that route will ask of you. Nothing in today's data speaks to it either way, so it remains the open question rather than a concern.",
+  "summary": "Your aerobic picture is settled and favourable \u2014 the lower easy-run HR now holds across a full block of comparable efforts, so treat that adaptation as banked rather than provisional. Volume is essentially flat versus the prior block, which reads as consolidation on top of a genuine ramp, not regression. Strength has doubled its session count over the previous four weeks, so the raised volume you were watching has held rather than reverting \u2014 that's the more notable stability story this week than the running numbers.\n\nThe gap worth naming is specificity. You have a 580 km self-supported trail crossing with a 6-8 kg pack in a month, and the recent running has been unloaded, single-day, and on modest elevation. Aerobic efficiency and strength are both trending the right way, but pack-carrying and consecutive-day time-on-feet remain the least-rehearsed qualities relative to what the route will actually demand. That's a training-design observation, not a fitness concern \u2014 your base and threshold are clearly intact.",
   "watch_items": [
-    "Whether loaded or consecutive-day efforts start appearing, since pack-carrying durability is the least-tested quality relative to the coming route demands.",
-    "Whether the lower easy-run HR continues to translate into faster paces at the same effort, or plateaus once the adaptation settles.",
-    "Whether strength volume holds at its raised level or was a temporary spike during the lighter running block."
+    "Whether consecutive-day or pack-loaded efforts start entering the block, given the route's self-supported multi-day profile.",
+    "Whether elevation and time-on-feet per session increase, since the crossing involves sustained hilly terrain and a mountain section.",
+    "Whether the raised strength frequency stays compatible with any added running-specific volume as the event approaches."
   ],
   "evidence_items": [
     {
@@ -24,31 +24,27 @@
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 142 bpm vs 155 bpm prior period (comparable-effort runs, 7 vs 7 runs)",
+      "text": "\u25bc Easy-run HR averaging 143 bpm vs 155 bpm prior period (comparable-effort runs, 8 vs 7 runs)",
       "priority": "High"
     },
     {
-      "text": "\u25bc 4-week volume 125 km vs 133 km prior block (-6%)",
-      "priority": "Medium"
-    },
-    {
-      "text": "\u25b2 Zone 2: 191 min vs 180-240 min/week target (106% of minimum); grey zone (Z3+Z4): 2.8%",
+      "text": "\u25bc 4-week volume 128 km vs 133 km prior block (-4%)",
       "priority": "Low"
     }
   ],
   "insights": [
-    "The aerobic efficiency shift you've been showing is no longer a one-off \u2014 it's now consistent across a full block of comparable-effort runs, with easy paces sitting at a meaningfully lower heart rate than the prior period. That's the kind of within-athlete signal that matters more than any single session, and it's held while your running frequency and pacing stayed in your normal range. This is the confirmation of a genuine adaptation, not variance.\n\nThe slight dip in four-week volume is well within consolidation territory and shouldn't be read as anything else \u2014 your strength work has actually doubled over the same window, so the total system load is broadly maintained rather than reduced. The picture is one of an athlete redistributing effort across modalities, not backing off.\n\nWhat's still absent, with the St. Olavsleden crossing approaching, is loaded back-to-back durability \u2014 the one demand closest to what that route will ask of you. Nothing in today's data speaks to it either way, so it remains the open question rather than a concern."
+    "Your aerobic picture is settled and favourable \u2014 the lower easy-run HR now holds across a full block of comparable efforts, so treat that adaptation as banked rather than provisional. Volume is essentially flat versus the prior block, which reads as consolidation on top of a genuine ramp, not regression. Strength has doubled its session count over the previous four weeks, so the raised volume you were watching has held rather than reverting \u2014 that's the more notable stability story this week than the running numbers.\n\nThe gap worth naming is specificity. You have a 580 km self-supported trail crossing with a 6-8 kg pack in a month, and the recent running has been unloaded, single-day, and on modest elevation. Aerobic efficiency and strength are both trending the right way, but pack-carrying and consecutive-day time-on-feet remain the least-rehearsed qualities relative to what the route will actually demand. That's a training-design observation, not a fitness concern \u2014 your base and threshold are clearly intact."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 5013,
+    "input_tokens": 5041,
     "output_tokens": 514,
-    "cost_usd": 0.037915,
-    "cost_dkk": 0.26161,
+    "cost_usd": 0.038055,
+    "cost_dkk": 0.26258,
     "date": "2026-07-09"
   },
-  "usage_mtd_usd": 0.18049,
-  "usage_mtd_dkk": 1.2454,
-  "usage_ytd_usd": 0.18049,
-  "usage_ytd_dkk": 1.2454
+  "usage_mtd_usd": 0.18063,
+  "usage_mtd_dkk": 1.2464,
+  "usage_ytd_usd": 0.18063,
+  "usage_ytd_dkk": 1.2464
 }

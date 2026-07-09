@@ -1,24 +1,24 @@
 {
-  "last_updated": "2026-07-09 15:18 UTC",
+  "last_updated": "2026-07-09 15:22 UTC",
   "last_complete_date": "2026-07-08",
   "this_year": "2026",
   "this_month_short": "Jul",
   "running": {
-    "avg_per_run_km": 10.9,
+    "avg_per_run_km": 11.0,
     "runs_this_year": 54,
-    "avg_per_week_km": 24.6,
+    "avg_per_week_km": 24.7,
     "avg_runs_per_week": 2.2,
-    "total_distance_this_year_km": 590.6,
+    "total_distance_this_year_km": 593.3,
     "current_weekly_streak": 21,
     "longest_weekly_streak": 21,
-    "week_delta_km": -33.0,
+    "week_delta_km": -30.3,
     "week_qual": "Decreased"
   },
   "strength": {
     "avg_sessions_per_week": 1.9,
     "sessions_this_year": 38,
     "avg_hours_per_week": 2.0,
-    "total_hours_this_year": 39.2,
+    "total_hours_this_year": 39.4,
     "current_weekly_streak": 4,
     "longest_weekly_streak": 23,
     "week_delta_sessions": 0,
@@ -34,13 +34,13 @@
     "discrepancy_days": 0
   },
   "intensity": {
-    "avg_week_year_mins": 233,
-    "avg_week_year_run_mins": 145,
+    "avg_week_year_mins": 235,
+    "avg_week_year_run_mins": 146,
     "avg_week_year_lift_mins": 118,
-    "avg_week_month_mins": 332,
-    "avg_week_month_run_mins": 190,
-    "avg_week_month_lift_mins": 142,
-    "delta_month_vs_year": 99,
+    "avg_week_month_mins": 349,
+    "avg_week_month_run_mins": 200,
+    "avg_week_month_lift_mins": 149,
+    "delta_month_vs_year": 114,
     "qual": "Increased",
     "streak_weeks": 2,
     "best_streak_weeks": 6,
@@ -97,7 +97,7 @@
       12.6,
       30.4,
       55.6,
-      22.6
+      25.3
     ],
     "strength_sessions": [
       1,
@@ -157,11 +157,11 @@
   "chart_annual": {
     "target_label": "vs 2025 total (490 km)",
     "target_km": 490.0,
-    "raw_pct": 120.5,
-    "display_pct": 120.5,
+    "raw_pct": 121.1,
+    "display_pct": 121.1,
     "is_overflow": true,
-    "year_dist_km": 590.6,
-    "km_to_target_km": 100.6,
+    "year_dist_km": 593.3,
+    "km_to_target_km": 103.3,
     "strength_target_label": "vs 2025 total (51 sessions)",
     "strength_pct": 75,
     "strength_display_pct": 75,
@@ -184,7 +184,7 @@
       124.1,
       148.7,
       113.2,
-      66.4
+      69.1
     ],
     "month_strength_sessions": [
       3,
@@ -776,11 +776,11 @@
       "sample_count": 3189
     },
     {
-      "date": "2026-07-06",
+      "date": "2026-07-08",
       "name": "Functional Fitness",
-      "avg_hr": 101,
-      "max_hr": 106,
-      "sample_count": 1802
+      "avg_hr": 100,
+      "max_hr": 132,
+      "sample_count": 3189
     },
     {
       "date": "2026-07-06",
@@ -804,25 +804,25 @@
       "window_start": "2026-07-02",
       "window_end": "2026-07-09",
       "minutes": {
-        "Z1": 396.7,
-        "Z2": 190.8,
-        "Z3": 13.9,
-        "Z4": 2.7,
+        "Z1": 414.9,
+        "Z2": 213.7,
+        "Z3": 9.2,
+        "Z4": 1.4,
         "Z5": 0.0
       },
-      "total_minutes": 604.2,
-      "z1_pct": 65.7,
-      "z2_pct": 31.6,
-      "grey_pct": 2.8,
+      "total_minutes": 639.2,
+      "z1_pct": 64.9,
+      "z2_pct": 33.4,
+      "grey_pct": 1.7,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
-      "z2_vs_target_pct": 106,
+      "z2_vs_target_pct": 119,
       "z1_target_min_pct": 75,
       "z1_target_max_pct": 80,
-      "z1_vs_target_pct": 88,
+      "z1_vs_target_pct": 87,
       "grey_ceiling_pct": 10,
-      "grey_vs_ceiling_pct": 28,
+      "grey_vs_ceiling_pct": 17,
       "z5_target_min_pct": 15,
       "z5_target_max_pct": 20,
       "z5_vs_target_pct": 0,
@@ -874,12 +874,12 @@
       "polar_sample_count": 676
     },
     {
-      "date": "2026-07-07",
+      "date": "2026-07-08",
       "name": "Copenhagen Running",
-      "garmin_avg_hr": 155,
-      "polar_avg_hr": 137,
-      "diff": -17.8,
-      "polar_sample_count": 707
+      "garmin_avg_hr": 147,
+      "polar_avg_hr": 136,
+      "diff": -11.4,
+      "polar_sample_count": 676
     },
     {
       "date": "2026-07-07",
@@ -916,7 +916,7 @@
   ],
   "digest": [
     "\u2794 LT established at 4:24/km (baseline building)",
-    "\u25bc 4-week volume reduced (125 vs 133 km prior block)",
+    "\u25bc 4-week volume reduced (128 vs 133 km prior block)",
     "\u25b2 Strength frequency 8 vs 4 sessions prior block",
     "\u25b2 Steps averaging 14,964 vs 14,045/day prior block",
     "\u2794 Sleep data still accumulating",

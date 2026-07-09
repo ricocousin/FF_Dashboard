@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-09 15:22 UTC",
-  "headline": "St. Olavsleden is a month out, yet no loaded or back-to-back durability work has surfaced in the recent block.",
+  "last_updated": "2026-07-09 18:23 UTC",
+  "headline": "Aerobic base and easy-run efficiency remain firmly intact, but the block still lacks any loaded or back-to-back durability work.",
   "confidence_pct": 92,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,11 +12,11 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 7/14 nights",
-  "summary": "Your aerobic picture is settled and favourable \u2014 the lower easy-run HR now holds across a full block of comparable efforts, so treat that adaptation as banked rather than provisional. Volume is essentially flat versus the prior block, which reads as consolidation on top of a genuine ramp, not regression. Strength has doubled its session count over the previous four weeks, so the raised volume you were watching has held rather than reverting \u2014 that's the more notable stability story this week than the running numbers.\n\nThe gap worth naming is specificity. You have a 580 km self-supported trail crossing with a 6-8 kg pack in a month, and the recent running has been unloaded, single-day, and on modest elevation. Aerobic efficiency and strength are both trending the right way, but pack-carrying and consecutive-day time-on-feet remain the least-rehearsed qualities relative to what the route will actually demand. That's a training-design observation, not a fitness concern \u2014 your base and threshold are clearly intact.",
+  "summary": "Your aerobic engine is in a good place. Easy-run HR continues to sit meaningfully lower on comparable efforts than the prior period, and volume has held essentially flat across the two blocks \u2014 this is a consolidation window, not regression. Nothing in the data suggests any loss of fitness; if anything, the efficiency signal has been consistent enough now over several weeks that it reads as a genuine adaptation rather than noise.\n\nThe gap worth naming again is durability-specific work. With the crossing about a month out and a self-supported, multi-day, pack-loaded profile, the current block is still built around single-session road runs at moderate distance. Your longest recent effort and your day-to-day terrain don't yet reflect the sustained time-on-feet or consecutive-day demand the route will impose. This isn't an urgent alarm \u2014 your base and demonstrated ultra history give you real headroom \u2014 but it's the one dimension the recent data hasn't touched.\n\nStrength frequency has stepped up noticeably and is sitting well above the prior block, which is a positive for pack-carrying resilience. The question is whether that raised frequency stays compatible if running-specific durability volume does start entering the picture.",
   "watch_items": [
-    "Whether consecutive-day or pack-loaded efforts start entering the block, given the route's self-supported multi-day profile.",
-    "Whether elevation and time-on-feet per session increase, since the crossing involves sustained hilly terrain and a mountain section.",
-    "Whether the raised strength frequency stays compatible with any added running-specific volume as the event approaches."
+    "Whether any pack-loaded or consecutive-day efforts finally enter the block as the crossing approaches.",
+    "Whether per-session elevation and duration begin trending upward to reflect sustained hilly terrain.",
+    "Whether the elevated strength frequency and any added running durability work can coexist without compromising either."
   ],
   "evidence_items": [
     {
@@ -33,18 +33,18 @@
     }
   ],
   "insights": [
-    "Your aerobic picture is settled and favourable \u2014 the lower easy-run HR now holds across a full block of comparable efforts, so treat that adaptation as banked rather than provisional. Volume is essentially flat versus the prior block, which reads as consolidation on top of a genuine ramp, not regression. Strength has doubled its session count over the previous four weeks, so the raised volume you were watching has held rather than reverting \u2014 that's the more notable stability story this week than the running numbers.\n\nThe gap worth naming is specificity. You have a 580 km self-supported trail crossing with a 6-8 kg pack in a month, and the recent running has been unloaded, single-day, and on modest elevation. Aerobic efficiency and strength are both trending the right way, but pack-carrying and consecutive-day time-on-feet remain the least-rehearsed qualities relative to what the route will actually demand. That's a training-design observation, not a fitness concern \u2014 your base and threshold are clearly intact."
+    "Your aerobic engine is in a good place. Easy-run HR continues to sit meaningfully lower on comparable efforts than the prior period, and volume has held essentially flat across the two blocks \u2014 this is a consolidation window, not regression. Nothing in the data suggests any loss of fitness; if anything, the efficiency signal has been consistent enough now over several weeks that it reads as a genuine adaptation rather than noise.\n\nThe gap worth naming again is durability-specific work. With the crossing about a month out and a self-supported, multi-day, pack-loaded profile, the current block is still built around single-session road runs at moderate distance. Your longest recent effort and your day-to-day terrain don't yet reflect the sustained time-on-feet or consecutive-day demand the route will impose. This isn't an urgent alarm \u2014 your base and demonstrated ultra history give you real headroom \u2014 but it's the one dimension the recent data hasn't touched.\n\nStrength frequency has stepped up noticeably and is sitting well above the prior block, which is a positive for pack-carrying resilience. The question is whether that raised frequency stays compatible if running-specific durability volume does start entering the picture."
   ],
   "quiet": [],
   "usage": {
     "input_tokens": 5041,
-    "output_tokens": 514,
-    "cost_usd": 0.038055,
-    "cost_dkk": 0.26258,
+    "output_tokens": 567,
+    "cost_usd": 0.03938,
+    "cost_dkk": 0.27172,
     "date": "2026-07-09"
   },
-  "usage_mtd_usd": 0.18063,
-  "usage_mtd_dkk": 1.2464,
-  "usage_ytd_usd": 0.18063,
-  "usage_ytd_dkk": 1.2464
+  "usage_mtd_usd": 0.18196,
+  "usage_mtd_dkk": 1.2555,
+  "usage_ytd_usd": 0.18196,
+  "usage_ytd_dkk": 1.2555
 }

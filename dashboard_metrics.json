@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-09 15:22 UTC",
+  "last_updated": "2026-07-09 18:23 UTC",
   "last_complete_date": "2026-07-08",
   "this_year": "2026",
   "this_month_short": "Jul",
@@ -766,6 +766,15 @@
     "status": "fresh",
     "last_success_date": "2026-07-09",
     "age_days": 0
+  },
+  "fitness_metrics": {
+    "latest_date": null,
+    "latest_vo2max": null,
+    "latest_vo2max_precise": null,
+    "trend": {
+      "labels": [],
+      "vo2max": []
+    }
   },
   "strength_hr_overlay": [
     {

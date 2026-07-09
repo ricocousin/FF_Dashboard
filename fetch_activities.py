@@ -636,20 +636,60 @@ if new_hr_sample_rows:
 else:
     print(f"run_hr_samples.csv: no new samples this run ({len(runs_needing_hr_detail)} run(s) attempted)")
 
-# ── DIAGNOSTIC ONLY (July 2026) — max-HR metric shape verification ───────────
-# Confirmed via direct inspection of the installed garminconnect library
-# source that get_max_metrics(cdate) exists, calling
-# {garmin_connect_metrics_url}/{cdate}/{cdate}. First check (today's date)
-# returned an empty list — inconclusive on its own (could mean today simply
-# has no fresh Garmin-computed estimate yet, or the endpoint is only
-# populated on dates where a new max-metric was actually computed). Widened
-# to check several recent dates, including 2026-07-04 (a real ~18km effort,
-# more likely to have triggered a fresh computation than an ordinary day).
-# Still print-only — no CSV write, no parsing logic — until a populated
-# response is actually seen.
-for _check_date in ["2026-07-09", "2026-07-08", "2026-07-06", "2026-07-04", "2026-07-01"]:
-    try:
-        _mm = client.get_max_metrics(_check_date)
-        print(f"DEBUG get_max_metrics({_check_date}) raw response: {_mm}")
-    except Exception as e:
-        print(f"DEBUG get_max_metrics({_check_date}) failed: {e}")
+# ── Garmin fitness metrics (VO2max) ────────────────────────────────────────────
+# get_max_metrics(cdate) CONFIRMED via live debug output (July 2026): returns
+# a list, empty on days with no fresh Garmin-computed estimate, else a list
+# with one dict shaped like:
+#   [{"userId": ..., "generic": {"calendarDate": ..., "vo2MaxValue": 53.0,
+#     "vo2MaxPreciseValue": 53.4, "fitnessAge": None,
+#     "fitnessAgeDescription": None, "maxMetCategory": 0},
+#     "cycling": None, "heatAltitudeAcclimation": {...}}]
+# CONFIRMED this endpoint does NOT expose a periodic max-HR metric (the
+# original ask) — only VO2max and heat/altitude acclimation data.
+#
+# fitnessAge DELIBERATELY NOT captured (July 2026, after direct inspection
+# of the athlete's real Garmin Connect app data): confirmed Garmin's Fitness
+# Age calculation is built on a corrupted "resting heart rate" input for
+# this athlete's specific hardware setup — the app's own Resting HR screen
+# showed a "monthly average" of 137 bpm, which is a moderate/hard EXERCISE
+# heart rate, not a resting one (genuine resting HR is 40-70 bpm even
+# untrained). Root cause: tattoo blocks Garmin's optical HR sensor outside
+# of runs (H10 chest strap only worn during runs), so Garmin has no real
+# resting-state HR data and appears to be misapplying in-run HR readings as
+# if they were rest. This isn't a sparse-data problem that improves with
+# more wear — it's a structurally wrong input for this athlete's setup.
+# VO2max is unaffected (derived from pace-vs-active-HR during a run, not
+# resting HR) and is still captured below. See PROJECT CONTEXT for the full
+# writeup and the resulting reprioritization of Polar's
+# /users/physical-information endpoint as the better-fitted source for any
+# future longevity/fitness-age-style metric for this athlete.
+try:
+    today_str = today.strftime("%Y-%m-%d")
+    max_metrics_resp = client.get_max_metrics(today_str)
+    if max_metrics_resp:
+        generic = max_metrics_resp[0].get("generic", {}) or {}
+        vo2max_value = generic.get("vo2MaxValue")
+        vo2max_precise = generic.get("vo2MaxPreciseValue")
+
+        existing_fitness_rows = []
+        if os.path.exists("garmin_fitness_metrics.csv"):
+            with open("garmin_fitness_metrics.csv", "r", encoding="utf-8") as f:
+                existing_fitness_rows = list(csv.DictReader(f))
+        # Dedup by date — skip if today's already recorded (avoids piling up
+        # duplicate rows if the workflow runs more than once in a day).
+        existing_fitness_rows = [r for r in existing_fitness_rows if r.get("date") != today_str]
+        existing_fitness_rows.insert(0, {
+            "date": today_str,
+            "vo2max_value": vo2max_value if vo2max_value is not None else "",
+            "vo2max_precise": vo2max_precise if vo2max_precise is not None else ""
+        })
+
+        with open("garmin_fitness_metrics.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=["date", "vo2max_value", "vo2max_precise"])
+            writer.writeheader()
+            writer.writerows(existing_fitness_rows)
+        print(f"garmin_fitness_metrics.csv: recorded {today_str} (VO2max {vo2max_value}), {len(existing_fitness_rows)} total rows")
+    else:
+        print(f"Garmin fitness metrics: no new estimate for {today_str} (empty response — normal, not every day has one)")
+except Exception as e:
+    print(f"Garmin fitness metrics fetch skipped: {e}")

@@ -27,9 +27,6 @@ from datetime import datetime, timedelta
 today = datetime.today()
 
 # ── Load raw data from disk ───────────────────────────────────────────────────
-# Always loaded fresh and in full — this script does not care whether today's
-# fetch_activities.py run was incremental, full-refresh, or didn't run at all;
-# it just aggregates whatever is currently in these files.
 def _load_csv(path):
     if not os.path.exists(path):
         return []
@@ -39,16 +36,6 @@ def _load_csv(path):
 all_run_rows = sorted(_load_csv("runs.csv"), key=lambda x: x.get("date", ""), reverse=True)
 all_strength_rows = sorted(_load_csv("strength.csv"), key=lambda x: x.get("date", ""), reverse=True)
 
-# Strength session duration sanity cap (added July 2026, same principle as
-# the existing LT pace sanity filter). A watch left running (forgot to stop
-# the timer) can report an implausible duration_min — e.g. one real session
-# observed at 875.8 min (14.6 hours) for what was actually a normal workout.
-# Capped rather than deleted/zeroed: the session still happened and should
-# still count toward frequency/streaks, but its reported duration shouldn't
-# be trusted beyond a sane ceiling for any hours-based total. Mutates the
-# dicts in place, before any filtering — every downstream subset (
-# complete_strength_rows, year_sessions, month_sessions, etc.) references
-# these same dict objects, so the cap applies everywhere automatically.
 STRENGTH_DURATION_SANITY_CAP_MIN = 240  # 4 hours
 for _row in all_strength_rows:
     try:
@@ -58,10 +45,6 @@ for _row in all_strength_rows:
     except (ValueError, TypeError):
         pass
 
-# polar_hr.csv — written by fetch_activities.py (8-day rolling window,
-# 5-minute-interval continuous HR). Loaded here for the strength-session HR
-# overlay below. Indexed by date -> list of (time_str, heart_rate) for fast
-# per-session lookup.
 _polar_hr_by_date = {}
 for row in _load_csv("polar_hr.csv"):
     d = row.get("date")
@@ -70,10 +53,6 @@ for row in _load_csv("polar_hr.csv"):
     if d and t and hr not in (None, ""):
         _polar_hr_by_date.setdefault(d, []).append((t, hr))
 
-# run_hr_samples.csv — written by fetch_activities.py via Garmin's
-# get_activity_details() (H10-sourced, per-run). Indexed by activity_id ->
-# list of (elapsed_seconds, heart_rate), used for the RUN ZONE-TIME PROJECT's
-# zone-binning below.
 _run_hr_by_activity = {}
 for row in _load_csv("run_hr_samples.csv"):
     aid = row.get("activity_id")
@@ -87,8 +66,7 @@ for row in _load_csv("run_hr_samples.csv"):
 for _aid in _run_hr_by_activity:
     _run_hr_by_activity[_aid].sort(key=lambda x: x[0])
 
-# ── Helpers (shared formatting/parsing — kept identical to fetch_activities.py
-# so pace strings etc. round-trip consistently between the two scripts) ──────
+# ── Helpers ────────────────────────────────────────────────────────────────
 def sec_to_pace(seconds):
     if not seconds or seconds <= 0:
         return ""
@@ -114,7 +92,6 @@ def get_week(date):
     return date.isocalendar()[:2]
 
 # ── Aggregate stats ───────────────────────────────────────────────────────────
-# Historical dashboard stats use yesterday as cutoff because today's data can be partial.
 today_date = today.date()
 last_complete_date = today_date - timedelta(days=1)
 last_complete_str = str(last_complete_date)
@@ -213,11 +190,6 @@ baseline_lt = next((r for r in reversed(lt_history)
     if datetime.strptime(r["date"], "%Y-%m-%d").date() <= today_date - timedelta(days=30)), None)
 
 # ── Steps: reconciled from iPhone + Polar ─────────────────────────────────────
-# Same logic the dashboard/coach have always used — average when both sources
-# report a day, fallback to whichever single source exists. If the two
-# sources disagree by more than 50%, use the larger (more complete) reading
-# instead of averaging — most likely one device wasn't worn the full day
-# rather than both being equally valid partial counts.
 iphone_steps_data = {}
 if os.path.exists("steps.csv"):
     with open("steps.csv", "r", encoding="utf-8") as f:
@@ -257,19 +229,57 @@ if os.path.exists("sleep.csv"):
             if row.get("date"):
                 sleep_data[row["date"]] = row
 
+# ── Polar cardio load (Training Load Pro: strain / tolerance / ratio) ────────
+# NEW (July 2026). polar_cardio_load.csv written by fetch_activities.py via
+# GET /v3/users/cardio-load. Strain (7d rolling avg load) and Tolerance (28d
+# rolling avg load) are already Polar-computed rolling averages, so no
+# further windowing is needed here — just read the latest row and build a
+# trend array for the chart. Deliberately kept as its OWN section (own units:
+# an arbitrary TRIMP-derived load score, not minutes or a 0-100 score) rather
+# than merged into "recovery" — see project notes on this: strain/tolerance
+# and sleep-based recovery are cross-referenced side by side on the
+# dashboard, not combined into a single number, since they measure different
+# things (load applied vs. resourcing available) on different scales.
+cardio_load_rows = sorted(_load_csv("polar_cardio_load.csv"), key=lambda x: x.get("date", ""))
+_latest_cl = cardio_load_rows[-1] if cardio_load_rows else None
+
+def _cl_float(row, key):
+    v = row.get(key) if row else None
+    if v in (None, ""):
+        return None
+    try:
+        return float(v)
+    except (ValueError, TypeError):
+        return None
+
+_latest_strain = _cl_float(_latest_cl, "strain")
+_latest_tolerance = _cl_float(_latest_cl, "tolerance")
+_latest_ratio = _cl_float(_latest_cl, "cardio_load_ratio")
+# Fall back to computing the ratio ourselves if Polar's own field is missing
+# but we have both inputs — keeps the card usable even if that one field
+# comes back blank on a given day.
+if _latest_ratio is None and _latest_strain is not None and _latest_tolerance not in (None, 0):
+    _latest_ratio = _latest_strain / _latest_tolerance
+
+CARDIO_LOAD_TREND_DAYS = 28
+_cl_trend_rows = [r for r in cardio_load_rows if r.get("date", "") >= str(today_date - timedelta(days=CARDIO_LOAD_TREND_DAYS))]
+cardio_load = {
+    "latest_date": _latest_cl["date"] if _latest_cl else None,
+    "status": (_latest_cl.get("cardio_load_status") or None) if _latest_cl else None,
+    "strain": _latest_strain,
+    "tolerance": _latest_tolerance,
+    "ratio": round(_latest_ratio, 2) if _latest_ratio is not None else None,
+    "trend": {
+        "labels": [r["date"][5:] for r in _cl_trend_rows],
+        "strain": [_cl_float(r, "strain") for r in _cl_trend_rows],
+        "tolerance": [_cl_float(r, "tolerance") for r in _cl_trend_rows]
+    } if len(_cl_trend_rows) > 1 else None
+}
+
 # ── Strength/power/durability test history (manually maintained) ─────────────
-# strength_tests.csv is edited directly via GitHub whenever a test happens —
-# it is NOT written by fetch_activities.py and never goes through that
-# script's resilient-commit loop. Loaded here so latest-vs-prior deltas can
-# feed the evidence catalog, same pattern as every other evidence category.
 strength_test_history = {}
 
 # ── Garmin fitness metrics (VO2max + fitness age) ─────────────────────────────
-# garmin_fitness_metrics.csv written by fetch_activities.py via
-# get_max_metrics() — see that file for the confirmed real response shape.
-# Only dates where Garmin actually computed something new have a row (most
-# days are skipped, not written as blank — confirmed via live diagnostic
-# that the endpoint returns empty on ordinary days).
 garmin_fitness_rows = sorted(_load_csv("garmin_fitness_metrics.csv"), key=lambda x: x.get("date", ""))
 _latest_fitness = garmin_fitness_rows[-1] if garmin_fitness_rows else None
 fitness_metrics = {
@@ -295,18 +305,6 @@ if os.path.exists("strength_tests.csv"):
         strength_test_history[ex].sort(key=lambda r: r["date"])
 
 # ── Upcoming events (manually maintained) ─────────────────────────────────────
-# upcoming_events.csv is edited directly via GitHub whenever a race/event is
-# planned — same low-friction manual pattern as strength_tests.csv, NOT
-# written by fetch_activities.py, never goes through that script's
-# resilient-commit loop. Fields: date, event_name, distance_km, notes.
-# Purpose: give the coach forward-looking awareness (e.g. an upcoming ultra)
-# that it previously had zero access to — the coach was 100% backward-looking
-# before this. Deliberately NOT evidence (no fabricated periodization
-# commentary) — just context, same spirit as the RECENT COACHING HISTORY
-# memory block: informs tone/awareness, never cited as a numbered evidence
-# item. Past events (date < today) are excluded — only genuinely upcoming
-# ones are relevant context. Nearest UPCOMING_EVENTS_MAX=3 events included,
-# soonest first, so a long list doesn't bloat the prompt.
 UPCOMING_EVENTS_MAX = 3
 upcoming_events = []
 if os.path.exists("upcoming_events.csv"):
@@ -403,8 +401,6 @@ def _run_mins(row):
     return h * 60 + m + s / 60
 
 def _qual(delta, threshold):
-    """Direction word for a delta given a per-metric 'meaningful change'
-    threshold — value-neutral (no good/bad framing)."""
     if delta is None:
         return None
     if abs(delta) <= threshold:
@@ -448,7 +444,6 @@ total_activity_mins_year = total_run_mins_year + total_strength_min_year
 avg_activity_mins_per_week = total_activity_mins_year / num_activity_weeks
 avg_activity_mins_per_week_month = (month_run_mins + month_strength_mins) / num_month_activity_weeks
 
-# ── Running / Strength week-over-week deltas ──────────────────────────────────
 last_complete_week = _iso_week_key(last_complete_date)
 prev_complete_week = _shift_week_key(last_complete_week, -1)
 
@@ -674,18 +669,7 @@ for pb in pbs:
 calendar_run_dates = sorted({r["date"] for r in all_run_rows if r.get("date")})
 calendar_strength_dates = sorted({s["date"] for s in all_strength_rows if s.get("date")})
 
-# ── Strength-session HR overlay (first build, July 2026) ─────────────────────
-# Matches polar_hr.csv's continuous 5-min-interval samples against each
-# strength session's [start_time, start_time + duration_min] window, using
-# the start_time field added to strength.csv for exactly this purpose.
-# Only produces an entry for sessions that both (a) have a start_time (i.e.
-# were fetched/refreshed after start_time was added) and (b) fall on a date
-# present in polar_hr.csv (i.e. within the last ~8 days the Loop was worn
-# and fetched). Silently skips everything else — this is expected to be
-# sparse at first and will naturally fill in as more overlapping days
-# accumulate. NOT yet using Polar's exercise list (/v3/exercises) for a
-# possible finer-sampled auto-detected-session HR — continuous HR only,
-# per the "start simple" plan; see PROJECT CONTEXT for the fuller plan.
+# ── Strength-session HR overlay ───────────────────────────────────────────────
 def _time_to_seconds(t):
     try:
         h, m, s = (int(p) for p in t.split(":"))
@@ -732,29 +716,8 @@ def build_strength_hr_overlay():
 
 strength_hr_overlay = build_strength_hr_overlay()
 
-# ── RUN ZONE-TIME PROJECT (July 2026) ─────────────────────────────────────────
-# Quantifies actual time-in-physiological-zone (using the same Z1-Z5 HR
-# boundaries as the LT card, NOT Garmin's own zone definitions) across both
-# running and strength, so the dashboard's numbers are comparable to real
-# training-science recommendations rather than just flat duration totals.
-#
-# Framework: Dr. Peter Attia's Zone 2 / polarized model — 80% of cardio time
-# in Zone 2, 20% in Zone 5, Zone 2 target 180-240 min/week, Zone 3-4 ("grey
-# zone") explicitly something to minimize rather than a neutral bucket.
-#
-# Source split: running uses Garmin/H10 raw per-second HR (run_hr_samples.csv)
-# as authoritative for zone classification. Strength uses Polar continuous HR
-# (already computed above as strength_hr_overlay's avg_hr) since Garmin has
-# no HR data for strength at all. Polar's continuous HR for RUNS is NOT
-# discarded despite Garmin being authoritative there — it's kept separately
-# and compared against Garmin for the same run window (see
-# run_hr_source_comparison below), mirroring the existing steps.csv vs
-# polar_steps.csv reconciliation pattern. Neither source replaces the other.
-
+# ── RUN ZONE-TIME PROJECT ─────────────────────────────────────────────────────
 def _hr_zone_bounds(lt_hr):
-    """Returns (z1, z2, z3, z4) HR boundaries, same formula as _calc_zones()
-    above — kept separate so classification logic doesn't need the
-    display-string building _calc_zones() does."""
     if not lt_hr:
         return None
     return (
@@ -781,38 +744,16 @@ def _classify_hr_zone(hr, bounds):
 
 _lt_hr_bounds = _hr_zone_bounds(latest_lt.get("lt_hr")) if latest_lt else None
 
-# Attia-target comparison. Z2 target 180-240 min/week (his stated 3-4 hrs).
-# "Grey zone" = Z3+Z4 combined (his framework treats moderate-hard as one
-# thing to minimize, not two separate zones) — Z5 = his VO2max/hard zone.
 ATTIA_Z2_TARGET_MIN = 180
 ATTIA_Z2_TARGET_MAX = 240
 
-# Percentage-of-total-time targets for the OTHER zones (Z2 keeps its own
-# absolute-minutes target above — these are a different kind of target).
-# Sourced from Stephen Seiler's polarized-training research (the scientist
-# whose work Attia's own "80/20" framing is popularized from), consistently
-# replicated across elite endurance athletes (rowing, cycling, running,
-# cross-country skiing): ~75-80% Zone 1 (low intensity, below first
-# threshold), ~5-10% "grey"/middle zone, ~15-20% Zone 3 (high intensity,
-# above second threshold) — commonly cited as an "80-5-15" or "75-5-20"
-# split. Mapped onto this dashboard's 5-zone system: Seiler's Zone 1 ≈ our
-# Z1, Seiler's grey/middle zone ≈ our Z3+Z4 combined (already treated as one
-# concept elsewhere on this dashboard), Seiler's Zone 3 ≈ our Z5.
 Z1_TARGET_MIN_PCT = 75
 Z1_TARGET_MAX_PCT = 80
-GREY_CEILING_PCT = 10  # a ceiling to stay UNDER, not a floor to reach
+GREY_CEILING_PCT = 10
 Z5_TARGET_MIN_PCT = 15
 Z5_TARGET_MAX_PCT = 20
 
 def _compute_zone_time(window_start, window_end, window_label, window_days):
-    """Computes zone-minutes and the Attia comparison for a given inclusive
-    date range [window_start, window_end]. Factored out so the same logic
-    can be run for both the rolling-7-day window (default, always full,
-    good for live pace-tracking against the weekly target) and the last
-    COMPLETED calendar week (Mon-Sun, matching the athlete's actual training
-    blocks — always requested only once a week is fully over, so it's never
-    partial/misleadingly low the way a live current-calendar-week view
-    would be)."""
     zone_minutes = {"Z1": 0.0, "Z2": 0.0, "Z3": 0.0, "Z4": 0.0, "Z5": 0.0}
     running_sessions_with_zone_data = 0
     strength_sessions_with_zone_data = 0
@@ -831,7 +772,7 @@ def _compute_zone_time(window_start, window_end, window_label, window_days):
                 t1, _ = samples[i + 1]
                 delta_sec = t1 - t0
                 if delta_sec <= 0 or delta_sec > 60:
-                    continue  # skip implausible gaps (sensor dropout) rather than misattribute
+                    continue
                 zone = _classify_hr_zone(hr0, _lt_hr_bounds)
                 if zone:
                     zone_minutes[zone] += delta_sec / 60
@@ -886,21 +827,10 @@ def _compute_zone_time(window_start, window_end, window_label, window_days):
         "has_lt_data": _lt_hr_bounds is not None
     }
 
-# Rolling 7-day window (default view): today minus 7 days through today.
 _rolling_start = today_date - timedelta(days=7)
 zone_time_rolling = _compute_zone_time(_rolling_start, today_date, "This week (rolling 7d)", 7)
 
-# Last COMPLETED calendar week (Mon-Sun), reusing the same ISO-week helpers
-# already built for the streak/delta logic elsewhere in this file — this is
-# always a full week (never partial), matching the athlete's actual
-# training blocks rather than an arbitrary rolling window.
-#
-# IMPORTANT: last_complete_week (yesterday's ISO week) is only a genuinely
-# FINISHED week if yesterday was a Sunday (i.e. today is Monday) — every
-# other day of the week, last_complete_week is still the in-progress CURRENT
-# week, and using it directly here would have mislabeled an unfinished week
-# as "completed." Caught via a runtime test before shipping, not assumed.
-if last_complete_date.weekday() == 6:  # Sunday=6 in Python's date.weekday()
+if last_complete_date.weekday() == 6:
     _true_last_completed_week = last_complete_week
 else:
     _true_last_completed_week = _shift_week_key(last_complete_week, -1)
@@ -916,14 +846,6 @@ zone_time = {
 }
 
 # ── Garmin-vs-Polar run HR comparison ─────────────────────────────────────────
-# For runs with BOTH a start_time (added to runs.csv same round as this
-# feature — existing rows before that will simply be skipped, same
-# backfill-via-FULL_REFRESH pattern already used for strength.csv) and
-# polar_hr.csv coverage for that date, compares Garmin's own avg_hr (H10,
-# already stored per run) against Polar's avg HR over the same time window —
-# mirrors the existing steps.csv vs polar_steps.csv reconciliation. Neither
-# source is treated as "correct" here — this is presented as a comparison,
-# not a discrepancy to resolve.
 def build_run_hr_source_comparison():
     comparison = []
     for r in all_run_rows:
@@ -971,9 +893,6 @@ def build_run_hr_source_comparison():
 run_hr_source_comparison = build_run_hr_source_comparison()
 
 # ── What's Changed digest ─────────────────────────────────────────────────────
-# Volume threshold/label kept aligned with the evidence catalog's own
-# "4-week volume" item (both threshold=1) so the two sections can never
-# disagree on direction for the same underlying numbers again.
 digest_lines = []
 if latest_lt and baseline_lt:
     d_sec = parse_pace_sec(baseline_lt["lt_pace"]) - parse_pace_sec(latest_lt["lt_pace"])
@@ -1018,10 +937,7 @@ else:
 
 digest_lines.append(f"➔ Running streak: {summary.get('current_weekly_streak', '—')} wks (best: {summary.get('longest_weekly_streak', '—')})")
 
-# ── Assemble and write dashboard_metrics.json ─────────────────────────────────
-# ── Calendar commentary (deterministic, rule-based — no LLM) ──────────────────
-# Simple streak-aware line for the Activity Calendar card. Same philosophy as
-# the digest[] field: cheap, deterministic, Python-computed, never fabricated.
+# ── Calendar commentary ────────────────────────────────────────────────────────
 def _calendar_commentary():
     streak = summary.get("current_weekly_streak") or 0
     best = summary.get("longest_weekly_streak") or 0
@@ -1032,13 +948,7 @@ def _calendar_commentary():
     else:
         return f"{streak}-week streak going (best: {best}). Consistency is compounding."
 
-# ── Data freshness indicator (for the overview panel) ─────────────────────────
-# Reads fetch_status.json independently of compute_confidence()'s own local
-# read (kept decoupled deliberately — this exposes freshness to the frontend
-# directly, rather than only feeding into the confidence score). Three states:
-# "fresh" (today/yesterday), "stale" (2-3 days), "failed" (>3 days or file
-# missing/unreadable) — mirrors the same age thresholds already used in
-# compute_confidence()'s pipeline-freshness scoring, for consistency.
+# ── Data freshness indicator ──────────────────────────────────────────────────
 def _data_freshness():
     if not os.path.exists("fetch_status.json"):
         return {"status": "failed", "last_success_date": None, "age_days": None}
@@ -1111,6 +1021,8 @@ dashboard_metrics = {
         "qual": _qual(recovery_delta, RECOVERY_STABLE_THRESHOLD)
     },
 
+    "cardio_load": cardio_load,
+
     "chart_16wk": chart_16wk,
     "chart_annual": chart_annual,
 
@@ -1146,13 +1058,7 @@ with open("dashboard_metrics.json", "w", encoding="utf-8") as f:
 print(f"dashboard_metrics.json written ({len(calendar_run_dates)} run dates, {len(calendar_strength_dates)} strength dates)")
 
 # ── Data-confidence score ──────────────────────────────────────────────────────
-# Deliberately NOT generated by the LLM. Measures DATA QUALITY/FRESHNESS only —
-# never training volume or behavior.
 def compute_confidence():
-    # Each component tracked as (name, points_earned, max_points, reason_text)
-    # so we can both sum a total score AND identify the single weakest
-    # component afterward for a short "attention" line on the dashboard —
-    # rather than just a wall of reasons no one reads on mobile.
     components = []
 
     if latest_lt:
@@ -1180,12 +1086,6 @@ def compute_confidence():
     steps_pts = 10 * (min(len(complete_step_days_7d), 7) / 7)
     components.append(("Steps completeness", steps_pts, 10, f"Steps tracked {min(len(complete_step_days_7d), 7)}/7 days"))
 
-    # Pipeline freshness — reads fetch_status.json, written by fetch_activities.py
-    # only on a fully successful run. Full points if that file's last_success_date
-    # is today or yesterday (accounts for the script running just after local
-    # midnight relative to when the athlete checks the dashboard); score decays
-    # to 0 by 3+ days stale, and 0 if the file is missing entirely (fetch has
-    # never succeeded, or this is the very first run before it exists).
     fetch_status = None
     if os.path.exists("fetch_status.json"):
         try:
@@ -1235,10 +1135,6 @@ def compute_confidence():
     else:
         label = "Low data confidence"
 
-    # Attention line: the single weakest component by how far short of its
-    # max it falls, but only surfaced if it's actually meaningfully short
-    # (>15% of that component's own max) — a component at 90%+ of its max
-    # isn't worth flagging even if it's technically the "weakest" one.
     attention = None
     shortfalls = [(name, max_pts - pts, max_pts, reason) for name, pts, max_pts, reason in components if max_pts > 0]
     if shortfalls:
@@ -1303,9 +1199,6 @@ def build_evidence_catalog():
         text = f"{arrow} Sleep averaging {_fmt_hm(avg_recent_sleep)} vs {_fmt_hm(avg_prior_sleep)} prior period"
         items.append((text, _priority_tier(abs(delta_sleep), high=30, medium=10)))
 
-    # Sleep SCORE trend (added — was computed as avg_sleep_score for the coach
-    # prompt's supporting-metrics text but never fed into the evidence catalog
-    # itself; audit gap closed here). Same threshold-tier pattern as duration.
     prior_sleep_scores = [float(s["sleep_score"]) for s in prior_sleep.values() if s.get("sleep_score")]
     if sleep_scores and prior_sleep_scores:
         avg_prior_score = sum(prior_sleep_scores) / len(prior_sleep_scores)
@@ -1315,13 +1208,6 @@ def build_evidence_catalog():
         text = f"{arrow} Sleep score averaging {avg_recent_score:.0f} vs {avg_prior_score:.0f} prior period"
         items.append((text, _priority_tier(abs(delta_score), high=10, medium=4)))
 
-    # Zone 2 / Attia-target comparison (added — zone_time was fully built and
-    # rendered on the dashboard but never surfaced to the coach; audit gap
-    # closed here). Uses the rolling 7-day window (current-status framing,
-    # not a vs-prior-period trend) since that's what the coach is assessing
-    # "right now," matching the dashboard's default view. Priority tiered by
-    # shortfall from target rather than a delta, since this is a target
-    # comparison, not a trend.
     zt = zone_time.get("rolling", {})
     if zt.get("has_lt_data") and zt.get("total_minutes", 0) > 0:
         z2_min = zt["minutes"]["Z2"]
@@ -1332,6 +1218,27 @@ def build_evidence_catalog():
                 f"({z2_ratio:.0f}% of minimum); grey zone (Z3+Z4): {grey_pct:.1f}%")
         priority = "High" if z2_ratio < 50 else "Medium" if z2_ratio < 100 else "Low"
         items.append((text, priority))
+
+    # Cardio load ratio (strain vs tolerance) — NEW. Cross-referenced with
+    # sleep in the SAME item (not a separate one) specifically because the
+    # athlete asked for these two to be shown together as independent-but-
+    # related signals: strain/tolerance measures load applied, sleep
+    # measures resourcing available. A single evidence line naming both,
+    # each in its own unit, lets the coach comment on whether they're
+    # pointing the same direction without implying they're one metric.
+    # Priority tiered by how far the ratio sits from a "balanced" ~1.0,
+    # since this is a status read (like the Zone 2 target check) rather
+    # than a vs-prior-period trend.
+    cl_ratio = cardio_load.get("ratio")
+    if cl_ratio is not None:
+        cl_status_text = f" ({cardio_load['status']})" if cardio_load.get("status") else ""
+        sleep_clause = ""
+        if avg_sleep_min is not None:
+            sleep_clause = f"; sleep averaging {avg_sleep_min // 60}h{avg_sleep_min % 60:02d}m over the same period"
+        arrow = "▲" if cl_ratio >= 1.3 else "▼" if cl_ratio < 0.8 else "▬"
+        text = (f"{arrow} Strain:tolerance ratio {cl_ratio:.2f}{cl_status_text} "
+                f"(strain {cardio_load['strain']:.0f}, tolerance {cardio_load['tolerance']:.0f}){sleep_clause}")
+        items.append((text, _priority_tier(abs(cl_ratio - 1.0), high=0.5, medium=0.2)))
 
     if len(recent_strength) or len(prior_strength):
         delta_strength = len(recent_strength) - len(prior_strength)
@@ -1453,6 +1360,7 @@ COACHING PRINCIPLES:
 - Do not infer causation unless the supplied data directly supports it. Prefer "is consistent with" over "because" — e.g. "the pace improvement is consistent with the added strength volume" rather than "the pace improved because of the added strength volume," unless the data actually demonstrates that causal link.
 - You will be given a RECENT COACHING HISTORY block showing your last few days' headlines and the most recent WATCH items. Use it only for continuity — to avoid reusing the same framing two days running, and to notice if something previously flagged has resolved, worsened, or changed. Never treat it as evidence, never quote it back verbatim, and never let it substitute for today's actual data.
 - Sleep data (from Polar Loop) is supporting context only. Note it when relevant, but do not change training recommendations or caution level based on sleep — this data stream is new and not yet validated enough to drive advice.
+- Cardio load strain/tolerance (from Polar Loop, Training Load Pro) is likewise supporting context, not yet validated enough on its own to drive advice. When both sleep and the strain:tolerance ratio point the same direction (e.g. reduced sleep alongside an elevated ratio), that convergence is worth naming as a pattern — but treat each figure as its own signal in its own unit, never combine them into a single score or imply one measures the other.
 
 DECISION FRAMEWORK — ask these questions before writing:
 1. What changed since the prior period? Is the change meaningful or within normal variance?
@@ -1484,15 +1392,6 @@ WATCH:
 
 Do not add any text outside these four sections, and use the exact delimiter labels (HEADLINE:, SUMMARY:, EVIDENCE:, WATCH:) on their own lines."""
 
-# ── Coach memory (coach_context.json) ─────────────────────────────────────────
-# Short rolling memory only — last MEMORY_HISTORY_MAX days' headline + that
-# day's WATCH items. Deliberately NOT block-phase-aware (considered and
-# dropped — the coach doesn't prescribe training, so which week of a 16-week
-# block it is has no clear effect on anything the coach actually says, per
-# athlete's own pushback). Purpose: let the coach avoid repeating the same
-# framing two days running, and notice when a previously-flagged WATCH item
-# has resolved or changed — not to accumulate a full history (that's what
-# the CSVs/dashboard are for).
 MEMORY_HISTORY_MAX = 5
 coach_context_history = []
 if os.path.exists("coach_context.json"):
@@ -1516,6 +1415,13 @@ Things flagged to watch as of {_last_entry.get('date', '?')}:
 {_last_watch_text}"""
 else:
     memory_summary_text = "RECENT COACHING HISTORY: none yet (first run, or history not yet accumulated)."
+
+cardio_load_context = "No cardio load data yet (Polar cardio-load feed not yet accumulated)."
+if cardio_load.get("strain") is not None:
+    cardio_load_context = (
+        f"Strain (7d avg load): {cardio_load['strain']:.0f} | Tolerance (28d avg load): {cardio_load['tolerance']:.0f} | "
+        f"Ratio: {cardio_load['ratio']:.2f}" + (f" | Status: {cardio_load['status']}" if cardio_load.get("status") else "")
+    )
 
 user_prompt = f"""Today: {today_date} (week {today_date.isocalendar()[1]} of {today_date.year})
 
@@ -1576,6 +1482,9 @@ SLEEP (last 4 weeks, from Polar Loop — supporting context only, do not let thi
 - Nights tracked: {len(recent_sleep)}
 {chr(10).join(sleep_lines) if sleep_lines else "  No sleep data in the last 4 weeks"}
 
+CARDIO LOAD (from Polar Loop, Training Load Pro — supporting context only, same caution as sleep above; strain/tolerance are Polar's own rolling 7d/28d averages, not computed here):
+{cardio_load_context}
+
 AVAILABLE EVIDENCE (numbered — in the EVIDENCE: section, write only the numbers of items you select, not the text):
 {chr(10).join(f"  {i+1}. {item}" for i, item in enumerate(evidence_catalog)) if evidence_catalog else '  No evidence items available today — write "0" in the EVIDENCE section.'}
 
@@ -1586,18 +1495,9 @@ api_key = os.environ.get("ANTHROPIC_API_KEY", "")
 coach_text = None
 token_usage = None
 
-# ── API pricing ───────────────────────────────────────────────────────────────
-# WARNING: hardcoded, must be updated manually if Anthropic changes pricing.
-# Last verified: 2026-07-06. Model: claude-opus-4-8 (migrated from
-# claude-sonnet-4-6 same day — see MODEL VERSION in PROJECT CONTEXT for the
-# full evaluation: cost is irrelevant at this project's actual daily volume
-# in either case, ~$5-6/year delta; Opus 4.8 chosen over Sonnet 5 or Fable 5
-# since this is a low-volume, judgment-heavy task rather than agentic/coding
-# work, and Fable 5 carries real recent reliability history (an 18-day
-# global suspension, June 12-30 2026) unsuited to an unattended daily cron).
 PRICE_INPUT_PER_M  = 5.00
 PRICE_OUTPUT_PER_M = 25.00
-USD_TO_DKK = 6.90  # fixed rate — approximate, update manually if needed
+USD_TO_DKK = 6.90
 
 if api_key:
     try:
@@ -1689,11 +1589,6 @@ def parse_coach_sections(text):
 
 coach_headline, coach_summary_text, coach_evidence_items, coach_watch_items = parse_coach_sections(coach_text)
 
-# ── Write coach memory (coach_context.json) ───────────────────────────────────
-# Only appends a real entry if the coach actually produced a headline this run
-# (i.e. parsing succeeded and the API call didn't fall back to the static
-# "unavailable today" message) — a failed/fallback day shouldn't pollute
-# tomorrow's continuity context with an empty or generic headline.
 if coach_headline:
     coach_context_history = [h for h in coach_context_history if h.get("date") != str(today_date)]
     coach_context_history.append({
@@ -1708,7 +1603,6 @@ if coach_headline:
 else:
     print("coach_context.json: skipped (no headline produced this run — fallback/failed day)")
 
-# ── Accumulate usage history ──────────────────────────────────────────────────
 usage_file = "api_usage.json"
 usage_history = []
 if os.path.exists(usage_file):
@@ -1734,7 +1628,6 @@ ytd_cost_usd = sum(u.get("cost_usd", 0) for u in ytd_entries)
 mtd_cost_dkk = mtd_cost_usd * USD_TO_DKK
 ytd_cost_dkk = ytd_cost_usd * USD_TO_DKK
 
-# ── Write coach_summary.json ──────────────────────────────────────────────────
 coach_summary = {
     "last_updated": today.strftime("%Y-%m-%d %H:%M UTC"),
     "headline": coach_headline,

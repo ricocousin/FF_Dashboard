@@ -263,6 +263,24 @@ if os.path.exists("sleep.csv"):
 # script's resilient-commit loop. Loaded here so latest-vs-prior deltas can
 # feed the evidence catalog, same pattern as every other evidence category.
 strength_test_history = {}
+
+# ── Garmin fitness metrics (VO2max + fitness age) ─────────────────────────────
+# garmin_fitness_metrics.csv written by fetch_activities.py via
+# get_max_metrics() — see that file for the confirmed real response shape.
+# Only dates where Garmin actually computed something new have a row (most
+# days are skipped, not written as blank — confirmed via live diagnostic
+# that the endpoint returns empty on ordinary days).
+garmin_fitness_rows = sorted(_load_csv("garmin_fitness_metrics.csv"), key=lambda x: x.get("date", ""))
+_latest_fitness = garmin_fitness_rows[-1] if garmin_fitness_rows else None
+fitness_metrics = {
+    "latest_date": _latest_fitness["date"] if _latest_fitness else None,
+    "latest_vo2max": float(_latest_fitness["vo2max_value"]) if _latest_fitness and _latest_fitness.get("vo2max_value") else None,
+    "latest_vo2max_precise": float(_latest_fitness["vo2max_precise"]) if _latest_fitness and _latest_fitness.get("vo2max_precise") else None,
+    "trend": {
+        "labels": [r["date"][5:] for r in garmin_fitness_rows if r.get("vo2max_value")],
+        "vo2max": [float(r["vo2max_value"]) for r in garmin_fitness_rows if r.get("vo2max_value")]
+    }
+}
 if os.path.exists("strength_tests.csv"):
     with open("strength_tests.csv", "r", encoding="utf-8") as f:
         for row in csv.DictReader(f):
@@ -1111,6 +1129,8 @@ dashboard_metrics = {
     },
 
     "data_freshness": _data_freshness(),
+
+    "fitness_metrics": fitness_metrics,
 
     "strength_hr_overlay": strength_hr_overlay,
 

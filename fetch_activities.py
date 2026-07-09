@@ -635,3 +635,21 @@ if new_hr_sample_rows:
     print(f"run_hr_samples.csv: appended {len(new_hr_sample_rows)} sample(s) across {len(runs_needing_hr_detail)} run(s)")
 else:
     print(f"run_hr_samples.csv: no new samples this run ({len(runs_needing_hr_detail)} run(s) attempted)")
+
+# ── DIAGNOSTIC ONLY (July 2026) — max-HR metric shape verification ───────────
+# Confirmed via direct inspection of the installed garminconnect library
+# source that get_max_metrics(cdate) exists, calling
+# {garmin_connect_metrics_url}/{cdate}/{cdate}. The exact response shape
+# (key names for max HR specifically, whether it's null on days without a
+# new Garmin-computed estimate, etc.) has NOT been verified against a real
+# payload yet. This block ONLY prints the raw response — no CSV write, no
+# parsing logic — following the same verify-before-build discipline that
+# caught real bugs in run_hr_samples.csv and polar_hr.csv earlier this
+# project. Remove or replace with real fetch/storage logic once the shape
+# is confirmed from a live run's log output.
+try:
+    today_str = today.strftime("%Y-%m-%d")
+    max_metrics_raw = client.get_max_metrics(today_str)
+    print(f"DEBUG get_max_metrics({today_str}) raw response: {max_metrics_raw}")
+except Exception as e:
+    print(f"DEBUG get_max_metrics diagnostic call failed: {e}")

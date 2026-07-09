@@ -21,6 +21,7 @@
       --steps:     #f472b6;
       --intensity: #a78bfa;
       --recovery:  #fbbf24;
+      --load:      #22d3ee;
       --font-display: 'Syne', sans-serif;
       --font-body:    'Inter', sans-serif;
       --font-mono:    'DM Mono', monospace;
@@ -66,7 +67,7 @@
     .coach-confidence { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.4rem; }
     .coach-confidence-bar { width: 40px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
     .coach-confidence-fill { height: 100%; border-radius: 2px; }
-    .coach-confidence-attention { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); margin-bottom: 0.6rem; }
+    .coach-confidence-attention { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); margin-bottom: 0.6rem; opacity: 0.8; }
     .coach-watch { margin-top: 0.9rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
     .coach-watch-title { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 0.5rem; }
     .coach-watch-item { font-family: var(--font-body); font-size: 12.5px; color: var(--text-dim); line-height: 1.5; padding-left: 1.1rem; position: relative; }
@@ -92,12 +93,14 @@
     .overview-label.steps { color: var(--steps); }
     .overview-label.intensity { color: var(--intensity); }
     .overview-label.recovery { color: var(--recovery); }
+    .overview-label.load { color: var(--load); }
     .stat { background: var(--surface); padding: 1rem 1.5rem; display: flex; flex-direction: column; gap: 0.2rem; }
     .stat-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
     .stat-value { font-family: var(--font-display); font-size: clamp(1.3rem, 2.5vw, 1.9rem); font-weight: 700; color: var(--text-hi); line-height: 1; }
     .stat-value.accent { color: var(--accent); }
     .stat-value.blue { color: var(--strength); }
     .stat-sub { font-size: 11px; color: var(--text-dim); font-family: var(--font-mono); }
+    .stat-sub.cross-ref { opacity: 0.8; }
     .section-heading { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-dim); display: flex; align-items: center; gap: 0.75rem; margin-top: 0.25rem; }
     .section-heading::before { content: ''; width: 3px; height: 12px; background: var(--accent); border-radius: 2px; }
     .card { background: var(--surface); border: 1px solid var(--border); padding: 1.5rem; }
@@ -108,7 +111,7 @@
     .effort-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 0.3rem; }
     .effort-value { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--accent); line-height: 1; }
     .effort-detail { font-family: var(--font-mono); font-size: 10px; color: var(--text); margin-top: 0.25rem; }
-    .effort-sub { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); margin-top: 0.15rem; line-height: 1.5; }
+    .effort-sub { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); margin-top: 0.1rem; white-space: normal; overflow-wrap: break-word; }
     .effort-date { font-family: var(--font-mono); font-size: 10px; color: var(--muted); margin-top: 0.1rem; }
     .lt-grid { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: start; }
     .lt-values { display: flex; flex-direction: column; gap: 0.75rem; }
@@ -117,12 +120,11 @@
     .lt-hr { font-family: var(--font-mono); font-size: 13px; color: var(--accent2); }
     .lt-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
     .zones { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.5rem; }
-    .zone { display: grid; grid-template-columns: 70px 1fr 95px 95px; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: 11px; }
+    .zone { display: grid; grid-template-columns: 70px 1fr 150px; align-items: center; gap: 0.75rem; font-family: var(--font-mono); font-size: 11px; }
     .zone-name { color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
     .zone-bar-track { height: 4px; background: var(--muted); border-radius: 2px; overflow: hidden; }
     .zone-bar-fill { height: 100%; border-radius: 2px; }
-    .zone-pace { color: var(--text); white-space: nowrap; text-align: right; }
-    .zone-hr { color: var(--text-dim); white-space: nowrap; text-align: right; }
+    .zone-pace { color: var(--text); white-space: nowrap; text-align: right; min-width: 170px; }
     .chart-wrap { position: relative; height: 220px; }
     .year-bar-track { height: 6px; background: var(--muted); border-radius: 3px; overflow: hidden; margin: 0.5rem 0; }
     .year-bar-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 1s ease; }
@@ -131,38 +133,11 @@
     .loading { text-align: center; padding: 4rem 2rem; font-family: var(--font-mono); color: var(--text-dim); font-size: 12px; letter-spacing: 0.1em; }
     .pulse { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 1.2s ease-in-out infinite; margin-right: 0.5rem; vertical-align: middle; }
     @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.6); } }
-    .ztime-stack { display: flex; height: 28px; border-radius: 4px; overflow: hidden; background: var(--border); }
-    .ztime-seg { height: 100%; min-width: 0; }
-    .ztime-legend { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.75rem; }
-    .ztime-legend-row { display: grid; grid-template-columns: 16px 1fr auto auto; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: 11px; }
-    .ztime-dot { width: 10px; height: 10px; border-radius: 2px; }
-    .ztime-name { color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
-    .ztime-mins { color: var(--text); text-align: right; }
-    .ztime-pct { color: var(--text-dim); text-align: right; min-width: 40px; }
-    .ztime-callout { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-top: 0.9rem; padding-top: 0.75rem; border-top: 1px solid var(--border); line-height: 1.7; }
-    .ztime-callout strong { color: var(--text-hi); font-weight: 500; }
-    .hr-source-item { font-family: var(--font-mono); font-size: 11.5px; color: var(--text); padding: 0.5rem 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
-    .hr-source-item:last-child { border-bottom: none; }
-    .hr-source-date { color: var(--text-dim); min-width: 70px; }
-    .hr-source-vals { text-align: right; color: var(--text-dim); font-size: 10.5px; }
-    .zgoal-section { margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--border); }
-    .zgoal-title { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 0.6rem; }
-    .zgoal-row { margin-bottom: 0.6rem; }
-    .zgoal-label-row { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); margin-bottom: 0.25rem; }
-    .zgoal-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-    .zgoal-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
   </style>
 </head>
 <body>
 <header>
-  <div style="display:flex;align-items:center;gap:0.9rem">
-    <svg width="38" height="38" viewBox="0 0 38 38" style="flex-shrink:0">
-      <path d="M4 30 L16 12 L22 20 L34 4" stroke="#e8ff5a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <circle cx="34" cy="4" r="3.5" fill="#e8ff5a"/>
-      <path d="M4 34 L14 20 L20 27 L30 14" stroke="#eeeef4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.4"/>
-    </svg>
-    <div class="logo">FRED'S <span>FEATS</span></div>
-  </div>
+  <div class="logo">FRED'S <span>FEATS</span></div>
   <div class="last-updated" id="last-updated">Loading…</div>
 </header>
 <main id="app">
@@ -171,8 +146,6 @@
 <script>
 const $ = id => document.getElementById(id);
 
-// ── Pure formatting helpers — these format Python-supplied numbers, they
-// don't derive/aggregate anything themselves. ─────────────────────────────────
 function fmt(n, dec = 1) { if (n === null || n === undefined || n === '') return '—'; return Number(n).toFixed(dec); }
 function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch])); }
 function secToPace(s) { if (s === null || s === undefined || s <= 0 || !isFinite(s)) return '—'; const total = Math.round(s); return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`; }
@@ -217,11 +190,10 @@ async function init() {
       const pct = coachData.confidence_pct;
       const label = coachData.confidence_label || '';
       const reasons = Array.isArray(coachData.confidence_reasons) ? coachData.confidence_reasons.join(' · ') : '';
-      const attention = coachData.confidence_attention || '';
       const barColor = pct >= 85 ? '#7bc67e' : pct >= 65 ? '#e8ff5a' : '#ff9f40';
-      const attentionHtml = attention ? `<div class="coach-confidence-attention">${escapeHtml(attention)}</div>` : '';
-      return `<div class="coach-confidence" title="${escapeHtml(reasons)}"><div class="coach-confidence-bar"><div class="coach-confidence-fill" style="width:${pct}%;background:${barColor}"></div></div><span>${pct}% · ${escapeHtml(label)}</span></div>${attentionHtml}`;
+      return `<div class="coach-confidence" title="${escapeHtml(reasons)}"><div class="coach-confidence-bar"><div class="coach-confidence-fill" style="width:${pct}%;background:${barColor}"></div></div><span>${pct}% · ${escapeHtml(label)}</span></div>`;
     })() : '';
+    const attentionHtml = coachData.confidence_attention ? `<div class="coach-confidence-attention">${escapeHtml(coachData.confidence_attention)}</div>` : '';
     const evidenceItems = Array.isArray(coachData.evidence_items) ? coachData.evidence_items.filter(Boolean) : [];
     const evidenceHtml = evidenceItems.length ? `<div class="coach-evidence"><div class="coach-evidence-title">Evidence supporting today's assessment</div>${evidenceItems.map(e => {
       const text = typeof e === 'string' ? e : e.text;
@@ -240,76 +212,74 @@ async function init() {
     function ytdColor(usd) { if (usd < 1.00) return '#4a9eff'; if (usd < 2.50) return '#7bc67e'; if (usd < 3.50) return '#e8ff5a'; if (usd < 4.50) return '#ff9f40'; return '#ff6b35'; }
     const u = coachData.usage;
     const usageHtml = u ? (() => { const dc = usageColor(u.cost_usd); const mc = mtdColor(coachData.usage_mtd_usd || 0); const yc = ytdColor(coachData.usage_ytd_usd || 0); return `<div class="coach-usage"><div><span style="color:${dc}">${u.input_tokens.toLocaleString()} it · ${u.output_tokens.toLocaleString()} ot · $${u.cost_usd.toFixed(4)} / ${u.cost_dkk.toFixed(3)} kr</span></div><div><span style="color:${mc}">MTD $${(coachData.usage_mtd_usd || 0).toFixed(4)} / ${(coachData.usage_mtd_dkk || 0).toFixed(3)} kr</span></div><div><span style="color:${yc}">YTD $${(coachData.usage_ytd_usd || 0).toFixed(4)} / ${(coachData.usage_ytd_dkk || 0).toFixed(3)} kr</span></div><div class="coach-usage-scale"><div style="background:linear-gradient(to right,#4a9eff,#7bc67e,#e8ff5a,#ff9f40,#ff6b35);height:2px;border-radius:1px;margin-top:4px;opacity:0.5"></div><div style="display:flex;justify-content:space-between;font-size:8px;color:var(--muted);margin-top:2px"><span>min</span><span>normal</span><span>elevated</span><span>high</span><span>max</span></div></div></div>`; })() : '';
-    coachCard.innerHTML = `<div class="coach-header"><span class="coach-dot"></span>Training status</div>${headlineHtml}${confidenceHtml}<button id="coachExpandBtn" style="background:none;border:1px solid var(--border);color:var(--text-dim);font-family:var(--font-mono);font-size:10px;padding:0.35rem 0.7rem;border-radius:4px;cursor:pointer;margin:0.3rem 0 0.6rem">Show details ▾</button><div id="coachDetails" style="display:none">${parasHtml}${evidenceHtml}${watchHtml}${digestHtml}<div class="coach-updated">Generated ${coachData.last_updated}</div>${usageHtml}</div>`;
-    const coachExpandBtn = coachCard.querySelector('#coachExpandBtn');
-    const coachDetails = coachCard.querySelector('#coachDetails');
-    coachExpandBtn.onclick = () => {
-      const isHidden = coachDetails.style.display === 'none';
-      coachDetails.style.display = isHidden ? 'block' : 'none';
-      coachExpandBtn.textContent = isHidden ? 'Hide details ▴' : 'Show details ▾';
-    };
+    coachCard.innerHTML = `<div class="coach-header"><span class="coach-dot"></span>Training status</div>${headlineHtml}${confidenceHtml}${attentionHtml}${parasHtml}${evidenceHtml}${watchHtml}${digestHtml}<div class="coach-updated">Generated ${coachData.last_updated}</div>${usageHtml}`;
     app.appendChild(coachCard);
   }
 
   // ── Overview block ────────────────────────────────────────────────────────────
-  // changeLine() replaces the previous deltaBadge()+qualLine() pair, which
-  // said the same thing twice in two formats (e.g. "▲2 vs last wk" followed
-  // immediately by "Increased vs last week") — now a single clear sentence,
-  // on its own line, self-explanatory without needing the value above it.
-  const changeLine = (delta, qual, formatFn, compareLabel) => {
+  const deltaBadge = (delta, qual, formatFn) => {
     if (delta === null || delta === undefined) return '';
-    if (delta === 0 || qual === 'Stable') {
-      return `<br><span style="color:var(--text-dim)">Stable — no meaningful change vs ${compareLabel}</span>`;
-    }
-    const arrow = arrowFor(qual, delta);
-    const verb = qual === 'Decreased' ? 'Decreased' : 'Increased';
-    return `<br><span style="color:var(--text-dim)">${arrow} ${verb} ${formatFn(Math.abs(delta))} vs ${compareLabel}</span>`;
+    return ` · <span style="color:var(--text-dim)">${arrowFor(qual, delta)} ${formatFn(Math.abs(delta))}</span>`;
+  };
+  const qualLine = (qual, compareLabel) => {
+    if (!qual) return '';
+    const text = qual === 'Stable' ? `Stable — no meaningful change vs ${compareLabel}` : `${qual} vs ${compareLabel}`;
+    return `<br><span style="color:var(--text-dim)">${text}</span>`;
   };
 
-  const r = m.running, st = m.strength, sp = m.steps, iv = m.intensity, rc = m.recovery;
+  const r = m.running, st = m.strength, sp = m.steps, iv = m.intensity, rc = m.recovery, cl = m.cardio_load || {};
 
-  const runChangeHtml = changeLine(r.week_delta_km, r.week_qual, v => `${v.toFixed(1)} km`, 'last week');
-  const strengthChangeHtml = changeLine(st.week_delta_sessions, st.week_qual, v => `${Math.round(v)} session${Math.round(v) === 1 ? '' : 's'}`, 'last week');
-  const stepsChangeHtml = sp.avg_7d !== null ? changeLine(sp.delta_7d_vs_30d, sp.qual, v => `${Math.round(v).toLocaleString()} steps`, '30d average') : '';
-  const stepsDiscrepancyHtml = sp.discrepancy_avg !== null ? `<br><span style="color:var(--text-dim)">Polar vs iPhone differ by ±${sp.discrepancy_avg.toLocaleString()} steps/day on average (${sp.discrepancy_days} overlapping days)</span>` : '';
-  const intensityChangeHtml = changeLine(iv.delta_month_vs_year, iv.qual, v => fmtHrs(v), 'year average');
-  const recoveryChangeHtml = changeLine(rc.delta_week_vs_month, rc.qual, v => fmtHrs(v), 'month average');
+  const runDeltaHtml = deltaBadge(r.week_delta_km, r.week_qual, v => `${v.toFixed(1)} km vs last wk`);
+  const runQualHtml = qualLine(r.week_qual, 'last week');
+  const strengthDeltaHtml = deltaBadge(st.week_delta_sessions, st.week_qual, v => `${Math.round(v)} vs last wk`);
+  const strengthQualHtml = qualLine(st.week_qual, 'last week');
+  const stepsDeltaHtml = sp.avg_7d !== null ? deltaBadge(sp.delta_7d_vs_30d, sp.qual, v => `${Math.round(v).toLocaleString()} vs 30d avg`) : '';
+  const stepsQualHtml = qualLine(sp.qual, '30d average');
+  const stepsDiscrepancyHtml = sp.discrepancy_avg !== null ? `<br><span style="color:var(--text-dim)">Polar vs iPhone: ±${sp.discrepancy_avg.toLocaleString()}/day (${sp.discrepancy_days}d overlap)</span>` : '';
+  const intensityDeltaHtml = deltaBadge(iv.delta_month_vs_year, iv.qual, v => `${fmtHrs(v)} vs yr avg`);
+  const intensityQualHtml = qualLine(iv.qual, 'year average');
+  const recoveryDeltaHtml = deltaBadge(rc.delta_week_vs_month, rc.qual, v => `${fmtHrs(v)} vs mo avg`);
+  const recoveryQualHtml = qualLine(rc.qual, 'month average');
 
-  const stepsRow = (sp.avg_all_time !== null) ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_all_time?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsChangeHtml}</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsDiscrepancyHtml}</span></div></div>` : '';
+  // Cross-reference: shown alongside Recovery's "avg/week" tile, not merged
+  // into it — own units (ratio is unitless, sleep is minutes/score), just
+  // placed side by side per the athlete's request that strain/tolerance and
+  // recovery be "independent but referenced together."
+  const cardioCrossRefHtml = (cl.ratio !== null && cl.ratio !== undefined)
+    ? `<br><span class="cross-ref" style="color:var(--load)">Strain:tolerance ${cl.ratio.toFixed(2)}${cl.status ? ' · ' + escapeHtml(cl.status) : ''}</span>`
+    : '';
 
-  const recoveryTile = (label, data, changeHtml) => {
+  const stepsRow = (sp.avg_all_time !== null) ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_all_time?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsDeltaHtml}${stepsQualHtml}</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsDiscrepancyHtml}</span></div></div>` : '';
+
+  const recoveryTile = (label, data, deltaHtml, qualHtml, crossRefHtml) => {
     const durationStr = data && data.mins ? fmtHrs(data.mins) : '—';
-    const scoreStr = data && data.score !== null && data.score !== undefined ? `Recovery score: ${Math.round(data.score)}` : 'Recovery score: —';
-    return `<div class="stat"><span class="stat-label">${label}</span><span class="stat-value" style="color:var(--recovery)">${durationStr}</span><span class="stat-sub">${scoreStr}${changeHtml || ''}</span></div>`;
+    const scoreStr = data && data.score !== null && data.score !== undefined ? `Score: ${Math.round(data.score)}` : 'Score: —';
+    return `<div class="stat"><span class="stat-label">${label}</span><span class="stat-value" style="color:var(--recovery)">${durationStr}</span><span class="stat-sub">${scoreStr}${deltaHtml || ''}${qualHtml || ''}${crossRefHtml || ''}</span></div>`;
   };
-  const recoveryRow = (rc.week.mins !== null || rc.month.mins !== null || rc.year.mins !== null) ? `<div class="overview-full"><div class="overview-label recovery" style="grid-column:1/-1">Recovery</div>${recoveryTile('Avg / week', rc.week, recoveryChangeHtml)}${recoveryTile('Avg / month', rc.month)}${recoveryTile('Avg / year', rc.year)}</div>` : '';
+  const recoveryRow = (rc.week.mins !== null || rc.month.mins !== null || rc.year.mins !== null) ? `<div class="overview-full"><div class="overview-label recovery" style="grid-column:1/-1">Recovery</div>${recoveryTile('Avg / week', rc.week, recoveryDeltaHtml, recoveryQualHtml, cardioCrossRefHtml)}${recoveryTile('Avg / month', rc.month)}${recoveryTile('Avg / year', rc.year)}</div>` : '';
 
-  // Freshness indicator — one light for the whole overview panel, not
-  // per-tile (the underlying fetch either succeeded today or it didn't,
-  // for all of these tiles at once, since they all come from the same
-  // daily pipeline run).
-  const freshness = m.data_freshness || {};
-  const freshMap = {
-    fresh: { color: '#7bc67e', label: 'Updated today' },
-    stale: { color: '#e8ff5a', label: `Last updated ${freshness.age_days}d ago` },
-    failed: { color: '#ff6b35', label: freshness.last_success_date ? `Fetch stale (${freshness.age_days}d) — check pipeline` : 'No successful fetch found — check pipeline' }
-  };
-  const freshInfo = freshMap[freshness.status] || freshMap.failed;
-  const freshnessHtml = `<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 1.5rem;font-family:var(--font-mono);font-size:10px;color:var(--text-dim);border-bottom:1px solid var(--border)"><div style="width:8px;height:8px;border-radius:50%;background:${freshInfo.color};flex-shrink:0"></div>${freshInfo.label}</div>`;
+  // ── Load (Polar Cardio Load / Training Load Pro) ──────────────────────────
+  // Own row, own color, own units — strain/tolerance are an arbitrary
+  // TRIMP-derived load score, not minutes or a 0-100 score, so this is
+  // deliberately NOT folded into the Recovery tiles above. The Recovery row
+  // does carry a small cross-reference line pointing at the ratio (see
+  // cardioCrossRefHtml), so the two sit next to each other without becoming
+  // one metric. Muscle Load is not shown — not available on this hardware
+  // (requires a running/cycling power sensor Polar doesn't have here).
+  const loadRow = (cl.strain !== null && cl.strain !== undefined) ? `<div class="overview-full"><div class="overview-label load" style="grid-column:1/-1">Load (Polar Cardio)</div><div class="stat"><span class="stat-label">Strain (7d avg)</span><span class="stat-value" style="color:var(--load)">${fmt(cl.strain, 0)}</span><span class="stat-sub">load units</span></div><div class="stat"><span class="stat-label">Tolerance (28d avg)</span><span class="stat-value" style="color:var(--load)">${fmt(cl.tolerance, 0)}</span><span class="stat-sub">load units</span></div><div class="stat"><span class="stat-label">Strain:tolerance ratio</span><span class="stat-value" style="color:var(--load)">${cl.ratio !== null && cl.ratio !== undefined ? cl.ratio.toFixed(2) : '—'}</span><span class="stat-sub">${cl.status ? escapeHtml(cl.status) : '—'}${cl.latest_date ? ' · ' + cl.latest_date : ''}</span></div></div>` : '';
 
   const overviewBlock = document.createElement('div');
   overviewBlock.className = 'overview-block';
   overviewBlock.innerHTML = `
-    ${freshnessHtml}
     <div class="overview-full">
       <div class="overview-label run" style="grid-column:1/-1">Running</div>
       <div class="stat"><span class="stat-label">Avg / run</span><span class="stat-value accent">${fmt(r.avg_per_run_km, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${r.runs_this_year} runs ${m.this_year}</span></div>
-      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(r.avg_per_week_km, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${fmt(r.total_distance_this_year_km, 0)} km ${m.this_year} · ${fmt(r.avg_runs_per_week, 1)} runs/wk avg${runChangeHtml}</span></div>
+      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(r.avg_per_week_km, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${fmt(r.total_distance_this_year_km, 0)} km ${m.this_year}${runDeltaHtml}${runQualHtml}</span></div>
       <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value accent">${r.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${r.longest_weekly_streak ?? '—'} wks</span></div>
     </div>
     <div class="overview-full">
       <div class="overview-label lift" style="grid-column:1/-1">Strength</div>
-      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value blue">${fmt(st.avg_sessions_per_week, 1)} <small style="font-size:.9rem;color:var(--text-dim)">sessions</small></span><span class="stat-sub">${st.sessions_this_year} sessions ${m.this_year}${strengthChangeHtml}</span></div>
+      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value blue">${fmt(st.avg_sessions_per_week, 1)}</span><span class="stat-sub">${st.sessions_this_year} sessions ${m.this_year}${strengthDeltaHtml}${strengthQualHtml}</span></div>
       <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(st.avg_hours_per_week, 1)} <small style="font-size:.9rem;color:var(--text-dim)">hrs</small></span><span class="stat-sub">${fmt(st.total_hours_this_year, 1)} hrs ${m.this_year}</span></div>
       <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value blue">${st.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${st.longest_weekly_streak ?? '—'} wks</span></div>
     </div>
@@ -317,10 +287,11 @@ async function init() {
     <div class="overview-full">
       <div class="overview-label intensity" style="grid-column:1/-1">Intensity Minutes</div>
       <div class="stat"><span class="stat-label">Avg / week (${m.this_year})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(iv.avg_week_year_mins)}</span><span class="stat-sub">${fmtHrs(iv.avg_week_year_run_mins)} run · ${fmtHrs(iv.avg_week_year_lift_mins)} lift</span></div>
-      <div class="stat"><span class="stat-label">Avg / week (${m.this_month_short})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(iv.avg_week_month_mins)}</span><span class="stat-sub">${fmtHrs(iv.avg_week_month_run_mins)} run · ${fmtHrs(iv.avg_week_month_lift_mins)} lift${intensityChangeHtml}</span></div>
+      <div class="stat"><span class="stat-label">Avg / week (${m.this_month_short})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(iv.avg_week_month_mins)}</span><span class="stat-sub">${fmtHrs(iv.avg_week_month_run_mins)} run · ${fmtHrs(iv.avg_week_month_lift_mins)} lift${intensityDeltaHtml}${intensityQualHtml}</span></div>
       <div class="stat"><span class="stat-label">Streak vs ${iv.goal_mins}min goal</span><span class="stat-value" style="color:var(--intensity)">${iv.streak_weeks} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${iv.best_streak_weeks} wks</span></div>
     </div>
     ${recoveryRow}
+    ${loadRow}
   `;
   app.appendChild(overviewBlock);
 
@@ -362,188 +333,13 @@ async function init() {
   const ltCard = document.createElement('div');
   ltCard.className = 'card';
   if (m.lt.latest) {
-    const zonesHtml = m.lt.zones ? m.lt.zones.map(z => `<div class="zone"><span class="zone-name">${z.name}</span><div class="zone-bar-track"><div class="zone-bar-fill" style="width:${z.pct}%;background:${z.color}"></div></div><span class="zone-pace">${z.pace_label}</span><span class="zone-hr">${z.hr_label || ''}</span></div>`).join('') : '';
+    const zonesHtml = m.lt.zones ? m.lt.zones.map(z => `<div class="zone"><span class="zone-name">${z.name}</span><div class="zone-bar-track"><div class="zone-bar-fill" style="width:${z.pct}%;background:${z.color}"></div></div><span class="zone-pace">${z.pace_label}${z.hr_label ? ' · ' + z.hr_label : ''}</span></div>`).join('') : '';
     const ltTrendHtml = m.lt.trend ? `<div class="chart-wrap" style="height:100px;margin-top:1rem"><canvas id="ltChart"></canvas></div>` : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:1rem">Trend builds daily — check back soon.</p>`;
     ltCard.innerHTML = `<div class="card-title">Lactate threshold</div><div class="lt-grid"><div class="lt-values"><div class="lt-main"><span class="lt-label">LT pace</span><span class="lt-pace">${m.lt.latest.lt_pace} /km</span><span class="lt-hr">@ ${m.lt.latest.lt_hr} bpm · ${m.lt.latest.source_date}</span></div></div><div><div class="lt-label" style="margin-bottom:0.75rem">Training zones</div><div class="zones">${zonesHtml}</div></div></div>${ltTrendHtml}`;
   } else {
     ltCard.innerHTML = `<div class="card-title">Lactate threshold</div><p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">No valid LT reading yet — recalibrating after a data fix.</p>`;
   }
   app.appendChild(ltCard);
-
-  // ── Fitness Metrics card (VO2max + fitness age) ──────────────────────────────
-  // Sourced from Garmin's get_max_metrics() — confirmed via live debug output
-  // that this endpoint does NOT expose a periodic max-HR metric (the
-  // originally requested feature); it exposes VO2max data, which is what
-  // this card shows. Fitness age deliberately NOT displayed — confirmed via
-  // direct inspection of the athlete's real Garmin Connect app that
-  // Garmin's Fitness Age calculation is built on a corrupted resting-HR
-  // input for this athlete's setup (a "monthly average" of 137 bpm shown as
-  // "resting" — clearly misapplied in-run HR, not real rest data, since the
-  // tattoo blocks the optical sensor outside runs). Not a sparse-data
-  // problem that improves with time — see PROJECT CONTEXT for the full
-  // writeup. Only rendered if at least one real VO2max value exists
-  // (sparse by nature — most days have no fresh Garmin-computed estimate,
-  // confirmed via the same diagnostic).
-  const fm = m.fitness_metrics;
-  if (fm && fm.latest_vo2max !== null) {
-    const fmCard = document.createElement('div');
-    fmCard.className = 'card';
-    const trendHtml = (fm.trend && fm.trend.vo2max.length >= 2)
-      ? `<div class="chart-wrap" style="height:120px;margin-top:1rem"><canvas id="vo2maxChart"></canvas></div>`
-      : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:1rem">Trend builds as more estimates land — check back soon (${fm.trend ? fm.trend.vo2max.length : 0} point${fm.trend && fm.trend.vo2max.length === 1 ? '' : 's'} so far).</p>`;
-    fmCard.innerHTML = `
-      <div class="card-title">VO2max <span style="font-weight:400;opacity:0.6">(Garmin)</span></div>
-      <div class="lt-main"><span class="lt-label">Latest estimate</span><span class="lt-pace">${fm.latest_vo2max_precise ?? fm.latest_vo2max}</span><span class="lt-hr">${fm.latest_date}</span></div>
-      ${trendHtml}
-    `;
-    app.appendChild(fmCard);
-  }
-
-
-  // ── Zone Time / HR Sources card ────────────────────────────────────────────
-  // Renders m.zone_time (Attia Zone 2 / polarized model comparison, now with
-  // TWO precomputed windows — .rolling (last 7 days, default) and
-  // .last_completed_week (Mon-Sun, matching the athlete's actual training
-  // blocks) — toggled client-side with no rebuild needed), m.strength_hr_overlay
-  // (Polar continuous HR matched to strength sessions), and
-  // m.run_hr_source_comparison (Garmin/H10 vs Polar Loop for the same run
-  // window). Zone colors reused from m.lt.zones so this reads as part of the
-  // same system as the LT card, not a separate visual language.
-  //
-  // Rolling vs last-completed-week is a deliberate choice, not a gimmick to
-  // toggle everywhere: rolling answers "am I on pace right now" (always a
-  // full week of context, never misleadingly low mid-week); last-completed-
-  // week answers "how did that finished training block actually go" (aligns
-  // with the athlete's real weekly blocks and existing streak/delta logic).
-  // Only zone_time has this toggle — other tiles (steps, sleep, intensity
-  // averages) don't have a real target to hit, so the same distinction
-  // wouldn't add anything there.
-  const zoneColorMap = { Z1: '#4a9eff', Z2: '#7bc67e', Z3: '#e8ff5a', Z4: '#ff9f40', Z5: '#ff6b35' };
-  const zoneLabelMap = { Z1: 'Z1 EASY', Z2: 'Z2 AEROBIC', Z3: 'Z3 TEMPO', Z4: 'Z4 LTHR', Z5: 'Z5 HARD' };
-
-  function renderZoneTimeBody(zt) {
-    const zoneOrder = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5'];
-    const segsHtml = zoneOrder.map(z => {
-      const mins = zt.minutes[z] || 0;
-      const pct = zt.total_minutes ? (mins / zt.total_minutes) * 100 : 0;
-      return pct > 0 ? `<div class="ztime-seg" style="width:${pct}%;background:${zoneColorMap[z]}"></div>` : '';
-    }).join('');
-    const legendHtml = zoneOrder.map(z => {
-      const mins = zt.minutes[z] || 0;
-      const pct = zt.total_minutes ? Math.round((mins / zt.total_minutes) * 100) : 0;
-      return `<div class="ztime-legend-row"><div class="ztime-dot" style="background:${zoneColorMap[z]}"></div><span class="ztime-name">${zoneLabelMap[z]}</span><span class="ztime-mins">${fmtHrs(mins)}</span><span class="ztime-pct">${pct}%</span></div>`;
-    }).join('');
-
-    if (zt.total_minutes === 0) {
-      return `<div class="ztime-callout" style="border-top:none;padding-top:0;margin-top:0">No zone data for this window yet.</div>`;
-    }
-
-    // Per-zone goal bars — each shows progress toward its OWN actual target
-    // number (not just "% of current activity"), reusing the same
-    // year-bar-style visual language as the annual progress bars elsewhere
-    // on this dashboard. Grey zone is a CEILING (bar fills as you approach
-    // the limit — full/red is bad here, unlike every other bar where full
-    // is good) — see PROJECT CONTEXT's RUN ZONE-TIME PROJECT section for
-    // the Seiler-research sourcing of the Z1/grey/Z5 targets.
-    const z2Ratio = zt.z2_vs_target_pct ?? 0;
-    const z2BarPct = Math.min(z2Ratio, 100);
-    const z2Color = z2Ratio >= 100 ? '#7bc67e' : z2Ratio >= 65 ? '#e8ff5a' : '#ff9f40';
-
-    const z1Ratio = zt.z1_vs_target_pct ?? 0;
-    const z1BarPct = Math.min(z1Ratio, 100);
-    const z1Color = z1Ratio >= 100 ? '#7bc67e' : z1Ratio >= 70 ? '#4a9eff' : '#ff9f40';
-
-    const greyRatio = zt.grey_vs_ceiling_pct ?? 0;
-    const greyBarPct = Math.min(greyRatio, 100);
-    const greyColor = greyRatio >= 100 ? '#ff6b35' : greyRatio >= 60 ? '#e8ff5a' : '#4a9eff';
-
-    const z5Ratio = zt.z5_vs_target_pct ?? 0;
-    const z5BarPct = Math.min(z5Ratio, 100);
-    const z5Color = z5Ratio >= 100 ? '#7bc67e' : z5Ratio >= 50 ? '#e8ff5a' : '#ff9f40';
-
-    const goalBarsHtml = `
-      <div class="zgoal-section">
-        <div class="zgoal-title">Progress toward weekly targets</div>
-        <div class="zgoal-row">
-          <div class="zgoal-label-row"><span>Zone 1 (easy)</span><span>${fmtHrs(zt.minutes.Z1)} of ${zt.z1_target_min_pct}-${zt.z1_target_max_pct}% target</span></div>
-          <div class="zgoal-track"><div class="zgoal-fill" style="width:${z1BarPct}%;background:${z1Color}"></div></div>
-        </div>
-        <div class="zgoal-row">
-          <div class="zgoal-label-row"><span>Zone 2 (aerobic)</span><span>${fmtHrs(zt.minutes.Z2)} of ${zt.z2_target_min}-${zt.z2_target_max} min target</span></div>
-          <div class="zgoal-track"><div class="zgoal-fill" style="width:${z2BarPct}%;background:${z2Color}"></div></div>
-        </div>
-        <div class="zgoal-row">
-          <div class="zgoal-label-row"><span>Grey zone (Z3+Z4, minimize)</span><span>${zt.grey_pct ?? 0}% of ≤${zt.grey_ceiling_pct}% ceiling</span></div>
-          <div class="zgoal-track"><div class="zgoal-fill" style="width:${greyBarPct}%;background:${greyColor}"></div></div>
-        </div>
-        <div class="zgoal-row">
-          <div class="zgoal-label-row"><span>Zone 5 (hard)</span><span>${fmtHrs(zt.minutes.Z5)} of ${zt.z5_target_min_pct}-${zt.z5_target_max_pct}% target</span></div>
-          <div class="zgoal-track"><div class="zgoal-fill" style="width:${z5BarPct}%;background:${z5Color}"></div></div>
-        </div>
-      </div>
-    `;
-
-    return `
-      <div class="ztime-stack">${segsHtml}</div>
-      <div class="ztime-legend">${legendHtml}</div>
-      ${goalBarsHtml}
-      <div class="ztime-callout">
-        <span style="opacity:0.7">${zt.window_start} to ${zt.window_end} · ${zt.running_sessions_with_data} run(s), ${zt.strength_sessions_with_data} strength session(s) contributing data</span>
-      </div>
-    `;
-  }
-
-  if (m.zone_time && m.zone_time.rolling && m.zone_time.rolling.has_lt_data) {
-    let currentView = m.zone_time.default_view || 'rolling';
-    const ztimeCard = document.createElement('div');
-    ztimeCard.className = 'card';
-
-    function renderZtimeCard() {
-      const zt = currentView === 'rolling' ? m.zone_time.rolling : m.zone_time.last_completed_week;
-      ztimeCard.innerHTML = `
-        <div class="card-title" style="margin-bottom:0.5rem">
-          Time in zone <span style="font-weight:400;opacity:0.6">(Attia Zone 2 model)</span>
-        </div>
-        <div style="display:flex;gap:0.4rem;margin-bottom:1rem">
-          <button class="ztime-toggle-btn" data-view="rolling" style="flex:1;padding:0.4rem;border-radius:4px;border:1px solid var(--border);background:${currentView === 'rolling' ? 'var(--border)' : 'transparent'};color:${currentView === 'rolling' ? 'var(--text-hi)' : 'var(--text-dim)'};font-family:var(--font-mono);font-size:10.5px;cursor:pointer">This week (rolling 7d)</button>
-          <button class="ztime-toggle-btn" data-view="last_completed_week" style="flex:1;padding:0.4rem;border-radius:4px;border:1px solid var(--border);background:${currentView === 'last_completed_week' ? 'var(--border)' : 'transparent'};color:${currentView === 'last_completed_week' ? 'var(--text-hi)' : 'var(--text-dim)'};font-family:var(--font-mono);font-size:10.5px;cursor:pointer">Last completed week</button>
-        </div>
-        ${renderZoneTimeBody(zt)}
-      `;
-      ztimeCard.querySelectorAll('.ztime-toggle-btn').forEach(btn => {
-        btn.onclick = () => { currentView = btn.dataset.view; renderZtimeCard(); };
-      });
-    }
-    renderZtimeCard();
-    app.appendChild(ztimeCard);
-  }
-
-  const hasStrengthHr = Array.isArray(m.strength_hr_overlay) && m.strength_hr_overlay.length > 0;
-  const hasHrComparison = Array.isArray(m.run_hr_source_comparison) && m.run_hr_source_comparison.length > 0;
-  if (hasStrengthHr || hasHrComparison) {
-    // Chart-based, not list-based — a growing list of rows can't show whether
-    // Polar's under-read vs Garmin is consistent over time, or whether
-    // strength-session effort is trending up/down across the block. A trend
-    // line answers exactly that. Each chart individually falls back to a
-    // "trend builds daily" message below 2 points, same pattern as the LT
-    // trend chart — a single point can't show a trend either way.
-    const hrTrendCard = document.createElement('div');
-    hrTrendCard.className = 'card';
-    const comparisonChartHtml = hasHrComparison ? `
-      <div class="card-title" style="margin-bottom:0.75rem">Run HR: Garmin vs Polar <span style="font-weight:400;opacity:0.6">(same run window)</span></div>
-      ${m.run_hr_source_comparison.length >= 2
-        ? `<div class="chart-wrap" style="height:140px"><canvas id="hrComparisonChart"></canvas></div>`
-        : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">Trend builds daily — check back soon (${m.run_hr_source_comparison.length} day${m.run_hr_source_comparison.length === 1 ? '' : 's'} so far).</p>`}
-    ` : '';
-    const strengthChartHtml = hasStrengthHr ? `
-      <div class="card-title" style="margin-top:${hasHrComparison ? '1.5rem' : '0'};margin-bottom:0.75rem">Strength session HR <span style="font-weight:400;opacity:0.6">(Polar Loop overlay)</span></div>
-      ${m.strength_hr_overlay.length >= 2
-        ? `<div class="chart-wrap" style="height:140px"><canvas id="strengthHrChart"></canvas></div>`
-        : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">Trend builds daily — check back soon (${m.strength_hr_overlay.length} session${m.strength_hr_overlay.length === 1 ? '' : 's'} so far).</p>`}
-    ` : '';
-    hrTrendCard.innerHTML = comparisonChartHtml + strengthChartHtml;
-    app.appendChild(hrTrendCard);
-  }
 
   // ── Activity calendar ─────────────────────────────────────────────────────────
   const calCard = document.createElement('div');
@@ -588,7 +384,7 @@ async function init() {
     const todayRowIdx = calRows.findIndex(row => row.includes(todayStr));
     const currentStreak = m.running.current_weekly_streak ?? 0;
     const rowsHtml = calRows.map((row, ri) => { const isCurrentRow = ri === todayRowIdx; const done = streakCol[ri]; const streakCell = isCurrentRow ? `<div class="streak-week current-fire">🔥</div>` : `<div class="streak-week ${done ? 'done' : 'empty'}">${done ? '✓' : ''}</div>`; return `<div class="cal-row-wrap">${streakCell}</div>`; }).join('');
-    calCard.innerHTML = `<div class="card-title">Activity calendar</div><div class="cal-header"><div class="cal-title">${monthNames[month]} ${year}</div><div class="cal-nav"><button id="calPrev">‹</button><button id="calNext">›</button></div></div><div class="cal-with-streak"><div class="cal-grid">${dayLabels.map(l => `<div class="cal-day-label">${l}</div>`).join('')}${dayCells}</div><div class="streak-col"><div class="streak-col-spacer"></div>${rowsHtml}<div class="streak-total"><div class="streak-count">${currentStreak}</div><div class="streak-label">wks</div></div></div></div>${m.calendar.commentary ? `<div style="margin-top:1rem;padding-top:0.85rem;border-top:1px solid var(--border);font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">${escapeHtml(m.calendar.commentary)}</div>` : ''}`;
+    calCard.innerHTML = `<div class="card-title">Activity calendar</div><div class="cal-header"><div class="cal-title">${monthNames[month]} ${year}</div><div class="cal-nav"><button id="calPrev">‹</button><button id="calNext">›</button></div></div><div class="cal-with-streak"><div class="cal-grid">${dayLabels.map(l => `<div class="cal-day-label">${l}</div>`).join('')}${dayCells}</div><div class="streak-col"><div class="streak-col-spacer"></div>${rowsHtml}<div class="streak-total"><div class="streak-count">${currentStreak}</div><div class="streak-label">wks</div></div></div></div>`;
     $('calPrev').onclick = () => { if (month === 0) renderCalendar(year - 1, 11); else renderCalendar(year, month - 1); };
     $('calNext').onclick = () => { const n = new Date(); const maxY = n.getFullYear(), maxM = n.getMonth(); if (year < maxY || (year === maxY && month < maxM)) month === 11 ? renderCalendar(year + 1, 0) : renderCalendar(year, month + 1); };
   }
@@ -607,13 +403,12 @@ async function init() {
     let gapHtml = '';
     if (pb.lt_gap_sec !== null && pb.lt_gap_sec !== undefined && m.lt.latest) {
       const sign = pb.lt_gap_sec >= 0 ? '+' : '';
-      gapHtml = `<div class="effort-sub">Current LTHR pace: ${m.lt.latest.lt_pace}/km</div><div class="effort-sub">Gap to LTHR: ${sign}${pb.lt_gap_sec}s/km</div>`;
+      gapHtml = `<div class="effort-sub" style="margin-top:0.2rem">Current LT: ${m.lt.latest.lt_pace}/km · Gap: ${sign}${pb.lt_gap_sec}s/km</div>`;
     }
     const paceLabel = pb.pace ? `${pb.pace} /km` : '—';
     const timeLabel = fmtDuration(pb.time);
     const distLabel = pb.dist !== null && pb.dist !== undefined ? `${fmt(pb.dist, 1)} km` : '—';
-    const noDataHtml = (!pb.pace) ? `<div class="effort-sub">No data yet</div>` : '';
-    return `<div class="effort"><div class="effort-label">${pb.label}</div><div class="effort-value">${paceLabel}</div><div class="effort-detail">${timeLabel} · ${distLabel}</div>${noDataHtml}<div class="effort-date">${pb.date ?? ''}</div>${gapHtml}</div>`;
+    return `<div class="effort"><div class="effort-label">${pb.label}</div><div class="effort-value">${paceLabel}</div><div class="effort-detail">${timeLabel} · ${distLabel}</div><div class="effort-sub">${escapeHtml(pb.name || (pb.pace ? '' : 'no data yet'))}</div><div class="effort-date">${pb.date ?? ''}</div>${gapHtml}</div>`;
   }).join('')}</div>`;
   app.appendChild(effortsCard);
 
@@ -624,40 +419,13 @@ async function init() {
     const maxMonthDist = Math.max(...monthData, 1);
     const maxMonthStr = Math.max(...monthStrengthData, 1);
 
-    const makeHLinePlugin = (id, yValue, label, color, yScaleId) => ({
-      id,
-      afterDraw(chart) {
-        const { ctx, chartArea, scales } = chart;
-        const scale = scales[yScaleId];
-        if (!scale) return;
-        const y = scale.getPixelForValue(yValue);
-        if (y < chartArea.top || y > chartArea.bottom) return; // off-chart, don't draw
-        ctx.save();
-        ctx.strokeStyle = color;
-        ctx.setLineDash([5, 4]);
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(chartArea.left, y);
-        ctx.lineTo(chartArea.right, y);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.font = '9px "DM Mono", monospace';
-        ctx.fillStyle = color;
-        ctx.textAlign = 'right';
-        ctx.fillText(label, chartArea.right - 4, y - 4);
-        ctx.restore();
-      }
-    });
-    const lastYearAvgPerMonth = ca.target_km / 12;
-
     new Chart($('monthChart'), {
       type: 'bar',
       data: { labels: ca.month_labels, datasets: [
         { type: 'line', label: 'Distance (km)', data: monthData, borderColor: 'rgba(232,255,90,0.9)', backgroundColor: 'rgba(232,255,90,0.08)', pointBackgroundColor: monthData.map((_, i) => i === ca.current_month_index ? 'rgba(255,107,53,1)' : 'rgba(232,255,90,0.9)'), pointBorderColor: 'transparent', pointRadius: 4, borderWidth: 2, tension: 0.35, fill: true, yAxisID: 'yDist', order: 1 },
         { type: 'bar', label: 'Strength sessions', data: monthStrengthData, backgroundColor: monthStrengthData.map((_, i) => i === ca.current_month_index ? 'rgba(74,158,255,0.7)' : 'rgba(74,158,255,0.25)'), borderRadius: 2, yAxisID: 'yStr', order: 2 }
       ] },
-      options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 14 } }, scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, yDist: { type: 'linear', position: 'left', grid: { color: '#1f1f24' }, ticks: { color: '#e8ff5a', callback: v => `${v}km` }, min: 0, max: Math.ceil(maxMonthDist * 1.2) }, yStr: { type: 'linear', position: 'right', grid: { display: false }, ticks: { color: '#4a9eff', stepSize: 1, callback: v => Number.isInteger(v) ? `${v}s` : '' }, min: 0, max: Math.max(maxMonthStr + 1, 4) } }, plugins: { legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1, titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 10, callbacks: { label: ctx => ctx.dataset.yAxisID === 'yDist' ? ` ${ctx.parsed.y} km` : ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}` } } } },
-      plugins: (ca.target_km > 0) ? [makeHLinePlugin('lastYearLine', lastYearAvgPerMonth, `${ca.target_km.toFixed(0)}km last yr (${lastYearAvgPerMonth.toFixed(0)}/mo avg)`, 'rgba(255,107,53,0.6)', 'yDist')] : []
+      options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 14 } }, scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, yDist: { type: 'linear', position: 'left', grid: { color: '#1f1f24' }, ticks: { color: '#e8ff5a', callback: v => `${v}km` }, min: 0, max: Math.ceil(maxMonthDist * 1.2) }, yStr: { type: 'linear', position: 'right', grid: { display: false }, ticks: { color: '#4a9eff', stepSize: 1, callback: v => Number.isInteger(v) ? `${v}s` : '' }, min: 0, max: Math.max(maxMonthStr + 1, 4) } }, plugins: { legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1, titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 10, callbacks: { label: ctx => ctx.dataset.yAxisID === 'yDist' ? ` ${ctx.parsed.y} km` : ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}` } } } }
     });
 
     const c16 = m.chart_16wk;
@@ -678,52 +446,6 @@ async function init() {
     if ($('ltChart') && m.lt.trend) {
       const t = m.lt.trend;
       new Chart($('ltChart'), { type: 'line', data: { labels: t.labels, datasets: [ { data: t.pace_sec, borderColor: 'rgba(232,255,90,0.8)', backgroundColor: 'rgba(232,255,90,0.06)', pointBackgroundColor: 'rgba(232,255,90,0.9)', pointRadius: 4, tension: 0.3, fill: true }, { data: t.trend_sec, borderColor: 'rgba(255,107,53,0.7)', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0 } ] }, options: { ...chartOpts(), scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, y: { reverse: true, grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', callback: v => secToPace(v) } } }, plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` LT pace: ${secToPace(ctx.parsed.y)} /km` : ` Trend` } } } } });
-    }
-
-    if ($('hrComparisonChart') && m.run_hr_source_comparison && m.run_hr_source_comparison.length >= 2) {
-      // Chronological order for a trend line — run_hr_source_comparison is
-      // stored newest-first (matching every other list in this dashboard),
-      // so reverse for charting.
-      const hrc = [...m.run_hr_source_comparison].reverse();
-      new Chart($('hrComparisonChart'), {
-        type: 'line',
-        data: {
-          labels: hrc.map(c => c.date.slice(5)),
-          datasets: [
-            { label: 'Garmin', data: hrc.map(c => c.garmin_avg_hr), borderColor: 'rgba(232,255,90,0.85)', backgroundColor: 'rgba(232,255,90,0.06)', pointRadius: 3, tension: 0.3, fill: false },
-            { label: 'Polar', data: hrc.map(c => c.polar_avg_hr), borderColor: 'rgba(74,158,255,0.85)', backgroundColor: 'rgba(74,158,255,0.06)', pointRadius: 3, tension: 0.3, fill: false }
-          ]
-        },
-        options: { ...chartOpts(), plugins: { ...chartOpts().plugins, legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} bpm` } } }, scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, y: { grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', callback: v => `${v} bpm` } } } }
-      });
-    }
-
-    if ($('strengthHrChart') && m.strength_hr_overlay && m.strength_hr_overlay.length >= 2) {
-      const shr = [...m.strength_hr_overlay].reverse();
-      new Chart($('strengthHrChart'), {
-        type: 'line',
-        data: {
-          labels: shr.map(s => s.date.slice(5)),
-          datasets: [
-            { label: 'Avg HR', data: shr.map(s => s.avg_hr), borderColor: 'rgba(74,158,255,0.85)', backgroundColor: 'rgba(74,158,255,0.08)', pointRadius: 3, tension: 0.3, fill: true },
-            { label: 'Max HR', data: shr.map(s => s.max_hr), borderColor: 'rgba(255,107,53,0.6)', borderWidth: 1.5, borderDash: [4, 3], pointRadius: 2, tension: 0.3, fill: false }
-          ]
-        },
-        options: { ...chartOpts(), plugins: { ...chartOpts().plugins, legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} bpm` } } }, scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, y: { grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', callback: v => `${v} bpm` } } } }
-      });
-    }
-
-    if ($('vo2maxChart') && fm && fm.trend && fm.trend.vo2max.length >= 2) {
-      new Chart($('vo2maxChart'), {
-        type: 'line',
-        data: {
-          labels: fm.trend.labels,
-          datasets: [
-            { data: fm.trend.vo2max, borderColor: 'rgba(232,255,90,0.85)', backgroundColor: 'rgba(232,255,90,0.08)', pointRadius: 3, tension: 0.3, fill: true }
-          ]
-        },
-        options: { ...chartOpts(), plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ` VO2max: ${ctx.parsed.y}` } } }, scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, y: { grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78' } } } }
-      });
     }
   });
 }

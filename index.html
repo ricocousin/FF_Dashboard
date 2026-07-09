@@ -370,6 +370,36 @@ async function init() {
   }
   app.appendChild(ltCard);
 
+  // ── Fitness Metrics card (VO2max + fitness age) ──────────────────────────────
+  // Sourced from Garmin's get_max_metrics() — confirmed via live debug output
+  // that this endpoint does NOT expose a periodic max-HR metric (the
+  // originally requested feature); it exposes VO2max data, which is what
+  // this card shows. Fitness age deliberately NOT displayed — confirmed via
+  // direct inspection of the athlete's real Garmin Connect app that
+  // Garmin's Fitness Age calculation is built on a corrupted resting-HR
+  // input for this athlete's setup (a "monthly average" of 137 bpm shown as
+  // "resting" — clearly misapplied in-run HR, not real rest data, since the
+  // tattoo blocks the optical sensor outside runs). Not a sparse-data
+  // problem that improves with time — see PROJECT CONTEXT for the full
+  // writeup. Only rendered if at least one real VO2max value exists
+  // (sparse by nature — most days have no fresh Garmin-computed estimate,
+  // confirmed via the same diagnostic).
+  const fm = m.fitness_metrics;
+  if (fm && fm.latest_vo2max !== null) {
+    const fmCard = document.createElement('div');
+    fmCard.className = 'card';
+    const trendHtml = (fm.trend && fm.trend.vo2max.length >= 2)
+      ? `<div class="chart-wrap" style="height:120px;margin-top:1rem"><canvas id="vo2maxChart"></canvas></div>`
+      : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:1rem">Trend builds as more estimates land — check back soon (${fm.trend ? fm.trend.vo2max.length : 0} point${fm.trend && fm.trend.vo2max.length === 1 ? '' : 's'} so far).</p>`;
+    fmCard.innerHTML = `
+      <div class="card-title">VO2max <span style="font-weight:400;opacity:0.6">(Garmin)</span></div>
+      <div class="lt-main"><span class="lt-label">Latest estimate</span><span class="lt-pace">${fm.latest_vo2max_precise ?? fm.latest_vo2max}</span><span class="lt-hr">${fm.latest_date}</span></div>
+      ${trendHtml}
+    `;
+    app.appendChild(fmCard);
+  }
+
+
   // ── Zone Time / HR Sources card ────────────────────────────────────────────
   // Renders m.zone_time (Attia Zone 2 / polarized model comparison, now with
   // TWO precomputed windows — .rolling (last 7 days, default) and
@@ -680,6 +710,19 @@ async function init() {
           ]
         },
         options: { ...chartOpts(), plugins: { ...chartOpts().plugins, legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} bpm` } } }, scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, y: { grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', callback: v => `${v} bpm` } } } }
+      });
+    }
+
+    if ($('vo2maxChart') && fm && fm.trend && fm.trend.vo2max.length >= 2) {
+      new Chart($('vo2maxChart'), {
+        type: 'line',
+        data: {
+          labels: fm.trend.labels,
+          datasets: [
+            { data: fm.trend.vo2max, borderColor: 'rgba(232,255,90,0.85)', backgroundColor: 'rgba(232,255,90,0.08)', pointRadius: 3, tension: 0.3, fill: true }
+          ]
+        },
+        options: { ...chartOpts(), plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ` VO2max: ${ctx.parsed.y}` } } }, scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, y: { grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78' } } } }
       });
     }
   });

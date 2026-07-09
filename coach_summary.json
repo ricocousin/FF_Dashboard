@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-09 18:23 UTC",
-  "headline": "Aerobic base and easy-run efficiency remain firmly intact, but the block still lacks any loaded or back-to-back durability work.",
+  "last_updated": "2026-07-09 20:33 UTC",
+  "headline": "Today's short easy run at your lowest HR of the recent block reinforces a settled aerobic base as volume holds flat.",
   "confidence_pct": 92,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,11 +12,11 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 7/14 nights",
-  "summary": "Your aerobic engine is in a good place. Easy-run HR continues to sit meaningfully lower on comparable efforts than the prior period, and volume has held essentially flat across the two blocks \u2014 this is a consolidation window, not regression. Nothing in the data suggests any loss of fitness; if anything, the efficiency signal has been consistent enough now over several weeks that it reads as a genuine adaptation rather than noise.\n\nThe gap worth naming again is durability-specific work. With the crossing about a month out and a self-supported, multi-day, pack-loaded profile, the current block is still built around single-session road runs at moderate distance. Your longest recent effort and your day-to-day terrain don't yet reflect the sustained time-on-feet or consecutive-day demand the route will impose. This isn't an urgent alarm \u2014 your base and demonstrated ultra history give you real headroom \u2014 but it's the one dimension the recent data hasn't touched.\n\nStrength frequency has stepped up noticeably and is sitting well above the prior block, which is a positive for pack-carrying resilience. The question is whether that raised frequency stays compatible if running-specific durability volume does start entering the picture.",
+  "summary": "Today was a short, controlled easy effort \u2014 the lowest heart rate of the recent runs at a comfortable pace, sitting right in line with the improved efficiency picture that's been consistent for a couple of weeks now. Nothing here changes the story: the aerobic engine is running well and comparable-effort heart rate remains meaningfully lower than the prior period. This is confirmation, not new information.\n\nThe pattern you should notice is that the block has now flattened. Volume is essentially unchanged from the prior four weeks, and the recent runs remain moderate in distance, low in elevation, and single-day. With the St. Olavsleden crossing about a month out \u2014 a self-supported, pack-loaded, moderately mountainous multi-day effort \u2014 the gap between what you're training and what the event demands is the most relevant thing on the table. Your aerobic efficiency and strength base are clearly intact, so this isn't a fitness concern; it's a specificity one. The durability qualities that event will test \u2014 loaded carries, consecutive-day time on feet, sustained climbing \u2014 still haven't entered the block.",
   "watch_items": [
-    "Whether any pack-loaded or consecutive-day efforts finally enter the block as the crossing approaches.",
-    "Whether per-session elevation and duration begin trending upward to reflect sustained hilly terrain.",
-    "Whether the elevated strength frequency and any added running durability work can coexist without compromising either."
+    "Whether pack-loaded or back-to-back efforts appear in the coming weeks, given how close the crossing now is.",
+    "Whether per-run elevation starts climbing to rehearse sustained uphill/downhill terrain rather than staying flat.",
+    "Whether the steady strength frequency is maintained or deliberately tapered as event-specific durability work is introduced."
   ],
   "evidence_items": [
     {
@@ -24,27 +24,27 @@
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 143 bpm vs 155 bpm prior period (comparable-effort runs, 8 vs 7 runs)",
+      "text": "\u25bc Easy-run HR averaging 143 bpm vs 155 bpm prior period (comparable-effort runs, 9 vs 7 runs)",
       "priority": "High"
     },
     {
-      "text": "\u25bc 4-week volume 128 km vs 133 km prior block (-4%)",
+      "text": "\u25b2 4-week volume 136 km vs 133 km prior block (+2%)",
       "priority": "Low"
     }
   ],
   "insights": [
-    "Your aerobic engine is in a good place. Easy-run HR continues to sit meaningfully lower on comparable efforts than the prior period, and volume has held essentially flat across the two blocks \u2014 this is a consolidation window, not regression. Nothing in the data suggests any loss of fitness; if anything, the efficiency signal has been consistent enough now over several weeks that it reads as a genuine adaptation rather than noise.\n\nThe gap worth naming again is durability-specific work. With the crossing about a month out and a self-supported, multi-day, pack-loaded profile, the current block is still built around single-session road runs at moderate distance. Your longest recent effort and your day-to-day terrain don't yet reflect the sustained time-on-feet or consecutive-day demand the route will impose. This isn't an urgent alarm \u2014 your base and demonstrated ultra history give you real headroom \u2014 but it's the one dimension the recent data hasn't touched.\n\nStrength frequency has stepped up noticeably and is sitting well above the prior block, which is a positive for pack-carrying resilience. The question is whether that raised frequency stays compatible if running-specific durability volume does start entering the picture."
+    "Today was a short, controlled easy effort \u2014 the lowest heart rate of the recent runs at a comfortable pace, sitting right in line with the improved efficiency picture that's been consistent for a couple of weeks now. Nothing here changes the story: the aerobic engine is running well and comparable-effort heart rate remains meaningfully lower than the prior period. This is confirmation, not new information.\n\nThe pattern you should notice is that the block has now flattened. Volume is essentially unchanged from the prior four weeks, and the recent runs remain moderate in distance, low in elevation, and single-day. With the St. Olavsleden crossing about a month out \u2014 a self-supported, pack-loaded, moderately mountainous multi-day effort \u2014 the gap between what you're training and what the event demands is the most relevant thing on the table. Your aerobic efficiency and strength base are clearly intact, so this isn't a fitness concern; it's a specificity one. The durability qualities that event will test \u2014 loaded carries, consecutive-day time on feet, sustained climbing \u2014 still haven't entered the block."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 5041,
-    "output_tokens": 567,
-    "cost_usd": 0.03938,
-    "cost_dkk": 0.27172,
+    "input_tokens": 5028,
+    "output_tokens": 546,
+    "cost_usd": 0.03879,
+    "cost_dkk": 0.26765,
     "date": "2026-07-09"
   },
-  "usage_mtd_usd": 0.18196,
-  "usage_mtd_dkk": 1.2555,
-  "usage_ytd_usd": 0.18196,
-  "usage_ytd_dkk": 1.2555
+  "usage_mtd_usd": 0.18137,
+  "usage_mtd_dkk": 1.2514,
+  "usage_ytd_usd": 0.18137,
+  "usage_ytd_dkk": 1.2514
 }

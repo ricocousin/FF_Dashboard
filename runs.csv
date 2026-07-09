@@ -1,4 +1,5 @@
 date,name,type,distance_km,moving_time,elapsed_time,avg_hr,max_hr,elevation_gain_m,elevation_loss_m,min_elevation_m,max_elevation_m,avg_pace_min_km,max_pace_min_km,avg_cadence,calories,training_load,aerobic_training_effect,anaerobic_training_effect,vo2max_estimate,activity_id,start_time
+2026-07-09,Copenhagen Running,outdoor,8.15,0:46:55,0:47:22,141.0,160.0,71.0,58.0,11.2,36.8,5:45,4:20,154,657.0,68.873779296875,3.0,0.0,54.0,23540360315,2026-07-09 21:26:01
 2026-07-08,Copenhagen Running,outdoor,9.32,0:54:17,0:55:09,147.0,166.0,80.0,78.0,9.2,36.0,5:49,4:18,155,791.0,88.69268798828125,3.299999952316284,0.0,54.0,23524591680,2026-07-08 16:25:56
 2026-07-08,Copenhagen Running,outdoor,9.32,0:54:17,0:55:09,147.0,166.0,80.0,78.0,9.2,36.0,5:49,4:18,155,791.0,88.69268798828125,3.299999952316284,0.0,54.0,23524591680,2026-07-08 16:25:56
 2026-07-07,Copenhagen Running,outdoor,6.62,0:33:49,0:33:59,155.0,186.0,50.0,51.0,9.4,18.2,5:06,2:26,162,541.0,152.87966918945312,3.5,2.799999952316284,54.0,23514250146,2026-07-07 19:47:08

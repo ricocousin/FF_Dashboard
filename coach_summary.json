@@ -1,54 +1,54 @@
 {
-  "last_updated": "2026-07-08 07:35 UTC",
-  "headline": "Today's faster tempo effort sat at a notably lower HR than a comparable hard run ten days ago.",
-  "confidence_pct": 91,
+  "last_updated": "2026-07-09 15:18 UTC",
+  "headline": "The lower easy-run HR now holds across a full block of comparable efforts, no longer a single reading.",
+  "confidence_pct": 92,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
-    "LT reading 5d old",
+    "LT reading 6d old",
     "HR data on 8/8 recent runs",
-    "Sleep tracked 6/14 nights",
+    "Sleep tracked 7/14 nights",
     "Steps tracked 7/7 days",
     "Data fetch up to date",
     "Multiple data sources active in last 3 days"
   ],
-  "confidence_attention": "Sleep tracked 6/14 nights",
-  "summary": "Today's 6.6 km at low-5s pace came in with heart rate well below where your late-June harder effort landed at a quicker pace \u2014 that late-June run cost you a much higher HR and load for its speed. Taken alongside the easy-run HR trend that's been building over the past two weeks, this is another data point pointing the same direction: your aerobic engine is running more efficiently at these paces. One faster session doesn't confirm anything on its own, but it's consistent with the economy picture the easy runs have been painting.\n\nVolume is essentially holding flat versus the prior block, and strength frequency has actually ticked up rather than slipping \u2014 a good sign given the recurring concern about strength getting squeezed as running load stays high. Zone 2 minutes have climbed back above the weekly floor, resolving the earlier worry about easy volume getting crowded out. This looks like a consolidating block with the pieces staying in balance rather than any one quality being sacrificed.\n\nWith St. Olavsleden about a month out, the demand still least represented in your recent data is loaded back-to-back time on feet \u2014 long, consecutive days under a 6-8 kg pack. Your fitness signals are trending well, but that specific durability quality isn't something the current run profile is testing.",
+  "confidence_attention": "Sleep tracked 7/14 nights",
+  "summary": "The aerobic efficiency shift you've been showing is no longer a one-off \u2014 it's now consistent across a full block of comparable-effort runs, with easy paces sitting at a meaningfully lower heart rate than the prior period. That's the kind of within-athlete signal that matters more than any single session, and it's held while your running frequency and pacing stayed in your normal range. This is the confirmation of a genuine adaptation, not variance.\n\nThe slight dip in four-week volume is well within consolidation territory and shouldn't be read as anything else \u2014 your strength work has actually doubled over the same window, so the total system load is broadly maintained rather than reduced. The picture is one of an athlete redistributing effort across modalities, not backing off.\n\nWhat's still absent, with the St. Olavsleden crossing approaching, is loaded back-to-back durability \u2014 the one demand closest to what that route will ask of you. Nothing in today's data speaks to it either way, so it remains the open question rather than a concern.",
   "watch_items": [
-    "Whether loaded, consecutive-day efforts appear in the coming weeks \u2014 that pack-carrying durability is the gap closest to the event demand.",
-    "Whether today's lower HR at faster paces holds up across repeated tempo sessions rather than a single occurrence.",
-    "Sleep scores have been erratic and mostly low this week; worth noting if that coincides with any flattening in the HR trend, though the data stream is still too new to act on."
+    "Whether loaded or consecutive-day efforts start appearing, since pack-carrying durability is the least-tested quality relative to the coming route demands.",
+    "Whether the lower easy-run HR continues to translate into faster paces at the same effort, or plateaus once the adaptation settles.",
+    "Whether strength volume holds at its raised level or was a temporary spike during the lighter running block."
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 Strength consistency: 7 sessions vs 5 prior 4wk",
+      "text": "\u25b2 Strength consistency: 8 sessions vs 4 prior 4wk",
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 140 bpm vs 155 bpm prior period (comparable-effort runs, 8 vs 7 runs)",
+      "text": "\u25bc Easy-run HR averaging 142 bpm vs 155 bpm prior period (comparable-effort runs, 7 vs 7 runs)",
       "priority": "High"
     },
     {
-      "text": "\u25b2 4-week volume 139 km vs 133 km prior block (+5%)",
-      "priority": "Low"
+      "text": "\u25bc 4-week volume 125 km vs 133 km prior block (-6%)",
+      "priority": "Medium"
     },
     {
-      "text": "\u25b2 Zone 2: 192 min vs 180-240 min/week target (107% of minimum); grey zone (Z3+Z4): 1.2%",
+      "text": "\u25b2 Zone 2: 191 min vs 180-240 min/week target (106% of minimum); grey zone (Z3+Z4): 2.8%",
       "priority": "Low"
     }
   ],
   "insights": [
-    "Today's 6.6 km at low-5s pace came in with heart rate well below where your late-June harder effort landed at a quicker pace \u2014 that late-June run cost you a much higher HR and load for its speed. Taken alongside the easy-run HR trend that's been building over the past two weeks, this is another data point pointing the same direction: your aerobic engine is running more efficiently at these paces. One faster session doesn't confirm anything on its own, but it's consistent with the economy picture the easy runs have been painting.\n\nVolume is essentially holding flat versus the prior block, and strength frequency has actually ticked up rather than slipping \u2014 a good sign given the recurring concern about strength getting squeezed as running load stays high. Zone 2 minutes have climbed back above the weekly floor, resolving the earlier worry about easy volume getting crowded out. This looks like a consolidating block with the pieces staying in balance rather than any one quality being sacrificed.\n\nWith St. Olavsleden about a month out, the demand still least represented in your recent data is loaded back-to-back time on feet \u2014 long, consecutive days under a 6-8 kg pack. Your fitness signals are trending well, but that specific durability quality isn't something the current run profile is testing."
+    "The aerobic efficiency shift you've been showing is no longer a one-off \u2014 it's now consistent across a full block of comparable-effort runs, with easy paces sitting at a meaningfully lower heart rate than the prior period. That's the kind of within-athlete signal that matters more than any single session, and it's held while your running frequency and pacing stayed in your normal range. This is the confirmation of a genuine adaptation, not variance.\n\nThe slight dip in four-week volume is well within consolidation territory and shouldn't be read as anything else \u2014 your strength work has actually doubled over the same window, so the total system load is broadly maintained rather than reduced. The picture is one of an athlete redistributing effort across modalities, not backing off.\n\nWhat's still absent, with the St. Olavsleden crossing approaching, is loaded back-to-back durability \u2014 the one demand closest to what that route will ask of you. Nothing in today's data speaks to it either way, so it remains the open question rather than a concern."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 4992,
-    "output_tokens": 618,
-    "cost_usd": 0.04041,
-    "cost_dkk": 0.27883,
-    "date": "2026-07-08"
+    "input_tokens": 5013,
+    "output_tokens": 514,
+    "cost_usd": 0.037915,
+    "cost_dkk": 0.26161,
+    "date": "2026-07-09"
   },
-  "usage_mtd_usd": 0.14258,
-  "usage_mtd_dkk": 0.9838,
-  "usage_ytd_usd": 0.14258,
-  "usage_ytd_dkk": 0.9838
+  "usage_mtd_usd": 0.18049,
+  "usage_mtd_dkk": 1.2454,
+  "usage_ytd_usd": 0.18049,
+  "usage_ytd_dkk": 1.2454
 }

@@ -28,6 +28,15 @@
         "Whether today's lower HR at faster paces holds up across repeated tempo sessions rather than a single occurrence.",
         "Sleep scores have been erratic and mostly low this week; worth noting if that coincides with any flattening in the HR trend, though the data stream is still too new to act on."
       ]
+    },
+    {
+      "date": "2026-07-09",
+      "headline": "The lower easy-run HR now holds across a full block of comparable efforts, no longer a single reading.",
+      "watch_items": [
+        "Whether loaded or consecutive-day efforts start appearing, since pack-carrying durability is the least-tested quality relative to the coming route demands.",
+        "Whether the lower easy-run HR continues to translate into faster paces at the same effort, or plateaus once the adaptation settles.",
+        "Whether strength volume holds at its raised level or was a temporary spike during the lighter running block."
+      ]
     }
   ]
 }

@@ -500,6 +500,87 @@ if polar_token:
         print(f"Polar continuous HR: {new_hr_count} sample(s) fetched this window, {len(existing_hr)} total in polar_hr.csv")
     except Exception as e:
         print(f"Polar continuous HR fetch skipped: {e}")
+    # ── Cardio load (via /v3/users/cardio-load) ──────────────────────────────
+    # NEW (July 2026). Daily Training Load Pro data: cardio_load, strain
+    # (7-day rolling avg load), tolerance (28-day rolling avg load),
+    # cardio_load_ratio (strain/tolerance), and cardio_load_status (Polar's
+    # own verbal bucket, e.g. "Productive"/"Overreaching"/"Maintaining"/
+    # "Detraining"/"Recovering"). Confirmed via Polar's official docs
+    # (polar.com/accesslink-api) that this is a distinct daily resource from
+    # continuous-heart-rate, returning one entry per day in range.
+    #
+    # DELIBERATELY NOT pulling Muscle Load: per Polar's own Training Load Pro
+    # documentation, Muscle Load is only computed "if you're using a separate
+    # running or cycling power sensor with your watch" — this athlete's setup
+    # (Garmin watch + H10 strap + Polar Loop) has no power meter, so Muscle
+    # Load would not populate regardless of whether it's requested. Cardio
+    # Load/Strain/Tolerance require no such sensor and are confirmed to work
+    # from HR + duration alone (TRIMP-based), which this setup already
+    # provides via the Loop's continuous HR.
+    #
+    # RESPONSE SHAPE NOT YET CONFIRMED LIVE: Polar's docs show a per-day
+    # object shape (date, cardio_load_status, cardio_load, strain, tolerance,
+    # cardio_load_ratio, cardio_load_level), but whether the endpoint returns
+    # a bare list or wraps it under a key (e.g. "cardio_load_days", by analogy
+    # with continuous-heart-rate's "heart_rates" wrapper) is unverified against
+    # a real payload — same "don't trust docs, confirm live" discipline as
+    # every other Polar/Garmin endpoint in this file. Parsing below handles
+    # BOTH a bare list and a dict-wrapped list defensively, and prints the raw
+    # top-level shape once so the first real run can confirm/correct this.
+    try:
+        existing_cardio_load = {}
+        if os.path.exists("polar_cardio_load.csv"):
+            with open("polar_cardio_load.csv", "r", encoding="utf-8") as f:
+                for row in csv.DictReader(f):
+                    if row.get("date"):
+                        existing_cardio_load[row["date"]] = row
+
+        cl_resp = polar_get("https://www.polaraccesslink.com/v3/users/cardio-load")
+
+        if isinstance(cl_resp, list):
+            cl_days = cl_resp
+        elif isinstance(cl_resp, dict):
+            # Try the most likely wrapper keys; fall back to "no list found"
+            # rather than guessing further.
+            cl_days = None
+            for k in ("cardio_load_days", "cardio_loads", "days"):
+                if isinstance(cl_resp.get(k), list):
+                    cl_days = cl_resp[k]
+                    break
+            if cl_days is None:
+                print(f"DEBUG polar cardio-load: dict response, no recognized list key. Top-level keys: {list(cl_resp.keys())}")
+                cl_days = []
+        else:
+            cl_days = []
+
+        if cl_days:
+            print(f"DEBUG polar cardio-load: {len(cl_days)} day(s) returned, sample keys: {list(cl_days[0].keys())}")
+
+        new_cl_count = 0
+        for day in cl_days:
+            cl_date = day.get("date", "")
+            if not cl_date:
+                continue
+            existing_cardio_load[cl_date] = {
+                "date": cl_date,
+                "cardio_load_status": day.get("cardio_load_status", ""),
+                "cardio_load": day.get("cardio_load", ""),
+                "strain": day.get("strain", ""),
+                "tolerance": day.get("tolerance", ""),
+                "cardio_load_ratio": day.get("cardio_load_ratio", "")
+            }
+            new_cl_count += 1
+
+        cl_fieldnames = ["date", "cardio_load_status", "cardio_load", "strain", "tolerance", "cardio_load_ratio"]
+        with open("polar_cardio_load.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=cl_fieldnames, extrasaction="ignore")
+            writer.writeheader()
+            for date in sorted(existing_cardio_load.keys(), reverse=True):
+                writer.writerow(existing_cardio_load[date])
+
+        print(f"Polar cardio load: {new_cl_count} day(s) fetched, {len(existing_cardio_load)} total in polar_cardio_load.csv")
+    except Exception as e:
+        print(f"Polar cardio load fetch skipped: {e}")
 else:
     print("POLAR_ACCESS_TOKEN not set — skipping Polar fetch")
 
@@ -519,35 +600,9 @@ with open("fetch_status.json", "w", encoding="utf-8") as f:
 print("fetch_activities.py complete — raw data written.")
 
 # ── Per-run HR detail (via Garmin's get_activity_details) ────────────────────
-# Pulls raw per-activity HR time series for recent runs, so build_dashboard.py
-# can eventually bin actual time-in-zone using our own LT zone boundaries,
-# rather than relying only on a single avg_hr per run. Uses Garmin (H10-
-# sourced) as the authoritative HR source for runs — kept DELIBERATELY
-# separate from polar_hr.csv (Loop-sourced), so the two can be compared
-# against each other for the same run window later, the same way steps.csv
-# (iPhone) and polar_steps.csv (Polar) are reconciled/compared today. Neither
-# source is being discarded in favor of the other.
-#
-# Response shape CONFIRMED (July 2026, via live debug output) from
-# get_activity_details(activity_id): a dict with "metricDescriptors" (list of
-# {metricsIndex, key, unit: {id, key, factor}}) and "activityDetailMetrics"
-# (list of {"metrics": [...]}, one entry per sample, values ordered to match
-# metricsIndex). Confirmed real keys used here: "directHeartRate" (unit bpm,
-# factor 1.0 — no scaling needed) and "sumElapsedDuration" (unit second,
-# factor 1000.0 — raw values are in MILLISECONDS, must divide by factor to
-# get real seconds; this was initially missed and would have made every
-# elapsed_seconds value 1000x too large). Real Garmin activities also expose
-# a "directTimestamp" (unit gmt) field, but sumElapsedDuration is preferred
-# since it's already relative to activity start, matching this file's
-# elapsed_seconds column directly with no further conversion needed.
 RUN_HR_DETAIL_WINDOW_DAYS = 8
 
 def _find_metric(descriptors, keywords):
-    """Find (index, factor) for the first metric whose key contains any of
-    the given keywords (case-insensitive), searched in descriptor list order
-    — order matters here since e.g. "sumElapsedDuration" and "directTimestamp"
-    can both match a broad keyword set; list order determines which wins.
-    Returns (None, None) if nothing matches."""
     for d in descriptors or []:
         key = str(d.get("key", "") or "").lower()
         idx = d.get("metricsIndex")
@@ -580,16 +635,6 @@ for r in runs_needing_hr_detail:
         descriptors = details.get("metricDescriptors", [])
 
         hr_idx, hr_factor = _find_metric(descriptors, ["heartrate", "heart_rate"])
-        # CHANGED (July 2026, after a real observed failure): Garmin's
-        # metricsIndex is NOT a stable identifier for a given metric type —
-        # the same activity_id returned hr_idx=17/time_idx=16 on one call and
-        # hr_idx=16/time_idx=10 on another. Rather than trust a shifting
-        # index or guess which of several time-like fields ("sumElapsedDuration"
-        # vs "directTimestamp") is actually present and correctly scaled this
-        # time, we now ALWAYS lock onto whichever field contains "timestamp"
-        # (confirmed present in every response seen so far, just at varying
-        # positions) and derive elapsed time ourselves via subtraction below —
-        # removing any dependence on Garmin's duration-field semantics/factor.
         time_idx, _ = _find_metric(descriptors, ["timestamp"])
 
         if not _debug_printed_once:
@@ -637,32 +682,6 @@ else:
     print(f"run_hr_samples.csv: no new samples this run ({len(runs_needing_hr_detail)} run(s) attempted)")
 
 # ── Garmin fitness metrics (VO2max) ────────────────────────────────────────────
-# get_max_metrics(cdate) CONFIRMED via live debug output (July 2026): returns
-# a list, empty on days with no fresh Garmin-computed estimate, else a list
-# with one dict shaped like:
-#   [{"userId": ..., "generic": {"calendarDate": ..., "vo2MaxValue": 53.0,
-#     "vo2MaxPreciseValue": 53.4, "fitnessAge": None,
-#     "fitnessAgeDescription": None, "maxMetCategory": 0},
-#     "cycling": None, "heatAltitudeAcclimation": {...}}]
-# CONFIRMED this endpoint does NOT expose a periodic max-HR metric (the
-# original ask) — only VO2max and heat/altitude acclimation data.
-#
-# fitnessAge DELIBERATELY NOT captured (July 2026, after direct inspection
-# of the athlete's real Garmin Connect app data): confirmed Garmin's Fitness
-# Age calculation is built on a corrupted "resting heart rate" input for
-# this athlete's specific hardware setup — the app's own Resting HR screen
-# showed a "monthly average" of 137 bpm, which is a moderate/hard EXERCISE
-# heart rate, not a resting one (genuine resting HR is 40-70 bpm even
-# untrained). Root cause: tattoo blocks Garmin's optical HR sensor outside
-# of runs (H10 chest strap only worn during runs), so Garmin has no real
-# resting-state HR data and appears to be misapplying in-run HR readings as
-# if they were rest. This isn't a sparse-data problem that improves with
-# more wear — it's a structurally wrong input for this athlete's setup.
-# VO2max is unaffected (derived from pace-vs-active-HR during a run, not
-# resting HR) and is still captured below. See PROJECT CONTEXT for the full
-# writeup and the resulting reprioritization of Polar's
-# /users/physical-information endpoint as the better-fitted source for any
-# future longevity/fitness-age-style metric for this athlete.
 try:
     today_str = today.strftime("%Y-%m-%d")
     max_metrics_resp = client.get_max_metrics(today_str)
@@ -675,8 +694,6 @@ try:
         if os.path.exists("garmin_fitness_metrics.csv"):
             with open("garmin_fitness_metrics.csv", "r", encoding="utf-8") as f:
                 existing_fitness_rows = list(csv.DictReader(f))
-        # Dedup by date — skip if today's already recorded (avoids piling up
-        # duplicate rows if the workflow runs more than once in a day).
         existing_fitness_rows = [r for r in existing_fitness_rows if r.get("date") != today_str]
         existing_fitness_rows.insert(0, {
             "date": today_str,

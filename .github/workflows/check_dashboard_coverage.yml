@@ -1,0 +1,48 @@
+# ── Add as a NEW workflow file: .github/workflows/check-dashboard-coverage.yml ──
+#
+# Runs on every push that touches build_dashboard.py or index.html, plus PRs.
+# Deliberately a SEPARATE workflow from Sync Training Data — this check has
+# nothing to do with fetching/building data, it only validates that the two
+# files stay in sync feature-wise. Keeping it separate means it runs fast
+# (no Garmin/Polar login, no API calls) and its pass/fail status is clearly
+# attributable in GitHub's UI rather than buried inside the daily sync job.
+#
+# If this check fails, the commit is NOT blocked from landing (GitHub Actions
+# can't prevent a push by itself without branch protection rules) — but the
+# workflow run shows red in the Actions tab and in any PR checks, which is
+# the "dumb-proof" signal: you don't have to remember to look, the failure
+# is visible wherever commits/PRs are visible.
+#
+# To make this a hard block (recommended once you've seen it pass a few
+# times and trust it): Settings → Branches → branch protection rule on
+# main → require this check to pass before merging. Not required to start
+# using it, but closes the last gap ("I saw it was red but pushed anyway").
+
+name: Check Dashboard Coverage
+
+on:
+  push:
+    paths:
+      - 'build_dashboard.py'
+      - 'index.html'
+      - 'check_dashboard_coverage.py'
+  pull_request:
+    paths:
+      - 'build_dashboard.py'
+      - 'index.html'
+      - 'check_dashboard_coverage.py'
+  workflow_dispatch: {}
+
+jobs:
+  check-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run dashboard coverage checker
+        run: python3 check_dashboard_coverage.py

@@ -159,7 +159,13 @@
 </head>
 <body>
 <header>
-  <div class="logo">FRED'S <span>FEATS</span></div>
+  <div style="display:flex;align-items:center;gap:0.75rem">
+    <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true">
+      <path d="M4 26 L14 12 L20 18 L30 4" stroke="#e8ff5a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M4 30 L12 19 L18 24 L28 10" stroke="#ff6b35" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+    </svg>
+    <div class="logo">FRED'S <span>FEATS</span></div>
+  </div>
   <div class="last-updated" id="last-updated">Loading…</div>
 </header>
 <main id="app">
@@ -205,6 +211,23 @@ async function init() {
   const app = $('app');
   app.innerHTML = '';
 
+  // ── Freshness indicator (single dot + label for the whole overview panel) ────
+  // Restored — reads data_freshness directly (fresh/stale/failed), decoupled
+  // from the confidence score's own separate read of the same underlying
+  // fetch_status.json. One indicator for the whole panel since every tile
+  // below shares the same daily fetch, not one per tile.
+  if (m.data_freshness) {
+    const df = m.data_freshness;
+    const freshColor = df.status === 'fresh' ? '#7bc67e' : df.status === 'stale' ? '#ff9f40' : '#ff6b35';
+    const freshLabel = df.status === 'fresh' ? 'Data fresh'
+      : df.status === 'stale' ? `Data stale (${df.age_days}d old)`
+      : (df.last_success_date ? `Fetch failed (last success ${df.last_success_date})` : 'No successful fetch found');
+    const freshBar = document.createElement('div');
+    freshBar.style.cssText = 'display:flex;align-items:center;gap:0.5rem;font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);padding:0 0.25rem;';
+    freshBar.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:${freshColor};flex-shrink:0"></span>${escapeHtml(freshLabel)}`;
+    app.appendChild(freshBar);
+  }
+
   // ── Coach card ────────────────────────────────────────────────────────────────
   if (coachData && (coachData.summary || (coachData.insights && coachData.insights.length > 0))) {
     const coachCard = document.createElement('div');
@@ -239,47 +262,61 @@ async function init() {
     function ytdColor(usd) { if (usd < 1.00) return '#4a9eff'; if (usd < 2.50) return '#7bc67e'; if (usd < 3.50) return '#e8ff5a'; if (usd < 4.50) return '#ff9f40'; return '#ff6b35'; }
     const u = coachData.usage;
     const usageHtml = u ? (() => { const dc = usageColor(u.cost_usd); const mc = mtdColor(coachData.usage_mtd_usd || 0); const yc = ytdColor(coachData.usage_ytd_usd || 0); return `<div class="coach-usage"><div><span style="color:${dc}">${u.input_tokens.toLocaleString()} it · ${u.output_tokens.toLocaleString()} ot · $${u.cost_usd.toFixed(4)} / ${u.cost_dkk.toFixed(3)} kr</span></div><div><span style="color:${mc}">MTD $${(coachData.usage_mtd_usd || 0).toFixed(4)} / ${(coachData.usage_mtd_dkk || 0).toFixed(3)} kr</span></div><div><span style="color:${yc}">YTD $${(coachData.usage_ytd_usd || 0).toFixed(4)} / ${(coachData.usage_ytd_dkk || 0).toFixed(3)} kr</span></div><div class="coach-usage-scale"><div style="background:linear-gradient(to right,#4a9eff,#7bc67e,#e8ff5a,#ff9f40,#ff6b35);height:2px;border-radius:1px;margin-top:4px;opacity:0.5"></div><div style="display:flex;justify-content:space-between;font-size:8px;color:var(--muted);margin-top:2px"><span>min</span><span>normal</span><span>elevated</span><span>high</span><span>max</span></div></div></div>`; })() : '';
-    coachCard.innerHTML = `<div class="coach-header"><span class="coach-dot"></span>Training status</div>${headlineHtml}${confidenceHtml}${attentionHtml}${parasHtml}${evidenceHtml}${watchHtml}${digestHtml}<div class="coach-updated">Generated ${coachData.last_updated}</div>${usageHtml}`;
+    // Restored — headline + confidence bar always visible; everything else
+    // collapsed by default behind "Show details ▾" (addresses the daily
+    // card being a lot to digest at a glance — see PROJECT_CONTEXT COACH
+    // CARD EXPAND/COLLAPSE).
+    const detailsToggleHtml = `<button id="coachDetailsToggle" style="background:var(--border);border:none;color:var(--text-dim);padding:0.35rem 0.7rem;border-radius:4px;cursor:pointer;font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.06em;align-self:flex-start;margin-top:0.2rem">Show details ▾</button>`;
+    const detailsHtml = `<div id="coachDetails" style="display:none">${parasHtml}${evidenceHtml}${watchHtml}${digestHtml}<div class="coach-updated">Generated ${coachData.last_updated}</div>${usageHtml}</div>`;
+    coachCard.innerHTML = `<div class="coach-header"><span class="coach-dot"></span>Training status</div>${headlineHtml}${confidenceHtml}${attentionHtml}${detailsToggleHtml}${detailsHtml}`;
     app.appendChild(coachCard);
+    const coachDetailsEl = $('coachDetails');
+    const coachToggleBtn = $('coachDetailsToggle');
+    coachToggleBtn.onclick = () => {
+      const isHidden = coachDetailsEl.style.display === 'none';
+      coachDetailsEl.style.display = isHidden ? 'block' : 'none';
+      coachToggleBtn.textContent = isHidden ? 'Hide details ▴' : 'Show details ▾';
+    };
   }
 
   // ── Overview block ────────────────────────────────────────────────────────────
-  const deltaBadge = (delta, qual, formatFn) => {
-    if (delta === null || delta === undefined) return '';
-    return ` · <span style="color:var(--text-dim)">${arrowFor(qual, delta)} ${formatFn(Math.abs(delta))}</span>`;
-  };
-  const qualLine = (qual, compareLabel) => {
-    if (!qual) return '';
-    const text = qual === 'Stable' ? `Stable — no meaningful change vs ${compareLabel}` : `${qual} vs ${compareLabel}`;
-    return `<br><span style="color:var(--text-dim)">${text}</span>`;
+  // changeLine(): ONE sentence per comparison (arrow + direction word + value
+  // + comparison label), e.g. "▲ Increased 2.3 km vs last week". Restored —
+  // a prior index.html version had regressed back to the pre-fix pattern of
+  // a deltaBadge ("▲ 2.3 km") immediately followed by a separate qualLine
+  // ("Increased vs last week") saying the same thing twice; that duplicate
+  // pattern was already fixed once (see PROJECT_CONTEXT OVERVIEW PANEL
+  // REDESIGN) and must not be reintroduced.
+  const changeLine = (delta, qual, compareLabel, formatFn) => {
+    if (delta === null || delta === undefined || !qual) return '';
+    const arrow = arrowFor(qual, delta);
+    const text = qual === 'Stable'
+      ? `Stable — no meaningful change vs ${compareLabel}`
+      : `${qual} ${formatFn(Math.abs(delta))} vs ${compareLabel}`;
+    return `<br><span style="color:var(--text-dim)">${arrow} ${text}</span>`;
   };
 
   const r = m.running, st = m.strength, sp = m.steps, iv = m.intensity, rc = m.recovery, cl = m.cardio_load || {};
 
-  const runDeltaHtml = deltaBadge(r.week_delta_km, r.week_qual, v => `${v.toFixed(1)} km vs last wk`);
-  const runQualHtml = qualLine(r.week_qual, 'last week');
-  const strengthDeltaHtml = deltaBadge(st.week_delta_sessions, st.week_qual, v => `${Math.round(v)} vs last wk`);
-  const strengthQualHtml = qualLine(st.week_qual, 'last week');
-  const stepsDeltaHtml = sp.avg_7d !== null ? deltaBadge(sp.delta_7d_vs_30d, sp.qual, v => `${Math.round(v).toLocaleString()} vs 30d avg`) : '';
-  const stepsQualHtml = qualLine(sp.qual, '30d average');
+  const runChangeHtml = changeLine(r.week_delta_km, r.week_qual, 'last week', v => `${v.toFixed(1)} km`);
+  const strengthChangeHtml = changeLine(st.week_delta_sessions, st.week_qual, 'last week', v => `${Math.round(v)}`);
+  const stepsChangeHtml = sp.avg_7d !== null ? changeLine(sp.delta_7d_vs_30d, sp.qual, '30d average', v => `${Math.round(v).toLocaleString()}`) : '';
   const stepsDiscrepancyHtml = sp.discrepancy_avg !== null ? `<br><span style="color:var(--text-dim)">Polar vs iPhone: ±${sp.discrepancy_avg.toLocaleString()}/day (${sp.discrepancy_days}d overlap)</span>` : '';
-  const intensityDeltaHtml = deltaBadge(iv.delta_month_vs_year, iv.qual, v => `${fmtHrs(v)} vs yr avg`);
-  const intensityQualHtml = qualLine(iv.qual, 'year average');
-  const recoveryDeltaHtml = deltaBadge(rc.delta_week_vs_month, rc.qual, v => `${fmtHrs(v)} vs mo avg`);
-  const recoveryQualHtml = qualLine(rc.qual, 'month average');
+  const intensityChangeHtml = changeLine(iv.delta_month_vs_year, iv.qual, 'year average', v => fmtHrs(v));
+  const recoveryChangeHtml = changeLine(rc.delta_week_vs_month, rc.qual, 'month average', v => fmtHrs(v));
 
   const cardioCrossRefHtml = (cl.ratio !== null && cl.ratio !== undefined)
     ? `<br><span class="cross-ref" style="color:var(--load)">Strain:tolerance ${cl.ratio.toFixed(2)}${cl.status ? ' · ' + escapeHtml(cl.status) : ''}</span>`
     : '';
 
-  const stepsRow = (sp.avg_all_time !== null) ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_all_time?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsDeltaHtml}${stepsQualHtml}</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsDiscrepancyHtml}</span></div></div>` : '';
+  const stepsRow = (sp.avg_all_time !== null) ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_all_time?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsChangeHtml}</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsDiscrepancyHtml}</span></div></div>` : '';
 
-  const recoveryTile = (label, data, deltaHtml, qualHtml, crossRefHtml) => {
+  const recoveryTile = (label, data, changeHtml, crossRefHtml) => {
     const durationStr = data && data.mins ? fmtHrs(data.mins) : '—';
     const scoreStr = data && data.score !== null && data.score !== undefined ? `Score: ${Math.round(data.score)}` : 'Score: —';
-    return `<div class="stat"><span class="stat-label">${label}</span><span class="stat-value" style="color:var(--recovery)">${durationStr}</span><span class="stat-sub">${scoreStr}${deltaHtml || ''}${qualHtml || ''}${crossRefHtml || ''}</span></div>`;
+    return `<div class="stat"><span class="stat-label">${label}</span><span class="stat-value" style="color:var(--recovery)">${durationStr}</span><span class="stat-sub">${scoreStr}${changeHtml || ''}${crossRefHtml || ''}</span></div>`;
   };
-  const recoveryRow = (rc.week.mins !== null || rc.month.mins !== null || rc.year.mins !== null) ? `<div class="overview-full"><div class="overview-label recovery" style="grid-column:1/-1">Recovery</div>${recoveryTile('Avg / week', rc.week, recoveryDeltaHtml, recoveryQualHtml, cardioCrossRefHtml)}${recoveryTile('Avg / month', rc.month)}${recoveryTile('Avg / year', rc.year)}</div>` : '';
+  const recoveryRow = (rc.week.mins !== null || rc.month.mins !== null || rc.year.mins !== null) ? `<div class="overview-full"><div class="overview-label recovery" style="grid-column:1/-1">Recovery</div>${recoveryTile('Avg / week', rc.week, recoveryChangeHtml, cardioCrossRefHtml)}${recoveryTile('Avg / month', rc.month)}${recoveryTile('Avg / year', rc.year)}</div>` : '';
 
   const loadRow = (cl.strain !== null && cl.strain !== undefined) ? `<div class="overview-full"><div class="overview-label load" style="grid-column:1/-1">Load (Polar Cardio)</div><div class="stat"><span class="stat-label">Strain (7d avg)</span><span class="stat-value" style="color:var(--load)">${fmt(cl.strain, 0)}</span><span class="stat-sub">load units</span></div><div class="stat"><span class="stat-label">Tolerance (28d avg)</span><span class="stat-value" style="color:var(--load)">${fmt(cl.tolerance, 0)}</span><span class="stat-sub">load units</span></div><div class="stat"><span class="stat-label">Strain:tolerance ratio</span><span class="stat-value" style="color:var(--load)">${cl.ratio !== null && cl.ratio !== undefined ? cl.ratio.toFixed(2) : '—'}</span><span class="stat-sub">${cl.status ? escapeHtml(cl.status) : '—'}${cl.latest_date ? ' · ' + cl.latest_date : ''}</span></div></div>` : '';
 
@@ -289,12 +326,12 @@ async function init() {
     <div class="overview-full">
       <div class="overview-label run" style="grid-column:1/-1">Running</div>
       <div class="stat"><span class="stat-label">Avg / run</span><span class="stat-value accent">${fmt(r.avg_per_run_km, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${r.runs_this_year} runs ${m.this_year}</span></div>
-      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(r.avg_per_week_km, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${fmt(r.total_distance_this_year_km, 0)} km ${m.this_year}${runDeltaHtml}${runQualHtml}</span></div>
+      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(r.avg_per_week_km, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${fmt(r.total_distance_this_year_km, 0)} km ${m.this_year}${runChangeHtml}</span></div>
       <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value accent">${r.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${r.longest_weekly_streak ?? '—'} wks</span></div>
     </div>
     <div class="overview-full">
       <div class="overview-label lift" style="grid-column:1/-1">Strength</div>
-      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value blue">${fmt(st.avg_sessions_per_week, 1)}</span><span class="stat-sub">${st.sessions_this_year} sessions ${m.this_year}${strengthDeltaHtml}${strengthQualHtml}</span></div>
+      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value blue">${fmt(st.avg_sessions_per_week, 1)}</span><span class="stat-sub">${st.sessions_this_year} sessions ${m.this_year}${strengthChangeHtml}</span></div>
       <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(st.avg_hours_per_week, 1)} <small style="font-size:.9rem;color:var(--text-dim)">hrs</small></span><span class="stat-sub">${fmt(st.total_hours_this_year, 1)} hrs ${m.this_year}</span></div>
       <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value blue">${st.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${st.longest_weekly_streak ?? '—'} wks</span></div>
     </div>
@@ -302,7 +339,7 @@ async function init() {
     <div class="overview-full">
       <div class="overview-label intensity" style="grid-column:1/-1">Intensity Minutes</div>
       <div class="stat"><span class="stat-label">Avg / week (${m.this_year})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(iv.avg_week_year_mins)}</span><span class="stat-sub">${fmtHrs(iv.avg_week_year_run_mins)} run · ${fmtHrs(iv.avg_week_year_lift_mins)} lift</span></div>
-      <div class="stat"><span class="stat-label">Avg / week (${m.this_month_short})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(iv.avg_week_month_mins)}</span><span class="stat-sub">${fmtHrs(iv.avg_week_month_run_mins)} run · ${fmtHrs(iv.avg_week_month_lift_mins)} lift${intensityDeltaHtml}${intensityQualHtml}</span></div>
+      <div class="stat"><span class="stat-label">Avg / week (${m.this_month_short})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(iv.avg_week_month_mins)}</span><span class="stat-sub">${fmtHrs(iv.avg_week_month_run_mins)} run · ${fmtHrs(iv.avg_week_month_lift_mins)} lift${intensityChangeHtml}</span></div>
       <div class="stat"><span class="stat-label">Streak vs ${iv.goal_mins}min goal</span><span class="stat-value" style="color:var(--intensity)">${iv.streak_weeks} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${iv.best_streak_weeks} wks</span></div>
     </div>
     ${recoveryRow}
@@ -355,6 +392,24 @@ async function init() {
     ltCard.innerHTML = `<div class="card-title">Lactate threshold</div><p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">No valid LT reading yet — recalibrating after a data fix.</p>`;
   }
   app.appendChild(ltCard);
+
+  // ── VO2max card ────────────────────────────────────────────────────────────
+  // Restored — same class of gap as the two cards below: build_dashboard.py
+  // has been writing fitness_metrics into dashboard_metrics.json all along,
+  // this card just wasn't rendering it. get_max_metrics() has no periodic
+  // max-HR field (see PROJECT_CONTEXT §5a) — VO2max + a trend once ≥2 points
+  // exist is all this card shows; fitness_age is deliberately never rendered
+  // here (dropped for a corrupted-input reason, not a missing-feature one).
+  const fm = m.fitness_metrics;
+  if (fm && fm.latest_vo2max !== null && fm.latest_vo2max !== undefined) {
+    const vo2Card = document.createElement('div');
+    vo2Card.className = 'card';
+    const vo2TrendHtml = (fm.trend && fm.trend.vo2max && fm.trend.vo2max.length > 1)
+      ? `<div class="chart-wrap" style="height:100px;margin-top:1rem"><canvas id="vo2Chart"></canvas></div>`
+      : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:1rem">Trend builds as more estimates land — check back soon.</p>`;
+    vo2Card.innerHTML = `<div class="card-title">VO2max</div><div class="lt-main"><span class="lt-label">Latest estimate</span><span class="lt-pace">${fmt(fm.latest_vo2max, 1)}</span><span class="lt-hr">${fm.latest_vo2max_precise !== null && fm.latest_vo2max_precise !== undefined ? `precise: ${fmt(fm.latest_vo2max_precise, 1)} · ` : ''}${fm.latest_date ?? ''}</span></div>${vo2TrendHtml}`;
+    app.appendChild(vo2Card);
+  }
 
   // ── Time in zone card (rolling / last-completed-week toggle) ─────────────────
   // Restored — this card (and the HR comparison card below) went missing
@@ -471,7 +526,8 @@ async function init() {
     const todayRowIdx = calRows.findIndex(row => row.includes(todayStr));
     const currentStreak = m.running.current_weekly_streak ?? 0;
     const rowsHtml = calRows.map((row, ri) => { const isCurrentRow = ri === todayRowIdx; const done = streakCol[ri]; const streakCell = isCurrentRow ? `<div class="streak-week current-fire">🔥</div>` : `<div class="streak-week ${done ? 'done' : 'empty'}">${done ? '✓' : ''}</div>`; return `<div class="cal-row-wrap">${streakCell}</div>`; }).join('');
-    calCard.innerHTML = `<div class="card-title">Activity calendar</div><div class="cal-header"><div class="cal-title">${monthNames[month]} ${year}</div><div class="cal-nav"><button id="calPrev">‹</button><button id="calNext">›</button></div></div><div class="cal-with-streak"><div class="cal-grid">${dayLabels.map(l => `<div class="cal-day-label">${l}</div>`).join('')}${dayCells}</div><div class="streak-col"><div class="streak-col-spacer"></div>${rowsHtml}<div class="streak-total"><div class="streak-count">${currentStreak}</div><div class="streak-label">wks</div></div></div></div>`;
+    const commentaryHtml = (m.calendar && m.calendar.commentary) ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:1rem;padding-top:0.9rem;border-top:1px solid var(--border)">${escapeHtml(m.calendar.commentary)}</div>` : '';
+    calCard.innerHTML = `<div class="card-title">Activity calendar</div><div class="cal-header"><div class="cal-title">${monthNames[month]} ${year}</div><div class="cal-nav"><button id="calPrev">‹</button><button id="calNext">›</button></div></div><div class="cal-with-streak"><div class="cal-grid">${dayLabels.map(l => `<div class="cal-day-label">${l}</div>`).join('')}${dayCells}</div><div class="streak-col"><div class="streak-col-spacer"></div>${rowsHtml}<div class="streak-total"><div class="streak-count">${currentStreak}</div><div class="streak-label">wks</div></div></div></div>${commentaryHtml}`;
     $('calPrev').onclick = () => { if (month === 0) renderCalendar(year - 1, 11); else renderCalendar(year, month - 1); };
     $('calNext').onclick = () => { const n = new Date(); const maxY = n.getFullYear(), maxM = n.getMonth(); if (year < maxY || (year === maxY && month < maxM)) month === 11 ? renderCalendar(year + 1, 0) : renderCalendar(year, month + 1); };
   }
@@ -533,6 +589,10 @@ async function init() {
     if ($('ltChart') && m.lt.trend) {
       const t = m.lt.trend;
       new Chart($('ltChart'), { type: 'line', data: { labels: t.labels, datasets: [ { data: t.pace_sec, borderColor: 'rgba(232,255,90,0.8)', backgroundColor: 'rgba(232,255,90,0.06)', pointBackgroundColor: 'rgba(232,255,90,0.9)', pointRadius: 4, tension: 0.3, fill: true }, { data: t.trend_sec, borderColor: 'rgba(255,107,53,0.7)', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0 } ] }, options: { ...chartOpts(), scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, y: { reverse: true, grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', callback: v => secToPace(v) } } }, plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` LT pace: ${secToPace(ctx.parsed.y)} /km` : ` Trend` } } } } });
+    }
+
+    if ($('vo2Chart') && fm && fm.trend && fm.trend.vo2max && fm.trend.vo2max.length > 1) {
+      new Chart($('vo2Chart'), { type: 'line', data: { labels: fm.trend.labels, datasets: [ { data: fm.trend.vo2max, borderColor: 'rgba(232,255,90,0.8)', backgroundColor: 'rgba(232,255,90,0.06)', pointBackgroundColor: 'rgba(232,255,90,0.9)', pointRadius: 4, tension: 0.3, fill: true } ] }, options: { ...chartOpts(), plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ` VO2max: ${ctx.parsed.y}` } } } } });
     }
 
     if ($('strengthHrChart') && overlay.length) {

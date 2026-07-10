@@ -1,0 +1,239 @@
+PROJECT CONTEXT — FRED'S FEATS
+
+Personal training dashboard for an athlete (ricocousin), ultra/trail runner, mid-30s, hybrid athlete. Repo: ricocousin/FF_Dashboard. Dashboard: ricocousin.github.io/FF_Dashboard.
+
+Pipeline: Garmin Connect → fetch_activities.py (raw fetch/merge) → build_dashboard.py (aggregation + AI coach) via GitHub Actions → dashboard_metrics.json + coach_summary.json → index.html (pure renderer) via GitHub Pages. Steps (iPhone): Apple Health → Health Auto Export → Pipedream → receive_steps.yml. Sleep + wrist steps + continuous HR + cardio load: Polar Loop → Polar AccessLink API → fetch_activities.py. Per-run detailed HR: Garmin Connect (H10-sourced) → fetch_activities.py. AI coach: claude-opus-4-8 via Anthropic API, billed separately from claude.ai subscription.
+
+ABOUT THIS DOCUMENT: this document IS the Project's custom instructions (pasted directly into Project settings), auto-applied to every new chat in this Project. It must be RE-PASTED into Project settings every time it's updated in a chat — a chat message alone does not persist it. Structure: §1 operating rules, §2 system/operations, §3 athlete, §4 file policy & schemas, §5 data sources, §6 derived metrics & dashboard, §7 AI coach, §8 lessons learned, §9 changelog, §10 pending, plus a maintenance rule at the end (context length management).
+
+STATUS VOCABULARY used throughout: CONFIRMED LIVE = verified against real data or the live dashboard, not just code inspection. BUILT, UNVERIFIED = code committed and compile-checked but not yet observed against a real run. DORMANT = built and reachable, waiting on data conditions to activate. NOT BUILT = catalogued/considered only.
+
+§1 OPERATING RULES
+
+SPAR BEFORE ITERATING: for any batch of design/UX/visual feedback (as opposed to a single well-defined bug report), discuss and critically evaluate each point first — flag which are genuine bugs needing real data before touching code, which are legitimate design decisions worth a second opinion, and which have real tradeoffs worth surfacing — before writing any code. Proceed only once the athlete has confirmed direction on ambiguous points. "Let's move on"/"we'll check everything at the end" authorizes building an already-sparred list; it does not waive sparring on any NEW batch introduced afterward.
+
+COMMIT MESSAGE FORMAT: one commit message per file — never combined across files even when changes are related. Format:
+
+<filename>: <one-line summary>
+
+- <concrete change>
+- <concrete change>
+
+Every bullet describing a changed number, threshold, label, or return signature/shape must state the exact old→new value (e.g. "threshold 3 → 1", "returns 3-tuple → 4-tuple"). No cross-file narrative in git history. Only describe changes relative to what is ACTUALLY committed — never phrase something as "reverted"/"removed" unless the prior version was genuinely committed; a change designed and abandoned within one conversation, never pushed, is described as if it never existed.
+
+CODE DELIVERY FORMAT:
+- Default: deliver the ENTIRE file, with an explicit instruction to open the named file in GitHub's mobile editor, select all, delete, paste the full replacement.
+- Exception only for a change statable as "find the exact line that says '...', replace it with '...'" — verbatim, findable by literal text search, never a described location.
+- Every Python file delivered must be compile-checked (py_compile) before handover — state that it passed.
+- After any delivery, state plainly which single file it replaces and confirm whether any other file needs to change.
+- Applies regardless of file size or how minor the change feels. Applies to this context document itself: always return the complete file.
+
+NEW DATA FILES: whenever a new script-generated data file is introduced, its addition to fetch_activities.yml's git-add list must be called out and delivered in the SAME response as the code creating it. A file left off the list is recomputed every run but never persists — silent repeated reprocessing, not a visible failure.
+
+DASHBOARD COVERAGE CHECK (added July 2026, after a real incident — see §8/§9): before handing over any index.html, run check_dashboard_coverage.py against it locally and confirm exit code 0. This is non-negotiable, same tier as the py_compile check for Python files — it catches the exact failure mode that already happened once: build_dashboard.py computes a field, index.html silently stops reading it, nothing errors. The same check also runs in CI (§2) as a second, independent layer — local + CI, not either/or.
+
+VERIFICATION DISCIPLINES (each learned from a real incident — see §8/§9):
+1. Don't trust third-party API positional/declared metadata to be stable across calls, even for the same resource ID. Prefer deriving values from first principles (e.g. self-normalizing timestamps against their own minimum).
+2. Check-first: after any index.html change depending on a new dashboard_metrics.json shape, confirm a real fetch+build has run (compare the "Generated"/"Updated" timestamp against the commit time) before treating a blank UI element as a bug — it may just be stale data predating the shape change.
+3. "I re-pasted the file" ≠ "the file is committed correctly." When a fix appears not to have taken effect, verify via literal string search directly in the committed repo files before further debugging.
+4. New external endpoints ship with defensive parsing plus a one-time DEBUG print of the raw response shape; the first live Action log confirms or corrects assumptions before the feature is trusted.
+
+MOBILE-PASTE GOTCHA: pasting workflow YAML or CSV on iOS has caused truncation/conflict issues more than once. Always scroll to confirm full content landed before committing. A commit failing with "Expected branch to point to X but it did not" is a stale-branch conflict (something else pushed in between) — refresh and retry; not a content problem.
+
+§2 SYSTEM & OPERATIONS
+
+WORKFLOW: display name "Sync Training Data". Cron uses UTC: both '0 4 * * *' and '0 5 * * *' (summer/winter Danish 6am), gated by a runtime check of the actual Danish local hour. workflow_dispatch bypasses the hour check and exposes a `full_refresh` boolean input. Two Python steps, both gated by the same dst_check condition: "Run fetch script" (fetch_activities.py; env: GARMIN_EMAIL/PASSWORD, POLAR_ACCESS_TOKEN, POLAR_USER_ID, FULL_REFRESH) and "Build dashboard metrics + AI coach" (build_dashboard.py; env: ANTHROPIC_API_KEY only — fetch no longer calls Claude).
+
+FULL_REFRESH: rebuilds runs.csv/strength.csv from Garmin's complete history instead of incrementally. Triggers: first Sunday of the month (automatic, regardless of checkbox — CONFIRMED observed live), FULL_REFRESH=true env var, or the manual workflow_dispatch checkbox. Determined at runtime, not by which cron fired. Governs fetch_activities.py only — build_dashboard.py always aggregates whatever's on disk regardless of mode. Keep available for any future clean historical rebuild.
+
+GIT-ADD LIST (third workflow step, 15 entries; polar_cardio_load.csv added July 2026 same-response with its code, per §1):
+for f in runs.csv strength.csv lactate.json coach_summary.json api_usage.json steps.csv sleep.csv polar_steps.csv dashboard_metrics.json fetch_status.json polar_hr.csv run_hr_samples.csv coach_context.json garmin_fitness_metrics.csv polar_cardio_load.csv; do
+  if [ -f "$f" ]; then git add "$f"; else echo "Skipping $f — not present this run"; fi
+done
+(summary.json intentionally absent — retired. strength_tests.csv and upcoming_events.csv intentionally absent — user-maintained input data, not script outputs.)
+
+CHECK DASHBOARD COVERAGE WORKFLOW (added July 2026): display name "Check Dashboard Coverage", separate from Sync Training Data — no Garmin/Polar login, runs fast. Triggers on push/PR touching build_dashboard.py, index.html, or check_dashboard_coverage.py itself, plus workflow_dispatch. Single step: python3 check_dashboard_coverage.py, exit 0 = pass. NOT currently enforced via branch protection (a red check doesn't block a push yet) — see §10. Two-layer check (§4 has the full design): Layer 1 auto-derives every dashboard_metrics.json/coach_summary.json key from build_dashboard.py and confirms index.html references each one; Layer 2 is a hand-maintained list of non-JSON-key markers (toggles, SVGs, named functions) plus named regression guards for bugs that have already happened once. Validated against a reconstruction of the actual broken index.html from the July 2026 incident: correctly failed with 20 errors, confirming the check would have caught it on the first bad commit.
+
+OPERATIONAL QUIRKS (all CONFIRMED observed live):
+- Garmin 429 on login ("mobile+cffi returned 429" / "mobile+requests returned 429" in the log): expected rate-limit, self-resolves via retry within ~9-14 seconds. No action needed.
+- GitHub Pages "Deployment failed, try again later": artifact upload and deployment creation succeed ("Created deployment for [sha]" appears before the failure); the failure is at the subsequent status-confirmation poll. Recurring (4 occurrences). Most likely cause: Pages processes one deployment per environment at a time, and rapid manual workflow_dispatch re-triggers create overlapping deployments. Not fixable from this repo. Troubleshooting order: (1) visit the live URL with a hard refresh — real chance of a false negative where the site actually updated; (2) check Settings → Environments → github-pages for a deployment stuck "in progress"; (3) space out manual triggers — let each deployment fully resolve (minutes, not seconds) before the next. (3) is likely the actual fix.
+- fetch_status.json's last_success_utc is UTC by design. Denmark is UTC+2 summer / UTC+1 winter — add the offset before judging how stale a fetch is from a Danish phone.
+- Garmin activityName staleness: if the athlete converts an activity's type in Garmin Connect after recording, the API keeps returning the original name (e.g. "Copenhagen Running" on a strength row) while activityType.typeKey correctly reflects the converted type. Classification filters on typeKey, never name, so this is cosmetic only.
+
+§3 ATHLETE PROFILE
+
+Ultra/trail runner, ~4 runs/week plus regular strength training. Longest effort: 137 km, Møn/Vordingborg. Running PBs: Marathon 3:46 | Half 1:31 | 5K 19:20. Trains in ~16-week strength blocks, retesting near the start and end of each block. Full cross-domain baseline logged July 4, 2026 in strength_tests.csv: Back Squat 95kg | Bench 110kg | Deadlift 160kg | Romanian Deadlift 130kg | Barbell Row ~95kg | OH BB Press 55kg | Pull-ups 16 strict | Dips 23 strict | Dead Hang >1:50 | Standing Long Jump ~2.1m | Box Jump 30in for reps (protocol/rep-count not fully specified — clarify at next test).
+
+Goal event (in upcoming_events.csv): St. Olavsleden — 580 km coast-to-coast pilgrim trail, Selånger (Sweden) to Trondheim (Norway), starting 2026-08-08, planned as a 9-10 day self-supported effort with a 6-8kg pack, as much running as possible, resupplying in towns.
+
+Weighted/ruck runs: some sessions carry a 3-8kg pack but are logged as ordinary runs, skewing pace PBs and HR evidence by an accepted, untracked margin. Chosen fix (not yet in use): Garmin's native Rucking profile on the FR970 (pack weight at session start; auto-disables VO2max updates for loads ≥2kg). Rucking will very likely report a different activityType.typeKey, so is_running() should exclude it automatically with no new code. Open decision for when adopted: fully exclude (simplest, loses volume/streak credit) vs. pull in as a separately-tagged type. A manual weighted_runs.csv approach was designed and abandoned in-conversation, never committed.
+
+Hardware: heavily tattooed — blocks Garmin's optical HR sensor entirely. Runs: Garmin FR970 + Polar H10 chest strap (accurate HR). Garmin strength sessions have NO HR data (no strap while lifting). Polar Loop worn continuously (barring showers/charging/swimming) for sleep, steps, continuous HR, cardio load. Daily bike commute (~8-10 min each way, ~8-10 o'clock) is untracked background load.
+
+Coach-prompt note: the coach's own ATHLETE PROFILE block (in build_dashboard.py's user_prompt) deliberately omits "Danish, mid-30s" (low daily interpretive value) but keeps the 137km longest effort and strength numbers — genuine reference points for interpreting long-run/strength context, not just biography.
+
+§4 FILE POLICY & SCHEMAS
+
+DATA FILES (17): runs.csv, strength.csv, lactate.json, sleep.csv, polar_steps.csv, polar_hr.csv, polar_cardio_load.csv, run_hr_samples.csv, garmin_fitness_metrics.csv, fetch_status.json (all written by fetch_activities.py); dashboard_metrics.json, coach_summary.json, api_usage.json, coach_context.json (written by build_dashboard.py); steps.csv (written by receive_steps.yml); strength_tests.csv, upcoming_events.csv (manually edited via GitHub — low-friction pattern for infrequent updates, never touched by scripts).
+
+RUNS.CSV: 21 fields, including activity_id and start_time (full unsliced ISO timestamp from Garmin's startTimeLocal; date = same value[:10]). start_time backfilled for all history via FULL_REFRESH; needed to align run windows against polar_hr.csv.
+
+STRENGTH.CSV: 6 fields — date, name, elapsed_time, duration_min, activity_id, start_time (same pattern, backfilled; supports the strength-session HR overlay).
+
+STRENGTH_TESTS.CSV: date, exercise, category (strength/power/durability), value, unit, notes. Flat by design — new exercises are just new rows, no schema changes ever. Feeds an evidence category (§7): for any exercise with 2+ dated entries, Python computes the latest-vs-prior delta. Currently DORMANT (single baseline entry only); activates automatically on the second logged test for any exercise.
+
+UPCOMING_EVENTS.CSV: date, event_name, distance_km, notes. Gives the coach forward-looking awareness. Context only, never evidence — nearest UPCOMING_EVENTS_MAX=3 future events included in the prompt, past events excluded.
+
+CHECK_DASHBOARD_COVERAGE.PY (added July 2026): standalone tooling script, not a pipeline file — reads build_dashboard.py and index.html from the current directory, no data files, no network. Two layers: Layer 1 auto-derives every top-level dashboard_metrics.json/coach_summary.json key from build_dashboard.py's dict literals via regex and confirms index.html references each one (KNOWN_UNUSED whitelist for legitimately backend-only/vestigial fields — currently last_complete_date and quiet); Layer 2 is a hand-maintained MARKERS list for features that aren't a single JSON key (toggles, SVGs, named functions), plus named REGRESSION GUARDS for specific bugs that have already happened once (currently: the deltaBadge+qualLine duplicate-message pattern, the zone-time card, the HR comparison card). Run locally before any index.html delivery (§1) and in CI (§2). Update the MARKERS list whenever a genuinely new non-JSON-key feature ships — this is manual by design, Layer 1 can't derive it automatically.
+
+DEDUP ARCHITECTURE (fetch_activities.py, current state after three real bugs — see §8/§9): rows key on Garmin's activityId ("id", activity_id); pre-activity_id rows key as ("legacy", date, name). merge() applies three layers: (1) legacy rows are cross-matched against new rows by date+name so a legacy row never survives alongside its freshly-fetched id-keyed twin; (2) _dedup_new_rows() collapses duplicate activityIds within a single fetch's own paginated results, applied both inside merge() and on the full-refresh path (which skips merge()); (3) a FINAL whole-list dedup pass on the combined new+existing result before writing — self-healing against any duplicate however introduced, since existing rows were previously never checked against each other.
+
+INCREMENTAL FETCH CUTOFF: computed only from sources that have existing data — a missing/empty CSV is excluded rather than dragging the cutoff to 2000 and forcing full-history refetches.
+
+SANITY FILTERS: LT records with pace outside 2:00–15:00/km (120–900 sec) are excluded and purged from lactate.json, not merely hidden downstream. Strength duration_min above STRENGTH_DURATION_SANITY_CAP_MIN=240 (real case: a forgotten watch reported 875.8 min) is capped to 240 in place, not deleted — the session still counts for frequency/streaks; only duration-based totals are capped. Mutation happens immediately after load, before any filtering, so all downstream subsets inherit it via shared dict references.
+
+APPEND-ONLY vs ROLLING-WINDOW: a script's "N-day window" constant may govern only new-fetch eligibility, not retention — check the file-write mode before assuming rolling behavior. run_hr_samples.csv is APPEND-ONLY and grows forever; its 8-day window only filters which new activities get fetched. polar_hr.csv, polar_cardio_load.csv, sleep.csv, polar_steps.csv are merged-by-key cumulative rewrites (re-fetching a window never duplicates rows). garmin_fitness_metrics.csv is rewritten fresh, deduped by date.
+
+§5 DATA SOURCES
+
+5a. GARMIN (authoritative for runs.csv/strength.csv; H10-sourced HR)
+- Activities via paginated get_activities(). is_running(): typeKey in running/treadmill_running/trail_running. is_strength(): strength_training/fitness_equipment. Filter on typeKey only, never name (§2 quirk).
+- Lactate threshold: client.get_lactate_threshold(), speed_and_heart_rate.speed (get_training_status() has NO LT data). Fetched in fetch_activities.py; zones/trend computed in build_dashboard.py.
+- Per-run HR detail (run_hr_samples.csv: activity_id, date, elapsed_seconds, heart_rate) — CONFIRMED LIVE. get_activity_details(activity_id) for runs dated within RUN_HR_DETAIL_WINDOW_DAYS=8, skipping activity_ids already in the file (never re-fetched). elapsed_seconds is SELF-NORMALIZED: the code locks onto whichever metricDescriptor key contains "timestamp", collects all raw timestamps per activity, and computes (sample − activity's own minimum)/1000 — because Garmin's metricsIndex positions are NOT stable across calls (observed 17/16 → 16/10 → 15/9 for the same activity_id) and duration-labeled fields have inconsistent semantics/factors. Do not "simplify" this back to trusting a declared duration field.
+- Fitness metrics (garmin_fitness_metrics.csv: date, vo2max_value, vo2max_precise) — CONFIRMED shape: get_max_metrics(cdate) returns a list, empty most days, else one dict with "generic": {calendarDate, vo2MaxValue, vo2MaxPreciseValue, fitnessAge, ...}. This endpoint has NO periodic max-HR metric (an original max-HR-line idea was verified impossible and abandoned — closed).
+- fitness_age DELIBERATELY NOT captured and must not be re-added: Garmin's calculation uses a corrupted resting-HR input for this athlete (tattoo blocks optical HR outside runs; the app's own Resting HR screen showed a 137 bpm "monthly average" — an exercise HR, not rest; historical Fitness Age showed a step change 26 → 33+ Nov-Dec 2025 consistent with an input problem). BMI, the other input, is also flagged unreliable for muscular athletes by Garmin's own help text. Structurally wrong for this setup; won't self-correct. VO2max is unaffected (derived from pace-vs-active-HR during runs) and remains captured. Polar's /users/physical-information is the better-fitted future source for any longevity/fitness-age-style metric.
+
+5b. POLAR ACCESSLINK (supplements Garmin, never replaces it)
+Auth: one-time OAuth2 done; token long-lived/non-expiring, scope accesslink.read_all covers everything below. Gate: `if polar_token:` only (POLAR_USER_ID stored but unused). Polar's 24/7 endpoints guarantee only ~90 days lookback — the repo's CSVs are the actual long-term record; anything not being fetched regularly is not being preserved anywhere. The old activity-transactions create/list/commit flow is DEPRECATED (was the cause of a long 405 saga) — everything uses simple GETs. Polar Loop mis-tags H10-strap runs as "indoor," so Polar exercise data is never merged into runs.csv.
+- sleep.csv — GET /v3/users/sleep. Duration computed from sleep_start_time/sleep_end_time (the 'total_sleep' field came back empty in practice). CONFIRMED LIVE.
+- polar_steps.csv — GET /v3/users/activities; objects use `steps` and `start_time`. CONFIRMED LIVE.
+- polar_hr.csv — GET /v3/users/continuous-heart-rate?from=X&to=Y, 8-day rolling fetch window. CONFIRMED LIVE (real runs: 37-44k samples/day). Shape: dict keyed "heart_rates" → per-day objects with "date" and "heart_rate_samples": [{"heart_rate", "sample_time" "HH:MM:SS"}]. Spacing is event-driven, NOT a clean 5-min grid — clusters then gaps; matching logic treats it accordingly.
+- polar_cardio_load.csv — GET /v3/users/cardio-load. BUILT, UNVERIFIED (July 2026). Fields: date, cardio_load_status, cardio_load, strain, tolerance, cardio_load_ratio. Semantics per Polar's Training Load Pro docs/white paper: cardio_load = per-day TRIMP-derived load (HR + duration; works from the Loop alone); strain = Polar's OWN 7-day rolling avg daily load; tolerance = Polar's OWN 28-day rolling avg; cardio_load_ratio = strain/tolerance (Polar's acute:chronic ratio); cardio_load_status = verbal bucket Detraining/Maintaining/Productive/Overreaching/Recovering. Because strain/tolerance are already Polar-computed rolling averages, build_dashboard.py does NO further windowing — reads the latest row + builds a CARDIO_LOAD_TREND_DAYS=28 trend array. Ratio computed locally as fallback if Polar's field is blank but strain/tolerance are present. MUSCLE LOAD deliberately not pulled: per Polar's docs it requires a running/cycling power sensor — this setup has none, so it would never populate (corrects an earlier catalog claim implying both halves were available). Response shape (bare list vs. dict wrapper) UNVERIFIED — parsing handles both (wrapper keys tried: "cardio_load_days"/"cardio_loads"/"days") and DEBUG-prints the raw top-level shape once; check the first real Action log per §1 discipline 4.
+- Loop auto-detection caution: the Loop auto-detects "exercises" on its own and misfires (an ~8-10 min bike commute logged as a ~20-25 min activity in Polar Flow). Harmless today (nothing pulls Polar's exercise list), but any future /v3/exercises pull needs duration/plausibility filtering.
+
+POLAR STREAMS NOT PULLED (catalog; all available on the existing token, one new stream at a time per athlete preference — cardio load is the current in-flight one):
+- Nightly Recharge (/users/nightly-recharge): ANS charge from HRV + sleep charge from staging; deeper than current sleep.csv. Candidate to supplement/replace sleep scoring.
+- Physical info (/users/physical-information): VO2max, running performance test, orthostatic test, max HR — REPRIORITIZED as the future fitness-age-style source (see fitness_age note in 5a).
+- HRV4T morning HRV (Loop support unconfirmed); PPI beat-to-beat, SpO2, body temperature (no use case yet).
+- Exercise list (/v3/exercises): finer-sampled auto-detected-session HR for the strength overlay + a run cross-check possibility. Validation/comparison only, never merged into runs.csv; needs the plausibility filtering above.
+
+5c. STEPS RECONCILIATION (iPhone steps.csv + polar_steps.csv → one series in build_dashboard.py): average when both report a day; single-source fallback otherwise; if they disagree by more than 50% (STEPS_DISAGREEMENT_THRESHOLD=0.5), use the LARGER reading instead of averaging (one device likely wasn't worn all day). Lives only in Python — no JS copy to keep in sync.
+
+HR SOURCE PHILOSOPHY (athlete's explicit direction): more-accurate sources are authoritative but less-accurate ones are kept and COMPARED, never discarded. Garmin/H10 is authoritative for run HR; Polar continuous HR for the same run windows is separately compared (run_hr_source_comparison in build_dashboard.py — CONFIRMED LIVE, first two matched runs showed Polar reading -11.7 and -25.0 bpm below Garmin, plausible optical-wrist under-read at intensity; conclusion: Polar wrist HR is not trustworthy standalone for running intensity). Polar continuous HR is the ONLY strength-session HR source (Garmin has none — tattoo); build_strength_hr_overlay() matches polar_hr.csv samples against each strength session's [start_time, start_time + duration_min] window — CONFIRMED LIVE. Same reconciliation spirit as steps.
+
+§6 DERIVED METRICS & DASHBOARD
+
+ARCHITECTURE: fetch_activities.py = fetch/merge/dedup only. build_dashboard.py = reads everything fresh from disk, computes ALL derived numbers into dashboard_metrics.json, then calls Claude and writes coach_summary.json + api_usage.json + coach_context.json. Split exists for blast-radius containment (an aggregation/coach bug can't block raw data landing) and build_dashboard.py is independently re-runnable against existing CSVs (no Garmin login/Polar hit) — useful for prompt iteration. index.html is a pure renderer of the two JSONs. Core numbers were verified against Strava/Garmin ground truth after the July 2026 dedup fixes (week deltas and 16-week chart confirmed exact).
+
+DESIGN LINE: Python computes AGGREGATION/DERIVATION; pure FORMATTING stays in JS. One exception: the calendar's "today"/"future" highlighting stays client-side (tied to viewing moment), reading Python-provided date-sets.
+
+CONVENTIONS:
+- lastCompleteDate: most historical stats cut off at yesterday (today's data can be partial). Exempt (use today): calendar, last-run label, coach summary, Recovery row.
+- Date handling: localDate() helper, local time — never toISOString().slice(0,10).
+- Chart.js: never Chart.register() — scope plugins per chart config. All chart numbers come from dashboard_metrics.json; JS only formats/draws.
+- Calendar grid: dayCells needs startDow leading blank divs before the day-number loop; verify visually across several months after any renderCalendar() edit.
+- Python 3.11 in the repo: no backslashes inside f-string {} expressions. Compile-check locally before handing back f-string edits.
+- Frontend load failure reports which JSON failed (metrics vs coach), not one generic error.
+
+LT ZONES: Z1-Z5 HR boundaries at 0.80/0.90/0.99/1.05 × LT HR (shared formula between the LT card's _calc_zones() and zone-time's _hr_zone_bounds()). Zone label "Z4 LTHR" (renamed from "Z4 LT" — ambiguous), in both backend and frontend.
+
+ZONE-TIME (CONFIRMED LIVE end-to-end): quantifies actual time-in-physiological-zone across running AND strength, using the dashboard's own LT-derived zones (deliberately NOT Garmin's pre-binned zone summary, whose boundaries would differ). Framework: Peter Attia's Zone 2 / polarized model, researched directly — 80% of cardio time in Zone 2, 20% in Zone 5; Z2 target 180-240 min/week (ATTIA_Z2_TARGET_MIN/MAX; 3-4 sessions of ~45-90 min, 45 min = minimum effective dose); Z3+Z4 = the "grey zone" to minimize, treated as one concept. Chosen over WHO/ACSM minutes because it matches the athlete's dual-capacity philosophy. Per-zone %-of-time targets for the other zones sourced from Stephen Seiler's polarized-training research (the science Attia's 80/20 derives from): Z1_TARGET_MIN/MAX_PCT=75/80, GREY_CEILING_PCT=10 (a ceiling to stay UNDER — bar fills toward bad), Z5_TARGET_MIN/MAX_PCT=15/20. Runs: per-sample step-function attribution over run_hr_samples.csv, skipping sample gaps >60s (sensor dropout) rather than misattributing. Strength: whole-session duration attributed to one zone from strength_hr_overlay avg_hr (no per-sample strength HR exists). Two precomputed windows in zone_time: "rolling" (last 7 days, default) and "last_completed_week" (true Mon-Sun — computed by checking last_complete_date.weekday()==6 and shifting back a week otherwise, because yesterday's ISO week is only a finished week on Mondays; verified by simulating all 7 weekdays). Toggle is client-side, no rebuild to switch. Dual-window deliberately NOT extended to other tiles — zone_time is the only tile with an external weekly target, which is what makes the distinction useful. Historical weeks before the feature existed are sparse (one-time bootstrap gap, not structural — coverage only grows; no UI caveat by decision).
+
+CARDIO LOAD ON THE DASHBOARD (BUILT, UNVERIFIED — pending first live run): independent-but-cross-referenced with Recovery, per athlete's explicit direction. Strain/tolerance measures load APPLIED; sleep-based Recovery measures resourcing AVAILABLE. Displayed adjacent, each in its own units (load units are an arbitrary TRIMP-derived scale), never combined into one score. Four touchpoints: (a) "Load (Polar Cardio)" overview row (strain / tolerance / ratio+status; renders only once cl.strain exists — a blank row before the first fetch is expected, not a bug); (b) small cross-reference sub-line on Recovery's Avg/week tile showing ratio+status in the Load color; (c) one combined evidence item (§7); (d) a coach principle about naming convergence without merging metrics.
+
+DASHBOARD SECTION ORDER:
+1. AI Coach card: headline → confidence bar → confidence attention line (if any) → [collapsed by default behind "Show details ▾"] summary → evidence (priority-sorted) → things to watch → what's-changed digest → usage/cost footer
+2. Unified overview block: freshness indicator (single green/amber/orange dot + label for the whole panel, driven by data_freshness) → Running / Strength / Steps (reconciled + discrepancy sub-line) / Intensity Minutes / Recovery (with strain:tolerance cross-reference) / Load (Polar Cardio)
+3. Weekly distance & strength — last 16 weeks (month-boundary dashed lines)
+4. Distance & strength sessions [year] — monthly chart + progress bars vs last year, with a dashed reference line at last year's AVERAGE MONTHLY distance (target_km/12 — a full-annual line would be meaningless on a per-month chart)
+5. LT card (Z4 labeled LTHR)
+6. Time in zone card — rolling/last-completed-week toggle, stacked zone bar, legend, four goal progress bars showing real target numbers (Z2's bar caps at 100% visually when over target)
+7. Strength session HR / Garmin-vs-Polar card — strength_hr_overlay + run_hr_source_comparison, rendered as trend charts
+8. Activity calendar, with deterministic rule-based streak commentary at the bottom (_calendar_commentary(), no LLM)
+9. Running heading + PBs (10K/Half include an LT-gap sub-line on its own line; location-heavy activity names removed; .effort-sub wraps rather than truncates)
+
+Other standing UI facts: overview comparisons use a single changeLine() sentence per comparison (merged from a former deltaBadge+qualLine pair that said the same thing twice); running has avg_runs_per_week alongside strength's avg_sessions_per_week; header wordmark carries a small abstract geometric SVG monogram (athlete prefers abstract over literal); intensity goal INTENSITY_GOAL_MINS=210/week drives that tile's streak.
+
+DATA FRESHNESS: data_freshness field reads fetch_status.json directly (decoupled from the confidence score's own read): age ≤1 day = "fresh", ≤3 = "stale", else/missing = "failed". fetch_status.json is written by fetch_activities.py as its LAST action, only on full success — a partial failure leaves it stale, which downstream scoring reflects honestly.
+
+COLOR SCHEME: Running #e8ff5a | Strength #4a9eff | Steps #f472b6 | Intensity #a78bfa | Recovery #fbbf24 | Load #22d3ee | Accent2/overflow #ff6b35
+
+§7 AI COACH
+
+MODEL: claude-opus-4-8 (migrated from claude-sonnet-4-6, July 2026; CONFIRMED LIVE). Chosen as the best fit for a low-volume, judgment-heavy daily task; Haiku 4.5 rejected (needless capability trade-down), Sonnet 5 viable but no task-fit edge, Fable 5 rejected (agentic/coding-calibrated, plus an 18-day global suspension June 12-30 2026 — wrong risk profile for an unattended cron). Cost delta vs Sonnet ~$5-6/year — irrelevant. Config: max_tokens=700, "thinking": {"type": "disabled"} in the payload (Opus 4.7+ defaults adaptive thinking ON, and thinking tokens would share the 700 budget, risking silent truncation before WATCH: — disabling it is why 700 stays sufficient). Pricing hardcoded in build_dashboard.py, last verified 2026-07-06: PRICE_INPUT_PER_M=5.00, PRICE_OUTPUT_PER_M=25.00, USD_TO_DKK=6.90 (update manually on changes). Prompt is anonymized ("the athlete", no real name).
+
+OUTPUT STRUCTURE: four delimited sections regex-parsed with defensive fallback (unparseable → raw text as summary; a fallback/failed day writes NO coach_context entry).
+- HEADLINE: one sentence, roughly 12-20 words, today's single most important insight — specific and data-anchored, never a generic state label.
+- SUMMARY: 1-3 short paragraphs of COACHING JUDGEMENT in second person — no exact figures (those belong in EVIDENCE), readable alone in under 30 seconds.
+- EVIDENCE: the model writes ONLY the NUMBERS of items it selects from the Python-built numbered catalog — zero-fabrication by construction: Python computes every figure; the model never writes or paraphrases evidence text. "Prefer fewer, stronger items; comprehensiveness is not the goal."
+- WATCH: 2-4 directional, forward-looking bullets, NO specific numbers, and must not restate/rephrase anything already in SUMMARY — each item adds a genuinely new angle or is dropped.
+
+EVIDENCE CATALOG (10 categories; each priority-tiered by magnitude on its own scale — a deliberate design; a REJECTED external-review suggestion to impose a fixed category hierarchy would have been a regression and must not be re-introduced):
+1. LT pace vs ~30d baseline (High ≥5 s/km, Medium ≥2)
+2. 4-week volume vs prior 4wk, % (High ≥15%, Medium ≥5%; direction threshold 1 km — aligned with the digest so the two can never disagree)
+3. Running streak length (fixed Medium)
+4. Sleep duration vs prior period (High ≥30 min, Medium ≥10)
+5. Sleep score vs prior period (High ≥10, Medium ≥4; arrow threshold 3) — reachable but not yet observed selected live; sleep only tracked 4/14 nights, no valid prior period yet. Just time, not a failure.
+6. Zone 2 vs Attia target + grey-zone % (uses zone_time["rolling"]; priority by shortfall: <50% High, <100% Medium, else Low; arrows ≥100% ▲, <65% ▼). CONFIRMED LIVE 2026-07-06 (105% → Low, mathematically correct).
+7. Strain:tolerance ratio + sleep, ONE combined item (deliberately combined per the independent-but-cross-referenced design — names the ratio with Polar's status word and raw strain/tolerance values, plus the same-period sleep average, each in its own unit; priority by |ratio − 1.0|: High ≥0.5, Medium ≥0.2; arrows ≥1.3 ▲, <0.8 ▼; a status read like #6, not a vs-prior trend). BUILT, UNVERIFIED — needs polar_cardio_load.csv populated.
+8. Strength session consistency vs prior 4wk (High ≥2 sessions, Medium ≥1)
+9. Easy-run HR on comparable-effort runs (pace > LT+45s, ≥2 runs each period; High ≥5 bpm, Medium ≥2, arrow threshold 1)
+10. Per-exercise strength_tests.csv deltas (High ≥8%, Medium ≥3%) — DORMANT until a second test is logged.
+DELIBERATELY EXCLUDED from evidence: run_hr_source_comparison — a sensor-accuracy signal, not a training-status signal; keeping it dashboard-only prevents the coach commenting on sensor discrepancies instead of training.
+
+PROMPT PRINCIPLES worth knowing when editing (all present in the system prompt): dual-capacity athlete identity (never "a runner who also lifts"); distinguish load from fitness; lower volume ≠ regression; within-athlete comparisons; trends before sessions; multiple metrics required to flag detraining; acknowledge uncertainty; anti-fake-causality ("is consistent with" over "because" — CONFIRMED followed live); sleep is supporting context only, must not drive recommendations; cardio load strain/tolerance same supporting-context status — when sleep and the ratio point the same direction, name the convergence as a pattern but keep each figure its own signal in its own unit, never one combined score; RECENT COACHING HISTORY is continuity only, never evidence, never quoted verbatim; upcoming events are context only, never a basis for prescribing training. A DECISION FRAMEWORK section (what changed / does it matter / what should the athlete notice) governs every paragraph.
+
+COACH MEMORY (coach_context.json — CONFIRMED LIVE producing real continuity across days): {"history": [{date, headline, watch_items}, ...]}, capped at MEMORY_HISTORY_MAX=5, loaded before the prompt is built and inserted as a RECENT COACHING HISTORY block (last 5 headlines + most recent day's WATCH items). Written back only when a real headline was parsed — failed/fallback days never pollute continuity. Deliberately NOT block-phase-aware (considered, dropped on athlete pushback: the coach doesn't prescribe training, so block position has no use).
+
+CONFIDENCE SCORE (pure Python, zero LLM; CONFIRMED LIVE 84-87% "Moderate"): components — LT freshness 20pts (full ≤14d old, linear decay over the next 46d); HR validity on last 8 complete runs 15pts; sleep completeness 15pts (/14 nights); steps completeness 10pts (/7 days); pipeline freshness 15pts from fetch_status.json (full if ≤1 day, formula 15 × (1 − max(0, age−1)/2), 0 if missing); recent-context 25pts (how many of run/strength/steps/sleep have data in the last 3 days, /4). Labels: ≥85 High, ≥65 Moderate, else Low. Deliberately measures DATA quality/freshness only, never training volume/behavior. Cardio load deliberately NOT a component — new unvalidated stream shouldn't drag the score for reasons unrelated to established data. ATTENTION LINE: the single component with the largest shortfall ratio (max−pts)/max is surfaced as confidence_attention when that ratio exceeds 0.15; rendered under the confidence bar (motivation: the per-component tooltip was unreachable on mobile). compute_confidence() returns a 4-tuple (pct, label, reasons, attention).
+
+DIGEST (dashboard_metrics.json digest[] — deterministic Python, no LLM): six fixed lines — LT vs ~30d, 4-week volume vs prior (3-way increased/unchanged/reduced wording, threshold 1 km matching evidence #2), strength frequency vs prior, steps avg vs prior, sleep avg vs prior, running streak.
+
+coach_summary.json shape: headline, confidence_pct/label/reasons/attention, summary, evidence_items ({text, priority} list), watch_items, insights (legacy compat), quiet, usage + MTD/YTD cost fields (USD + DKK).
+
+Token-cost posture: the memory block, evidence expansions, and cardio-load additions each add on the order of 100-150 input tokens against a ~2,800-3,400 baseline — invisible against pennies-per-month totals. No need to re-litigate cost for additions of this size.
+
+§8 LESSONS LEARNED (distilled from real incidents; incident history in §9)
+
+1. Dedup must be closed-world: checking new-vs-existing and within-new is not enough — existing data can already be duplicated (e.g. by overlapping workflow runs racing each other's commits). Always include a final whole-collection dedup so the pipeline self-heals regardless of how a duplicate got in.
+2. Key-scheme transitions create invisible duplicates: rows keyed under an old scheme never match their re-fetched twins under a new scheme. Any key migration needs an explicit cross-match between schemes.
+3. External APIs lie about their own structure: field positions/indices shift between calls for the same resource; declared unit factors and field semantics differ between similar-looking fields. Derive from first principles where possible; confirm shapes with live debug output before trusting them.
+4. Deprecated API flows fail confusingly (Polar's transaction flow → persistent 405s). When an integration fights back, check whether the flow itself is still current before debugging the implementation.
+5. Stale rendered data mimics frontend bugs: a UI element blank after a shape change usually means no fresh build has run — check the generated timestamp before touching code.
+6. Reporting a commit is not the same as the commit existing: verify contested fixes via literal string search in the repo. This failure mode actually happened and cost a full round.
+7. Vendor-computed wellness metrics inherit their inputs' failure modes: Garmin's Fitness Age was structurally broken here because its resting-HR input was garbage for this hardware setup. Before adopting any derived vendor metric, check whether its inputs are actually valid for THIS athlete's setup.
+8. Rapid manual re-triggering of CI creates its own failures (overlapping fetch commits → duplicates; overlapping Pages deployments → failed status checks). Space out manual runs; let each fully resolve.
+9. A full-file rewrite can silently drop a feature the backend still computes — nothing errors, the data just goes dark. Six real features (freshness indicator, VO2max card, calendar commentary, coach card collapse, banner monogram, and a regression back to a previously-fixed duplicate-message UI pattern) were lost this way and only caught by the athlete's manual inspection, not by any process. Fixed structurally, not by "being more careful": check_dashboard_coverage.py (§4) now runs before every index.html delivery and in CI, auto-deriving most of its checklist from the code itself rather than relying on memory.
+
+§9 CHANGELOG (compressed; all items resolved/complete unless noted)
+
+- July 3-4, 2026: dashboard logic rewritten and verified against Strava/Garmin ground truth; then split into fetch_activities.py + build_dashboard.py for blast-radius containment. summary.json retired.
+- Duplicate-counting bugs, three occurrences, all fixed and CONFIRMED resolved on real data (July 2026): (1) legacy/id key-scheme mismatch double-counting; (2) intra-fetch pagination duplicates surviving merge and full-refresh paths; (3) existing-rows-vs-themselves never checked, letting race-introduced duplicates persist forever. Fixes: legacy cross-match, _dedup_new_rows(), final whole-list pass (§4). Historical cleanup via FULL_REFRESH runs. A complication where fixes were reported committed but hadn't persisted was resolved via literal-string-search verification (§8.6) and re-confirmed live July 6 ~20:06 Danish.
+- run_hr_samples.csv elapsed_seconds, two bug rounds (unapplied unit factor ×1000; then unstable metricsIndex making duration fields unreliable) → self-normalization fix, CONFIRMED on real data; bad rows manually purged since skip-if-present would never self-correct them.
+- Polar steps 405 saga: deprecated transaction flow replaced by simple GET.
+- Stale-data regression (July 6): three UI symptoms ("No successful fetch found", undefined zone targets, missing avg_runs_per_week) all traced to a served dashboard_metrics.json predating the backend commit — the canonical check-first case (§8.5/8.6).
+- Coach: structured four-section output, evidence catalog, confidence score, digest, memory — each CONFIRMED LIVE incrementally; external prompt review critically evaluated (4 of 12 adopted; fixed-hierarchy suggestion rejected as a regression); model migrated Sonnet 4.6 → Opus 4.8 with thinking disabled, CONFIRMED LIVE 2026-07-06. Coaching-briefing redesign fully complete; a full structured-JSON coach response was considered and NOT built (delimited sections working well — revisit only if needed).
+- UI rounds (all CONFIRMED LIVE): overview redesign (changeLine, freshness indicator, avg_runs_per_week), zone-time card + dual-window toggle + four Seiler-sourced goal bars, PB tile cleanup, calendar commentary, annual-chart last-year-average line, coach card collapse, banner monogram, confidence attention line, Z4 LTHR rename.
+- Fitness age captured then dropped on direct evidence of a corrupted input (§5a) — removed from all three files, not hidden.
+- Strength-session HR overlay built and CONFIRMED LIVE (real session matched 1041 Polar samples); run_hr_source_comparison built and CONFIRMED LIVE.
+- Cardio load build (July 2026, latest): fetch + polar_cardio_load.csv + dashboard_metrics cardio_load field + Load overview row + Recovery cross-reference + evidence category #7 + coach principle/context block. BUILT, UNVERIFIED — first-live-run checks in §10.
+- index.html silent feature-loss incident (July 2026): a full-file rewrite (during the cardio load build) dropped the zone-time card and HR comparison card without any error; a subsequent audit found four more silently-dropped features (freshness indicator, VO2max card, calendar commentary, coach card collapse, banner monogram) plus a regression back to the pre-fix overview duplicate-message pattern. All restored and CONFIRMED via a real audit of every dashboard_metrics.json/coach_summary.json key against index.html's actual references (not assumption). Root-caused to §8.9 — fixed by building check_dashboard_coverage.py (§4), validated against a reconstruction of the actual broken file (correctly failed with 20 errors), and wired into both local delivery practice (§1) and CI (§2).
+
+§10 PENDING
+
+- Add .github/workflows/check-dashboard-coverage.yml to the repo (delivered separately this round — not auto-added, needs manual commit like any new workflow file).
+- Enable branch protection on main requiring Check Dashboard Coverage to pass before merge — currently the check runs and shows red/green but doesn't block a push by itself.
+- POLAR CARDIO LOAD first-live-run verification: check the first real Action log for the "DEBUG polar cardio-load" line to confirm response shape (bare list vs dict wrapper, and which key), then confirm the Load row and Recovery cross-reference render real values live (check-first: a blank Load row before the first successful fetch+build is expected — it doesn't render until cl.strain exists).
+- Confirm evidence category #7 (strain:tolerance) eventually gets selected live (needs data first — same "just time" status as sleep-score category #5).
+- GitHub Pages deployment failures: confirm they stop recurring once manual triggers are spaced out (§2 troubleshooting order).
+- Sleep-score evidence category: waiting on sleep-tracking accumulation (4/14 nights). No action, just time.
+- Update Polar Portal's registered redirect URI to ricocousin.github.io/FF_Dashboard/ — not urgent.
+- Optional: extend the strength HR overlay to check Polar's exercise list (/v3/exercises) for finer-sampled auto-detected-session HR (needs plausibility filtering, §5b).
+- Weighted/ruck runs: decide exclude vs tagged-and-counted once the FR970 Rucking profile is actually in use (§3).
+- Log a second strength_tests.csv entry for any exercise to activate and verify evidence category #10.
+- Clarify Box Jump test protocol (height recorded, rep count not).
+- Broader ground-truth re-verification post-dedup-fix: the specific duplicate cases are confirmed collapsed, but a full dashboard-vs-Strava/Garmin comparison at the original July 4 rigor hasn't been redone.
+- Verify fetch_status.json freshness scoring against a real failed-fetch day (logic in place, never observed against a genuine failure).
+- LT chart zone-row dot separator: one final visual glance at the live LT card to close out (a screenshot suggested a stray middle-dot between pace and HR text; frontend-only).
+
+CONTEXT LENGTH MANAGEMENT (standing maintenance rule for this document): resolved incidents get compressed into §8 lessons + a §9 one-liner — full narratives do not accumulate. Completed features get their operative facts placed in the relevant section (§2-§7) and at most one §9 line; no dedicated sections for small finished changes. On every update, actively look for content to prune or merge, not just append — the July 2026 restructure (from ~10k words of accreted narrative to this form) is the precedent. Status markers (see STATUS VOCABULARY) must be kept current: when something moves from BUILT, UNVERIFIED to CONFIRMED LIVE, update the marker and delete any now-redundant caveats.

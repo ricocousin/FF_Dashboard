@@ -1,59 +1,55 @@
 {
-  "last_updated": "2026-07-09 22:04 UTC",
-  "headline": "The aerobic-efficiency trend holds as volume plateaus, with strength frequency doubling into a genuinely durable base a month out from St. Olavsleden.",
-  "confidence_pct": 92,
+  "last_updated": "2026-07-10 18:10 UTC",
+  "headline": "Two easy, low-HR days follow the week's hard tempo \u2014 recovery is being taken, and easy-run HR keeps trending down.",
+  "confidence_pct": 94,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
-    "LT reading 6d old",
+    "LT reading 7d old",
     "HR data on 8/8 recent runs",
-    "Sleep tracked 7/14 nights",
+    "Sleep tracked 8/14 nights",
     "Steps tracked 7/7 days",
     "Data fetch up to date",
     "Multiple data sources active in last 3 days"
   ],
-  "confidence_attention": "Sleep tracked 7/14 nights",
-  "summary": "The picture continues to point in one direction: your engine is settling. Comparable easy efforts keep landing at lower heart rates, and this week's short easy runs sat right in that lower band without any sign of drift. This isn't a single good session anymore \u2014 it's a consistent, weeks-long pattern that now reads as a real efficiency gain rather than day-to-day variance.\n\nWhat's more notable today is that your strength frequency has doubled versus the prior block while running volume has held essentially flat and Zone 2 time has stayed high. That combination \u2014 maintained aerobic time on feet plus meaningfully more strength work \u2014 is exactly the durability profile a self-supported, pack-loaded, multi-day crossing rewards. You're building resilience without inflating running load, which is the sustainable version of getting ready.\n\nWith the crossing now roughly a month out, the base looks broad rather than sharp, and that suits the demand. The one gap worth naming honestly is specificity: the recent runs remain flat and pack-free, so the aerobic and strength gains haven't yet been translated into the exact terrain and load you'll face.",
+  "confidence_attention": "Sleep tracked 8/14 nights",
+  "summary": "The two most recent runs sit clearly in easy territory \u2014 relaxed paces, low heart rates, modest loads \u2014 which reads as deliberate recovery after the sharper tempo effort earlier in the week. That contrast is exactly what you want to see: the ability to run genuinely easy when the session calls for it, rather than grinding every day at the same moderate intensity. The lower easy-run HR on comparable efforts continues the aerobic-efficiency trend that's been holding for a couple of weeks now, so nothing here suggests fatigue accumulating.\n\nVolume is essentially flat block-on-block, which at four weeks out from a nine-day self-supported crossing is a reasonable place to be \u2014 the base is durable and strength frequency has stepped up rather than eased. The gap that remains is specificity: the running is still general aerobic work, without the pack-loading, back-to-back durability, or sustained climbing that the border-mountain section will demand. That's the thing worth converting base into over the next few weeks, not more raw mileage.",
   "watch_items": [
-    "Whether pack-loaded or back-to-back sessions start appearing to bridge the gap between general base and the specific demand of the crossing.",
-    "Whether per-run elevation begins climbing to rehearse the sustained up- and downhill of the border mountain section.",
-    "Whether the doubled strength frequency is held or deliberately eased as event-specific durability work takes priority.",
-    "The sleep signal has been erratic across tracked nights \u2014 worth watching whether it stabilises as volume and strain hold steady."
+    "Whether the next quality session returns at a controlled HR, confirming these two easy days did their recovery job.",
+    "Whether pack-loaded or back-to-back running starts appearing, given the crossing's self-supported demands are now inside a month.",
+    "Whether per-run elevation begins climbing to rehearse the sustained up- and downhill of the border section.",
+    "Sleep has stayed erratic across tracked nights \u2014 worth watching whether it steadies as the event approaches, since accumulated recovery will matter more once specific durability work ramps."
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 Strength consistency: 8 sessions vs 4 prior 4wk",
+      "text": "\u25b2 Strength consistency: 7 sessions vs 4 prior 4wk",
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 142 bpm vs 155 bpm prior period (comparable-effort runs, 10 vs 7 runs)",
+      "text": "\u25bc Easy-run HR averaging 142 bpm vs 155 bpm prior period (comparable-effort runs, 8 vs 7 runs)",
       "priority": "High"
     },
     {
-      "text": "\u25b2 4-week volume 144 km vs 133 km prior block (+8%)",
+      "text": "\u25ac 21-week running streak (best: 21 wks)",
       "priority": "Medium"
     },
     {
-      "text": "\u25b2 Zone 2: 258 min vs 180-240 min/week target (143% of minimum); grey zone (Z3+Z4): 1.5%",
-      "priority": "Low"
-    },
-    {
-      "text": "\u25ac Strain:tolerance ratio 0.93 (MAINTAINING) (strain 72, tolerance 77); sleep averaging 7h37m over the same period",
+      "text": "\u25bc 4-week volume 126 km vs 133 km prior block (-5%)",
       "priority": "Low"
     }
   ],
   "insights": [
-    "The picture continues to point in one direction: your engine is settling. Comparable easy efforts keep landing at lower heart rates, and this week's short easy runs sat right in that lower band without any sign of drift. This isn't a single good session anymore \u2014 it's a consistent, weeks-long pattern that now reads as a real efficiency gain rather than day-to-day variance.\n\nWhat's more notable today is that your strength frequency has doubled versus the prior block while running volume has held essentially flat and Zone 2 time has stayed high. That combination \u2014 maintained aerobic time on feet plus meaningfully more strength work \u2014 is exactly the durability profile a self-supported, pack-loaded, multi-day crossing rewards. You're building resilience without inflating running load, which is the sustainable version of getting ready.\n\nWith the crossing now roughly a month out, the base looks broad rather than sharp, and that suits the demand. The one gap worth naming honestly is specificity: the recent runs remain flat and pack-free, so the aerobic and strength gains haven't yet been translated into the exact terrain and load you'll face."
+    "The two most recent runs sit clearly in easy territory \u2014 relaxed paces, low heart rates, modest loads \u2014 which reads as deliberate recovery after the sharper tempo effort earlier in the week. That contrast is exactly what you want to see: the ability to run genuinely easy when the session calls for it, rather than grinding every day at the same moderate intensity. The lower easy-run HR on comparable efforts continues the aerobic-efficiency trend that's been holding for a couple of weeks now, so nothing here suggests fatigue accumulating.\n\nVolume is essentially flat block-on-block, which at four weeks out from a nine-day self-supported crossing is a reasonable place to be \u2014 the base is durable and strength frequency has stepped up rather than eased. The gap that remains is specificity: the running is still general aerobic work, without the pack-loading, back-to-back durability, or sustained climbing that the border-mountain section will demand. That's the thing worth converting base into over the next few weeks, not more raw mileage."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 5371,
-    "output_tokens": 612,
-    "cost_usd": 0.042155,
-    "cost_dkk": 0.29087,
-    "date": "2026-07-09"
+    "input_tokens": 5448,
+    "output_tokens": 587,
+    "cost_usd": 0.041915,
+    "cost_dkk": 0.28921,
+    "date": "2026-07-10"
   },
-  "usage_mtd_usd": 0.18473,
-  "usage_mtd_dkk": 1.2747,
-  "usage_ytd_usd": 0.18473,
-  "usage_ytd_dkk": 1.2747
+  "usage_mtd_usd": 0.22665,
+  "usage_mtd_dkk": 1.5639,
+  "usage_ytd_usd": 0.22665,
+  "usage_ytd_dkk": 1.5639
 }

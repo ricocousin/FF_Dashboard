@@ -106,6 +106,8 @@
     .card { background: var(--surface); border: 1px solid var(--border); padding: 1.5rem; }
     .card-title { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
     .card-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .card-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; gap: 1rem; }
+    .card-title-row .card-title { margin-bottom: 0; flex: 1; }
     .efforts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1px; background: var(--border); }
     .effort { background: var(--surface); padding: 1rem 1.25rem; }
     .effort-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 0.3rem; }
@@ -133,6 +135,26 @@
     .loading { text-align: center; padding: 4rem 2rem; font-family: var(--font-mono); color: var(--text-dim); font-size: 12px; letter-spacing: 0.1em; }
     .pulse { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 1.2s ease-in-out infinite; margin-right: 0.5rem; vertical-align: middle; }
     @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.6); } }
+
+    /* ── Zone-time card ─────────────────────────────────────────────────── */
+    .zt-toggle { display: flex; gap: 0.4rem; }
+    .zt-toggle button { background: var(--border); border: none; color: var(--text-dim); padding: 0.4rem 0.75rem; border-radius: 4px; cursor: pointer; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+    .zt-toggle button:hover { color: var(--text-hi); }
+    .zt-toggle button.active { background: var(--accent); color: #0d0d0f; font-weight: 700; }
+    .zt-stack { display: flex; width: 100%; height: 22px; border-radius: 4px; overflow: hidden; background: var(--muted); }
+    .zt-stack-seg { height: 100%; }
+    .zt-legend { display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; margin: 0.75rem 0 1.25rem; }
+    .zt-legend-item { display: flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); }
+    .zt-legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+    .zt-goals { display: flex; flex-direction: column; gap: 0.9rem; }
+    .zt-goal-label { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); margin-bottom: 0.3rem; }
+    .zt-goal-label b { color: var(--text-hi); font-weight: 500; }
+    .zt-empty { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+
+    /* ── Strength HR / Garmin-vs-Polar card ─────────────────────────────── */
+    .hr-subcard-title { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 0.5rem; }
+    .hr-subcard { margin-bottom: 1.75rem; }
+    .hr-subcard:last-child { margin-bottom: 0; }
   </style>
 </head>
 <body>
@@ -154,6 +176,11 @@ function fmtDuration(timeStr) { if (!timeStr) return '—'; const parts = timeSt
 function arrowFor(qual, delta) { if (qual === 'Stable' || qual === null || qual === undefined) return '▬'; if (qual === 'Increased') return '▲'; if (qual === 'Decreased') return '▼'; return delta > 0 ? '▲' : delta < 0 ? '▼' : '▬'; }
 Chart.defaults.color = '#6b6b78'; Chart.defaults.borderColor = '#1f1f24'; Chart.defaults.font.family = "'DM Mono', monospace";
 function chartOpts(extra = {}) { return { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1, titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 10 } }, scales: { x: { grid: { color: '#1f1f24' }, ticks: { maxRotation: 0 } }, y: { grid: { color: '#1f1f24' } } }, ...extra }; }
+
+// Zone colors — match the LT card's _calc_zones() palette exactly, so a
+// zone reads the same color everywhere on the dashboard.
+const ZONE_COLORS = { Z1: '#4a9eff', Z2: '#7bc67e', Z3: '#e8ff5a', Z4: '#ff9f40', Z5: '#ff6b35' };
+const ZONE_LABELS = { Z1: 'Z1 Easy', Z2: 'Z2 Aerobic', Z3: 'Z3 Tempo', Z4: 'Z4 LTHR', Z5: 'Z5 Hard' };
 
 async function init() {
   const fileStatus = {};
@@ -241,10 +268,6 @@ async function init() {
   const recoveryDeltaHtml = deltaBadge(rc.delta_week_vs_month, rc.qual, v => `${fmtHrs(v)} vs mo avg`);
   const recoveryQualHtml = qualLine(rc.qual, 'month average');
 
-  // Cross-reference: shown alongside Recovery's "avg/week" tile, not merged
-  // into it — own units (ratio is unitless, sleep is minutes/score), just
-  // placed side by side per the athlete's request that strain/tolerance and
-  // recovery be "independent but referenced together."
   const cardioCrossRefHtml = (cl.ratio !== null && cl.ratio !== undefined)
     ? `<br><span class="cross-ref" style="color:var(--load)">Strain:tolerance ${cl.ratio.toFixed(2)}${cl.status ? ' · ' + escapeHtml(cl.status) : ''}</span>`
     : '';
@@ -258,14 +281,6 @@ async function init() {
   };
   const recoveryRow = (rc.week.mins !== null || rc.month.mins !== null || rc.year.mins !== null) ? `<div class="overview-full"><div class="overview-label recovery" style="grid-column:1/-1">Recovery</div>${recoveryTile('Avg / week', rc.week, recoveryDeltaHtml, recoveryQualHtml, cardioCrossRefHtml)}${recoveryTile('Avg / month', rc.month)}${recoveryTile('Avg / year', rc.year)}</div>` : '';
 
-  // ── Load (Polar Cardio Load / Training Load Pro) ──────────────────────────
-  // Own row, own color, own units — strain/tolerance are an arbitrary
-  // TRIMP-derived load score, not minutes or a 0-100 score, so this is
-  // deliberately NOT folded into the Recovery tiles above. The Recovery row
-  // does carry a small cross-reference line pointing at the ratio (see
-  // cardioCrossRefHtml), so the two sit next to each other without becoming
-  // one metric. Muscle Load is not shown — not available on this hardware
-  // (requires a running/cycling power sensor Polar doesn't have here).
   const loadRow = (cl.strain !== null && cl.strain !== undefined) ? `<div class="overview-full"><div class="overview-label load" style="grid-column:1/-1">Load (Polar Cardio)</div><div class="stat"><span class="stat-label">Strain (7d avg)</span><span class="stat-value" style="color:var(--load)">${fmt(cl.strain, 0)}</span><span class="stat-sub">load units</span></div><div class="stat"><span class="stat-label">Tolerance (28d avg)</span><span class="stat-value" style="color:var(--load)">${fmt(cl.tolerance, 0)}</span><span class="stat-sub">load units</span></div><div class="stat"><span class="stat-label">Strain:tolerance ratio</span><span class="stat-value" style="color:var(--load)">${cl.ratio !== null && cl.ratio !== undefined ? cl.ratio.toFixed(2) : '—'}</span><span class="stat-sub">${cl.status ? escapeHtml(cl.status) : '—'}${cl.latest_date ? ' · ' + cl.latest_date : ''}</span></div></div>` : '';
 
   const overviewBlock = document.createElement('div');
@@ -340,6 +355,78 @@ async function init() {
     ltCard.innerHTML = `<div class="card-title">Lactate threshold</div><p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">No valid LT reading yet — recalibrating after a data fix.</p>`;
   }
   app.appendChild(ltCard);
+
+  // ── Time in zone card (rolling / last-completed-week toggle) ─────────────────
+  // Restored — this card (and the HR comparison card below) went missing
+  // from a prior index.html rewrite; both read fields build_dashboard.py
+  // has been computing into dashboard_metrics.json the whole time
+  // (m.zone_time, m.strength_hr_overlay, m.run_hr_source_comparison), so no
+  // backend work was needed, only rebuilding the frontend that reads them.
+  const ztCard = document.createElement('div');
+  ztCard.className = 'card';
+  ztCard.id = 'ztCard';
+  app.appendChild(ztCard);
+
+  let ztWindow = (m.zone_time && m.zone_time.default_view) || 'rolling';
+
+  function renderZoneTimeCard() {
+    const zt = m.zone_time ? m.zone_time[ztWindow] : null;
+    const toggleHtml = `<div class="zt-toggle">
+      <button data-win="rolling" class="${ztWindow === 'rolling' ? 'active' : ''}">This week</button>
+      <button data-win="last_completed_week" class="${ztWindow === 'last_completed_week' ? 'active' : ''}">Last completed week</button>
+    </div>`;
+
+    if (!zt || !zt.has_lt_data || !zt.total_minutes) {
+      ztCard.innerHTML = `<div class="card-title-row"><div class="card-title">Time in zone</div>${toggleHtml}</div><p class="zt-empty">${!zt || !zt.has_lt_data ? 'No LT reading yet — zone boundaries need a valid LT to compute.' : 'No zone data for this window yet.'}</p>`;
+    } else {
+      const zones = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5'];
+      const stackHtml = zones.map(z => {
+        const pct = zt.total_minutes ? (zt.minutes[z] / zt.total_minutes) * 100 : 0;
+        return pct > 0 ? `<div class="zt-stack-seg" style="width:${pct}%;background:${ZONE_COLORS[z]}"></div>` : '';
+      }).join('');
+      const legendHtml = zones.map(z => `<div class="zt-legend-item"><span class="zt-legend-dot" style="background:${ZONE_COLORS[z]}"></span>${ZONE_LABELS[z]}: ${fmt(zt.minutes[z], 0)} min</div>`).join('');
+
+      const goalBar = (label, currentLabel, pctOfTarget, color, isCeiling) => {
+        const cappedPct = Math.min(pctOfTarget ?? 0, 100);
+        const overflowCls = isCeiling && (pctOfTarget ?? 0) > 100 ? ' overflow' : '';
+        return `<div><div class="zt-goal-label"><span>${label}</span><b>${currentLabel}</b></div><div class="year-bar-track"><div class="year-bar-fill${overflowCls}" style="width:${cappedPct}%;background:${color}"></div></div></div>`;
+      };
+
+      const goalsHtml = `<div class="zt-goals">
+        ${goalBar('Z1 (target ' + zt.z1_target_min_pct + '-' + zt.z1_target_max_pct + '%)', (zt.z1_pct ?? 0) + '%', zt.z1_vs_target_pct, ZONE_COLORS.Z1, false)}
+        ${goalBar('Z2 (target ' + zt.z2_target_min + '-' + zt.z2_target_max + ' min)', fmt(zt.minutes.Z2, 0) + ' min', zt.z2_vs_target_pct, ZONE_COLORS.Z2, false)}
+        ${goalBar('Grey zone Z3+Z4 (ceiling ' + zt.grey_ceiling_pct + '%)', (zt.grey_pct ?? 0) + '%', zt.grey_vs_ceiling_pct, '#ff9f40', true)}
+        ${goalBar('Z5 (target ' + zt.z5_target_min_pct + '-' + zt.z5_target_max_pct + '%)', (zt.z5_pct ?? 0) + '%', zt.z5_vs_target_pct, ZONE_COLORS.Z5, false)}
+      </div>`;
+
+      const sessionsNote = `<div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:1rem">${zt.running_sessions_with_data} run(s), ${zt.strength_sessions_with_data} strength session(s) with zone data this window · ${zt.window_start} to ${zt.window_end}</div>`;
+
+      ztCard.innerHTML = `<div class="card-title-row"><div class="card-title">Time in zone</div>${toggleHtml}</div><div class="zt-stack">${stackHtml}</div><div class="zt-legend">${legendHtml}</div>${goalsHtml}${sessionsNote}`;
+    }
+
+    ztCard.querySelectorAll('.zt-toggle button').forEach(btn => {
+      btn.onclick = () => { ztWindow = btn.dataset.win; renderZoneTimeCard(); };
+    });
+  }
+  renderZoneTimeCard();
+
+  // ── Strength session HR / Garmin-vs-Polar comparison card ────────────────────
+  const hrCard = document.createElement('div');
+  hrCard.className = 'card';
+  const overlay = Array.isArray(m.strength_hr_overlay) ? [...m.strength_hr_overlay].reverse() : [];
+  const hrCompare = Array.isArray(m.run_hr_source_comparison) ? [...m.run_hr_source_comparison].reverse() : [];
+  hrCard.innerHTML = `
+    <div class="card-title">Strength session HR / Garmin vs Polar</div>
+    <div class="hr-subcard">
+      <div class="hr-subcard-title">Strength session HR (Polar Loop overlay)</div>
+      ${overlay.length ? `<div class="chart-wrap" style="height:160px"><canvas id="strengthHrChart"></canvas></div>` : `<p class="zt-empty">No overlapping strength-session HR data yet.</p>`}
+    </div>
+    <div class="hr-subcard">
+      <div class="hr-subcard-title">Run HR: Garmin (H10) vs Polar (wrist) — same run windows</div>
+      ${hrCompare.length ? `<div class="chart-wrap" style="height:160px"><canvas id="hrCompareChart"></canvas></div>` : `<p class="zt-empty">No matched run windows yet.</p>`}
+    </div>
+  `;
+  app.appendChild(hrCard);
 
   // ── Activity calendar ─────────────────────────────────────────────────────────
   const calCard = document.createElement('div');
@@ -446,6 +533,34 @@ async function init() {
     if ($('ltChart') && m.lt.trend) {
       const t = m.lt.trend;
       new Chart($('ltChart'), { type: 'line', data: { labels: t.labels, datasets: [ { data: t.pace_sec, borderColor: 'rgba(232,255,90,0.8)', backgroundColor: 'rgba(232,255,90,0.06)', pointBackgroundColor: 'rgba(232,255,90,0.9)', pointRadius: 4, tension: 0.3, fill: true }, { data: t.trend_sec, borderColor: 'rgba(255,107,53,0.7)', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0 } ] }, options: { ...chartOpts(), scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, y: { reverse: true, grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', callback: v => secToPace(v) } } }, plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` LT pace: ${secToPace(ctx.parsed.y)} /km` : ` Trend` } } } } });
+    }
+
+    if ($('strengthHrChart') && overlay.length) {
+      new Chart($('strengthHrChart'), {
+        type: 'line',
+        data: {
+          labels: overlay.map(o => o.date.slice(5)),
+          datasets: [
+            { label: 'Avg HR', data: overlay.map(o => o.avg_hr), borderColor: 'rgba(74,158,255,0.9)', backgroundColor: 'rgba(74,158,255,0.1)', pointRadius: 3, borderWidth: 2, tension: 0.3, fill: true },
+            { label: 'Max HR', data: overlay.map(o => o.max_hr), borderColor: 'rgba(255,107,53,0.7)', borderWidth: 1.5, borderDash: [4,3], pointRadius: 2, fill: false, tension: 0.3 }
+          ]
+        },
+        options: { ...chartOpts(), plugins: { legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} bpm (${overlay[ctx.dataIndex].name}, ${overlay[ctx.dataIndex].sample_count} samples)` } } } }
+      });
+    }
+
+    if ($('hrCompareChart') && hrCompare.length) {
+      new Chart($('hrCompareChart'), {
+        type: 'line',
+        data: {
+          labels: hrCompare.map(c => c.date.slice(5)),
+          datasets: [
+            { label: 'Garmin (H10)', data: hrCompare.map(c => c.garmin_avg_hr), borderColor: 'rgba(232,255,90,0.9)', backgroundColor: 'rgba(232,255,90,0.08)', pointRadius: 3, borderWidth: 2, tension: 0.3, fill: false },
+            { label: 'Polar (wrist)', data: hrCompare.map(c => c.polar_avg_hr), borderColor: 'rgba(244,114,182,0.9)', backgroundColor: 'rgba(244,114,182,0.08)', pointRadius: 3, borderWidth: 2, tension: 0.3, fill: false }
+          ]
+        },
+        options: { ...chartOpts(), plugins: { legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} bpm` } } } }
+      });
     }
   });
 }

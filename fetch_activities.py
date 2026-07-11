@@ -189,6 +189,76 @@ def _parse_iso8601_duration_to_seconds(dur_str):
     s = float(m.group(3) or 0)
     return h * 3600 + mi * 60 + s
 
+_polar_exercise_offset_debug_printed = False
+
+def _polar_exercise_local_datetime(ex):
+    """CONFIRMED NECESSARY (July 2026, via live debug output): Polar's
+    exercise start_time is UTC, not local — the real response also
+    includes a start_time_utc_offset field that fetch_activities.py
+    originally ignored, causing every exercise's time-of-day to be off by
+    the local UTC offset (2h during CEST) and silently producing ZERO
+    matches against Garmin's local-time run windows on a real run (9
+    exercises returned, 0 matched). Fixed by resolving local date +
+    seconds-of-day here, applying the offset, before any overlap check.
+
+    Offset UNIT defensively detected rather than trusted: Polar's docs
+    describe start_time_utc_offset in minutes, but per this codebase's
+    standing rule (never trust a third-party API's declared field
+    semantics without confirming live — see the Garmin metricsIndex
+    lesson), a magnitude check treats anything with |value| >= 1000 as
+    already being seconds instead. Prints the raw offset value and unit
+    decision once so the first real Action log after this fix confirms
+    or corrects the assumption."""
+    global _polar_exercise_offset_debug_printed
+    start_utc = ex.get("start_time", "")
+    offset_raw = ex.get("start_time_utc_offset")
+    if not start_utc:
+        return None, None
+    try:
+        date_part, time_part = start_utc.split("T")
+        time_part = time_part.split("+")[0].split("Z")[0]
+        h, m, s = time_part.split(":")
+        s = s.split(".")[0]
+        utc_seconds_of_day = int(h) * 3600 + int(m) * 60 + int(s)
+    except Exception:
+        return None, None
+
+    offset_seconds = 0
+    unit_guess = "none"
+    if offset_raw is not None:
+        try:
+            offset_val = int(offset_raw)
+            if abs(offset_val) >= 1000:
+                offset_seconds = offset_val
+                unit_guess = "seconds"
+            else:
+                offset_seconds = offset_val * 60
+                unit_guess = "minutes (x60)"
+        except (ValueError, TypeError):
+            offset_seconds = 0
+            unit_guess = "unparseable, treated as 0"
+
+    if not _polar_exercise_offset_debug_printed:
+        print(f"DEBUG polar exercise UTC offset: raw start_time_utc_offset={offset_raw!r} -> assumed unit: {unit_guess} -> offset_seconds={offset_seconds}")
+        _polar_exercise_offset_debug_printed = True
+
+    local_seconds_total = utc_seconds_of_day + offset_seconds
+    day_shift = 0
+    if local_seconds_total < 0:
+        local_seconds_total += 86400
+        day_shift = -1
+    elif local_seconds_total >= 86400:
+        local_seconds_total -= 86400
+        day_shift = 1
+
+    try:
+        base_date = datetime.strptime(date_part, "%Y-%m-%d").date()
+        local_date = (base_date + timedelta(days=day_shift)).isoformat()
+    except Exception:
+        return None, None
+
+    return local_date, local_seconds_total
+
 # ── Build run records ─────────────────────────────────────────────────────────
 run_fieldnames = [
     "date", "name", "type", "distance_km", "moving_time", "elapsed_time",
@@ -695,11 +765,10 @@ if polar_token:
             if not ex_id or not ex_start:
                 continue
 
-            ex_date = ex_start[:10]
-            ex_start_sec = _iso_time_to_seconds_of_day(ex_start)
+            ex_date, ex_start_sec = _polar_exercise_local_datetime(ex)
             ex_duration_sec = _parse_iso8601_duration_to_seconds(ex_duration_raw)
-            if ex_start_sec is None or ex_duration_sec is None:
-                print(f"Polar exercise {ex_id}: could not parse start_time/duration ({ex_start!r}, {ex_duration_raw!r}) — skipping")
+            if ex_date is None or ex_start_sec is None or ex_duration_sec is None:
+                print(f"Polar exercise {ex_id}: could not parse start_time/offset/duration ({ex_start!r}, {ex_duration_raw!r}) — skipping")
                 continue
             ex_end_sec = ex_start_sec + ex_duration_sec
 
@@ -713,7 +782,8 @@ if polar_token:
             sport = ex.get("sport", ex.get("detailed_sport_info", ""))
 
             matched_run = None
-            for r in runs_by_date.get(ex_date, []):
+            same_date_runs = runs_by_date.get(ex_date, [])
+            for r in same_date_runs:
                 run_start = r.get("start_time", "")
                 if not run_start:
                     continue
@@ -727,7 +797,18 @@ if polar_token:
                     break
 
             if not matched_run:
-                continue  # no genuine Garmin run overlaps — likely a false-positive auto-detection
+                # Diagnostic for the case where a Garmin run exists that
+                # SAME DATE but the windows still didn't overlap — if the
+                # UTC offset fix above is still wrong, this makes the
+                # actual gap visible in the next log instead of just "0
+                # matched" again with no way to tell why.
+                if same_date_runs:
+                    for r in same_date_runs:
+                        rs = _iso_time_to_seconds_of_day(r.get("start_time", ""))
+                        rd = _duration_str_to_seconds(r.get("moving_time", ""))
+                        if rs is not None and rd is not None:
+                            print(f"Polar exercise {ex_id} NEAR MISS: exercise window {ex_start_sec}-{ex_end_sec}s vs Garmin run {r.get('activity_id')} window {rs}-{rs+rd}s on {ex_date} (gap: {min(abs(ex_start_sec - (rs+rd)), abs(rs - ex_end_sec))}s)")
+                continue  # no genuine Garmin run overlaps — likely a false-positive auto-detection, OR still a timezone/parsing mismatch — see NEAR MISS lines above if any
 
             existing_exercises[ex_id] = {
                 "date": ex_date,

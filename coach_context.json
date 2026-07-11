@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-07-05",
-      "headline": "Aerobic efficiency gain is now confirmed by HR data \u2014 easy-run HR has dropped meaningfully on comparable efforts.",
-      "watch_items": [
-        "Watch whether the easy-run HR improvement continues to hold as weekly volume stays elevated \u2014 a plateau here would be informative.",
-        "Monitor strength session frequency over the coming weeks to catch any further drift while running load is high.",
-        "Zone 2 volume is sitting well below the target range \u2014 worth noticing whether this is a structural gap or a consequence of how sessions are being distributed.",
-        "Sleep data is too sparse to draw conclusions yet, but as tracking accumulates, watch for any pattern between low-score nights and next-day aerobic HR."
-      ]
-    },
-    {
       "date": "2026-07-06",
       "headline": "Volume has ramped nearly 60% over the prior block while easy-run HR sits meaningfully lower on comparable efforts.",
       "watch_items": [
@@ -47,6 +37,16 @@
         "Whether pack-loaded or back-to-back running starts appearing, given the crossing's self-supported demands are now inside a month.",
         "Whether per-run elevation begins climbing to rehearse the sustained up- and downhill of the border section.",
         "Sleep has stayed erratic across tracked nights \u2014 worth watching whether it steadies as the event approaches, since accumulated recovery will matter more once specific durability work ramps."
+      ]
+    },
+    {
+      "date": "2026-07-11",
+      "headline": "Volume has held flat while easy-run HR keeps trending down, so the \"detraining\" strain flag misreads a genuine consolidation.",
+      "watch_items": [
+        "Whether the strain ratio recovers on its own once the next quality or longer session lands, confirming it was a rolling-average artefact rather than a real dip.",
+        "Whether pack-loaded or back-to-back running finally appears, given the self-supported crossing is now inside a month and hasn't yet shown up in the data.",
+        "Whether per-run elevation starts climbing to rehearse the sustained border-section terrain.",
+        "Sleep remains erratic across tracked nights, with one long night offsetting several short ones \u2014 worth watching whether it steadies as specific durability work ramps."
       ]
     }
   ]

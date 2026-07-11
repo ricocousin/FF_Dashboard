@@ -1,31 +1,31 @@
 {
-  "last_updated": "2026-07-10 18:10 UTC",
-  "headline": "Two easy, low-HR days follow the week's hard tempo \u2014 recovery is being taken, and easy-run HR keeps trending down.",
-  "confidence_pct": 94,
+  "last_updated": "2026-07-11 20:20 UTC",
+  "headline": "Volume has held flat while easy-run HR keeps trending down, so the \"detraining\" strain flag misreads a genuine consolidation.",
+  "confidence_pct": 95,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
-    "LT reading 7d old",
+    "LT reading 8d old",
     "HR data on 8/8 recent runs",
-    "Sleep tracked 8/14 nights",
+    "Sleep tracked 9/14 nights",
     "Steps tracked 7/7 days",
     "Data fetch up to date",
     "Multiple data sources active in last 3 days"
   ],
-  "confidence_attention": "Sleep tracked 8/14 nights",
-  "summary": "The two most recent runs sit clearly in easy territory \u2014 relaxed paces, low heart rates, modest loads \u2014 which reads as deliberate recovery after the sharper tempo effort earlier in the week. That contrast is exactly what you want to see: the ability to run genuinely easy when the session calls for it, rather than grinding every day at the same moderate intensity. The lower easy-run HR on comparable efforts continues the aerobic-efficiency trend that's been holding for a couple of weeks now, so nothing here suggests fatigue accumulating.\n\nVolume is essentially flat block-on-block, which at four weeks out from a nine-day self-supported crossing is a reasonable place to be \u2014 the base is durable and strength frequency has stepped up rather than eased. The gap that remains is specificity: the running is still general aerobic work, without the pack-loading, back-to-back durability, or sustained climbing that the border-mountain section will demand. That's the thing worth converting base into over the next few weeks, not more raw mileage.",
+  "confidence_attention": "Sleep tracked 9/14 nights",
+  "summary": "Your load hasn't dropped in any way that matters \u2014 four-week volume is essentially level with the prior block and the running streak is intact at its all-time best. What has changed is efficiency: easy-run HR continues to sit meaningfully lower on comparable efforts than it did a period ago. That's the through-line from the past week, and it holds again today. Read the two figures together and the picture is a base that's getting more economical at the same workload, not one that's shrinking.\n\nThe Polar strain:tolerance ratio flags DETRAINING, but treat that as one unvalidated signal in its own unit rather than a verdict. Your 28-day tolerance is anchored by a higher-load stretch that included last week's hard tempo, so a quieter recent seven days will mechanically pull the ratio down \u2014 that's arithmetic, not lost fitness, especially set against flat volume and a strength block that's doubled its frequency. If it kept falling while HR started drifting up and pace slipped, that would be worth acting on. None of that is happening.\n\nStrength is the quietly notable line: nine sessions in four weeks is a real step up in frequency, and it's holding alongside the running rather than displacing it. With the crossing under a month out, that durability base is well-timed.",
   "watch_items": [
-    "Whether the next quality session returns at a controlled HR, confirming these two easy days did their recovery job.",
-    "Whether pack-loaded or back-to-back running starts appearing, given the crossing's self-supported demands are now inside a month.",
-    "Whether per-run elevation begins climbing to rehearse the sustained up- and downhill of the border section.",
-    "Sleep has stayed erratic across tracked nights \u2014 worth watching whether it steadies as the event approaches, since accumulated recovery will matter more once specific durability work ramps."
+    "Whether the strain ratio recovers on its own once the next quality or longer session lands, confirming it was a rolling-average artefact rather than a real dip.",
+    "Whether pack-loaded or back-to-back running finally appears, given the self-supported crossing is now inside a month and hasn't yet shown up in the data.",
+    "Whether per-run elevation starts climbing to rehearse the sustained border-section terrain.",
+    "Sleep remains erratic across tracked nights, with one long night offsetting several short ones \u2014 worth watching whether it steadies as specific durability work ramps."
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 Strength consistency: 7 sessions vs 4 prior 4wk",
+      "text": "\u25b2 Strength consistency: 9 sessions vs 4 prior 4wk",
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 142 bpm vs 155 bpm prior period (comparable-effort runs, 8 vs 7 runs)",
+      "text": "\u25bc Easy-run HR averaging 143 bpm vs 153 bpm prior period (comparable-effort runs, 9 vs 8 runs)",
       "priority": "High"
     },
     {
@@ -33,23 +33,27 @@
       "priority": "Medium"
     },
     {
-      "text": "\u25bc 4-week volume 126 km vs 133 km prior block (-5%)",
+      "text": "\u25bc Strain:tolerance ratio 0.73 (DETRAINING) (strain 45, tolerance 61); sleep averaging 7h40m over the same period",
+      "priority": "Medium"
+    },
+    {
+      "text": "\u25b2 4-week volume 140 km vs 137 km prior block (+2%)",
       "priority": "Low"
     }
   ],
   "insights": [
-    "The two most recent runs sit clearly in easy territory \u2014 relaxed paces, low heart rates, modest loads \u2014 which reads as deliberate recovery after the sharper tempo effort earlier in the week. That contrast is exactly what you want to see: the ability to run genuinely easy when the session calls for it, rather than grinding every day at the same moderate intensity. The lower easy-run HR on comparable efforts continues the aerobic-efficiency trend that's been holding for a couple of weeks now, so nothing here suggests fatigue accumulating.\n\nVolume is essentially flat block-on-block, which at four weeks out from a nine-day self-supported crossing is a reasonable place to be \u2014 the base is durable and strength frequency has stepped up rather than eased. The gap that remains is specificity: the running is still general aerobic work, without the pack-loading, back-to-back durability, or sustained climbing that the border-mountain section will demand. That's the thing worth converting base into over the next few weeks, not more raw mileage."
+    "Your load hasn't dropped in any way that matters \u2014 four-week volume is essentially level with the prior block and the running streak is intact at its all-time best. What has changed is efficiency: easy-run HR continues to sit meaningfully lower on comparable efforts than it did a period ago. That's the through-line from the past week, and it holds again today. Read the two figures together and the picture is a base that's getting more economical at the same workload, not one that's shrinking.\n\nThe Polar strain:tolerance ratio flags DETRAINING, but treat that as one unvalidated signal in its own unit rather than a verdict. Your 28-day tolerance is anchored by a higher-load stretch that included last week's hard tempo, so a quieter recent seven days will mechanically pull the ratio down \u2014 that's arithmetic, not lost fitness, especially set against flat volume and a strength block that's doubled its frequency. If it kept falling while HR started drifting up and pace slipped, that would be worth acting on. None of that is happening.\n\nStrength is the quietly notable line: nine sessions in four weeks is a real step up in frequency, and it's holding alongside the running rather than displacing it. With the crossing under a month out, that durability base is well-timed."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 5448,
-    "output_tokens": 587,
-    "cost_usd": 0.041915,
-    "cost_dkk": 0.28921,
-    "date": "2026-07-10"
+    "input_tokens": 5527,
+    "output_tokens": 671,
+    "cost_usd": 0.04441,
+    "cost_dkk": 0.30643,
+    "date": "2026-07-11"
   },
-  "usage_mtd_usd": 0.22665,
-  "usage_mtd_dkk": 1.5639,
-  "usage_ytd_usd": 0.22665,
-  "usage_ytd_dkk": 1.5639
+  "usage_mtd_usd": 0.27106,
+  "usage_mtd_dkk": 1.8703,
+  "usage_ytd_usd": 0.27106,
+  "usage_ytd_dkk": 1.8703
 }

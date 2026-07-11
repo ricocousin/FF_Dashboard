@@ -13,6 +13,7 @@ never prevent today's raw activity data from being fetched and committed.
 import os
 import csv
 import json
+import re
 import urllib.request
 import urllib.error
 from datetime import datetime, timedelta
@@ -145,6 +146,48 @@ def lt_speed_to_pace(speed_value):
 def is_valid_lt_record(record):
     pace_sec = parse_pace_sec(record.get("lt_pace"))
     return pace_sec is not None and 120 < pace_sec < 900
+
+def _iso_time_to_seconds_of_day(iso_str):
+    """Extracts seconds-since-midnight from an ISO 8601 timestamp, tolerant
+    of a trailing 'Z', a timezone offset, or fractional seconds. Used to
+    check whether a Polar exercise window overlaps a Garmin run window on
+    the same date — only the time-of-day matters, not the date itself
+    (that's matched separately via the date string)."""
+    try:
+        time_part = iso_str.split("T")[1]
+        time_part = time_part.split("+")[0].split("Z")[0]
+        h, m, s = time_part.split(":")
+        s = s.split(".")[0]
+        return int(h) * 3600 + int(m) * 60 + int(s)
+    except Exception:
+        return None
+
+def _duration_str_to_seconds(dur_str):
+    """Parses this codebase's own HH:MM:SS duration format (used in
+    runs.csv's moving_time) — NOT the same format as Polar's exercise
+    duration field, see _parse_iso8601_duration_to_seconds below."""
+    try:
+        h, m, s = (int(p) for p in dur_str.split(":"))
+        return h * 3600 + m * 60 + s
+    except Exception:
+        return None
+
+def _parse_iso8601_duration_to_seconds(dur_str):
+    """Polar's exercise 'duration' field is typically ISO 8601 duration
+    format (e.g. 'PT48M48S'), NOT HH:MM:SS — a different shape from every
+    other duration field in this codebase, and unconfirmed against a real
+    payload until the first live fetch. Parsed defensively: returns None
+    (never raises, never guesses) if the string doesn't match, so a caller
+    can skip that entry and log why rather than silently miscomputing."""
+    if not dur_str:
+        return None
+    m = re.match(r'^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?$', str(dur_str))
+    if not m or not any(m.groups()):
+        return None
+    h = int(m.group(1) or 0)
+    mi = int(m.group(2) or 0)
+    s = float(m.group(3) or 0)
+    return h * 3600 + mi * 60 + s
 
 # ── Build run records ─────────────────────────────────────────────────────────
 run_fieldnames = [
@@ -581,6 +624,133 @@ if polar_token:
         print(f"Polar cardio load: {new_cl_count} day(s) fetched, {len(existing_cardio_load)} total in polar_cardio_load.csv")
     except Exception as e:
         print(f"Polar cardio load fetch skipped: {e}")
+
+    # ── Polar exercise list (via /v3/exercises) — diagnostic/comparison only ─
+    # NEW (July 2026). Built to answer two open questions raised by the
+    # athlete rather than assumed: (1) does Polar's continuous HR actually
+    # have a gap during a Loop-auto-detected exercise window, with finer
+    # per-exercise data living only here? (2) is this exercise-level HR any
+    # closer to Garmin/H10 than continuous HR is, or does it share the same
+    # optical-wrist under-read problem already confirmed for continuous HR?
+    # NOT wired into any fallback logic yet — this round only fetches,
+    # plausibility-filters, and stores for a three-way comparison in
+    # build_dashboard.py. A Garmin-HR-dropout fallback (e.g. a dead H10
+    # battery mid-run) is a separate, later step once real comparison data
+    # shows which Polar source is actually more reliable.
+    #
+    # RESPONSE SHAPE NOT CONFIRMED LIVE: parsing handles both a bare list
+    # and a dict-wrapped list (wrapper keys tried: "exercises", "data"),
+    # same defensive pattern as every other new Polar endpoint in this file,
+    # and prints the raw top-level shape + first entry's keys once so the
+    # first real Action log can confirm/correct this.
+    #
+    # PLAUSIBILITY FILTER (per the known Loop auto-detection false-positive
+    # caution elsewhere in this file — e.g. an 8-10 min bike commute once
+    # logged as a ~20-25 min "activity"): an exercise entry is only kept if
+    # its [start, start+duration] window genuinely overlaps a real Garmin
+    # run's window on the same date. This throws out false-positive
+    # auto-detections for free, without a separate duration/heuristic filter.
+    try:
+        existing_exercises = {}
+        if os.path.exists("polar_exercises.csv"):
+            with open("polar_exercises.csv", "r", encoding="utf-8") as f:
+                for row in csv.DictReader(f):
+                    if row.get("polar_exercise_id"):
+                        existing_exercises[row["polar_exercise_id"]] = row
+
+        ex_resp = polar_get("https://www.polaraccesslink.com/v3/exercises")
+
+        if isinstance(ex_resp, list):
+            ex_list = ex_resp
+        elif isinstance(ex_resp, dict):
+            ex_list = None
+            for k in ("exercises", "data"):
+                if isinstance(ex_resp.get(k), list):
+                    ex_list = ex_resp[k]
+                    break
+            if ex_list is None:
+                print(f"DEBUG polar exercises: dict response, no recognized list key. Top-level keys: {list(ex_resp.keys())}")
+                ex_list = []
+        else:
+            ex_list = []
+
+        if ex_list:
+            print(f"DEBUG polar exercises: {len(ex_list)} entr(ies) returned, sample keys: {list(ex_list[0].keys())}")
+
+        # Date -> [Garmin run rows] index for overlap matching, built from
+        # the full current run history (not just this fetch's new rows) —
+        # Polar's ~90-day lookback can plausibly cover runs from before
+        # today's incremental/full-refresh window.
+        runs_by_date = {}
+        for r in all_run_rows:
+            d = r.get("date")
+            if d:
+                runs_by_date.setdefault(d, []).append(r)
+
+        new_exercise_count = 0
+        for ex in ex_list:
+            ex_id = str(ex.get("id", "") or ex.get("exercise_id", ""))
+            ex_start = ex.get("start_time", "")
+            ex_duration_raw = ex.get("duration", "")
+            if not ex_id or not ex_start:
+                continue
+
+            ex_date = ex_start[:10]
+            ex_start_sec = _iso_time_to_seconds_of_day(ex_start)
+            ex_duration_sec = _parse_iso8601_duration_to_seconds(ex_duration_raw)
+            if ex_start_sec is None or ex_duration_sec is None:
+                print(f"Polar exercise {ex_id}: could not parse start_time/duration ({ex_start!r}, {ex_duration_raw!r}) — skipping")
+                continue
+            ex_end_sec = ex_start_sec + ex_duration_sec
+
+            # Defensive HR extraction — Polar exercise summaries commonly
+            # nest this under "heart_rate": {"average", "maximum"}, but
+            # unconfirmed against a real payload; falls back to top-level
+            # average_heart_rate/maximum_heart_rate if present instead.
+            hr_block = ex.get("heart_rate") or {}
+            avg_hr = hr_block.get("average", ex.get("average_heart_rate"))
+            max_hr = hr_block.get("maximum", ex.get("maximum_heart_rate"))
+            sport = ex.get("sport", ex.get("detailed_sport_info", ""))
+
+            matched_run = None
+            for r in runs_by_date.get(ex_date, []):
+                run_start = r.get("start_time", "")
+                if not run_start:
+                    continue
+                run_start_sec = _iso_time_to_seconds_of_day(run_start)
+                run_dur_sec = _duration_str_to_seconds(r.get("moving_time", ""))
+                if run_start_sec is None or run_dur_sec is None:
+                    continue
+                run_end_sec = run_start_sec + run_dur_sec
+                if ex_start_sec <= run_end_sec and run_start_sec <= ex_end_sec:
+                    matched_run = r
+                    break
+
+            if not matched_run:
+                continue  # no genuine Garmin run overlaps — likely a false-positive auto-detection
+
+            existing_exercises[ex_id] = {
+                "date": ex_date,
+                "garmin_activity_id": matched_run.get("activity_id", ""),
+                "polar_exercise_id": ex_id,
+                "start_time": ex_start,
+                "duration_min": round(ex_duration_sec / 60, 1),
+                "sport": sport,
+                "avg_hr": avg_hr if avg_hr is not None else "",
+                "max_hr": max_hr if max_hr is not None else ""
+            }
+            new_exercise_count += 1
+
+        ex_fieldnames = ["date", "garmin_activity_id", "polar_exercise_id", "start_time", "duration_min", "sport", "avg_hr", "max_hr"]
+        with open("polar_exercises.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=ex_fieldnames, extrasaction="ignore")
+            writer.writeheader()
+            for eid in sorted(existing_exercises.keys(), key=lambda k: existing_exercises[k].get("date", ""), reverse=True):
+                writer.writerow(existing_exercises[eid])
+
+        print(f"Polar exercises: {new_exercise_count} matched to a real Garmin run this fetch, {len(existing_exercises)} total in polar_exercises.csv")
+    except Exception as e:
+        print(f"Polar exercises fetch skipped: {e}")
 else:
     print("POLAR_ACCESS_TOKEN not set — skipping Polar fetch")
 

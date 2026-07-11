@@ -477,7 +477,7 @@ async function init() {
       ${overlay.length ? `<div class="chart-wrap" style="height:160px"><canvas id="strengthHrChart"></canvas></div>` : `<p class="zt-empty">No overlapping strength-session HR data yet.</p>`}
     </div>
     <div class="hr-subcard">
-      <div class="hr-subcard-title">Run HR: Garmin (H10) vs Polar (wrist) — same run windows</div>
+      <div class="hr-subcard-title">Run HR: Garmin (H10) vs Polar (wrist continuous vs exercise entry) — same run windows</div>
       ${hrCompare.length ? `<div class="chart-wrap" style="height:160px"><canvas id="hrCompareChart"></canvas></div>` : `<p class="zt-empty">No matched run windows yet.</p>`}
     </div>
   `;
@@ -610,17 +610,29 @@ async function init() {
     }
 
     if ($('hrCompareChart') && hrCompare.length) {
+      const hasExerciseData = hrCompare.some(c => c.polar_exercise_avg_hr !== null && c.polar_exercise_avg_hr !== undefined);
       new Chart($('hrCompareChart'), {
         type: 'line',
         data: {
           labels: hrCompare.map(c => c.date.slice(5)),
           datasets: [
             { label: 'Garmin (H10)', data: hrCompare.map(c => c.garmin_avg_hr), borderColor: 'rgba(232,255,90,0.9)', backgroundColor: 'rgba(232,255,90,0.08)', pointRadius: 3, borderWidth: 2, tension: 0.3, fill: false },
-            { label: 'Polar (wrist)', data: hrCompare.map(c => c.polar_avg_hr), borderColor: 'rgba(244,114,182,0.9)', backgroundColor: 'rgba(244,114,182,0.08)', pointRadius: 3, borderWidth: 2, tension: 0.3, fill: false }
+            { label: 'Polar (wrist, continuous)', data: hrCompare.map(c => c.polar_avg_hr), borderColor: 'rgba(244,114,182,0.9)', backgroundColor: 'rgba(244,114,182,0.08)', pointRadius: 3, borderWidth: 2, tension: 0.3, fill: false },
+            ...(hasExerciseData ? [{ label: 'Polar (exercise entry)', data: hrCompare.map(c => c.polar_exercise_avg_hr), borderColor: 'rgba(74,222,128,0.9)', backgroundColor: 'rgba(74,222,128,0.08)', pointRadius: 3, borderWidth: 2, borderDash: [3,2], tension: 0.3, fill: false }] : [])
           ]
         },
-        options: { ...chartOpts(), plugins: { legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} bpm` } } } }
+        options: { ...chartOpts(), plugins: { legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ctx.parsed.y === null ? undefined : ` ${ctx.dataset.label}: ${ctx.parsed.y} bpm` } } } }
       });
+      // Diagnostic note — answers the athlete's own two open questions
+      // directly on the dashboard rather than only in a data file: how
+      // many matched runs have exercise-entry data vs continuous-only.
+      const exerciseCount = hrCompare.filter(c => c.polar_exercise_avg_hr !== null && c.polar_exercise_avg_hr !== undefined).length;
+      const continuousOnlyCount = hrCompare.filter(c => (c.polar_avg_hr !== null && c.polar_avg_hr !== undefined) && (c.polar_exercise_avg_hr === null || c.polar_exercise_avg_hr === undefined)).length;
+      const exerciseOnlyCount = hrCompare.filter(c => (c.polar_exercise_avg_hr !== null && c.polar_exercise_avg_hr !== undefined) && (c.polar_avg_hr === null || c.polar_avg_hr === undefined)).length;
+      const noteEl = document.createElement('div');
+      noteEl.style.cssText = 'font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:0.5rem';
+      noteEl.textContent = `${exerciseCount} run(s) with exercise-entry HR · ${continuousOnlyCount} continuous-only · ${exerciseOnlyCount} exercise-only (diagnostic — no fallback logic applied yet)`;
+      $('hrCompareChart').closest('.hr-subcard').appendChild(noteEl);
     }
   });
 }

@@ -136,6 +136,7 @@ def check_layer2_feature_markers(html_src):
         (r'ztCard|zt-toggle', "Time in zone card + rolling/last-completed-week toggle"),
         (r'strengthHrChart', "Strength session HR overlay chart"),
         (r'hrCompareChart', "Garmin vs Polar run HR comparison chart"),
+        (r'polar_exercise_avg_hr', "Three-way HR comparison: Polar exercise-entry line"),
         (r'<svg[^>]*>.*?</svg>', "Banner monogram SVG in the header"),
         (r'changeLine', "Single-sentence overview change function (changeLine)"),
         (r'ltChart', "LT pace trend chart"),

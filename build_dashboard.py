@@ -66,6 +66,17 @@ for row in _load_csv("run_hr_samples.csv"):
 for _aid in _run_hr_by_activity:
     _run_hr_by_activity[_aid].sort(key=lambda x: x[0])
 
+# polar_exercises.csv — written by fetch_activities.py via GET /v3/exercises,
+# already plausibility-filtered to only entries overlapping a real Garmin
+# run window (see that file for the full matching logic). Indexed by
+# garmin_activity_id for the three-way HR comparison below. Diagnostic
+# only at this stage — not used for any fallback/backfill logic yet.
+_polar_exercise_by_garmin_id = {}
+for row in _load_csv("polar_exercises.csv"):
+    gid = row.get("garmin_activity_id")
+    if gid:
+        _polar_exercise_by_garmin_id[gid] = row
+
 # ── Helpers ────────────────────────────────────────────────────────────────
 def sec_to_pace(seconds):
     if not seconds or seconds <= 0:
@@ -845,7 +856,16 @@ zone_time = {
     "default_view": "rolling"
 }
 
-# ── Garmin-vs-Polar run HR comparison ─────────────────────────────────────────
+# ── Garmin-vs-Polar run HR comparison (now three-way) ─────────────────────────
+# Extended July 2026 to also include Polar's exercise-list HR (when a
+# matched entry exists in polar_exercises.csv) alongside the original
+# Garmin-vs-continuous-HR comparison. Purpose is diagnostic, per the
+# athlete's own two questions: does continuous HR actually gap during a
+# Loop-auto-detected exercise window (a run can now show continuous-HR
+# data as None while still having exercise data, or vice versa — both are
+# informative), and is exercise-level HR any closer to Garmin/H10 than
+# continuous HR is. NOT used for any fallback/backfill decision yet — this
+# is comparison data only, to be looked at before that decision is made.
 def build_run_hr_source_comparison():
     comparison = []
     for r in all_run_rows:
@@ -853,41 +873,55 @@ def build_run_hr_source_comparison():
         if not start_time_full or not r.get("avg_hr"):
             continue
         run_date = start_time_full[:10]
-        if run_date not in _polar_hr_by_date:
-            continue
-        try:
-            run_start_sec = _time_to_seconds(start_time_full[11:19])
-            moving_parts = (r.get("moving_time") or "").split(":")
-            if len(moving_parts) != 3:
-                continue
-            h, m, s = (int(p) for p in moving_parts)
-            duration_sec = h * 3600 + m * 60 + s
-        except Exception:
-            continue
-        if run_start_sec is None or duration_sec <= 0:
-            continue
-        run_end_sec = run_start_sec + duration_sec
 
-        matched_polar_hrs = []
-        for (t, hr) in _polar_hr_by_date[run_date]:
-            t_sec = _time_to_seconds(t)
-            if t_sec is not None and run_start_sec <= t_sec <= run_end_sec:
-                try:
-                    matched_polar_hrs.append(float(hr))
-                except (ValueError, TypeError):
-                    continue
+        polar_continuous_avg = None
+        polar_sample_count = 0
+        if run_date in _polar_hr_by_date:
+            try:
+                run_start_sec = _time_to_seconds(start_time_full[11:19])
+                moving_parts = (r.get("moving_time") or "").split(":")
+                if len(moving_parts) == 3:
+                    h, m, s = (int(p) for p in moving_parts)
+                    duration_sec = h * 3600 + m * 60 + s
+                    if run_start_sec is not None and duration_sec > 0:
+                        run_end_sec = run_start_sec + duration_sec
+                        matched_polar_hrs = []
+                        for (t, hr) in _polar_hr_by_date[run_date]:
+                            t_sec = _time_to_seconds(t)
+                            if t_sec is not None and run_start_sec <= t_sec <= run_end_sec:
+                                try:
+                                    matched_polar_hrs.append(float(hr))
+                                except (ValueError, TypeError):
+                                    continue
+                        if matched_polar_hrs:
+                            polar_continuous_avg = sum(matched_polar_hrs) / len(matched_polar_hrs)
+                            polar_sample_count = len(matched_polar_hrs)
+            except Exception:
+                pass
 
-        if matched_polar_hrs:
-            garmin_avg = float(r["avg_hr"])
-            polar_avg = sum(matched_polar_hrs) / len(matched_polar_hrs)
-            comparison.append({
-                "date": run_date,
-                "name": r.get("name", ""),
-                "garmin_avg_hr": round(garmin_avg),
-                "polar_avg_hr": round(polar_avg),
-                "diff": round(polar_avg - garmin_avg, 1),
-                "polar_sample_count": len(matched_polar_hrs)
-            })
+        polar_exercise_avg = None
+        exercise_row = _polar_exercise_by_garmin_id.get(r.get("activity_id", ""))
+        if exercise_row and exercise_row.get("avg_hr"):
+            try:
+                polar_exercise_avg = float(exercise_row["avg_hr"])
+            except (ValueError, TypeError):
+                polar_exercise_avg = None
+
+        if polar_continuous_avg is None and polar_exercise_avg is None:
+            continue  # nothing from either Polar source to compare against this run
+
+        garmin_avg = float(r["avg_hr"])
+        entry = {
+            "date": run_date,
+            "name": r.get("name", ""),
+            "garmin_avg_hr": round(garmin_avg),
+            "polar_avg_hr": round(polar_continuous_avg) if polar_continuous_avg is not None else None,
+            "diff": round(polar_continuous_avg - garmin_avg, 1) if polar_continuous_avg is not None else None,
+            "polar_sample_count": polar_sample_count,
+            "polar_exercise_avg_hr": round(polar_exercise_avg) if polar_exercise_avg is not None else None,
+            "polar_exercise_diff": round(polar_exercise_avg - garmin_avg, 1) if polar_exercise_avg is not None else None
+        }
+        comparison.append(entry)
     return sorted(comparison, key=lambda x: x["date"], reverse=True)
 
 run_hr_source_comparison = build_run_hr_source_comparison()

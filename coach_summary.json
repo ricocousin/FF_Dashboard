@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-11 20:20 UTC",
-  "headline": "Volume has held flat while easy-run HR keeps trending down, so the \"detraining\" strain flag misreads a genuine consolidation.",
+  "last_updated": "2026-07-11 22:06 UTC",
+  "headline": "Today's 21 km at easy pace and low effort marks the return of longer time-on-feet the strain flag was waiting for.",
   "confidence_pct": 95,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,12 +12,12 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 9/14 nights",
-  "summary": "Your load hasn't dropped in any way that matters \u2014 four-week volume is essentially level with the prior block and the running streak is intact at its all-time best. What has changed is efficiency: easy-run HR continues to sit meaningfully lower on comparable efforts than it did a period ago. That's the through-line from the past week, and it holds again today. Read the two figures together and the picture is a base that's getting more economical at the same workload, not one that's shrinking.\n\nThe Polar strain:tolerance ratio flags DETRAINING, but treat that as one unvalidated signal in its own unit rather than a verdict. Your 28-day tolerance is anchored by a higher-load stretch that included last week's hard tempo, so a quieter recent seven days will mechanically pull the ratio down \u2014 that's arithmetic, not lost fitness, especially set against flat volume and a strength block that's doubled its frequency. If it kept falling while HR started drifting up and pace slipped, that would be worth acting on. None of that is happening.\n\nStrength is the quietly notable line: nine sessions in four weeks is a real step up in frequency, and it's holding alongside the running rather than displacing it. With the crossing under a month out, that durability base is well-timed.",
+  "summary": "The long-ish easy run you'd been missing has now landed. Today's effort was your longest single run in this block and sat at a controlled, low ATE \u2014 exactly the kind of session that should quietly resolve the strain-ratio artefact flagged earlier in the week. This is durability work reappearing, not a spike, and it slots cleanly into the consolidation you've been running.\n\nYour aerobic picture continues to hold together well: easy-run HR remains meaningfully lower than the prior comparable period, strength frequency has doubled into this block, and volume is climbing modestly rather than lurching. That combination is the signature of a base that's deepening rather than plateauing. Nothing here suggests you've lost anything \u2014 the lower recent intensity is a deliberate feature of the last week, not evidence of decline.\n\nWhat's still absent is anything that rehearses the specific demands of St. Olavsleden \u2014 pack load, back-to-back running, and sustained climbing. Today's elevation was modest and this was a single run, not a double day. With the crossing now well inside a month, that gap is the thing worth closing, though the general aerobic and structural readiness you're carrying is a strong platform to build it on.",
   "watch_items": [
-    "Whether the strain ratio recovers on its own once the next quality or longer session lands, confirming it was a rolling-average artefact rather than a real dip.",
-    "Whether pack-loaded or back-to-back running finally appears, given the self-supported crossing is now inside a month and hasn't yet shown up in the data.",
+    "Whether this longer run pulls the strain ratio back up, confirming the earlier dip was a rolling-average artefact.",
+    "Whether pack-loaded or back-to-back running finally appears, given how close the self-supported crossing now is.",
     "Whether per-run elevation starts climbing to rehearse the sustained border-section terrain.",
-    "Sleep remains erratic across tracked nights, with one long night offsetting several short ones \u2014 worth watching whether it steadies as specific durability work ramps."
+    "Whether the recent erratic nights settle into something steadier now that longer sessions are re-entering the week."
   ],
   "evidence_items": [
     {
@@ -25,35 +25,31 @@
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 143 bpm vs 153 bpm prior period (comparable-effort runs, 9 vs 8 runs)",
+      "text": "\u25bc Easy-run HR averaging 142 bpm vs 153 bpm prior period (comparable-effort runs, 8 vs 8 runs)",
       "priority": "High"
     },
     {
-      "text": "\u25ac 21-week running streak (best: 21 wks)",
+      "text": "\u25b2 4-week volume 152 km vs 137 km prior block (+11%)",
       "priority": "Medium"
     },
     {
-      "text": "\u25bc Strain:tolerance ratio 0.73 (DETRAINING) (strain 45, tolerance 61); sleep averaging 7h40m over the same period",
-      "priority": "Medium"
-    },
-    {
-      "text": "\u25b2 4-week volume 140 km vs 137 km prior block (+2%)",
+      "text": "\u25b2 Zone 2: 187 min vs 180-240 min/week target (104% of minimum); grey zone (Z3+Z4): 1.6%",
       "priority": "Low"
     }
   ],
   "insights": [
-    "Your load hasn't dropped in any way that matters \u2014 four-week volume is essentially level with the prior block and the running streak is intact at its all-time best. What has changed is efficiency: easy-run HR continues to sit meaningfully lower on comparable efforts than it did a period ago. That's the through-line from the past week, and it holds again today. Read the two figures together and the picture is a base that's getting more economical at the same workload, not one that's shrinking.\n\nThe Polar strain:tolerance ratio flags DETRAINING, but treat that as one unvalidated signal in its own unit rather than a verdict. Your 28-day tolerance is anchored by a higher-load stretch that included last week's hard tempo, so a quieter recent seven days will mechanically pull the ratio down \u2014 that's arithmetic, not lost fitness, especially set against flat volume and a strength block that's doubled its frequency. If it kept falling while HR started drifting up and pace slipped, that would be worth acting on. None of that is happening.\n\nStrength is the quietly notable line: nine sessions in four weeks is a real step up in frequency, and it's holding alongside the running rather than displacing it. With the crossing under a month out, that durability base is well-timed."
+    "The long-ish easy run you'd been missing has now landed. Today's effort was your longest single run in this block and sat at a controlled, low ATE \u2014 exactly the kind of session that should quietly resolve the strain-ratio artefact flagged earlier in the week. This is durability work reappearing, not a spike, and it slots cleanly into the consolidation you've been running.\n\nYour aerobic picture continues to hold together well: easy-run HR remains meaningfully lower than the prior comparable period, strength frequency has doubled into this block, and volume is climbing modestly rather than lurching. That combination is the signature of a base that's deepening rather than plateauing. Nothing here suggests you've lost anything \u2014 the lower recent intensity is a deliberate feature of the last week, not evidence of decline.\n\nWhat's still absent is anything that rehearses the specific demands of St. Olavsleden \u2014 pack load, back-to-back running, and sustained climbing. Today's elevation was modest and this was a single run, not a double day. With the crossing now well inside a month, that gap is the thing worth closing, though the general aerobic and structural readiness you're carrying is a strong platform to build it on."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 5527,
-    "output_tokens": 671,
-    "cost_usd": 0.04441,
-    "cost_dkk": 0.30643,
+    "input_tokens": 5537,
+    "output_tokens": 604,
+    "cost_usd": 0.042785,
+    "cost_dkk": 0.29522,
     "date": "2026-07-11"
   },
-  "usage_mtd_usd": 0.27106,
-  "usage_mtd_dkk": 1.8703,
-  "usage_ytd_usd": 0.27106,
-  "usage_ytd_dkk": 1.8703
+  "usage_mtd_usd": 0.26943,
+  "usage_mtd_dkk": 1.8591,
+  "usage_ytd_usd": 0.26943,
+  "usage_ytd_dkk": 1.8591
 }

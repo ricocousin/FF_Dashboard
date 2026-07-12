@@ -762,12 +762,26 @@ if polar_token:
                     sport = ex.get("sport", "")
 
                     matched_run = None
-                    for r in runs_by_date.get(ex_date, []):
+                    same_date_runs = runs_by_date.get(ex_date, [])
+                    for r in same_date_runs:
                         run_start = r.get("start_time", "")
                         if not run_start:
                             continue
                         run_start_sec = _iso_time_to_seconds_of_day(run_start)
-                        run_dur_sec = _duration_str_to_seconds(r.get("moving_time", ""))
+                        # Using elapsed_time here deliberately, NOT moving_time —
+                        # moving_time excludes paused/stopped time, but Polar's
+                        # Loop tracks real wall-clock exercise windows. A run
+                        # with a real mid-run stop (auto-pause or manual pause
+                        # on the watch) would have moving_time understate the
+                        # true window end, potentially missing genuine overlap
+                        # with a Loop-detected session that started after the
+                        # stop. elapsed_time (wall-clock, pause-inclusive) is
+                        # the correct basis for matching against Polar's
+                        # windows specifically — this is intentionally
+                        # DIFFERENT from moving_time's use elsewhere in this
+                        # codebase (pace/effort calculations), where excluding
+                        # pauses is the correct choice instead.
+                        run_dur_sec = _duration_str_to_seconds(r.get("elapsed_time", ""))
                         if run_start_sec is None or run_dur_sec is None:
                             continue
                         run_end_sec = run_start_sec + run_dur_sec
@@ -776,7 +790,16 @@ if polar_token:
                             break
 
                     if not matched_run:
-                        continue  # no genuine Garmin run overlaps — likely a non-run Loop-detected session
+                        # Diagnostic for the case where a Garmin run exists on
+                        # the SAME DATE but the windows still didn't overlap —
+                        # makes the actual gap visible in the log instead of
+                        # just "0 matched" with no way to tell why.
+                        for r in same_date_runs:
+                            rs = _iso_time_to_seconds_of_day(r.get("start_time", ""))
+                            rd = _duration_str_to_seconds(r.get("elapsed_time", ""))
+                            if rs is not None and rd is not None:
+                                print(f"Polar exercise {ex_id} NEAR MISS: exercise window {ex_start_sec}-{ex_end_sec}s vs Garmin run {r.get('activity_id')} window {rs}-{rs+rd}s on {ex_date} (gap: {min(abs(ex_start_sec - (rs+rd)), abs(rs - ex_end_sec))}s)")
+                        continue  # no genuine Garmin run overlaps — likely a non-run Loop-detected session, or see NEAR MISS above
 
                     existing_exercises[ex_id] = {
                         "date": ex_date,

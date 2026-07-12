@@ -1,55 +1,55 @@
 {
-  "last_updated": "2026-07-11 22:06 UTC",
-  "headline": "Today's 21 km at easy pace and low effort marks the return of longer time-on-feet the strain flag was waiting for.",
-  "confidence_pct": 95,
+  "last_updated": "2026-07-12 08:37 UTC",
+  "headline": "Today's 12 km at a brisker pace sat mid-range on HR, following yesterday's long run \u2014 solid back-to-back durability.",
+  "confidence_pct": 92,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
-    "LT reading 8d old",
-    "HR data on 8/8 recent runs",
-    "Sleep tracked 9/14 nights",
+    "LT reading 9d old",
+    "HR data on 6/8 recent runs",
+    "Sleep tracked 10/14 nights",
     "Steps tracked 7/7 days",
     "Data fetch up to date",
     "Multiple data sources active in last 3 days"
   ],
-  "confidence_attention": "Sleep tracked 9/14 nights",
-  "summary": "The long-ish easy run you'd been missing has now landed. Today's effort was your longest single run in this block and sat at a controlled, low ATE \u2014 exactly the kind of session that should quietly resolve the strain-ratio artefact flagged earlier in the week. This is durability work reappearing, not a spike, and it slots cleanly into the consolidation you've been running.\n\nYour aerobic picture continues to hold together well: easy-run HR remains meaningfully lower than the prior comparable period, strength frequency has doubled into this block, and volume is climbing modestly rather than lurching. That combination is the signature of a base that's deepening rather than plateauing. Nothing here suggests you've lost anything \u2014 the lower recent intensity is a deliberate feature of the last week, not evidence of decline.\n\nWhat's still absent is anything that rehearses the specific demands of St. Olavsleden \u2014 pack load, back-to-back running, and sustained climbing. Today's elevation was modest and this was a single run, not a double day. With the crossing now well inside a month, that gap is the thing worth closing, though the general aerobic and structural readiness you're carrying is a strong platform to build it on.",
+  "confidence_attention": "Sleep tracked 10/14 nights",
+  "summary": "You've effectively strung together a longer easy run and a quicker, moderate-effort session on consecutive days \u2014 the first genuine back-to-back pairing to appear recently, which is exactly the durability quality that matters most a month out from a self-supported multi-day crossing. Today ran nearly a full minute per km quicker than yesterday's 21 km, yet the heart rate stayed comfortably below your threshold, so this reads as controlled aerobic work rather than a hard session stacked onto fatigue.\n\nThe medium-term picture stays intact: volume has stepped up meaningfully over the prior block, strength frequency has more than doubled, and your comparable-effort easy-run HR continues to run lower than the previous period. That combination \u2014 more load, more strength, lower cost per easy effort \u2014 is consistent with genuine aerobic consolidation rather than accumulating strain, and the strain:tolerance ratio sitting in a maintaining band supports that.\n\nOne thing the recent weeks still haven't rehearsed for St. Olavsleden specifically: pack-loaded running and sustained climbing. Yesterday's elevation was the best of the block, but the terrain you're heading into asks for more of both. Worth noting, not correcting mid-week.",
   "watch_items": [
-    "Whether this longer run pulls the strain ratio back up, confirming the earlier dip was a rolling-average artefact.",
-    "Whether pack-loaded or back-to-back running finally appears, given how close the self-supported crossing now is.",
-    "Whether per-run elevation starts climbing to rehearse the sustained border-section terrain.",
-    "Whether the recent erratic nights settle into something steadier now that longer sessions are re-entering the week."
+    "Whether pack-loaded running finally enters the week, since the self-supported crossing is now close.",
+    "Whether per-run elevation keeps building toward the sustained border-section climb.",
+    "Whether short-sleep nights like the most recent one cluster or stay isolated as longer sessions re-enter the schedule.",
+    "Whether this back-to-back pairing repeats, confirming durability rather than a one-off."
   ],
   "evidence_items": [
+    {
+      "text": "\u25b2 4-week volume 178 km vs 126 km prior block (+41%)",
+      "priority": "High"
+    },
     {
       "text": "\u25b2 Strength consistency: 9 sessions vs 4 prior 4wk",
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 142 bpm vs 153 bpm prior period (comparable-effort runs, 8 vs 8 runs)",
+      "text": "\u25bc Easy-run HR averaging 144 bpm vs 153 bpm prior period (comparable-effort runs, 8 vs 8 runs)",
       "priority": "High"
     },
     {
-      "text": "\u25b2 4-week volume 152 km vs 137 km prior block (+11%)",
-      "priority": "Medium"
-    },
-    {
-      "text": "\u25b2 Zone 2: 187 min vs 180-240 min/week target (104% of minimum); grey zone (Z3+Z4): 1.6%",
+      "text": "\u25ac Strain:tolerance ratio 0.93 (MAINTAINING) (strain 78, tolerance 84); sleep averaging 7h27m over the same period",
       "priority": "Low"
     }
   ],
   "insights": [
-    "The long-ish easy run you'd been missing has now landed. Today's effort was your longest single run in this block and sat at a controlled, low ATE \u2014 exactly the kind of session that should quietly resolve the strain-ratio artefact flagged earlier in the week. This is durability work reappearing, not a spike, and it slots cleanly into the consolidation you've been running.\n\nYour aerobic picture continues to hold together well: easy-run HR remains meaningfully lower than the prior comparable period, strength frequency has doubled into this block, and volume is climbing modestly rather than lurching. That combination is the signature of a base that's deepening rather than plateauing. Nothing here suggests you've lost anything \u2014 the lower recent intensity is a deliberate feature of the last week, not evidence of decline.\n\nWhat's still absent is anything that rehearses the specific demands of St. Olavsleden \u2014 pack load, back-to-back running, and sustained climbing. Today's elevation was modest and this was a single run, not a double day. With the crossing now well inside a month, that gap is the thing worth closing, though the general aerobic and structural readiness you're carrying is a strong platform to build it on."
+    "You've effectively strung together a longer easy run and a quicker, moderate-effort session on consecutive days \u2014 the first genuine back-to-back pairing to appear recently, which is exactly the durability quality that matters most a month out from a self-supported multi-day crossing. Today ran nearly a full minute per km quicker than yesterday's 21 km, yet the heart rate stayed comfortably below your threshold, so this reads as controlled aerobic work rather than a hard session stacked onto fatigue.\n\nThe medium-term picture stays intact: volume has stepped up meaningfully over the prior block, strength frequency has more than doubled, and your comparable-effort easy-run HR continues to run lower than the previous period. That combination \u2014 more load, more strength, lower cost per easy effort \u2014 is consistent with genuine aerobic consolidation rather than accumulating strain, and the strain:tolerance ratio sitting in a maintaining band supports that.\n\nOne thing the recent weeks still haven't rehearsed for St. Olavsleden specifically: pack-loaded running and sustained climbing. Yesterday's elevation was the best of the block, but the terrain you're heading into asks for more of both. Worth noting, not correcting mid-week."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 5537,
-    "output_tokens": 604,
-    "cost_usd": 0.042785,
-    "cost_dkk": 0.29522,
-    "date": "2026-07-11"
+    "input_tokens": 5483,
+    "output_tokens": 615,
+    "cost_usd": 0.04279,
+    "cost_dkk": 0.29525,
+    "date": "2026-07-12"
   },
-  "usage_mtd_usd": 0.26943,
-  "usage_mtd_dkk": 1.8591,
-  "usage_ytd_usd": 0.26943,
-  "usage_ytd_dkk": 1.8591
+  "usage_mtd_usd": 0.31222,
+  "usage_mtd_dkk": 2.1543,
+  "usage_ytd_usd": 0.31222,
+  "usage_ytd_dkk": 2.1543
 }

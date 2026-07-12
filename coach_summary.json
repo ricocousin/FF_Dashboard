@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-12 16:00 UTC",
-  "headline": "The four-week build tops out with strain and tolerance level, leaving the base durable rather than overreached a month from the crossing.",
+  "last_updated": "2026-07-12 16:07 UTC",
+  "headline": "A 12 km moderate run at controlled HR follows yesterday's long effort, capping a level four-week block heading into taper territory.",
   "confidence_pct": 92,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,12 +12,11 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 10/14 nights",
-  "summary": "Your recent block has closed out a genuine volume build without the fatigue markers you'd expect if you'd overreached \u2014 strain and tolerance are sitting essentially level, which tells you the added load has been absorbed rather than accumulated as debt. That's the right place to be with the crossing inside a month: capacity is up, and the body isn't behind on it.\n\nThe most useful signal continues to be aerobic efficiency. Comparable-effort easy runs are averaging lower HR than the prior period, and yesterday's long run into today's brisker follow-up produced no HR drift \u2014 back-to-back durability is holding at higher pace, not just easy pace. Strength frequency has more than doubled over the block too, so the base you're carrying into St. Olavsleden is broad rather than purely mileage-driven.\n\nNothing here suggests the need to push harder from this peak. The build has done its job; the question now is how you consolidate it into event-specific readiness rather than chasing more raw volume.",
+  "summary": "Today's run sits at a moderate pace and effort \u2014 nothing hard, and reasonable to see the day after a 21 km time-on-feet session. Nothing in it suggests fatigue accumulation; it reads as a durable base absorbing back-to-back load rather than straining under it. The strain:tolerance balance staying level confirms the four-week build topped out where it should, leaving you neither overreached nor detrained a month out from the crossing.\n\nThe through-line worth holding onto is aerobic efficiency: comparable-effort easy runs are settling at a lower HR than the prior period, and that trend has held through a block where volume rose materially and strength frequency more than doubled. That's the signal that matters more than any single session \u2014 the base is genuinely getting more economical, not just bigger.\n\nLast night's short sleep after a longer-sleep night fits the wide night-to-night swing that's been present lately. On its own it doesn't change anything; it's worth naming only because longer efforts are likely to keep coming and the swings haven't settled.",
   "watch_items": [
-    "Whether pack-loaded running enters the schedule now that the crossing is inside a month \u2014 the base is there, but the specific demand isn't yet trained.",
-    "Whether per-run climbing starts building toward sustained ascent rather than the rolling profiles seen so far.",
-    "Whether the strain:tolerance balance stays level or tips if volume is held here versus pushed further.",
-    "Whether short-sleep nights start clustering as longer efforts continue, given the wide night-to-night swing lately."
+    "Whether pack-loaded running finally enters the schedule, since the general base is ready but the specific weighted demand still isn't trained.",
+    "Whether climbing per run starts trending toward sustained ascent rather than the rolling profiles logged so far.",
+    "Whether the short-sleep nights begin clustering as longer efforts continue, rather than alternating with long-sleep nights."
   ],
   "evidence_items": [
     {
@@ -33,23 +32,27 @@
       "priority": "High"
     },
     {
+      "text": "\u25b2 Zone 2: 205 min vs 180-240 min/week target (114% of minimum); grey zone (Z3+Z4): 7.1%",
+      "priority": "Low"
+    },
+    {
       "text": "\u25ac Strain:tolerance ratio 0.99 (MAINTAINING) (strain 91, tolerance 92); sleep averaging 7h29m over the same period",
       "priority": "Low"
     }
   ],
   "insights": [
-    "Your recent block has closed out a genuine volume build without the fatigue markers you'd expect if you'd overreached \u2014 strain and tolerance are sitting essentially level, which tells you the added load has been absorbed rather than accumulated as debt. That's the right place to be with the crossing inside a month: capacity is up, and the body isn't behind on it.\n\nThe most useful signal continues to be aerobic efficiency. Comparable-effort easy runs are averaging lower HR than the prior period, and yesterday's long run into today's brisker follow-up produced no HR drift \u2014 back-to-back durability is holding at higher pace, not just easy pace. Strength frequency has more than doubled over the block too, so the base you're carrying into St. Olavsleden is broad rather than purely mileage-driven.\n\nNothing here suggests the need to push harder from this peak. The build has done its job; the question now is how you consolidate it into event-specific readiness rather than chasing more raw volume."
+    "Today's run sits at a moderate pace and effort \u2014 nothing hard, and reasonable to see the day after a 21 km time-on-feet session. Nothing in it suggests fatigue accumulation; it reads as a durable base absorbing back-to-back load rather than straining under it. The strain:tolerance balance staying level confirms the four-week build topped out where it should, leaving you neither overreached nor detrained a month out from the crossing.\n\nThe through-line worth holding onto is aerobic efficiency: comparable-effort easy runs are settling at a lower HR than the prior period, and that trend has held through a block where volume rose materially and strength frequency more than doubled. That's the signal that matters more than any single session \u2014 the base is genuinely getting more economical, not just bigger.\n\nLast night's short sleep after a longer-sleep night fits the wide night-to-night swing that's been present lately. On its own it doesn't change anything; it's worth naming only because longer efforts are likely to keep coming and the swings haven't settled."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 5476,
-    "output_tokens": 552,
-    "cost_usd": 0.04118,
-    "cost_dkk": 0.28414,
+    "input_tokens": 5494,
+    "output_tokens": 537,
+    "cost_usd": 0.040895,
+    "cost_dkk": 0.28218,
     "date": "2026-07-12"
   },
-  "usage_mtd_usd": 0.31061,
-  "usage_mtd_dkk": 2.1432,
-  "usage_ytd_usd": 0.31061,
-  "usage_ytd_dkk": 2.1432
+  "usage_mtd_usd": 0.31033,
+  "usage_mtd_dkk": 2.1413,
+  "usage_ytd_usd": 0.31033,
+  "usage_ytd_dkk": 2.1413
 }

@@ -102,13 +102,15 @@ elif status in (200, 201):
         for i, ex_url in enumerate(exercise_urls[:25]):
             print(f"\nStep 3.{i+1}: GET {ex_url}")
             status3, body3 = polar_request(ex_url, method="GET")
-            if isinstance(body3, dict):
-                print(f"  id={body3.get('id')} start_time={body3.get('start_time')} "
-                      f"start_time_utc_offset={body3.get('start_time_utc_offset')} "
-                      f"duration={body3.get('duration')} sport={body3.get('sport')} "
-                      f"upload_time={body3.get('upload_time')}")
-            else:
-                print(f"  Status: {status3}, raw: {body3}")
+            # Printing the FULL raw body this time, not cherry-picked fields —
+            # the first pass guessed underscored key names (start_time) based
+            # on the OLD bare-GET endpoint's shape, but the transaction-id/
+            # resource-uri fields above are hyphenated, suggesting the real
+            # per-exercise summary likely uses different key names entirely
+            # (e.g. start-time, not start_time). Don't guess twice — just
+            # look at everything that's actually there.
+            print(f"  Status: {status3}")
+            print(f"  Full body: {body3}")
 
         if len(exercise_urls) > 25:
             print(f"\n  ({len(exercise_urls) - 25} more exercise(s) not printed — first 25 shown)")

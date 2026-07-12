@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-12 08:37 UTC",
-  "headline": "Today's 12 km at a brisker pace sat mid-range on HR, following yesterday's long run \u2014 solid back-to-back durability.",
+  "last_updated": "2026-07-12 15:38 UTC",
+  "headline": "Back-to-back durability confirmed as the brisk 12 km follows yesterday's long run without HR drift, capping a genuine four-week volume build.",
   "confidence_pct": 92,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,16 +12,16 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 10/14 nights",
-  "summary": "You've effectively strung together a longer easy run and a quicker, moderate-effort session on consecutive days \u2014 the first genuine back-to-back pairing to appear recently, which is exactly the durability quality that matters most a month out from a self-supported multi-day crossing. Today ran nearly a full minute per km quicker than yesterday's 21 km, yet the heart rate stayed comfortably below your threshold, so this reads as controlled aerobic work rather than a hard session stacked onto fatigue.\n\nThe medium-term picture stays intact: volume has stepped up meaningfully over the prior block, strength frequency has more than doubled, and your comparable-effort easy-run HR continues to run lower than the previous period. That combination \u2014 more load, more strength, lower cost per easy effort \u2014 is consistent with genuine aerobic consolidation rather than accumulating strain, and the strain:tolerance ratio sitting in a maintaining band supports that.\n\nOne thing the recent weeks still haven't rehearsed for St. Olavsleden specifically: pack-loaded running and sustained climbing. Yesterday's elevation was the best of the block, but the terrain you're heading into asks for more of both. Worth noting, not correcting mid-week.",
+  "summary": "The pairing you saw yesterday has now repeated with intent: a longer time-on-feet effort followed by a brisker morning run, and the HR on today's faster pace sat mid-range rather than climbing under accumulated fatigue. That's the durability signal, not a one-off \u2014 exactly the quality a self-supported multi-day crossing rewards. Your recent four-week block sits well above the prior one, and unlike a spike that outruns its base, the strain:tolerance balance stayed level through it, so this is load you've absorbed rather than borrowed against.\n\nUnderneath the volume, the aerobic picture keeps trending the right way \u2014 easy-effort HR is running lower than the comparable prior period on more runs, which is the kind of within-athlete signal that matters more than any single session. Strength frequency has more than doubled versus the previous block, so the hybrid base is holding while endurance volume rises rather than one displacing the other. This is consolidation of a genuine build, not fatigue accumulation.\n\nThe one thing worth naming plainly: with the crossing now under a month out, pack-loaded running and sustained climbing still haven't clearly entered the picture. Today's elevation was modest and the long run carried more, but neither yet resembles the sustained border-section demand.",
   "watch_items": [
-    "Whether pack-loaded running finally enters the week, since the self-supported crossing is now close.",
-    "Whether per-run elevation keeps building toward the sustained border-section climb.",
-    "Whether short-sleep nights like the most recent one cluster or stay isolated as longer sessions re-enter the schedule.",
-    "Whether this back-to-back pairing repeats, confirming durability rather than a one-off."
+    "Whether pack-loaded running finally enters the schedule with the crossing now inside a month.",
+    "Whether per-run climbing builds toward the sustained mountain section rather than staying rolling.",
+    "Whether short-sleep nights cluster as longer sessions and back-to-backs continue, or stay isolated.",
+    "Whether the strain:tolerance balance holds level if volume keeps climbing from here."
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 4-week volume 178 km vs 126 km prior block (+41%)",
+      "text": "\u25b2 4-week volume 190 km vs 126 km prior block (+51%)",
       "priority": "High"
     },
     {
@@ -29,27 +29,27 @@
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 144 bpm vs 153 bpm prior period (comparable-effort runs, 8 vs 8 runs)",
+      "text": "\u25bc Easy-run HR averaging 145 bpm vs 153 bpm prior period (comparable-effort runs, 9 vs 8 runs)",
       "priority": "High"
     },
     {
-      "text": "\u25ac Strain:tolerance ratio 0.93 (MAINTAINING) (strain 78, tolerance 84); sleep averaging 7h27m over the same period",
+      "text": "\u25ac Strain:tolerance ratio 0.99 (MAINTAINING) (strain 91, tolerance 92); sleep averaging 7h29m over the same period",
       "priority": "Low"
     }
   ],
   "insights": [
-    "You've effectively strung together a longer easy run and a quicker, moderate-effort session on consecutive days \u2014 the first genuine back-to-back pairing to appear recently, which is exactly the durability quality that matters most a month out from a self-supported multi-day crossing. Today ran nearly a full minute per km quicker than yesterday's 21 km, yet the heart rate stayed comfortably below your threshold, so this reads as controlled aerobic work rather than a hard session stacked onto fatigue.\n\nThe medium-term picture stays intact: volume has stepped up meaningfully over the prior block, strength frequency has more than doubled, and your comparable-effort easy-run HR continues to run lower than the previous period. That combination \u2014 more load, more strength, lower cost per easy effort \u2014 is consistent with genuine aerobic consolidation rather than accumulating strain, and the strain:tolerance ratio sitting in a maintaining band supports that.\n\nOne thing the recent weeks still haven't rehearsed for St. Olavsleden specifically: pack-loaded running and sustained climbing. Yesterday's elevation was the best of the block, but the terrain you're heading into asks for more of both. Worth noting, not correcting mid-week."
+    "The pairing you saw yesterday has now repeated with intent: a longer time-on-feet effort followed by a brisker morning run, and the HR on today's faster pace sat mid-range rather than climbing under accumulated fatigue. That's the durability signal, not a one-off \u2014 exactly the quality a self-supported multi-day crossing rewards. Your recent four-week block sits well above the prior one, and unlike a spike that outruns its base, the strain:tolerance balance stayed level through it, so this is load you've absorbed rather than borrowed against.\n\nUnderneath the volume, the aerobic picture keeps trending the right way \u2014 easy-effort HR is running lower than the comparable prior period on more runs, which is the kind of within-athlete signal that matters more than any single session. Strength frequency has more than doubled versus the previous block, so the hybrid base is holding while endurance volume rises rather than one displacing the other. This is consolidation of a genuine build, not fatigue accumulation.\n\nThe one thing worth naming plainly: with the crossing now under a month out, pack-loaded running and sustained climbing still haven't clearly entered the picture. Today's elevation was modest and the long run carried more, but neither yet resembles the sustained border-section demand."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 5483,
-    "output_tokens": 615,
-    "cost_usd": 0.04279,
-    "cost_dkk": 0.29525,
+    "input_tokens": 5471,
+    "output_tokens": 627,
+    "cost_usd": 0.04303,
+    "cost_dkk": 0.29691,
     "date": "2026-07-12"
   },
-  "usage_mtd_usd": 0.31222,
-  "usage_mtd_dkk": 2.1543,
-  "usage_ytd_usd": 0.31222,
-  "usage_ytd_dkk": 2.1543
+  "usage_mtd_usd": 0.31246,
+  "usage_mtd_dkk": 2.156,
+  "usage_ytd_usd": 0.31246,
+  "usage_ytd_dkk": 2.156
 }

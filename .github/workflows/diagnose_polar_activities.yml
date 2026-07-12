@@ -1,0 +1,35 @@
+# ── Add as .github/workflows/diagnose-polar-transaction.yml ──
+#
+# ONE-OFF diagnostic workflow, manual trigger only (workflow_dispatch).
+# Not scheduled, not triggered by any push/PR, not part of the daily
+# Sync Training Data pipeline. Runs diagnose_polar_transaction.py, which
+# is read-only against Polar's API and writes nothing to disk — safe to
+# run repeatedly while deciding between building the full transaction
+# flow vs abandoning polar_exercises.csv as a data source.
+#
+# Delete this workflow (and diagnose_polar_transaction.py) once the
+# decision is made and, if applicable, the real transaction flow has
+# been built into fetch_activities.py properly — this is investigative
+# scaffolding, not a permanent part of the pipeline.
+
+name: Diagnose Polar Exercise Transaction
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run diagnostic (read-only, commits nothing)
+        env:
+          POLAR_ACCESS_TOKEN: ${{ secrets.POLAR_ACCESS_TOKEN }}
+          POLAR_USER_ID: ${{ secrets.POLAR_USER_ID }}
+        run: python3 diagnose_polar_transaction.py

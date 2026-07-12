@@ -1,0 +1,42 @@
+# ── Add as .github/workflows/clear-stuck-polar-transactions.yml ──
+#
+# ONE-OFF workflow, manual trigger only. Runs clear_stuck_polar_transactions.py,
+# which processes and commits the two known stuck diagnostic transactions,
+# then commits the resulting polar_exercises.csv back to the repo — this
+# is the one part of the diagnostic/cleanup work that DOES need a git
+# commit, unlike the earlier read-only diagnose-polar-transaction.yml.
+#
+# Delete this workflow and clear_stuck_polar_transactions.py after a
+# single successful run. This is not meant to run twice — once the two
+# known transactions are committed, this script has nothing left to do
+# (KNOWN_STUCK_TRANSACTION_IDS is hardcoded to exactly those two).
+
+name: Clear Stuck Polar Transactions
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  clear-transactions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run cleanup script
+        env:
+          POLAR_ACCESS_TOKEN: ${{ secrets.POLAR_ACCESS_TOKEN }}
+          POLAR_USER_ID: ${{ secrets.POLAR_USER_ID }}
+        run: python3 clear_stuck_polar_transactions.py
+
+      - name: Commit polar_exercises.csv
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add polar_exercises.csv
+          git diff --staged --quiet && echo "No changes to commit" || git commit -m "polar_exercises.csv: backfill from cleared stuck transactions"
+          git push

@@ -189,75 +189,17 @@ def _parse_iso8601_duration_to_seconds(dur_str):
     s = float(m.group(3) or 0)
     return h * 3600 + mi * 60 + s
 
-_polar_exercise_offset_debug_printed = False
-
-def _polar_exercise_local_datetime(ex):
-    """CONFIRMED NECESSARY (July 2026, via live debug output): Polar's
-    exercise start_time is UTC, not local — the real response also
-    includes a start_time_utc_offset field that fetch_activities.py
-    originally ignored, causing every exercise's time-of-day to be off by
-    the local UTC offset (2h during CEST) and silently producing ZERO
-    matches against Garmin's local-time run windows on a real run (9
-    exercises returned, 0 matched). Fixed by resolving local date +
-    seconds-of-day here, applying the offset, before any overlap check.
-
-    Offset UNIT defensively detected rather than trusted: Polar's docs
-    describe start_time_utc_offset in minutes, but per this codebase's
-    standing rule (never trust a third-party API's declared field
-    semantics without confirming live — see the Garmin metricsIndex
-    lesson), a magnitude check treats anything with |value| >= 1000 as
-    already being seconds instead. Prints the raw offset value and unit
-    decision once so the first real Action log after this fix confirms
-    or corrects the assumption."""
-    global _polar_exercise_offset_debug_printed
-    start_utc = ex.get("start_time", "")
-    offset_raw = ex.get("start_time_utc_offset")
-    if not start_utc:
-        return None, None
-    try:
-        date_part, time_part = start_utc.split("T")
-        time_part = time_part.split("+")[0].split("Z")[0]
-        h, m, s = time_part.split(":")
-        s = s.split(".")[0]
-        utc_seconds_of_day = int(h) * 3600 + int(m) * 60 + int(s)
-    except Exception:
-        return None, None
-
-    offset_seconds = 0
-    unit_guess = "none"
-    if offset_raw is not None:
-        try:
-            offset_val = int(offset_raw)
-            if abs(offset_val) >= 1000:
-                offset_seconds = offset_val
-                unit_guess = "seconds"
-            else:
-                offset_seconds = offset_val * 60
-                unit_guess = "minutes (x60)"
-        except (ValueError, TypeError):
-            offset_seconds = 0
-            unit_guess = "unparseable, treated as 0"
-
-    if not _polar_exercise_offset_debug_printed:
-        print(f"DEBUG polar exercise UTC offset: raw start_time_utc_offset={offset_raw!r} -> assumed unit: {unit_guess} -> offset_seconds={offset_seconds}")
-        _polar_exercise_offset_debug_printed = True
-
-    local_seconds_total = utc_seconds_of_day + offset_seconds
-    day_shift = 0
-    if local_seconds_total < 0:
-        local_seconds_total += 86400
-        day_shift = -1
-    elif local_seconds_total >= 86400:
-        local_seconds_total -= 86400
-        day_shift = 1
-
-    try:
-        base_date = datetime.strptime(date_part, "%Y-%m-%d").date()
-        local_date = (base_date + timedelta(days=day_shift)).isoformat()
-    except Exception:
-        return None, None
-
-    return local_date, local_seconds_total
+# NOTE (July 2026): a _polar_exercise_local_datetime() UTC-offset-applying
+# helper previously lived here, built against the WRONG endpoint (a bare
+# GET /v3/exercises that turned out not to be Polar's real Exercises
+# resource at all). It was removed after a live diagnostic against the
+# REAL transaction-based endpoint (see POLAR EXERCISE TRANSACTION FLOW
+# below) proved start-time on that endpoint is ALREADY LOCAL — applying a
+# UTC offset to it would have silently shifted every timestamp by +2h.
+# Do not re-add offset-shifting logic to exercise start-time without
+# re-confirming live first; two differently-named Polar fields
+# (start_time on the old endpoint vs start-time on the real one) turned
+# out to have opposite timezone conventions despite looking similar.
 
 # ── Build run records ─────────────────────────────────────────────────────────
 run_fieldnames = [
@@ -454,6 +396,11 @@ with open(lt_file, "w", encoding="utf-8") as f:
 # current schema before assuming the fetch is broken.
 
 polar_token = os.environ.get("POLAR_ACCESS_TOKEN", "")
+# POLAR_USER_ID: previously stored but unused (every other Polar endpoint
+# is scoped by the bearer token alone). Now genuinely needed — the real
+# exercise-transactions endpoints are path-scoped by user id, unlike
+# sleep/steps/continuous-HR/cardio-load.
+polar_user_id = os.environ.get("POLAR_USER_ID", "")
 
 def _sleep_duration_min(start_iso, end_iso):
     """Derive sleep duration in minutes from start/end ISO timestamps.
@@ -695,145 +642,181 @@ if polar_token:
     except Exception as e:
         print(f"Polar cardio load fetch skipped: {e}")
 
-    # ── Polar exercise list (via /v3/exercises) — diagnostic/comparison only ─
-    # NEW (July 2026). Built to answer two open questions raised by the
-    # athlete rather than assumed: (1) does Polar's continuous HR actually
-    # have a gap during a Loop-auto-detected exercise window, with finer
-    # per-exercise data living only here? (2) is this exercise-level HR any
-    # closer to Garmin/H10 than continuous HR is, or does it share the same
-    # optical-wrist under-read problem already confirmed for continuous HR?
-    # NOT wired into any fallback logic yet — this round only fetches,
-    # plausibility-filters, and stores for a three-way comparison in
-    # build_dashboard.py. A Garmin-HR-dropout fallback (e.g. a dead H10
-    # battery mid-run) is a separate, later step once real comparison data
-    # shows which Polar source is actually more reliable.
+    # ── Polar exercise list (via the REAL exercise-transactions flow) ────────
+    # REWRITTEN (July 2026). The original implementation used a bare
+    # GET /v3/exercises, which turned out to be the WRONG resource
+    # entirely — confirmed via a read-only diagnostic script that never
+    # returned matching data, then confirmed via Polar's own official
+    # example repo that Exercises is a TRANSACTION-based resource: you
+    # must POST to open a transaction, GET the list of exercises within
+    # it, GET each exercise's own summary, and PUT to commit — only then
+    # does new data become available on a future fetch. This was
+    # independently proven against real data: a diagnostic transaction
+    # matched 8 of 12 returned entries exactly (duration AND start time,
+    # to the minute) against the athlete's own Polar Flow app screenshots,
+    # including a real run split into two sessions by a mid-run stop.
     #
-    # RESPONSE SHAPE NOT CONFIRMED LIVE: parsing handles both a bare list
-    # and a dict-wrapped list (wrapper keys tried: "exercises", "data"),
-    # same defensive pattern as every other new Polar endpoint in this file,
-    # and prints the raw top-level shape + first entry's keys once so the
-    # first real Action log can confirm/correct this.
+    # FIELD NAMES ARE HYPHENATED on this endpoint (start-time, heart-rate,
+    # detailed-sport-info, training-load-pro) — CONFIRMED live, NOT the
+    # underscored names (start_time) the old wrong endpoint used. Two
+    # differently-shaped Polar resources, not a typo.
     #
-    # PLAUSIBILITY FILTER (per the known Loop auto-detection false-positive
-    # caution elsewhere in this file — e.g. an 8-10 min bike commute once
-    # logged as a ~20-25 min "activity"): an exercise entry is only kept if
-    # its [start, start+duration] window genuinely overlaps a real Garmin
-    # run's window on the same date. This throws out false-positive
-    # auto-detections for free, without a separate duration/heuristic filter.
-    try:
-        existing_exercises = {}
-        if os.path.exists("polar_exercises.csv"):
-            with open("polar_exercises.csv", "r", encoding="utf-8") as f:
-                for row in csv.DictReader(f):
-                    if row.get("polar_exercise_id"):
-                        existing_exercises[row["polar_exercise_id"]] = row
+    # start-time IS ALREADY LOCAL TIME, NOT UTC — CONFIRMED by exact-minute
+    # matches against the Polar Flow app's own displayed local times
+    # (e.g. "08.41" in the app == "2026-07-12T08:41:06" here). This is the
+    # OPPOSITE convention from what the old (wrong) endpoint would have
+    # needed. The start-time-utc-offset field IS present in the payload
+    # but must NOT be applied to start-time — doing so would incorrectly
+    # shift an already-local time by the local UTC offset (+2h in CEST).
+    # A previous _polar_exercise_local_datetime() helper that applied this
+    # offset has been removed entirely — see the note near the other
+    # helper functions above. Do not re-add offset-shifting logic here
+    # without re-confirming live first.
+    #
+    # MUSCLE LOAD CONFIRMED NOT AVAILABLE (independent confirmation of an
+    # already-documented finding): every real entry's training-load-pro
+    # block showed muscle-load: -1.0 / NOT_AVAILABLE — consistent with
+    # Polar's requirement of a separate running/cycling power sensor,
+    # which this setup doesn't have. Not pulled into polar_exercises.csv
+    # for this reason, same as polar_cardio_load.csv.
+    #
+    # COMMIT DISCIPLINE (per Polar's own docs: "if you commit without
+    # successfully processing and storing the data, you will not be able
+    # to retrieve it again through the standard transaction flow"): the
+    # transaction is committed ONLY after polar_exercises.csv has been
+    # successfully written below. Any exception during processing skips
+    # the commit, leaving the same batch available on the next scheduled
+    # run — Polar's documented at-least-once delivery guarantee, used
+    # exactly as intended rather than fought against.
+    #
+    # A fresh POST can return 204 (no new data) if a prior transaction was
+    # opened and never committed/rolled back — observed live during
+    # diagnosis. Handled as a clean no-op: log it and move on, rather than
+    # erroring. Two transactions opened during diagnosis were deliberately
+    # left uncommitted for safety; this first real run may encounter that
+    # backlog, or Polar may have already cleared it — either way this code
+    # only ever acts on whatever transaction it's actually given.
+    if polar_user_id:
+        try:
+            existing_exercises = {}
+            if os.path.exists("polar_exercises.csv"):
+                with open("polar_exercises.csv", "r", encoding="utf-8") as f:
+                    for row in csv.DictReader(f):
+                        if row.get("polar_exercise_id"):
+                            existing_exercises[row["polar_exercise_id"]] = row
 
-        ex_resp = polar_get("https://www.polaraccesslink.com/v3/exercises")
+            create_url = f"https://www.polaraccesslink.com/v3/users/{polar_user_id}/exercise-transactions"
+            create_req = urllib.request.Request(
+                create_url,
+                headers={"Authorization": f"Bearer {polar_token}", "Accept": "application/json"},
+                method="POST"
+            )
 
-        if isinstance(ex_resp, list):
-            ex_list = ex_resp
-        elif isinstance(ex_resp, dict):
-            ex_list = None
-            for k in ("exercises", "data"):
-                if isinstance(ex_resp.get(k), list):
-                    ex_list = ex_resp[k]
-                    break
-            if ex_list is None:
-                print(f"DEBUG polar exercises: dict response, no recognized list key. Top-level keys: {list(ex_resp.keys())}")
-                ex_list = []
-        else:
-            ex_list = []
+            transaction_id = None
+            resource_url = None
+            try:
+                with urllib.request.urlopen(create_req, timeout=30) as resp:
+                    if resp.status == 204:
+                        print("Polar exercises: 204 No Content — no new exercise data this run")
+                    else:
+                        tx_body = json.loads(resp.read().decode("utf-8"))
+                        transaction_id = tx_body.get("transaction-id")
+                        resource_url = tx_body.get("resource-uri")
+                        print(f"Polar exercises: opened transaction {transaction_id}")
+            except urllib.error.HTTPError as e:
+                _log_polar_http_error("exercise-transaction create", e)
 
-        if ex_list:
-            print(f"DEBUG polar exercises: {len(ex_list)} entr(ies) returned, sample keys: {list(ex_list[0].keys())}")
+            if resource_url:
+                list_resp = polar_get(resource_url)
+                exercise_urls = (list_resp or {}).get("exercises", [])
+                print(f"Polar exercises: {len(exercise_urls)} entr(ies) in transaction {transaction_id}")
 
-        # Date -> [Garmin run rows] index for overlap matching, built from
-        # the full current run history (not just this fetch's new rows) —
-        # Polar's ~90-day lookback can plausibly cover runs from before
-        # today's incremental/full-refresh window.
-        runs_by_date = {}
-        for r in all_run_rows:
-            d = r.get("date")
-            if d:
-                runs_by_date.setdefault(d, []).append(r)
+                runs_by_date = {}
+                for r in all_run_rows:
+                    d = r.get("date")
+                    if d:
+                        runs_by_date.setdefault(d, []).append(r)
 
-        new_exercise_count = 0
-        for ex in ex_list:
-            ex_id = str(ex.get("id", "") or ex.get("exercise_id", ""))
-            ex_start = ex.get("start_time", "")
-            ex_duration_raw = ex.get("duration", "")
-            if not ex_id or not ex_start:
-                continue
+                new_exercise_count = 0
+                for ex_url in exercise_urls:
+                    ex = polar_get(ex_url)
+                    if not ex:
+                        continue
+                    ex_id = str(ex.get("id", ""))
+                    ex_start = ex.get("start-time", "")  # already local — do NOT apply start-time-utc-offset
+                    ex_duration_raw = ex.get("duration", "")
+                    if not ex_id or not ex_start:
+                        continue
 
-            ex_date, ex_start_sec = _polar_exercise_local_datetime(ex)
-            ex_duration_sec = _parse_iso8601_duration_to_seconds(ex_duration_raw)
-            if ex_date is None or ex_start_sec is None or ex_duration_sec is None:
-                print(f"Polar exercise {ex_id}: could not parse start_time/offset/duration ({ex_start!r}, {ex_duration_raw!r}) — skipping")
-                continue
-            ex_end_sec = ex_start_sec + ex_duration_sec
+                    ex_date = ex_start[:10]
+                    ex_start_sec = _iso_time_to_seconds_of_day(ex_start)
+                    ex_duration_sec = _parse_iso8601_duration_to_seconds(ex_duration_raw)
+                    if ex_start_sec is None or ex_duration_sec is None:
+                        print(f"Polar exercise {ex_id}: could not parse start-time/duration ({ex_start!r}, {ex_duration_raw!r}) — skipping")
+                        continue
+                    ex_end_sec = ex_start_sec + ex_duration_sec
 
-            # Defensive HR extraction — Polar exercise summaries commonly
-            # nest this under "heart_rate": {"average", "maximum"}, but
-            # unconfirmed against a real payload; falls back to top-level
-            # average_heart_rate/maximum_heart_rate if present instead.
-            hr_block = ex.get("heart_rate") or {}
-            avg_hr = hr_block.get("average", ex.get("average_heart_rate"))
-            max_hr = hr_block.get("maximum", ex.get("maximum_heart_rate"))
-            sport = ex.get("sport", ex.get("detailed_sport_info", ""))
+                    hr_block = ex.get("heart-rate") or {}
+                    avg_hr = hr_block.get("average")
+                    max_hr = hr_block.get("maximum")
+                    sport = ex.get("sport", "")
 
-            matched_run = None
-            same_date_runs = runs_by_date.get(ex_date, [])
-            for r in same_date_runs:
-                run_start = r.get("start_time", "")
-                if not run_start:
-                    continue
-                run_start_sec = _iso_time_to_seconds_of_day(run_start)
-                run_dur_sec = _duration_str_to_seconds(r.get("moving_time", ""))
-                if run_start_sec is None or run_dur_sec is None:
-                    continue
-                run_end_sec = run_start_sec + run_dur_sec
-                if ex_start_sec <= run_end_sec and run_start_sec <= ex_end_sec:
-                    matched_run = r
-                    break
+                    matched_run = None
+                    for r in runs_by_date.get(ex_date, []):
+                        run_start = r.get("start_time", "")
+                        if not run_start:
+                            continue
+                        run_start_sec = _iso_time_to_seconds_of_day(run_start)
+                        run_dur_sec = _duration_str_to_seconds(r.get("moving_time", ""))
+                        if run_start_sec is None or run_dur_sec is None:
+                            continue
+                        run_end_sec = run_start_sec + run_dur_sec
+                        if ex_start_sec <= run_end_sec and run_start_sec <= ex_end_sec:
+                            matched_run = r
+                            break
 
-            if not matched_run:
-                # Diagnostic for the case where a Garmin run exists that
-                # SAME DATE but the windows still didn't overlap — if the
-                # UTC offset fix above is still wrong, this makes the
-                # actual gap visible in the next log instead of just "0
-                # matched" again with no way to tell why.
-                if same_date_runs:
-                    for r in same_date_runs:
-                        rs = _iso_time_to_seconds_of_day(r.get("start_time", ""))
-                        rd = _duration_str_to_seconds(r.get("moving_time", ""))
-                        if rs is not None and rd is not None:
-                            print(f"Polar exercise {ex_id} NEAR MISS: exercise window {ex_start_sec}-{ex_end_sec}s vs Garmin run {r.get('activity_id')} window {rs}-{rs+rd}s on {ex_date} (gap: {min(abs(ex_start_sec - (rs+rd)), abs(rs - ex_end_sec))}s)")
-                continue  # no genuine Garmin run overlaps — likely a false-positive auto-detection, OR still a timezone/parsing mismatch — see NEAR MISS lines above if any
+                    if not matched_run:
+                        continue  # no genuine Garmin run overlaps — likely a non-run Loop-detected session
 
-            existing_exercises[ex_id] = {
-                "date": ex_date,
-                "garmin_activity_id": matched_run.get("activity_id", ""),
-                "polar_exercise_id": ex_id,
-                "start_time": ex_start,
-                "duration_min": round(ex_duration_sec / 60, 1),
-                "sport": sport,
-                "avg_hr": avg_hr if avg_hr is not None else "",
-                "max_hr": max_hr if max_hr is not None else ""
-            }
-            new_exercise_count += 1
+                    existing_exercises[ex_id] = {
+                        "date": ex_date,
+                        "garmin_activity_id": matched_run.get("activity_id", ""),
+                        "polar_exercise_id": ex_id,
+                        "start_time": ex_start,
+                        "duration_min": round(ex_duration_sec / 60, 1),
+                        "sport": sport,
+                        "avg_hr": avg_hr if avg_hr is not None else "",
+                        "max_hr": max_hr if max_hr is not None else ""
+                    }
+                    new_exercise_count += 1
 
-        ex_fieldnames = ["date", "garmin_activity_id", "polar_exercise_id", "start_time", "duration_min", "sport", "avg_hr", "max_hr"]
-        with open("polar_exercises.csv", "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=ex_fieldnames, extrasaction="ignore")
-            writer.writeheader()
-            for eid in sorted(existing_exercises.keys(), key=lambda k: existing_exercises[k].get("date", ""), reverse=True):
-                writer.writerow(existing_exercises[eid])
+                ex_fieldnames = ["date", "garmin_activity_id", "polar_exercise_id", "start_time", "duration_min", "sport", "avg_hr", "max_hr"]
+                with open("polar_exercises.csv", "w", newline="", encoding="utf-8") as f:
+                    writer = csv.DictWriter(f, fieldnames=ex_fieldnames, extrasaction="ignore")
+                    writer.writeheader()
+                    for eid in sorted(existing_exercises.keys(), key=lambda k: existing_exercises[k].get("date", ""), reverse=True):
+                        writer.writerow(existing_exercises[eid])
 
-        print(f"Polar exercises: {new_exercise_count} matched to a real Garmin run this fetch, {len(existing_exercises)} total in polar_exercises.csv")
-    except Exception as e:
-        print(f"Polar exercises fetch skipped: {e}")
-else:
-    print("POLAR_ACCESS_TOKEN not set — skipping Polar fetch")
+                print(f"Polar exercises: {new_exercise_count} matched to a real Garmin run this fetch, {len(existing_exercises)} total in polar_exercises.csv")
+
+                # Commit ONLY now that the CSV write above succeeded — see
+                # COMMIT DISCIPLINE note. If anything above raised, we never
+                # reach this point and the transaction stays open for retry.
+                commit_req = urllib.request.Request(
+                    resource_url,
+                    headers={"Authorization": f"Bearer {polar_token}", "Accept": "application/json"},
+                    method="PUT"
+                )
+                try:
+                    with urllib.request.urlopen(commit_req, timeout=30) as resp:
+                        print(f"Polar exercises: transaction {transaction_id} committed (status {resp.status})")
+                except urllib.error.HTTPError as e:
+                    _log_polar_http_error(f"exercise-transaction {transaction_id} commit", e)
+                    print(f"Polar exercises: commit failed — same data will be offered again next run")
+        except Exception as e:
+            print(f"Polar exercises fetch skipped: {e}")
+    else:
+        print("POLAR_USER_ID not set — skipping Polar exercises (transaction endpoints require it)")
 
 # ── Fetch status (for build_dashboard.py's confidence score) ─────────────────
 # Written last, only on successful completion of this whole script. If Garmin

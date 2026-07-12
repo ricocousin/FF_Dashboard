@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-12 15:38 UTC",
-  "headline": "Back-to-back durability confirmed as the brisk 12 km follows yesterday's long run without HR drift, capping a genuine four-week volume build.",
+  "last_updated": "2026-07-12 16:00 UTC",
+  "headline": "The four-week build tops out with strain and tolerance level, leaving the base durable rather than overreached a month from the crossing.",
   "confidence_pct": 92,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,12 +12,12 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "Sleep tracked 10/14 nights",
-  "summary": "The pairing you saw yesterday has now repeated with intent: a longer time-on-feet effort followed by a brisker morning run, and the HR on today's faster pace sat mid-range rather than climbing under accumulated fatigue. That's the durability signal, not a one-off \u2014 exactly the quality a self-supported multi-day crossing rewards. Your recent four-week block sits well above the prior one, and unlike a spike that outruns its base, the strain:tolerance balance stayed level through it, so this is load you've absorbed rather than borrowed against.\n\nUnderneath the volume, the aerobic picture keeps trending the right way \u2014 easy-effort HR is running lower than the comparable prior period on more runs, which is the kind of within-athlete signal that matters more than any single session. Strength frequency has more than doubled versus the previous block, so the hybrid base is holding while endurance volume rises rather than one displacing the other. This is consolidation of a genuine build, not fatigue accumulation.\n\nThe one thing worth naming plainly: with the crossing now under a month out, pack-loaded running and sustained climbing still haven't clearly entered the picture. Today's elevation was modest and the long run carried more, but neither yet resembles the sustained border-section demand.",
+  "summary": "Your recent block has closed out a genuine volume build without the fatigue markers you'd expect if you'd overreached \u2014 strain and tolerance are sitting essentially level, which tells you the added load has been absorbed rather than accumulated as debt. That's the right place to be with the crossing inside a month: capacity is up, and the body isn't behind on it.\n\nThe most useful signal continues to be aerobic efficiency. Comparable-effort easy runs are averaging lower HR than the prior period, and yesterday's long run into today's brisker follow-up produced no HR drift \u2014 back-to-back durability is holding at higher pace, not just easy pace. Strength frequency has more than doubled over the block too, so the base you're carrying into St. Olavsleden is broad rather than purely mileage-driven.\n\nNothing here suggests the need to push harder from this peak. The build has done its job; the question now is how you consolidate it into event-specific readiness rather than chasing more raw volume.",
   "watch_items": [
-    "Whether pack-loaded running finally enters the schedule with the crossing now inside a month.",
-    "Whether per-run climbing builds toward the sustained mountain section rather than staying rolling.",
-    "Whether short-sleep nights cluster as longer sessions and back-to-backs continue, or stay isolated.",
-    "Whether the strain:tolerance balance holds level if volume keeps climbing from here."
+    "Whether pack-loaded running enters the schedule now that the crossing is inside a month \u2014 the base is there, but the specific demand isn't yet trained.",
+    "Whether per-run climbing starts building toward sustained ascent rather than the rolling profiles seen so far.",
+    "Whether the strain:tolerance balance stays level or tips if volume is held here versus pushed further.",
+    "Whether short-sleep nights start clustering as longer efforts continue, given the wide night-to-night swing lately."
   ],
   "evidence_items": [
     {
@@ -38,18 +38,18 @@
     }
   ],
   "insights": [
-    "The pairing you saw yesterday has now repeated with intent: a longer time-on-feet effort followed by a brisker morning run, and the HR on today's faster pace sat mid-range rather than climbing under accumulated fatigue. That's the durability signal, not a one-off \u2014 exactly the quality a self-supported multi-day crossing rewards. Your recent four-week block sits well above the prior one, and unlike a spike that outruns its base, the strain:tolerance balance stayed level through it, so this is load you've absorbed rather than borrowed against.\n\nUnderneath the volume, the aerobic picture keeps trending the right way \u2014 easy-effort HR is running lower than the comparable prior period on more runs, which is the kind of within-athlete signal that matters more than any single session. Strength frequency has more than doubled versus the previous block, so the hybrid base is holding while endurance volume rises rather than one displacing the other. This is consolidation of a genuine build, not fatigue accumulation.\n\nThe one thing worth naming plainly: with the crossing now under a month out, pack-loaded running and sustained climbing still haven't clearly entered the picture. Today's elevation was modest and the long run carried more, but neither yet resembles the sustained border-section demand."
+    "Your recent block has closed out a genuine volume build without the fatigue markers you'd expect if you'd overreached \u2014 strain and tolerance are sitting essentially level, which tells you the added load has been absorbed rather than accumulated as debt. That's the right place to be with the crossing inside a month: capacity is up, and the body isn't behind on it.\n\nThe most useful signal continues to be aerobic efficiency. Comparable-effort easy runs are averaging lower HR than the prior period, and yesterday's long run into today's brisker follow-up produced no HR drift \u2014 back-to-back durability is holding at higher pace, not just easy pace. Strength frequency has more than doubled over the block too, so the base you're carrying into St. Olavsleden is broad rather than purely mileage-driven.\n\nNothing here suggests the need to push harder from this peak. The build has done its job; the question now is how you consolidate it into event-specific readiness rather than chasing more raw volume."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 5471,
-    "output_tokens": 627,
-    "cost_usd": 0.04303,
-    "cost_dkk": 0.29691,
+    "input_tokens": 5476,
+    "output_tokens": 552,
+    "cost_usd": 0.04118,
+    "cost_dkk": 0.28414,
     "date": "2026-07-12"
   },
-  "usage_mtd_usd": 0.31246,
-  "usage_mtd_dkk": 2.156,
-  "usage_ytd_usd": 0.31246,
-  "usage_ytd_dkk": 2.156
+  "usage_mtd_usd": 0.31061,
+  "usage_mtd_dkk": 2.1432,
+  "usage_ytd_usd": 0.31061,
+  "usage_ytd_dkk": 2.1432
 }

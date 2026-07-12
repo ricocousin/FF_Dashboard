@@ -69,18 +69,43 @@ print("=" * 70)
 print("POLAR EXERCISE TRANSACTION DIAGNOSTIC — read-only, nothing committed")
 print("=" * 70)
 
+# KNOWN_OPEN_TRANSACTION: the first diagnostic run (July 12) opened
+# transaction 334708890 and deliberately never committed it. Per Polar's
+# docs, an open transaction blocks new data from surfacing via a fresh
+# POST until it's committed or rolled back — so a second POST correctly
+# returns 204 (confirmed: that's exactly what happened on the second run)
+# rather than either re-returning the same transaction or surfacing
+# anything new. The 12 exercises are still sitting there, reachable
+# directly via this known resource-uri, without needing a new POST.
+KNOWN_OPEN_TRANSACTION_ID = "334708890"
+
 print(f"\nStep 1: POST create-transaction for user {polar_user_id}")
 create_url = f"https://www.polaraccesslink.com/v3/users/{polar_user_id}/exercise-transactions"
 status, body = polar_request(create_url, method="POST")
 print(f"  Status: {status}")
 print(f"  Body: {body}")
 
+resource_url = None
+transaction_id = None
+
 if status == 204:
-    print("\n  204 No Content — Polar reports no NEW exercise data available.")
-    print("  This itself is informative: either everything has already been")
-    print("  delivered via some prior transaction (possibly the same stale")
-    print("  data our GET /v3/exercises has been returning), or genuinely")
-    print("  nothing new has synced from the Loop to Polar's cloud yet.")
+    print("\n  204 No Content — expected, since transaction "
+          f"{KNOWN_OPEN_TRANSACTION_ID} from the first diagnostic run was")
+    print("  deliberately never committed, and Polar blocks new data from")
+    print("  surfacing until an open transaction is committed or rolled back.")
+    print(f"\n  Falling back to directly GETting the known still-open")
+    print(f"  transaction {KNOWN_OPEN_TRANSACTION_ID} instead of creating a new one —")
+    print("  same 12 exercises, still not committing anything.")
+    fallback_url = f"https://www.polaraccesslink.com/v3/users/{polar_user_id}/exercise-transactions/{KNOWN_OPEN_TRANSACTION_ID}"
+    status_fb, body_fb = polar_request(fallback_url, method="GET")
+    print(f"\n  Fallback GET status: {status_fb}")
+    if status_fb == 200 and isinstance(body_fb, dict):
+        transaction_id = KNOWN_OPEN_TRANSACTION_ID
+        resource_url = fallback_url
+    else:
+        print(f"  Fallback body: {body_fb}")
+        print("\n  Fallback also failed — the known transaction may have expired")
+        print("  or been cleared server-side. See status/body above.")
 
 elif status in (200, 201):
     transaction_id = body.get("transaction-id") if isinstance(body, dict) else None
@@ -88,32 +113,32 @@ elif status in (200, 201):
     print(f"  transaction-id: {transaction_id}")
     print(f"  resource-uri: {resource_url}")
 
-    if resource_url:
-        print(f"\nStep 2: GET exercise list within this transaction")
-        status2, body2 = polar_request(resource_url, method="GET")
-        print(f"  Status: {status2}")
-        print(f"  Body: {body2}")
+if resource_url:
+    print(f"\nStep 2: GET exercise list within this transaction")
+    status2, body2 = polar_request(resource_url, method="GET")
+    print(f"  Status: {status2}")
+    print(f"  Body: {body2}")
 
-        exercise_urls = []
-        if isinstance(body2, dict):
-            exercise_urls = body2.get("exercises", [])
-        print(f"\n  {len(exercise_urls)} exercise(s) listed in this transaction")
+    exercise_urls = []
+    if isinstance(body2, dict):
+        exercise_urls = body2.get("exercises", [])
+    print(f"\n  {len(exercise_urls)} exercise(s) listed in this transaction")
 
-        for i, ex_url in enumerate(exercise_urls[:25]):
-            print(f"\nStep 3.{i+1}: GET {ex_url}")
-            status3, body3 = polar_request(ex_url, method="GET")
-            # Printing the FULL raw body this time, not cherry-picked fields —
-            # the first pass guessed underscored key names (start_time) based
-            # on the OLD bare-GET endpoint's shape, but the transaction-id/
-            # resource-uri fields above are hyphenated, suggesting the real
-            # per-exercise summary likely uses different key names entirely
-            # (e.g. start-time, not start_time). Don't guess twice — just
-            # look at everything that's actually there.
-            print(f"  Status: {status3}")
-            print(f"  Full body: {body3}")
+    for i, ex_url in enumerate(exercise_urls[:25]):
+        print(f"\nStep 3.{i+1}: GET {ex_url}")
+        status3, body3 = polar_request(ex_url, method="GET")
+        # Printing the FULL raw body this time, not cherry-picked fields —
+        # the first pass guessed underscored key names (start_time) based
+        # on the OLD bare-GET endpoint's shape, but the transaction-id/
+        # resource-uri fields seen earlier are hyphenated, suggesting the
+        # real per-exercise summary likely uses different key names
+        # entirely (e.g. start-time, not start_time). Don't guess twice —
+        # just look at everything that's actually there.
+        print(f"  Status: {status3}")
+        print(f"  Full body: {body3}")
 
-        if len(exercise_urls) > 25:
-            print(f"\n  ({len(exercise_urls) - 25} more exercise(s) not printed — first 25 shown)")
+    if len(exercise_urls) > 25:
+        print(f"\n  ({len(exercise_urls) - 25} more exercise(s) not printed — first 25 shown)")
 
     print("\n" + "=" * 70)
     print(f"*** TRANSACTION {transaction_id} DELIBERATELY NOT COMMITTED ***")
@@ -122,5 +147,5 @@ elif status in (200, 201):
     print("BEFORE ever calling commit on a real transaction going forward.")
     print("=" * 70)
 
-else:
+elif status not in (200, 201, 204):
     print(f"\n  Unexpected status {status} — see body above for details.")

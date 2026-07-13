@@ -727,135 +727,6 @@ def build_strength_hr_overlay():
 
 strength_hr_overlay = build_strength_hr_overlay()
 
-# ── RUN ZONE-TIME PROJECT ─────────────────────────────────────────────────────
-def _hr_zone_bounds(lt_hr):
-    if not lt_hr:
-        return None
-    return (
-        round(lt_hr * 0.80),
-        round(lt_hr * 0.90),
-        round(lt_hr * 0.99),
-        round(lt_hr * 1.05)
-    )
-
-def _classify_hr_zone(hr, bounds):
-    if bounds is None or hr is None:
-        return None
-    z1, z2, z3, z4 = bounds
-    if hr < z1:
-        return "Z1"
-    elif hr < z2:
-        return "Z2"
-    elif hr < z3:
-        return "Z3"
-    elif hr < z4:
-        return "Z4"
-    else:
-        return "Z5"
-
-_lt_hr_bounds = _hr_zone_bounds(latest_lt.get("lt_hr")) if latest_lt else None
-
-ATTIA_Z2_TARGET_MIN = 180
-ATTIA_Z2_TARGET_MAX = 240
-
-Z1_TARGET_MIN_PCT = 75
-Z1_TARGET_MAX_PCT = 80
-GREY_CEILING_PCT = 10
-Z5_TARGET_MIN_PCT = 15
-Z5_TARGET_MAX_PCT = 20
-
-def _compute_zone_time(window_start, window_end, window_label, window_days):
-    zone_minutes = {"Z1": 0.0, "Z2": 0.0, "Z3": 0.0, "Z4": 0.0, "Z5": 0.0}
-    running_sessions_with_zone_data = 0
-    strength_sessions_with_zone_data = 0
-
-    if _lt_hr_bounds:
-        runs_in_window = [r for r in all_run_rows
-            if r.get("date") and window_start <= datetime.strptime(r["date"], "%Y-%m-%d").date() <= window_end
-            and r.get("activity_id") in _run_hr_by_activity]
-        for r in runs_in_window:
-            samples = _run_hr_by_activity[r["activity_id"]]
-            if len(samples) < 2:
-                continue
-            running_sessions_with_zone_data += 1
-            for i in range(len(samples) - 1):
-                t0, hr0 = samples[i]
-                t1, _ = samples[i + 1]
-                delta_sec = t1 - t0
-                if delta_sec <= 0 or delta_sec > 60:
-                    continue
-                zone = _classify_hr_zone(hr0, _lt_hr_bounds)
-                if zone:
-                    zone_minutes[zone] += delta_sec / 60
-
-        strength_in_window = [s for s in strength_hr_overlay
-            if s.get("date") and window_start <= datetime.strptime(s["date"], "%Y-%m-%d").date() <= window_end]
-        for s in strength_in_window:
-            match = next((row for row in all_strength_rows
-                if row.get("date") == s["date"] and row.get("name") == s["name"]), None)
-            if not match:
-                continue
-            try:
-                dur_min = float(match.get("duration_min") or 0)
-            except (ValueError, TypeError):
-                continue
-            if dur_min <= 0:
-                continue
-            zone = _classify_hr_zone(s.get("avg_hr"), _lt_hr_bounds)
-            if zone:
-                zone_minutes[zone] += dur_min
-                strength_sessions_with_zone_data += 1
-
-    total_zone_minutes = sum(zone_minutes.values())
-    z1_pct = round((zone_minutes["Z1"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None
-    grey_pct_val = round(((zone_minutes["Z3"] + zone_minutes["Z4"]) / total_zone_minutes) * 100, 1) if total_zone_minutes else None
-    z5_pct_val = round((zone_minutes["Z5"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None
-
-    return {
-        "label": window_label,
-        "window_days": window_days,
-        "window_start": window_start.isoformat(),
-        "window_end": window_end.isoformat(),
-        "minutes": {k: round(v, 1) for k, v in zone_minutes.items()},
-        "total_minutes": round(total_zone_minutes, 1),
-        "z1_pct": z1_pct,
-        "z2_pct": round((zone_minutes["Z2"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None,
-        "grey_pct": grey_pct_val,
-        "z5_pct": z5_pct_val,
-        "z2_target_min": ATTIA_Z2_TARGET_MIN,
-        "z2_target_max": ATTIA_Z2_TARGET_MAX,
-        "z2_vs_target_pct": round((zone_minutes["Z2"] / ATTIA_Z2_TARGET_MIN) * 100) if ATTIA_Z2_TARGET_MIN else None,
-        "z1_target_min_pct": Z1_TARGET_MIN_PCT,
-        "z1_target_max_pct": Z1_TARGET_MAX_PCT,
-        "z1_vs_target_pct": round((z1_pct / Z1_TARGET_MIN_PCT) * 100) if (z1_pct is not None and Z1_TARGET_MIN_PCT) else None,
-        "grey_ceiling_pct": GREY_CEILING_PCT,
-        "grey_vs_ceiling_pct": round((grey_pct_val / GREY_CEILING_PCT) * 100) if (grey_pct_val is not None and GREY_CEILING_PCT) else None,
-        "z5_target_min_pct": Z5_TARGET_MIN_PCT,
-        "z5_target_max_pct": Z5_TARGET_MAX_PCT,
-        "z5_vs_target_pct": round((z5_pct_val / Z5_TARGET_MIN_PCT) * 100) if (z5_pct_val is not None and Z5_TARGET_MIN_PCT) else None,
-        "running_sessions_with_data": running_sessions_with_zone_data,
-        "strength_sessions_with_data": strength_sessions_with_zone_data,
-        "has_lt_data": _lt_hr_bounds is not None
-    }
-
-_rolling_start = today_date - timedelta(days=7)
-zone_time_rolling = _compute_zone_time(_rolling_start, today_date, "This week (rolling 7d)", 7)
-
-if last_complete_date.weekday() == 6:
-    _true_last_completed_week = last_complete_week
-else:
-    _true_last_completed_week = _shift_week_key(last_complete_week, -1)
-
-_last_week_monday = _week_start_date(_true_last_completed_week)
-_last_week_sunday = _last_week_monday + timedelta(days=6)
-zone_time_last_completed_week = _compute_zone_time(_last_week_monday, _last_week_sunday, "Last completed week", 7)
-
-zone_time = {
-    "rolling": zone_time_rolling,
-    "last_completed_week": zone_time_last_completed_week,
-    "default_view": "rolling"
-}
-
 # ── Garmin-vs-Polar run HR comparison (now three-way) ─────────────────────────
 # Extended July 2026 to also include Polar's exercise-list HR (when a
 # matched entry exists in polar_exercises.csv) alongside the original
@@ -925,6 +796,283 @@ def build_run_hr_source_comparison():
     return sorted(comparison, key=lambda x: x["date"], reverse=True)
 
 run_hr_source_comparison = build_run_hr_source_comparison()
+
+# ── H10-DROPOUT FALLBACK (built July 2026 — the real motivating case) ────────
+# CONFIRMED real use case, not hypothetical: 2026-07-11 (Furesø Running,
+# activity_id 23563760621) recorded NO Garmin/H10 heart rate at all —
+# avg_hr and max_hr both blank in runs.csv. Design agreed before building
+# (see PROJECT_CONTEXT H10-DROPOUT FALLBACK note):
+#  1. NEVER touch runs.csv — Garmin's raw report stays exactly what it is.
+#  2. Fallback computed fresh here every run, not backfilled into any
+#     source file.
+#  3. Calibrated using the REAL Garmin-vs-Polar offset already visible in
+#     run_hr_source_comparison (computed just above) — self-correcting as
+#     more comparison data accumulates, rather than a fixed guessed number.
+#  4. Usable for zone-time attribution (below) so a dropout run still
+#     counts toward Zone 2 targets and streaks.
+#  5. Explicitly EXCLUDED from the easy-run-HR evidence trend (#9) — that
+#     comparison is meant to be precision vs-prior-period, and a corrected
+#     estimate risks a subtle bias there even calibrated. This exclusion
+#     happens automatically: evidence item #9 already filters on
+#     r.get("avg_hr") not in (None, "", "0"), and a dropout run's avg_hr
+#     genuinely is blank, so it was never going to be included anyway —
+#     no extra filtering needed here.
+#  6. ALWAYS visibly labeled wherever it appears (e.g. "Polar fallback —
+#     H10 dropout") — never presented as if it were real H10 data.
+
+def _compute_hr_calibration_offsets(comparison_list):
+    """Average (polar − garmin) offset per Polar source, computed from
+    whatever real matched comparisons currently exist in
+    run_hr_source_comparison. Self-correcting: as more genuine dropout-free
+    runs accumulate real comparisons, this offset gets more reliable
+    automatically — nothing hardcoded or guessed."""
+    continuous_diffs = [c["diff"] for c in comparison_list if c.get("diff") is not None]
+    exercise_diffs = [c["polar_exercise_diff"] for c in comparison_list if c.get("polar_exercise_diff") is not None]
+    return {
+        "continuous": (sum(continuous_diffs) / len(continuous_diffs)) if continuous_diffs else None,
+        "continuous_n": len(continuous_diffs),
+        "exercise": (sum(exercise_diffs) / len(exercise_diffs)) if exercise_diffs else None,
+        "exercise_n": len(exercise_diffs)
+    }
+
+_hr_calibration = _compute_hr_calibration_offsets(run_hr_source_comparison)
+
+def build_hr_dropout_fallback(calibration):
+    """Identifies runs with NO Garmin HR at all and computes a labeled,
+    calibrated estimate from whichever real Polar source is available.
+    Exercise-entry HR (session-specific boundaries, from polar_exercises.csv)
+    is preferred over continuous HR (all-day stream) when both exist —
+    limited real comparison data exists so far to confirm this preference
+    is optimal; revisit once more accumulates, per the original design
+    note that this choice was deliberately deferred until real data
+    existed rather than guessed upfront."""
+    fallback_runs = []
+    for r in all_run_rows:
+        if r.get("avg_hr") not in (None, "", "0"):
+            continue  # Garmin HR present — not a dropout, nothing to fall back for
+        start_time_full = r.get("start_time", "")
+        if not start_time_full:
+            continue
+        run_date = start_time_full[:10]
+
+        raw_hr, source, sample_info = None, None, ""
+
+        exercise_row = _polar_exercise_by_garmin_id.get(r.get("activity_id", ""))
+        if exercise_row and exercise_row.get("avg_hr"):
+            try:
+                raw_hr = float(exercise_row["avg_hr"])
+                source = "exercise"
+                sample_info = f"Polar exercise entry {exercise_row.get('polar_exercise_id', '')}"
+            except (ValueError, TypeError):
+                raw_hr = None
+
+        if raw_hr is None and run_date in _polar_hr_by_date:
+            try:
+                run_start_sec = _time_to_seconds(start_time_full[11:19])
+                elapsed_parts = (r.get("elapsed_time") or "").split(":")
+                if len(elapsed_parts) == 3:
+                    h, m, s = (int(p) for p in elapsed_parts)
+                    duration_sec = h * 3600 + m * 60 + s
+                    if run_start_sec is not None and duration_sec > 0:
+                        run_end_sec = run_start_sec + duration_sec
+                        matched = []
+                        for (t, hr) in _polar_hr_by_date[run_date]:
+                            t_sec = _time_to_seconds(t)
+                            if t_sec is not None and run_start_sec <= t_sec <= run_end_sec:
+                                try:
+                                    matched.append(float(hr))
+                                except (ValueError, TypeError):
+                                    continue
+                        if matched:
+                            raw_hr = sum(matched) / len(matched)
+                            source = "continuous"
+                            sample_info = f"{len(matched)} continuous HR sample(s)"
+            except Exception:
+                pass
+
+        if raw_hr is None:
+            continue  # no Polar data of any kind available for this dropout run either
+
+        offset = calibration.get(source)
+        offset_n = calibration.get(f"{source}_n", 0)
+        if offset is not None and offset_n > 0:
+            estimated_hr = round(raw_hr - offset)
+            calibration_note = f"calibrated using {offset_n} comparison run(s), offset {offset:+.1f} bpm"
+        else:
+            estimated_hr = round(raw_hr)
+            calibration_note = "uncalibrated — no comparison data yet for this source"
+
+        fallback_runs.append({
+            "activity_id": r.get("activity_id", ""),
+            "date": run_date,
+            "name": r.get("name", ""),
+            "source": source,
+            "raw_polar_hr": round(raw_hr),
+            "estimated_garmin_hr": estimated_hr,
+            "calibration_note": calibration_note,
+            "sample_info": sample_info,
+            "label": "Polar fallback — H10 dropout"
+        })
+    return sorted(fallback_runs, key=lambda x: x["date"], reverse=True)
+
+hr_dropout_fallback = build_hr_dropout_fallback(_hr_calibration)
+_hr_dropout_fallback_by_activity = {f["activity_id"]: f for f in hr_dropout_fallback if f.get("activity_id")}
+
+# ── RUN ZONE-TIME PROJECT ─────────────────────────────────────────────────────
+def _hr_zone_bounds(lt_hr):
+    if not lt_hr:
+        return None
+    return (
+        round(lt_hr * 0.80),
+        round(lt_hr * 0.90),
+        round(lt_hr * 0.99),
+        round(lt_hr * 1.05)
+    )
+
+def _classify_hr_zone(hr, bounds):
+    if bounds is None or hr is None:
+        return None
+    z1, z2, z3, z4 = bounds
+    if hr < z1:
+        return "Z1"
+    elif hr < z2:
+        return "Z2"
+    elif hr < z3:
+        return "Z3"
+    elif hr < z4:
+        return "Z4"
+    else:
+        return "Z5"
+
+_lt_hr_bounds = _hr_zone_bounds(latest_lt.get("lt_hr")) if latest_lt else None
+
+ATTIA_Z2_TARGET_MIN = 180
+ATTIA_Z2_TARGET_MAX = 240
+
+Z1_TARGET_MIN_PCT = 75
+Z1_TARGET_MAX_PCT = 80
+GREY_CEILING_PCT = 10
+Z5_TARGET_MIN_PCT = 15
+Z5_TARGET_MAX_PCT = 20
+
+def _compute_zone_time(window_start, window_end, window_label, window_days):
+    zone_minutes = {"Z1": 0.0, "Z2": 0.0, "Z3": 0.0, "Z4": 0.0, "Z5": 0.0}
+    running_sessions_with_zone_data = 0
+    strength_sessions_with_zone_data = 0
+    dropout_fallback_sessions_with_zone_data = 0
+
+    if _lt_hr_bounds:
+        runs_in_window = [r for r in all_run_rows
+            if r.get("date") and window_start <= datetime.strptime(r["date"], "%Y-%m-%d").date() <= window_end
+            and r.get("activity_id") in _run_hr_by_activity]
+        for r in runs_in_window:
+            samples = _run_hr_by_activity[r["activity_id"]]
+            if len(samples) < 2:
+                continue
+            running_sessions_with_zone_data += 1
+            for i in range(len(samples) - 1):
+                t0, hr0 = samples[i]
+                t1, _ = samples[i + 1]
+                delta_sec = t1 - t0
+                if delta_sec <= 0 or delta_sec > 60:
+                    continue
+                zone = _classify_hr_zone(hr0, _lt_hr_bounds)
+                if zone:
+                    zone_minutes[zone] += delta_sec / 60
+
+        # H10-DROPOUT FALLBACK runs: no per-sample HR exists (Garmin
+        # recorded nothing), so — same coarse approach already used for
+        # strength sessions below — the whole run's duration is attributed
+        # to a single zone based on the calibrated fallback estimate,
+        # rather than excluded from zone-time entirely. This is the actual
+        # payoff of the fallback: a run like 2026-07-11 (real H10 dropout)
+        # still counts toward Zone 2 targets and streaks instead of
+        # silently vanishing from every zone-based metric.
+        dropout_runs_in_window = [r for r in all_run_rows
+            if r.get("date") and window_start <= datetime.strptime(r["date"], "%Y-%m-%d").date() <= window_end
+            and r.get("activity_id") in _hr_dropout_fallback_by_activity]
+        for r in dropout_runs_in_window:
+            fb = _hr_dropout_fallback_by_activity[r["activity_id"]]
+            try:
+                dur_min = float(_time_to_seconds(r.get("elapsed_time") or "") or 0) / 60
+            except Exception:
+                dur_min = 0
+            if dur_min <= 0:
+                continue
+            zone = _classify_hr_zone(fb["estimated_garmin_hr"], _lt_hr_bounds)
+            if zone:
+                zone_minutes[zone] += dur_min
+                dropout_fallback_sessions_with_zone_data += 1
+
+        strength_in_window = [s for s in strength_hr_overlay
+            if s.get("date") and window_start <= datetime.strptime(s["date"], "%Y-%m-%d").date() <= window_end]
+        for s in strength_in_window:
+            match = next((row for row in all_strength_rows
+                if row.get("date") == s["date"] and row.get("name") == s["name"]), None)
+            if not match:
+                continue
+            try:
+                dur_min = float(match.get("duration_min") or 0)
+            except (ValueError, TypeError):
+                continue
+            if dur_min <= 0:
+                continue
+            zone = _classify_hr_zone(s.get("avg_hr"), _lt_hr_bounds)
+            if zone:
+                zone_minutes[zone] += dur_min
+                strength_sessions_with_zone_data += 1
+
+    total_zone_minutes = sum(zone_minutes.values())
+    z1_pct = round((zone_minutes["Z1"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None
+    grey_pct_val = round(((zone_minutes["Z3"] + zone_minutes["Z4"]) / total_zone_minutes) * 100, 1) if total_zone_minutes else None
+    z5_pct_val = round((zone_minutes["Z5"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None
+
+    return {
+        "label": window_label,
+        "window_days": window_days,
+        "window_start": window_start.isoformat(),
+        "window_end": window_end.isoformat(),
+        "minutes": {k: round(v, 1) for k, v in zone_minutes.items()},
+        "total_minutes": round(total_zone_minutes, 1),
+        "z1_pct": z1_pct,
+        "z2_pct": round((zone_minutes["Z2"] / total_zone_minutes) * 100, 1) if total_zone_minutes else None,
+        "grey_pct": grey_pct_val,
+        "z5_pct": z5_pct_val,
+        "z2_target_min": ATTIA_Z2_TARGET_MIN,
+        "z2_target_max": ATTIA_Z2_TARGET_MAX,
+        "z2_vs_target_pct": round((zone_minutes["Z2"] / ATTIA_Z2_TARGET_MIN) * 100) if ATTIA_Z2_TARGET_MIN else None,
+        "z1_target_min_pct": Z1_TARGET_MIN_PCT,
+        "z1_target_max_pct": Z1_TARGET_MAX_PCT,
+        "z1_vs_target_pct": round((z1_pct / Z1_TARGET_MIN_PCT) * 100) if (z1_pct is not None and Z1_TARGET_MIN_PCT) else None,
+        "grey_ceiling_pct": GREY_CEILING_PCT,
+        "grey_vs_ceiling_pct": round((grey_pct_val / GREY_CEILING_PCT) * 100) if (grey_pct_val is not None and GREY_CEILING_PCT) else None,
+        "z5_target_min_pct": Z5_TARGET_MIN_PCT,
+        "z5_target_max_pct": Z5_TARGET_MAX_PCT,
+        "z5_vs_target_pct": round((z5_pct_val / Z5_TARGET_MIN_PCT) * 100) if (z5_pct_val is not None and Z5_TARGET_MIN_PCT) else None,
+        "running_sessions_with_data": running_sessions_with_zone_data,
+        "strength_sessions_with_data": strength_sessions_with_zone_data,
+        "dropout_fallback_sessions_with_data": dropout_fallback_sessions_with_zone_data,
+        "has_lt_data": _lt_hr_bounds is not None
+    }
+
+_rolling_start = today_date - timedelta(days=7)
+zone_time_rolling = _compute_zone_time(_rolling_start, today_date, "This week (rolling 7d)", 7)
+
+if last_complete_date.weekday() == 6:
+    _true_last_completed_week = last_complete_week
+else:
+    _true_last_completed_week = _shift_week_key(last_complete_week, -1)
+
+_last_week_monday = _week_start_date(_true_last_completed_week)
+_last_week_sunday = _last_week_monday + timedelta(days=6)
+zone_time_last_completed_week = _compute_zone_time(_last_week_monday, _last_week_sunday, "Last completed week", 7)
+
+zone_time = {
+    "rolling": zone_time_rolling,
+    "last_completed_week": zone_time_last_completed_week,
+    "default_view": "rolling"
+}
+
 
 # ── What's Changed digest ─────────────────────────────────────────────────────
 digest_lines = []
@@ -1082,6 +1230,7 @@ dashboard_metrics = {
 
     "zone_time": zone_time,
     "run_hr_source_comparison": run_hr_source_comparison,
+    "hr_dropout_fallback": hr_dropout_fallback,
 
     "digest": digest_lines
 }

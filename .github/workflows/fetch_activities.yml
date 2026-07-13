@@ -59,41 +59,4 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           for f in runs.csv strength.csv lactate.json coach_summary.json api_usage.json steps.csv sleep.csv polar_steps.csv dashboard_metrics.json fetch_status.json polar_hr.csv run_hr_samples.csv coach_context.json garmin_fitness_metrics.csv polar_cardio_load.csv polar_exercises.csv polar_pending_transaction.json; do
-            if [ -f "$f" ]; then
-              git add "$f"
-            else
-              echo "Skipping $f — not present this run"
-            fi
-          done
-          git diff --staged --quiet || git commit -m "Update activity data"
-
-          # Retry-with-rebase push: added after a real failure where this
-          # workflow's push was rejected because another workflow (a manual
-          # one-off run, in that specific case) had pushed to main in the
-          # gap between this job's checkout and its own push attempt. A
-          # plain `git push` has no way to recover from that — it just
-          # fails outright, and whatever this run fetched (sleep, steps,
-          # continuous HR, cardio load, HR samples — everything, not just
-          # the file that changed) never reaches GitHub even though the
-          # script itself completed successfully. All of these data files
-          # are deterministically regenerated from source each run, so
-          # rebasing onto whatever's newest on main and re-pushing is safe
-          # here — there's no meaningful "merge conflict" to resolve by
-          # hand, just freshest-wins on each file. Retries a few times
-          # since this project has repeatedly seen overlapping-workflow-run
-          # issues (duplicate commits, Pages deployment races, and now
-          # this) during active manual testing sessions specifically.
-          for attempt in 1 2 3 4 5; do
-            if git push origin main; then
-              echo "Push succeeded on attempt $attempt"
-              break
-            fi
-            if [ "$attempt" -eq 5 ]; then
-              echo "Push failed after 5 attempts — giving up, see error above"
-              exit 1
-            fi
-            echo "Push rejected (attempt $attempt) — pulling and rebasing before retry"
-            git fetch origin main
-            git rebase origin/main
-            sleep 3
-          done
+            if [ -

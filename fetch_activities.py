@@ -705,26 +705,44 @@ if polar_token:
                         if row.get("polar_exercise_id"):
                             existing_exercises[row["polar_exercise_id"]] = row
 
-            create_url = f"https://www.polaraccesslink.com/v3/users/{polar_user_id}/exercise-transactions"
-            create_req = urllib.request.Request(
-                create_url,
-                headers={"Authorization": f"Bearer {polar_token}", "Accept": "application/json"},
-                method="POST"
-            )
-
+            # PENDING_TRANSACTION_FILE: if a prior run detected a near-miss
+            # (see COMMIT DISCIPLINE below) and deliberately skipped
+            # committing, it wrote this file so a LATER run can resume the
+            # exact same transaction directly rather than hitting 204 forever
+            # (a fresh POST while a transaction is open just returns 204,
+            # with no way back to it unless we already know its resource-uri
+            # — confirmed live during diagnosis). Cleared only after a
+            # successful commit.
+            PENDING_TRANSACTION_FILE = "polar_pending_transaction.json"
             transaction_id = None
             resource_url = None
-            try:
-                with urllib.request.urlopen(create_req, timeout=30) as resp:
-                    if resp.status == 204:
-                        print("Polar exercises: 204 No Content — no new exercise data this run")
-                    else:
-                        tx_body = json.loads(resp.read().decode("utf-8"))
-                        transaction_id = tx_body.get("transaction-id")
-                        resource_url = tx_body.get("resource-uri")
-                        print(f"Polar exercises: opened transaction {transaction_id}")
-            except urllib.error.HTTPError as e:
-                _log_polar_http_error("exercise-transaction create", e)
+
+            if os.path.exists(PENDING_TRANSACTION_FILE):
+                with open(PENDING_TRANSACTION_FILE, "r", encoding="utf-8") as f:
+                    pending = json.load(f)
+                transaction_id = pending.get("transaction_id")
+                resource_url = pending.get("resource_url")
+                print(f"Polar exercises: resuming pending transaction {transaction_id} from a prior run's near-miss")
+            else:
+                create_url = f"https://www.polaraccesslink.com/v3/users/{polar_user_id}/exercise-transactions"
+                create_req = urllib.request.Request(
+                    create_url,
+                    headers={"Authorization": f"Bearer {polar_token}", "Accept": "application/json"},
+                    method="POST"
+                )
+                try:
+                    with urllib.request.urlopen(create_req, timeout=30) as resp:
+                        if resp.status == 204:
+                            print("Polar exercises: 204 No Content — no new exercise data this run")
+                        else:
+                            tx_body = json.loads(resp.read().decode("utf-8"))
+                            transaction_id = tx_body.get("transaction-id")
+                            resource_url = tx_body.get("resource-uri")
+                            print(f"Polar exercises: opened transaction {transaction_id}")
+                            with open(PENDING_TRANSACTION_FILE, "w", encoding="utf-8") as f:
+                                json.dump({"transaction_id": transaction_id, "resource_url": resource_url}, f)
+                except urllib.error.HTTPError as e:
+                    _log_polar_http_error("exercise-transaction create", e)
 
             if resource_url:
                 list_resp = polar_get(resource_url)
@@ -738,6 +756,7 @@ if polar_token:
                         runs_by_date.setdefault(d, []).append(r)
 
                 new_exercise_count = 0
+                had_near_miss = False
                 for ex_url in exercise_urls:
                     ex = polar_get(ex_url)
                     if not ex:
@@ -793,11 +812,15 @@ if polar_token:
                         # Diagnostic for the case where a Garmin run exists on
                         # the SAME DATE but the windows still didn't overlap —
                         # makes the actual gap visible in the log instead of
-                        # just "0 matched" with no way to tell why.
+                        # just "0 matched" with no way to tell why. Also
+                        # tracked as had_near_miss below — see COMMIT
+                        # DISCIPLINE note near the commit call for why this
+                        # gates whether we commit this run at all.
                         for r in same_date_runs:
                             rs = _iso_time_to_seconds_of_day(r.get("start_time", ""))
                             rd = _duration_str_to_seconds(r.get("elapsed_time", ""))
                             if rs is not None and rd is not None:
+                                had_near_miss = True
                                 print(f"Polar exercise {ex_id} NEAR MISS: exercise window {ex_start_sec}-{ex_end_sec}s vs Garmin run {r.get('activity_id')} window {rs}-{rs+rd}s on {ex_date} (gap: {min(abs(ex_start_sec - (rs+rd)), abs(rs - ex_end_sec))}s)")
                         continue  # no genuine Garmin run overlaps — likely a non-run Loop-detected session, or see NEAR MISS above
 
@@ -822,20 +845,39 @@ if polar_token:
 
                 print(f"Polar exercises: {new_exercise_count} matched to a real Garmin run this fetch, {len(existing_exercises)} total in polar_exercises.csv")
 
-                # Commit ONLY now that the CSV write above succeeded — see
-                # COMMIT DISCIPLINE note. If anything above raised, we never
-                # reach this point and the transaction stays open for retry.
-                commit_req = urllib.request.Request(
-                    resource_url,
-                    headers={"Authorization": f"Bearer {polar_token}", "Accept": "application/json"},
-                    method="PUT"
-                )
-                try:
-                    with urllib.request.urlopen(commit_req, timeout=30) as resp:
-                        print(f"Polar exercises: transaction {transaction_id} committed (status {resp.status})")
-                except urllib.error.HTTPError as e:
-                    _log_polar_http_error(f"exercise-transaction {transaction_id} commit", e)
-                    print(f"Polar exercises: commit failed — same data will be offered again next run")
+                # COMMIT DISCIPLINE, extended (July 2026, after a real miss):
+                # committing only on "no exception" wasn't enough — a run
+                # was written successfully with 0 matches due to a matching
+                # LOGIC bug (moving_time vs elapsed_time), and that "success"
+                # still triggered a commit, permanently losing the ability
+                # to re-fetch that exact batch once the bug was found and
+                # fixed. Now: if ANY near-miss was detected this run (a
+                # same-date Garmin run existed but didn't overlap), treat
+                # that as a signal matching may still be incomplete/wrong,
+                # and skip the commit entirely — the same batch stays
+                # available for the next run once matching is trusted again.
+                # A transaction with genuinely no near-misses (e.g. every
+                # unmatched entry is a real non-run Loop session, like a
+                # misdetected bike commute) commits normally.
+                if had_near_miss:
+                    print("Polar exercises: NEAR MISS(es) detected — commit skipped so this batch can be retried; see NEAR MISS lines above for the gap")
+                    print(f"Polar exercises: transaction {transaction_id} left pending in {PENDING_TRANSACTION_FILE} for the next run to resume")
+                else:
+                    # Commit ONLY now that the CSV write above succeeded AND
+                    # no near-misses were flagged.
+                    commit_req = urllib.request.Request(
+                        resource_url,
+                        headers={"Authorization": f"Bearer {polar_token}", "Accept": "application/json"},
+                        method="PUT"
+                    )
+                    try:
+                        with urllib.request.urlopen(commit_req, timeout=30) as resp:
+                            print(f"Polar exercises: transaction {transaction_id} committed (status {resp.status})")
+                            if os.path.exists(PENDING_TRANSACTION_FILE):
+                                os.remove(PENDING_TRANSACTION_FILE)
+                    except urllib.error.HTTPError as e:
+                        _log_polar_http_error(f"exercise-transaction {transaction_id} commit", e)
+                        print(f"Polar exercises: commit failed — same data will be offered again next run")
         except Exception as e:
             print(f"Polar exercises fetch skipped: {e}")
     else:

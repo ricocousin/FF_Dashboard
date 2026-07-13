@@ -59,4 +59,43 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           for f in runs.csv strength.csv lactate.json coach_summary.json api_usage.json steps.csv sleep.csv polar_steps.csv dashboard_metrics.json fetch_status.json polar_hr.csv run_hr_samples.csv coach_context.json garmin_fitness_metrics.csv polar_cardio_load.csv polar_exercises.csv polar_pending_transaction.json; do
-            if [ -
+            if [ -f "$f" ]; then
+              git add "$f"
+            else
+              echo "Skipping $f — not present this run"
+            fi
+          done
+          git diff --staged --quiet || git commit -m "Update activity data"
+
+          # Retry-with-reset push: replaces an earlier `git rebase` version
+          # of this step that caused a real duplication bug. EVERY file this
+          # workflow commits is fully regenerated from source each run —
+          # none are hand-edited — so on a rejected push, the correct
+          # recovery is to discard the stale local commit and re-commit our
+          # already-fresh working tree on top of whatever's now on main, not
+          # to textually merge the two. `git rebase` does a line-based 3-way
+          # merge: two commits that each contain a full, independently
+          # regenerated rewrite of the same CSV look to git like two
+          # non-conflicting sets of added lines, so rebase silently
+          # interleaved BOTH versions — duplicating every row exactly once.
+          # `git reset --soft` avoids this entirely: it moves the branch
+          # pointer without touching the working tree, so our freshly
+          # written files simply become "uncommitted changes on top of the
+          # new remote HEAD" and get re-committed as a single clean
+          # snapshot — never diffed/merged against the old committed
+          # version at the line level.
+          for attempt in 1 2 3 4 5; do
+            if git push origin main; then
+              echo "Push succeeded on attempt $attempt"
+              break
+            fi
+            if [ "$attempt" -eq 5 ]; then
+              echo "Push failed after 5 attempts — giving up, see error above"
+              exit 1
+            fi
+            echo "Push rejected (attempt $attempt) — resetting onto latest main and re-committing (not rebasing, see note above)"
+            git fetch origin main
+            git reset --soft origin/main
+            git diff --staged --quiet || git commit -m "Update activity data"
+            sleep 3
+          done

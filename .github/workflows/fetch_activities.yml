@@ -1,5 +1,4 @@
 name: Sync Training Data
-
 on:
   schedule:
     - cron: '0 4 * * *'   # 6am Danish time in summer (UTC+2)
@@ -11,13 +10,11 @@ on:
         required: false
         default: false
         type: boolean
-
 jobs:
   fetch:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - name: Check if this is the correct Danish local hour
         id: dst_check
         run: |
@@ -34,17 +31,14 @@ jobs:
               echo "Skipping — this cron fire doesn't match current Danish 6am (DST offset)."
             fi
           fi
-
       - name: Set up Python
         if: steps.dst_check.outputs.run == 'true'
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-
       - name: Install dependencies
         if: steps.dst_check.outputs.run == 'true'
         run: pip install garminconnect
-
       - name: Run fetch script
         if: steps.dst_check.outputs.run == 'true'
         env:
@@ -54,13 +48,11 @@ jobs:
           POLAR_USER_ID: ${{ secrets.POLAR_USER_ID }}
           FULL_REFRESH: ${{ github.event.inputs.full_refresh }}
         run: python fetch_activities.py
-
       - name: Build dashboard metrics + AI coach
         if: steps.dst_check.outputs.run == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python build_dashboard.py
-
       - name: Commit and push data files
         if: steps.dst_check.outputs.run == 'true'
         run: |
@@ -74,4 +66,34 @@ jobs:
             fi
           done
           git diff --staged --quiet || git commit -m "Update activity data"
-          git push
+
+          # Retry-with-rebase push: added after a real failure where this
+          # workflow's push was rejected because another workflow (a manual
+          # one-off run, in that specific case) had pushed to main in the
+          # gap between this job's checkout and its own push attempt. A
+          # plain `git push` has no way to recover from that — it just
+          # fails outright, and whatever this run fetched (sleep, steps,
+          # continuous HR, cardio load, HR samples — everything, not just
+          # the file that changed) never reaches GitHub even though the
+          # script itself completed successfully. All of these data files
+          # are deterministically regenerated from source each run, so
+          # rebasing onto whatever's newest on main and re-pushing is safe
+          # here — there's no meaningful "merge conflict" to resolve by
+          # hand, just freshest-wins on each file. Retries a few times
+          # since this project has repeatedly seen overlapping-workflow-run
+          # issues (duplicate commits, Pages deployment races, and now
+          # this) during active manual testing sessions specifically.
+          for attempt in 1 2 3 4 5; do
+            if git push origin main; then
+              echo "Push succeeded on attempt $attempt"
+              break
+            fi
+            if [ "$attempt" -eq 5 ]; then
+              echo "Push failed after 5 attempts — giving up, see error above"
+              exit 1
+            fi
+            echo "Push rejected (attempt $attempt) — pulling and rebasing before retry"
+            git fetch origin main
+            git rebase origin/main
+            sleep 3
+          done

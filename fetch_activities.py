@@ -148,13 +148,28 @@ def is_valid_lt_record(record):
     return pace_sec is not None and 120 < pace_sec < 900
 
 def _iso_time_to_seconds_of_day(iso_str):
-    """Extracts seconds-since-midnight from an ISO 8601 timestamp, tolerant
-    of a trailing 'Z', a timezone offset, or fractional seconds. Used to
-    check whether a Polar exercise window overlaps a Garmin run window on
-    the same date — only the time-of-day matters, not the date itself
-    (that's matched separately via the date string)."""
+    """Extracts seconds-since-midnight from a timestamp string, tolerant of
+    a trailing 'Z', a timezone offset, or fractional seconds. Used to check
+    whether a Polar exercise window overlaps a Garmin run window on the
+    same date — only the time-of-day matters, not the date itself (that's
+    matched separately via the date string).
+
+    CONFIRMED BUG, FIXED (July 2026, via real backfill data): this
+    originally assumed a 'T' separator (ISO 8601, e.g. Polar's
+    start-time: "2026-07-12T08:41:06"), but Garmin's runs.csv start_time
+    is written SPACE-separated ("2026-07-12 08:39:38", from startTimeLocal)
+    — a plain .split("T")[1] on a space-separated string raises IndexError,
+    silently caught, always returning None. This meant every Garmin run's
+    computed start time was None from the very first version of the
+    exercise-matching feature, so NO exercise could ever match ANY run,
+    for a more fundamental reason than the later moving_time-vs-
+    elapsed_time fix (which was correct but never got a chance to matter).
+    Confirmed by testing this function directly against a real runs.csv
+    row before shipping this fix — do not remove the space-vs-T handling
+    without re-confirming both timestamp formats live again."""
     try:
-        time_part = iso_str.split("T")[1]
+        sep = "T" if "T" in iso_str else " "
+        time_part = iso_str.split(sep)[1]
         time_part = time_part.split("+")[0].split("Z")[0]
         h, m, s = time_part.split(":")
         s = s.split(".")[0]

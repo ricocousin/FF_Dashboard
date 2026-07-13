@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-13 18:21 UTC",
-  "headline": "Recovery week continues with easy-run HR sitting well below the prior period as the +51% block settles.",
+  "last_updated": "2026-07-13 19:15 UTC",
+  "headline": "Easy-run HR holds well below the prior block into the recovery week, strengthening the case for a real efficiency gain.",
   "confidence_pct": 93,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
@@ -12,12 +12,11 @@
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "HR data on 6/8 recent runs",
-  "summary": "The lightest days of the block are behind you now, and the picture is consistent: comparable-effort easy runs are landing at a lower heart rate than the prior period, which is exactly what you'd want to see after a four-week block that added half again as much volume. That combination \u2014 more work absorbed, lower cost per kilometre \u2014 is the signal that the base is genuinely consolidating rather than just accumulating.\n\nStrength frequency has more than doubled versus the prior block and the running streak sits at its all-time high, so nothing here suggests you're giving anything back during the lighter days. This is a recovery week doing its job, not a step down in preparedness. With St. Olavsleden about four weeks out, the aerobic side looks well-positioned; the untrained variable remains the pack carry and sustained climbing rather than fitness itself.",
+  "summary": "The lower easy-run HR you saw building through the recent block has carried into a lighter week rather than snapping back \u2014 which is exactly the signal that separates a genuine aerobic efficiency gain from a recovery-week artefact. It's holding at comparable effort across a decent number of runs, so this is looking more like a durable adaptation than noise. Worth noting it's not confirmed until volume steps back up, but the direction is encouraging.\n\nThe recent block landed a meaningful step up in volume over the prior four weeks while doubling strength frequency, and you've absorbed it without the strain ratio drifting out of productive territory. That combination \u2014 more running, more lifting, HR trending down \u2014 is the picture of a base that's consolidating rather than being overreached. Zone distribution stays heavily aerobic with very little grey-zone drift, which is what you want with the event roughly four weeks out and a self-supported, pack-carrying effort ahead.\n\nNothing in today's data argues for changing course. The recovery week is doing its job.",
   "watch_items": [
-    "Whether weighted-pack running enters the schedule while there's still runway to adapt the carry demand before the event.",
-    "Whether ascent per run starts trending toward sustained climbing rather than the rolling profiles logged so far.",
-    "Whether the lower easy-run HR holds once volume steps back up, confirming the efficiency gain rather than a recovery-week artefact.",
-    "Whether the short nights after hard days start clustering as the event nears."
+    "Whether the lower easy-run HR survives the return to higher volume \u2014 the confirming test for this efficiency gain.",
+    "Whether pack-carry running enters the schedule while there's still time to adapt the carry demand before the coast-to-coast.",
+    "Whether ascent per run starts building toward sustained climbing rather than the rolling profiles logged so far, given the mountain crossing."
   ],
   "evidence_items": [
     {
@@ -33,27 +32,27 @@
       "priority": "High"
     },
     {
-      "text": "\u25ac 21-week running streak (best: 21 wks)",
-      "priority": "Medium"
+      "text": "\u25b2 Zone 2: 444 min vs 180-240 min/week target (246% of minimum); grey zone (Z3+Z4): 5.2%",
+      "priority": "Low"
     },
     {
-      "text": "\u25b2 Zone 2: 444 min vs 180-240 min/week target (246% of minimum); grey zone (Z3+Z4): 5.2%",
+      "text": "\u25ac Strain:tolerance ratio 1.09 (PRODUCTIVE) (strain 94, tolerance 87); sleep averaging 7h36m over the same period",
       "priority": "Low"
     }
   ],
   "insights": [
-    "The lightest days of the block are behind you now, and the picture is consistent: comparable-effort easy runs are landing at a lower heart rate than the prior period, which is exactly what you'd want to see after a four-week block that added half again as much volume. That combination \u2014 more work absorbed, lower cost per kilometre \u2014 is the signal that the base is genuinely consolidating rather than just accumulating.\n\nStrength frequency has more than doubled versus the prior block and the running streak sits at its all-time high, so nothing here suggests you're giving anything back during the lighter days. This is a recovery week doing its job, not a step down in preparedness. With St. Olavsleden about four weeks out, the aerobic side looks well-positioned; the untrained variable remains the pack carry and sustained climbing rather than fitness itself."
+    "The lower easy-run HR you saw building through the recent block has carried into a lighter week rather than snapping back \u2014 which is exactly the signal that separates a genuine aerobic efficiency gain from a recovery-week artefact. It's holding at comparable effort across a decent number of runs, so this is looking more like a durable adaptation than noise. Worth noting it's not confirmed until volume steps back up, but the direction is encouraging.\n\nThe recent block landed a meaningful step up in volume over the prior four weeks while doubling strength frequency, and you've absorbed it without the strain ratio drifting out of productive territory. That combination \u2014 more running, more lifting, HR trending down \u2014 is the picture of a base that's consolidating rather than being overreached. Zone distribution stays heavily aerobic with very little grey-zone drift, which is what you want with the event roughly four weeks out and a self-supported, pack-carrying effort ahead.\n\nNothing in today's data argues for changing course. The recovery week is doing its job."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 5498,
-    "output_tokens": 479,
-    "cost_usd": 0.039465,
-    "cost_dkk": 0.27231,
+    "input_tokens": 5503,
+    "output_tokens": 531,
+    "cost_usd": 0.04079,
+    "cost_dkk": 0.28145,
     "date": "2026-07-13"
   },
-  "usage_mtd_usd": 0.34979,
-  "usage_mtd_dkk": 2.4136,
-  "usage_ytd_usd": 0.34979,
-  "usage_ytd_dkk": 2.4136
+  "usage_mtd_usd": 0.35112,
+  "usage_mtd_dkk": 2.4227,
+  "usage_ytd_usd": 0.35112,
+  "usage_ytd_dkk": 2.4227
 }

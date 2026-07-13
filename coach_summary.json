@@ -1,22 +1,22 @@
 {
-  "last_updated": "2026-07-12 16:07 UTC",
-  "headline": "A 12 km moderate run at controlled HR follows yesterday's long effort, capping a level four-week block heading into taper territory.",
-  "confidence_pct": 92,
+  "last_updated": "2026-07-13 12:58 UTC",
+  "headline": "Easy-run HR keeps drifting down as the four-week block closes with volume up and strength doubled \u2014 base is consolidating well.",
+  "confidence_pct": 93,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
-    "LT reading 9d old",
+    "LT reading 10d old",
     "HR data on 6/8 recent runs",
-    "Sleep tracked 10/14 nights",
+    "Sleep tracked 11/14 nights",
     "Steps tracked 7/7 days",
     "Data fetch up to date",
     "Multiple data sources active in last 3 days"
   ],
-  "confidence_attention": "Sleep tracked 10/14 nights",
-  "summary": "Today's run sits at a moderate pace and effort \u2014 nothing hard, and reasonable to see the day after a 21 km time-on-feet session. Nothing in it suggests fatigue accumulation; it reads as a durable base absorbing back-to-back load rather than straining under it. The strain:tolerance balance staying level confirms the four-week build topped out where it should, leaving you neither overreached nor detrained a month out from the crossing.\n\nThe through-line worth holding onto is aerobic efficiency: comparable-effort easy runs are settling at a lower HR than the prior period, and that trend has held through a block where volume rose materially and strength frequency more than doubled. That's the signal that matters more than any single session \u2014 the base is genuinely getting more economical, not just bigger.\n\nLast night's short sleep after a longer-sleep night fits the wide night-to-night swing that's been present lately. On its own it doesn't change anything; it's worth naming only because longer efforts are likely to keep coming and the swings haven't settled.",
+  "confidence_attention": "HR data on 6/8 recent runs",
+  "summary": "The aerobic-efficiency signal you've been building is still the clearest thing in the data: comparable-effort easy runs are sitting at a lower heart rate than the prior period, which is exactly what you want to see with volume up by half over the previous block. That combination \u2014 more kilometres carried at a lower cost \u2014 is consolidation, not fatigue.\n\nStrength has genuinely stepped up too, roughly doubling in frequency, and it's holding alongside the running rather than being crowded out. With St. Olavsleden a few weeks out, this looks like a base that's ready and now settling. The strain:tolerance ratio still reads productive, so nothing here argues for backing off; today's picture is a durable block finishing in good order.\n\nSleep is worth a passing note only \u2014 it's been swinging hard between very short and very long nights, but that stream isn't validated enough to shift anything, and the strain ratio isn't corroborating any concern.",
   "watch_items": [
-    "Whether pack-loaded running finally enters the schedule, since the general base is ready but the specific weighted demand still isn't trained.",
-    "Whether climbing per run starts trending toward sustained ascent rather than the rolling profiles logged so far.",
-    "Whether the short-sleep nights begin clustering as longer efforts continue, rather than alternating with long-sleep nights."
+    "Whether the short/long sleep swings settle into a steadier pattern or begin clustering short as the event approaches.",
+    "Whether pack-loaded running enters the schedule, since the general base looks ready but the specific weighted demand still isn't trained.",
+    "Whether ascent per run starts trending toward sustained climbing to match the mountain crossing, rather than the rolling profiles logged so far."
   ],
   "evidence_items": [
     {
@@ -32,27 +32,23 @@
       "priority": "High"
     },
     {
-      "text": "\u25b2 Zone 2: 205 min vs 180-240 min/week target (114% of minimum); grey zone (Z3+Z4): 7.1%",
-      "priority": "Low"
-    },
-    {
-      "text": "\u25ac Strain:tolerance ratio 0.99 (MAINTAINING) (strain 91, tolerance 92); sleep averaging 7h29m over the same period",
+      "text": "\u25ac Strain:tolerance ratio 1.08 (PRODUCTIVE) (strain 91, tolerance 85); sleep averaging 7h36m over the same period",
       "priority": "Low"
     }
   ],
   "insights": [
-    "Today's run sits at a moderate pace and effort \u2014 nothing hard, and reasonable to see the day after a 21 km time-on-feet session. Nothing in it suggests fatigue accumulation; it reads as a durable base absorbing back-to-back load rather than straining under it. The strain:tolerance balance staying level confirms the four-week build topped out where it should, leaving you neither overreached nor detrained a month out from the crossing.\n\nThe through-line worth holding onto is aerobic efficiency: comparable-effort easy runs are settling at a lower HR than the prior period, and that trend has held through a block where volume rose materially and strength frequency more than doubled. That's the signal that matters more than any single session \u2014 the base is genuinely getting more economical, not just bigger.\n\nLast night's short sleep after a longer-sleep night fits the wide night-to-night swing that's been present lately. On its own it doesn't change anything; it's worth naming only because longer efforts are likely to keep coming and the swings haven't settled."
+    "The aerobic-efficiency signal you've been building is still the clearest thing in the data: comparable-effort easy runs are sitting at a lower heart rate than the prior period, which is exactly what you want to see with volume up by half over the previous block. That combination \u2014 more kilometres carried at a lower cost \u2014 is consolidation, not fatigue.\n\nStrength has genuinely stepped up too, roughly doubling in frequency, and it's holding alongside the running rather than being crowded out. With St. Olavsleden a few weeks out, this looks like a base that's ready and now settling. The strain:tolerance ratio still reads productive, so nothing here argues for backing off; today's picture is a durable block finishing in good order.\n\nSleep is worth a passing note only \u2014 it's been swinging hard between very short and very long nights, but that stream isn't validated enough to shift anything, and the strain ratio isn't corroborating any concern."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 5494,
-    "output_tokens": 537,
-    "cost_usd": 0.040895,
-    "cost_dkk": 0.28218,
-    "date": "2026-07-12"
+    "input_tokens": 5483,
+    "output_tokens": 506,
+    "cost_usd": 0.040065,
+    "cost_dkk": 0.27645,
+    "date": "2026-07-13"
   },
-  "usage_mtd_usd": 0.31033,
-  "usage_mtd_dkk": 2.1413,
-  "usage_ytd_usd": 0.31033,
-  "usage_ytd_dkk": 2.1413
+  "usage_mtd_usd": 0.35039,
+  "usage_mtd_dkk": 2.4177,
+  "usage_ytd_usd": 0.35039,
+  "usage_ytd_dkk": 2.4177
 }

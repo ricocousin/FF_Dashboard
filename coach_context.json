@@ -1,15 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-07-08",
-      "headline": "Today's faster tempo effort sat at a notably lower HR than a comparable hard run ten days ago.",
-      "watch_items": [
-        "Whether loaded, consecutive-day efforts appear in the coming weeks \u2014 that pack-carrying durability is the gap closest to the event demand.",
-        "Whether today's lower HR at faster paces holds up across repeated tempo sessions rather than a single occurrence.",
-        "Sleep scores have been erratic and mostly low this week; worth noting if that coincides with any flattening in the HR trend, though the data stream is still too new to act on."
-      ]
-    },
-    {
       "date": "2026-07-09",
       "headline": "The aerobic-efficiency trend holds as volume plateaus, with strength frequency doubling into a genuinely durable base a month out from St. Olavsleden.",
       "watch_items": [
@@ -46,6 +37,15 @@
         "Whether pack-loaded running finally enters the schedule, since the general base is ready but the specific weighted demand still isn't trained.",
         "Whether climbing per run starts trending toward sustained ascent rather than the rolling profiles logged so far.",
         "Whether the short-sleep nights begin clustering as longer efforts continue, rather than alternating with long-sleep nights."
+      ]
+    },
+    {
+      "date": "2026-07-13",
+      "headline": "Easy-run HR keeps drifting down as the four-week block closes with volume up and strength doubled \u2014 base is consolidating well.",
+      "watch_items": [
+        "Whether the short/long sleep swings settle into a steadier pattern or begin clustering short as the event approaches.",
+        "Whether pack-loaded running enters the schedule, since the general base looks ready but the specific weighted demand still isn't trained.",
+        "Whether ascent per run starts trending toward sustained climbing to match the mountain crossing, rather than the rolling profiles logged so far."
       ]
     }
   ]

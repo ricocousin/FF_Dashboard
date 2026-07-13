@@ -298,6 +298,29 @@ async function init() {
 
   const r = m.running, st = m.strength, sp = m.steps, iv = m.intensity, rc = m.recovery, cl = m.cardio_load || {};
 
+  // ── Per-tile freshness dots ───────────────────────────────────────────────
+  // Running/Strength/Intensity deliberately reuse the SAME pipeline-level
+  // status as the global overview dot — a real per-day check would show
+  // stale on every ordinary rest day, which isn't a freshness problem.
+  // Steps/Recovery/Load get a real per-day check from m.tile_freshness,
+  // since those are genuinely continuous data. See PROJECT_CONTEXT for
+  // the full reasoning (option B, chosen after sparring).
+  function tileFreshDot(status) {
+    const color = status === 'fresh' ? '#7bc67e' : status === 'stale' ? '#ff9f40' : '#ff6b35';
+    const title = status === 'fresh' ? 'Fresh — up to date as of yesterday'
+      : status === 'stale' ? 'Stale — no confirmed data for yesterday yet'
+      : 'Freshness unclear — check the pipeline';
+    return `<span title="${escapeHtml(title)}" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${color};margin-left:0.5rem;vertical-align:middle"></span>`;
+  }
+  const pipelineStatus = (m.data_freshness && m.data_freshness.status) || 'failed';
+  const tf = m.tile_freshness || {};
+  const runningFreshDot = tileFreshDot(pipelineStatus);
+  const strengthFreshDot = tileFreshDot(pipelineStatus);
+  const intensityFreshDot = tileFreshDot(pipelineStatus);
+  const stepsFreshDot = tileFreshDot(tf.steps || 'failed');
+  const recoveryFreshDot = tileFreshDot(tf.recovery || 'failed');
+  const loadFreshDot = tileFreshDot(tf.load || 'failed');
+
   const runChangeHtml = changeLine(r.week_delta_km, r.week_qual, 'last week', v => `${v.toFixed(1)} km`);
   const strengthChangeHtml = changeLine(st.week_delta_sessions, st.week_qual, 'last week', v => `${Math.round(v)}`);
   const stepsChangeHtml = sp.avg_7d !== null ? changeLine(sp.delta_7d_vs_30d, sp.qual, '30d average', v => `${Math.round(v).toLocaleString()}`) : '';
@@ -309,35 +332,35 @@ async function init() {
     ? `<br><span class="cross-ref" style="color:var(--load)">Strain:tolerance ${cl.ratio.toFixed(2)}${cl.status ? ' · ' + escapeHtml(cl.status) : ''}</span>`
     : '';
 
-  const stepsRow = (sp.avg_all_time !== null) ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_all_time?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsChangeHtml}</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsDiscrepancyHtml}</span></div></div>` : '';
+  const stepsRow = (sp.avg_all_time !== null) ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps${stepsFreshDot}</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_all_time?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsChangeHtml}</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsDiscrepancyHtml}</span></div></div>` : '';
 
   const recoveryTile = (label, data, changeHtml, crossRefHtml) => {
     const durationStr = data && data.mins ? fmtHrs(data.mins) : '—';
     const scoreStr = data && data.score !== null && data.score !== undefined ? `Score: ${Math.round(data.score)}` : 'Score: —';
     return `<div class="stat"><span class="stat-label">${label}</span><span class="stat-value" style="color:var(--recovery)">${durationStr}</span><span class="stat-sub">${scoreStr}${changeHtml || ''}${crossRefHtml || ''}</span></div>`;
   };
-  const recoveryRow = (rc.week.mins !== null || rc.month.mins !== null || rc.year.mins !== null) ? `<div class="overview-full"><div class="overview-label recovery" style="grid-column:1/-1">Recovery</div>${recoveryTile('Avg / week', rc.week, recoveryChangeHtml, cardioCrossRefHtml)}${recoveryTile('Avg / month', rc.month)}${recoveryTile('Avg / year', rc.year)}</div>` : '';
+  const recoveryRow = (rc.week.mins !== null || rc.month.mins !== null || rc.year.mins !== null) ? `<div class="overview-full"><div class="overview-label recovery" style="grid-column:1/-1">Recovery${recoveryFreshDot}</div>${recoveryTile('Avg / week', rc.week, recoveryChangeHtml, cardioCrossRefHtml)}${recoveryTile('Avg / month', rc.month)}${recoveryTile('Avg / year', rc.year)}</div>` : '';
 
-  const loadRow = (cl.strain !== null && cl.strain !== undefined) ? `<div class="overview-full"><div class="overview-label load" style="grid-column:1/-1">Load (Polar Cardio)</div><div class="stat"><span class="stat-label">Strain (7d avg)</span><span class="stat-value" style="color:var(--load)">${fmt(cl.strain, 0)}</span><span class="stat-sub">load units</span></div><div class="stat"><span class="stat-label">Tolerance (28d avg)</span><span class="stat-value" style="color:var(--load)">${fmt(cl.tolerance, 0)}</span><span class="stat-sub">load units</span></div><div class="stat"><span class="stat-label">Strain:tolerance ratio</span><span class="stat-value" style="color:var(--load)">${cl.ratio !== null && cl.ratio !== undefined ? cl.ratio.toFixed(2) : '—'}</span><span class="stat-sub">${cl.status ? escapeHtml(cl.status) : '—'}${cl.latest_date ? ' · ' + cl.latest_date : ''}</span></div></div>` : '';
+  const loadRow = (cl.strain !== null && cl.strain !== undefined) ? `<div class="overview-full"><div class="overview-label load" style="grid-column:1/-1">Load (Polar Cardio)${loadFreshDot}</div><div class="stat"><span class="stat-label">Strain (7d avg)</span><span class="stat-value" style="color:var(--load)">${fmt(cl.strain, 0)}</span><span class="stat-sub">load units</span></div><div class="stat"><span class="stat-label">Tolerance (28d avg)</span><span class="stat-value" style="color:var(--load)">${fmt(cl.tolerance, 0)}</span><span class="stat-sub">load units</span></div><div class="stat"><span class="stat-label">Strain:tolerance ratio</span><span class="stat-value" style="color:var(--load)">${cl.ratio !== null && cl.ratio !== undefined ? cl.ratio.toFixed(2) : '—'}</span><span class="stat-sub">${cl.status ? escapeHtml(cl.status) : '—'}${cl.latest_date ? ' · ' + cl.latest_date : ''}</span></div></div>` : '';
 
   const overviewBlock = document.createElement('div');
   overviewBlock.className = 'overview-block';
   overviewBlock.innerHTML = `
     <div class="overview-full">
-      <div class="overview-label run" style="grid-column:1/-1">Running</div>
+      <div class="overview-label run" style="grid-column:1/-1">Running${runningFreshDot}</div>
       <div class="stat"><span class="stat-label">Avg / run</span><span class="stat-value accent">${fmt(r.avg_per_run_km, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${r.runs_this_year} runs ${m.this_year}</span></div>
       <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(r.avg_per_week_km, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${fmt(r.total_distance_this_year_km, 0)} km ${m.this_year}${runChangeHtml}</span></div>
       <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value accent">${r.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${r.longest_weekly_streak ?? '—'} wks</span></div>
     </div>
     <div class="overview-full">
-      <div class="overview-label lift" style="grid-column:1/-1">Strength</div>
+      <div class="overview-label lift" style="grid-column:1/-1">Strength${strengthFreshDot}</div>
       <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value blue">${fmt(st.avg_sessions_per_week, 1)}</span><span class="stat-sub">${st.sessions_this_year} sessions ${m.this_year}${strengthChangeHtml}</span></div>
       <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(st.avg_hours_per_week, 1)} <small style="font-size:.9rem;color:var(--text-dim)">hrs</small></span><span class="stat-sub">${fmt(st.total_hours_this_year, 1)} hrs ${m.this_year}</span></div>
       <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value blue">${st.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${st.longest_weekly_streak ?? '—'} wks</span></div>
     </div>
     ${stepsRow}
     <div class="overview-full">
-      <div class="overview-label intensity" style="grid-column:1/-1">Intensity Minutes</div>
+      <div class="overview-label intensity" style="grid-column:1/-1">Intensity Minutes${intensityFreshDot}</div>
       <div class="stat"><span class="stat-label">Avg / week (${m.this_year})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(iv.avg_week_year_mins)}</span><span class="stat-sub">${fmtHrs(iv.avg_week_year_run_mins)} run · ${fmtHrs(iv.avg_week_year_lift_mins)} lift</span></div>
       <div class="stat"><span class="stat-label">Avg / week (${m.this_month_short})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(iv.avg_week_month_mins)}</span><span class="stat-sub">${fmtHrs(iv.avg_week_month_run_mins)} run · ${fmtHrs(iv.avg_week_month_lift_mins)} lift${intensityChangeHtml}</span></div>
       <div class="stat"><span class="stat-label">Streak vs ${iv.goal_mins}min goal</span><span class="stat-value" style="color:var(--intensity)">${iv.streak_weeks} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${iv.best_streak_weeks} wks</span></div>
@@ -381,35 +404,48 @@ async function init() {
   `;
   app.appendChild(grid1);
 
-  // ── LT card ───────────────────────────────────────────────────────────────────
-  const ltCard = document.createElement('div');
-  ltCard.className = 'card';
-  if (m.lt.latest) {
-    const zonesHtml = m.lt.zones ? m.lt.zones.map(z => `<div class="zone"><span class="zone-name">${z.name}</span><div class="zone-bar-track"><div class="zone-bar-fill" style="width:${z.pct}%;background:${z.color}"></div></div><span class="zone-pace">${z.pace_label}${z.hr_label ? ' · ' + z.hr_label : ''}</span></div>`).join('') : '';
-    const ltTrendHtml = m.lt.trend ? `<div class="chart-wrap" style="height:100px;margin-top:1rem"><canvas id="ltChart"></canvas></div>` : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:1rem">Trend builds daily — check back soon.</p>`;
-    ltCard.innerHTML = `<div class="card-title">Lactate threshold</div><div class="lt-grid"><div class="lt-values"><div class="lt-main"><span class="lt-label">LT pace</span><span class="lt-pace">${m.lt.latest.lt_pace} /km</span><span class="lt-hr">@ ${m.lt.latest.lt_hr} bpm · ${m.lt.latest.source_date}</span></div></div><div><div class="lt-label" style="margin-bottom:0.75rem">Training zones</div><div class="zones">${zonesHtml}</div></div></div>${ltTrendHtml}`;
-  } else {
-    ltCard.innerHTML = `<div class="card-title">Lactate threshold</div><p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">No valid LT reading yet — recalibrating after a data fix.</p>`;
-  }
-  app.appendChild(ltCard);
-
-  // ── VO2max card ────────────────────────────────────────────────────────────
-  // Restored — same class of gap as the two cards below: build_dashboard.py
-  // has been writing fitness_metrics into dashboard_metrics.json all along,
-  // this card just wasn't rendering it. get_max_metrics() has no periodic
-  // max-HR field (see PROJECT_CONTEXT §5a) — VO2max + a trend once ≥2 points
-  // exist is all this card shows; fitness_age is deliberately never rendered
-  // here (dropped for a corrupted-input reason, not a missing-feature one).
+  // ── Lactate Threshold & VO2max (merged card) ──────────────────────────────
+  // Merged per athlete request — LT and VO2max shown together with a
+  // combined dual-axis trend chart (left: LT pace, reversed since lower is
+  // better, matching the existing convention; right: VO2max, higher is
+  // better) rather than two separate cards with two separate small charts.
+  // The two series have different dates (LT and VO2max readings don't
+  // happen on the same days), so the chart is built from the UNION of
+  // both series' dates, each dataset supplying null for dates it has no
+  // reading on — Chart.js draws a genuine gap rather than a false
+  // interpolation across missing data.
+  //
+  // Freshness dot reuses the pipeline-level status (not a per-day check —
+  // neither LT nor VO2max update daily, so "was there a reading yesterday"
+  // isn't a meaningful question; what the athlete actually asked for is
+  // "does this reflect the latest successful pipeline run," which the
+  // pipeline-level signal already answers honestly).
+  const ltVo2Card = document.createElement('div');
+  ltVo2Card.className = 'card';
   const fm = m.fitness_metrics;
-  if (fm && fm.latest_vo2max !== null && fm.latest_vo2max !== undefined) {
-    const vo2Card = document.createElement('div');
-    vo2Card.className = 'card';
-    const vo2TrendHtml = (fm.trend && fm.trend.vo2max && fm.trend.vo2max.length > 1)
-      ? `<div class="chart-wrap" style="height:100px;margin-top:1rem"><canvas id="vo2Chart"></canvas></div>`
-      : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:1rem">Trend builds as more estimates land — check back soon.</p>`;
-    vo2Card.innerHTML = `<div class="card-title">VO2max</div><div class="lt-main"><span class="lt-label">Latest estimate</span><span class="lt-pace">${fmt(fm.latest_vo2max, 1)}</span><span class="lt-hr">${fm.latest_vo2max_precise !== null && fm.latest_vo2max_precise !== undefined ? `precise: ${fmt(fm.latest_vo2max_precise, 1)} · ` : ''}${fm.latest_date ?? ''}</span></div>${vo2TrendHtml}`;
-    app.appendChild(vo2Card);
+  const hasLt = !!m.lt.latest;
+  const hasVo2 = fm && fm.latest_vo2max !== null && fm.latest_vo2max !== undefined;
+
+  if (hasLt || hasVo2) {
+    const zonesHtml = m.lt.zones ? m.lt.zones.map(z => `<div class="zone"><span class="zone-name">${z.name}</span><div class="zone-bar-track"><div class="zone-bar-fill" style="width:${z.pct}%;background:${z.color}"></div></div><span class="zone-pace">${z.pace_label}${z.hr_label ? ' · ' + z.hr_label : ''}</span></div>`).join('') : '';
+
+    const ltHeaderHtml = hasLt ? `<div class="lt-main"><span class="lt-label">LT pace</span><span class="lt-pace">${m.lt.latest.lt_pace} /km</span><span class="lt-hr">@ ${m.lt.latest.lt_hr} bpm · ${m.lt.latest.source_date}</span></div>` : `<div class="lt-main"><span class="lt-label">LT pace</span><span class="lt-pace" style="color:var(--text-dim);font-size:1.4rem">No data yet</span></div>`;
+    const vo2HeaderHtml = hasVo2 ? `<div class="lt-main"><span class="lt-label">VO2max</span><span class="lt-pace" style="color:var(--strength)">${fmt(fm.latest_vo2max, 1)}</span><span class="lt-hr">${fm.latest_vo2max_precise !== null && fm.latest_vo2max_precise !== undefined ? `precise: ${fmt(fm.latest_vo2max_precise, 1)} · ` : ''}${fm.latest_date ?? ''}</span></div>` : `<div class="lt-main"><span class="lt-label">VO2max</span><span class="lt-pace" style="color:var(--text-dim);font-size:1.4rem">No data yet</span></div>`;
+
+    const ltLabels = (m.lt.trend && m.lt.trend.labels) || [];
+    const ltPaceData = (m.lt.trend && m.lt.trend.pace_sec) || [];
+    const vo2Labels = (fm && fm.trend && fm.trend.labels) || [];
+    const vo2Data = (fm && fm.trend && fm.trend.vo2max) || [];
+    const hasCombinedTrend = ltLabels.length > 1 || vo2Labels.length > 1;
+    const trendHtml = hasCombinedTrend
+      ? `<div class="chart-wrap" style="height:140px;margin-top:1rem"><canvas id="ltVo2Chart"></canvas></div>`
+      : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:1rem">Trend builds as more readings land — check back soon.</p>`;
+
+    ltVo2Card.innerHTML = `<div class="card-title-row"><div class="card-title">Lactate threshold &amp; VO2max</div>${tileFreshDot(pipelineStatus)}</div><div class="lt-grid" style="grid-template-columns:1fr 1fr"><div>${ltHeaderHtml}</div><div>${vo2HeaderHtml}</div></div>${hasLt ? `<div style="margin-top:1rem"><div class="lt-label" style="margin-bottom:0.75rem">Training zones</div><div class="zones">${zonesHtml}</div></div>` : ''}${trendHtml}`;
+  } else {
+    ltVo2Card.innerHTML = `<div class="card-title-row"><div class="card-title">Lactate threshold &amp; VO2max</div>${tileFreshDot(pipelineStatus)}</div><p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">No LT or VO2max data yet.</p>`;
   }
+  app.appendChild(ltVo2Card);
 
   // ── Time in zone card (rolling / last-completed-week toggle) ─────────────────
   // Restored — this card (and the HR comparison card below) went missing
@@ -615,13 +651,41 @@ async function init() {
       plugins: [makeMonthPlugin('optionAMonthLines', c16.month_boundaries, c16.month_labels)]
     });
 
-    if ($('ltChart') && m.lt.trend) {
-      const t = m.lt.trend;
-      new Chart($('ltChart'), { type: 'line', data: { labels: t.labels, datasets: [ { data: t.pace_sec, borderColor: 'rgba(232,255,90,0.8)', backgroundColor: 'rgba(232,255,90,0.06)', pointBackgroundColor: 'rgba(232,255,90,0.9)', pointRadius: 4, tension: 0.3, fill: true }, { data: t.trend_sec, borderColor: 'rgba(255,107,53,0.7)', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0 } ] }, options: { ...chartOpts(), scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, y: { reverse: true, grid: { color: '#1f1f24' }, ticks: { color: '#6b6b78', callback: v => secToPace(v) } } }, plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` LT pace: ${secToPace(ctx.parsed.y)} /km` : ` Trend` } } } } });
-    }
+    if ($('ltVo2Chart')) {
+      const ltLabels = (m.lt.trend && m.lt.trend.labels) || [];
+      const ltPaceData = (m.lt.trend && m.lt.trend.pace_sec) || [];
+      const vo2Labels = (fm && fm.trend && fm.trend.labels) || [];
+      const vo2Data = (fm && fm.trend && fm.trend.vo2max) || [];
+      // Union of both series' dates (each is already chronologically
+      // sorted MM-DD from the backend) — each dataset supplies null for
+      // dates it has no reading on, so Chart.js draws a real gap rather
+      // than a false interpolation across missing data.
+      const unionLabels = Array.from(new Set([...ltLabels, ...vo2Labels])).sort();
+      const ltSeries = unionLabels.map(l => { const i = ltLabels.indexOf(l); return i === -1 ? null : ltPaceData[i]; });
+      const vo2Series = unionLabels.map(l => { const i = vo2Labels.indexOf(l); return i === -1 ? null : vo2Data[i]; });
 
-    if ($('vo2Chart') && fm && fm.trend && fm.trend.vo2max && fm.trend.vo2max.length > 1) {
-      new Chart($('vo2Chart'), { type: 'line', data: { labels: fm.trend.labels, datasets: [ { data: fm.trend.vo2max, borderColor: 'rgba(232,255,90,0.8)', backgroundColor: 'rgba(232,255,90,0.06)', pointBackgroundColor: 'rgba(232,255,90,0.9)', pointRadius: 4, tension: 0.3, fill: true } ] }, options: { ...chartOpts(), plugins: { ...chartOpts().plugins, tooltip: { ...chartOpts().plugins.tooltip, callbacks: { label: ctx => ` VO2max: ${ctx.parsed.y}` } } } } });
+      new Chart($('ltVo2Chart'), {
+        type: 'line',
+        data: {
+          labels: unionLabels,
+          datasets: [
+            { label: 'LT pace', data: ltSeries, borderColor: 'rgba(232,255,90,0.9)', backgroundColor: 'rgba(232,255,90,0.08)', pointRadius: 4, tension: 0.3, fill: false, yAxisID: 'yLT', spanGaps: false },
+            { label: 'VO2max', data: vo2Series, borderColor: 'rgba(74,158,255,0.9)', backgroundColor: 'rgba(74,158,255,0.08)', pointRadius: 4, tension: 0.3, fill: false, yAxisID: 'yVO2', spanGaps: false }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#6b6b78' } },
+            yLT: { type: 'linear', position: 'left', reverse: true, grid: { color: '#1f1f24' }, ticks: { color: '#e8ff5a', callback: v => secToPace(v) } },
+            yVO2: { type: 'linear', position: 'right', grid: { display: false }, ticks: { color: '#4a9eff' } }
+          },
+          plugins: {
+            legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } },
+            tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1, titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 10, callbacks: { label: ctx => ctx.dataset.yAxisID === 'yLT' ? ` LT pace: ${secToPace(ctx.parsed.y)} /km` : ` VO2max: ${ctx.parsed.y}` } }
+          }
+        }
+      });
     }
 
     if ($('strengthHrChart') && overlay.length) {

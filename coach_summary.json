@@ -1,54 +1,54 @@
 {
-  "last_updated": "2026-07-13 12:58 UTC",
-  "headline": "Easy-run HR keeps drifting down as the four-week block closes with volume up and strength doubled \u2014 base is consolidating well.",
-  "confidence_pct": 93,
+  "last_updated": "2026-07-13 17:40 UTC",
+  "headline": "Recovery week is underway \u2014 the two lightest days of the block follow the long run, with easy-run HR sitting well below the prior period.",
+  "confidence_pct": 95,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
     "LT reading 10d old",
-    "HR data on 6/8 recent runs",
+    "HR data on 7/8 recent runs",
     "Sleep tracked 11/14 nights",
     "Steps tracked 7/7 days",
     "Data fetch up to date",
     "Multiple data sources active in last 3 days"
   ],
-  "confidence_attention": "HR data on 6/8 recent runs",
-  "summary": "The aerobic-efficiency signal you've been building is still the clearest thing in the data: comparable-effort easy runs are sitting at a lower heart rate than the prior period, which is exactly what you want to see with volume up by half over the previous block. That combination \u2014 more kilometres carried at a lower cost \u2014 is consolidation, not fatigue.\n\nStrength has genuinely stepped up too, roughly doubling in frequency, and it's holding alongside the running rather than being crowded out. With St. Olavsleden a few weeks out, this looks like a base that's ready and now settling. The strain:tolerance ratio still reads productive, so nothing here argues for backing off; today's picture is a durable block finishing in good order.\n\nSleep is worth a passing note only \u2014 it's been swinging hard between very short and very long nights, but that stream isn't validated enough to shift anything, and the strain ratio isn't corroborating any concern.",
+  "confidence_attention": "Sleep tracked 11/14 nights",
+  "summary": "Coming off the closed four-week block, you've stepped into a lighter phase with the two most recent runs \u2014 the moderate 12 km and the long 21 km \u2014 bracketing the load without adding much on top. This reads as intentional consolidation rather than a dip in preparedness, especially with volume still up on the prior block and strength frequency holding at double the earlier rate. Nothing here suggests fatigue accumulating faster than you can absorb it; the strain-to-tolerance balance remains in productive territory.\n\nThe aerobic-efficiency signal you've been building continues to be the through-line: comparable-effort easy runs are landing meaningfully lower on heart rate than the prior period. That's the kind of within-athlete shift that matters more than any single session, and it's held steady enough now to treat as a real base adaptation rather than noise. With St. Olavsleden roughly four weeks out, the general endurance base looks in good shape.\n\nWhere the gap remains is specificity: the ascent per run is still modest and rolling, and there's no sign yet of pack-loaded work. The base is ready to carry that specific demand \u2014 it just hasn't been asked to yet.",
   "watch_items": [
-    "Whether the short/long sleep swings settle into a steadier pattern or begin clustering short as the event approaches.",
-    "Whether pack-loaded running enters the schedule, since the general base looks ready but the specific weighted demand still isn't trained.",
-    "Whether ascent per run starts trending toward sustained climbing to match the mountain crossing, rather than the rolling profiles logged so far."
+    "Whether weighted-pack running finally enters the schedule, since the aerobic base looks ready but the 6-8kg carry demand is still untrained.",
+    "Whether ascent per run begins trending toward sustained climbing rather than the rolling profiles logged so far.",
+    "Whether the sharp sleep swings settle or start clustering short as the event nears \u2014 worth noting the recent short night after the long-run day."
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 4-week volume 190 km vs 126 km prior block (+51%)",
+      "text": "\u25b2 4-week volume 156 km vs 126 km prior block (+24%)",
       "priority": "High"
     },
     {
-      "text": "\u25b2 Strength consistency: 9 sessions vs 4 prior 4wk",
+      "text": "\u25b2 Strength consistency: 8 sessions vs 4 prior 4wk",
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 145 bpm vs 153 bpm prior period (comparable-effort runs, 9 vs 8 runs)",
+      "text": "\u25bc Easy-run HR averaging 144 bpm vs 153 bpm prior period (comparable-effort runs, 8 vs 8 runs)",
       "priority": "High"
     },
     {
-      "text": "\u25ac Strain:tolerance ratio 1.08 (PRODUCTIVE) (strain 91, tolerance 85); sleep averaging 7h36m over the same period",
+      "text": "\u25ac Strain:tolerance ratio 1.09 (PRODUCTIVE) (strain 94, tolerance 87); sleep averaging 7h36m over the same period",
       "priority": "Low"
     }
   ],
   "insights": [
-    "The aerobic-efficiency signal you've been building is still the clearest thing in the data: comparable-effort easy runs are sitting at a lower heart rate than the prior period, which is exactly what you want to see with volume up by half over the previous block. That combination \u2014 more kilometres carried at a lower cost \u2014 is consolidation, not fatigue.\n\nStrength has genuinely stepped up too, roughly doubling in frequency, and it's holding alongside the running rather than being crowded out. With St. Olavsleden a few weeks out, this looks like a base that's ready and now settling. The strain:tolerance ratio still reads productive, so nothing here argues for backing off; today's picture is a durable block finishing in good order.\n\nSleep is worth a passing note only \u2014 it's been swinging hard between very short and very long nights, but that stream isn't validated enough to shift anything, and the strain ratio isn't corroborating any concern."
+    "Coming off the closed four-week block, you've stepped into a lighter phase with the two most recent runs \u2014 the moderate 12 km and the long 21 km \u2014 bracketing the load without adding much on top. This reads as intentional consolidation rather than a dip in preparedness, especially with volume still up on the prior block and strength frequency holding at double the earlier rate. Nothing here suggests fatigue accumulating faster than you can absorb it; the strain-to-tolerance balance remains in productive territory.\n\nThe aerobic-efficiency signal you've been building continues to be the through-line: comparable-effort easy runs are landing meaningfully lower on heart rate than the prior period. That's the kind of within-athlete shift that matters more than any single session, and it's held steady enough now to treat as a real base adaptation rather than noise. With St. Olavsleden roughly four weeks out, the general endurance base looks in good shape.\n\nWhere the gap remains is specificity: the ascent per run is still modest and rolling, and there's no sign yet of pack-loaded work. The base is ready to carry that specific demand \u2014 it just hasn't been asked to yet."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 5483,
-    "output_tokens": 506,
-    "cost_usd": 0.040065,
-    "cost_dkk": 0.27645,
+    "input_tokens": 5499,
+    "output_tokens": 582,
+    "cost_usd": 0.042045,
+    "cost_dkk": 0.29011,
     "date": "2026-07-13"
   },
-  "usage_mtd_usd": 0.35039,
-  "usage_mtd_dkk": 2.4177,
-  "usage_ytd_usd": 0.35039,
-  "usage_ytd_dkk": 2.4177
+  "usage_mtd_usd": 0.35237,
+  "usage_mtd_dkk": 2.4314,
+  "usage_ytd_usd": 0.35237,
+  "usage_ytd_dkk": 2.4314
 }

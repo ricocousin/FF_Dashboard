@@ -1,5 +1,5 @@
 {
-  "last_success_utc": "2026-07-13 12:58 UTC",
+  "last_success_utc": "2026-07-13 17:39 UTC",
   "last_success_date": "2026-07-13",
-  "mode": "incremental"
+  "mode": "full_refresh"
 }

@@ -1146,6 +1146,34 @@ def _data_freshness():
     except Exception:
         return {"status": "failed", "last_success_date": None, "age_days": None}
 
+# ── Per-tile freshness indicators (added July 2026) ───────────────────────────
+# Real question the athlete asked: "is the data in THIS specific tile
+# actually from yesterday?" — distinct from the single global dot, which
+# only says the pipeline itself ran successfully.
+#
+# DELIBERATE SPLIT (option B, chosen after sparring — see PROJECT_CONTEXT):
+# Steps, Recovery, and Load are genuinely continuous (Polar Loop worn all
+# day every day), so "is there a real row for yesterday" is an honest,
+# meaningful check for those three — computed here as real per-day
+# presence checks. Running, Strength, and Intensity are NOT daily — a
+# literal per-day check would show stale/failed on every ordinary rest
+# day, which isn't a freshness problem at all, and a signal that's wrong
+# that often gets ignored (same "cries wolf" failure mode the coverage
+# checker was built to avoid elsewhere in this project). Those three
+# tiles deliberately reuse the SAME pipeline-level data_freshness object
+# already computed above — index.html renders it directly for those
+# three rather than a separate per-tile field, so no new backend value is
+# needed for them.
+def _tile_freshness():
+    steps_fresh = steps_data.get(last_complete_str, 0) > 0
+    recovery_fresh = last_complete_str in sleep_complete
+    load_fresh = cardio_load.get("latest_date") == last_complete_str
+    return {
+        "steps": "fresh" if steps_fresh else "stale",
+        "recovery": "fresh" if recovery_fresh else "stale",
+        "load": "fresh" if load_fresh else "stale"
+    }
+
 dashboard_metrics = {
     "last_updated": today.strftime("%Y-%m-%d %H:%M UTC"),
     "last_complete_date": last_complete_str,
@@ -1223,6 +1251,7 @@ dashboard_metrics = {
     },
 
     "data_freshness": _data_freshness(),
+    "tile_freshness": _tile_freshness(),
 
     "fitness_metrics": fitness_metrics,
 

@@ -454,7 +454,8 @@ async function init() {
         ${goalBar('Z5 (target ' + zt.z5_target_min_pct + '-' + zt.z5_target_max_pct + '%)', (zt.z5_pct ?? 0) + '%', zt.z5_vs_target_pct, ZONE_COLORS.Z5, false)}
       </div>`;
 
-      const sessionsNote = `<div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:1rem">${zt.running_sessions_with_data} run(s), ${zt.strength_sessions_with_data} strength session(s) with zone data this window · ${zt.window_start} to ${zt.window_end}</div>`;
+      const dropoutNote = zt.dropout_fallback_sessions_with_data ? `, ${zt.dropout_fallback_sessions_with_data} via H10 dropout fallback` : '';
+      const sessionsNote = `<div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:1rem">${zt.running_sessions_with_data} run(s), ${zt.strength_sessions_with_data} strength session(s) with zone data this window${dropoutNote} · ${zt.window_start} to ${zt.window_end}</div>`;
 
       ztCard.innerHTML = `<div class="card-title-row"><div class="card-title">Time in zone</div>${toggleHtml}</div><div class="zt-stack">${stackHtml}</div><div class="zt-legend">${legendHtml}</div>${goalsHtml}${sessionsNote}`;
     }
@@ -482,6 +483,34 @@ async function init() {
     </div>
   `;
   app.appendChild(hrCard);
+
+  // ── H10 dropout fallback card ─────────────────────────────────────────────────
+  // CONFIRMED real use case (2026-07-11, Furesø Running) — a run with NO
+  // Garmin/H10 HR at all now gets a calibrated estimate from Polar instead
+  // of vanishing from every HR-based view. Rendered only when at least one
+  // real dropout run exists — nothing to show otherwise. Every entry is
+  // explicitly labeled "Polar fallback — H10 dropout" per the design's own
+  // requirement that this never be presented as if it were real H10 data.
+  const dropoutFallback = Array.isArray(m.hr_dropout_fallback) ? m.hr_dropout_fallback : [];
+  if (dropoutFallback.length) {
+    const dropoutCard = document.createElement('div');
+    dropoutCard.className = 'card';
+    dropoutCard.innerHTML = `
+      <div class="card-title">H10 dropout fallback</div>
+      ${dropoutFallback.map(f => `
+        <div class="hr-subcard">
+          <div class="hr-subcard-title" style="color:var(--accent2)">⚠ ${escapeHtml(f.label)}</div>
+          <div style="font-family:var(--font-mono);font-size:12px;color:var(--text)">${f.date} · ${escapeHtml(f.name || '')}</div>
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:0.3rem">
+            Estimated avg HR: <b style="color:var(--text-hi)">${f.estimated_garmin_hr} bpm</b>
+            (raw ${f.source === 'exercise' ? 'Polar exercise' : 'Polar continuous'}: ${f.raw_polar_hr} bpm)
+          </div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:0.2rem">${escapeHtml(f.calibration_note)} · ${escapeHtml(f.sample_info)}</div>
+        </div>
+      `).join('')}
+    `;
+    app.appendChild(dropoutCard);
+  }
 
   // ── Activity calendar ─────────────────────────────────────────────────────────
   const calCard = document.createElement('div');

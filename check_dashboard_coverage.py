@@ -131,7 +131,8 @@ def check_layer2_feature_markers(html_src):
     MARKERS = [
         (r'freshBar|data_freshness', "Freshness indicator dot (overview panel)"),
         (r'coachDetailsToggle', "Coach card 'Show details' collapse toggle"),
-        (r'vo2Chart', "VO2max card + trend chart"),
+        (r'ltVo2Chart', "Merged LT + VO2max dual-axis trend chart"),
+        (r'tileFreshDot', "Per-tile freshness dots (overview panel)"),
         (r'commentary', "Calendar streak commentary line"),
         (r'ztCard|zt-toggle', "Time in zone card + rolling/last-completed-week toggle"),
         (r'strengthHrChart', "Strength session HR overlay chart"),
@@ -140,7 +141,6 @@ def check_layer2_feature_markers(html_src):
         (r'hr_dropout_fallback|dropoutFallback', "H10 dropout fallback card"),
         (r'<svg[^>]*>.*?</svg>', "Banner monogram SVG in the header"),
         (r'changeLine', "Single-sentence overview change function (changeLine)"),
-        (r'ltChart', "LT pace trend chart"),
         (r'optionAChart', "16-week distance/strength chart"),
         (r'monthChart', "Annual distance/strength chart"),
     ]

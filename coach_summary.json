@@ -1,26 +1,26 @@
 {
-  "last_updated": "2026-07-13 19:15 UTC",
-  "headline": "Easy-run HR holds well below the prior block into the recovery week, strengthening the case for a real efficiency gain.",
-  "confidence_pct": 93,
+  "last_updated": "2026-07-15 15:29 UTC",
+  "headline": "The lower easy-run HR has now survived the volume build, confirming the efficiency gain that was on trial.",
+  "confidence_pct": 95,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
-    "LT reading 10d old",
+    "LT reading 12d old",
     "HR data on 6/8 recent runs",
-    "Sleep tracked 11/14 nights",
+    "Sleep tracked 13/14 nights",
     "Steps tracked 7/7 days",
     "Data fetch up to date",
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": "HR data on 6/8 recent runs",
-  "summary": "The lower easy-run HR you saw building through the recent block has carried into a lighter week rather than snapping back \u2014 which is exactly the signal that separates a genuine aerobic efficiency gain from a recovery-week artefact. It's holding at comparable effort across a decent number of runs, so this is looking more like a durable adaptation than noise. Worth noting it's not confirmed until volume steps back up, but the direction is encouraging.\n\nThe recent block landed a meaningful step up in volume over the prior four weeks while doubling strength frequency, and you've absorbed it without the strain ratio drifting out of productive territory. That combination \u2014 more running, more lifting, HR trending down \u2014 is the picture of a base that's consolidating rather than being overreached. Zone distribution stays heavily aerobic with very little grey-zone drift, which is what you want with the event roughly four weeks out and a self-supported, pack-carrying effort ahead.\n\nNothing in today's data argues for changing course. The recovery week is doing its job.",
+  "summary": "The confirming test flagged last week has resolved in your favour. Easy-run heart rate has held down through the same weeks that saw the four-week block climb well above the prior one \u2014 the efficiency gain isn't an artefact of a light recovery stretch, it's persisting under real load. That's the signal worth taking away today.\n\nToday's short, low-HR run fits the pattern rather than adding anything new: it's a light day sitting comfortably within a block that has otherwise pushed both volume and strength frequency. The strain:tolerance balance is sitting neutral, so you're absorbing this load rather than digging into it \u2014 appropriate roughly three weeks out from a self-supported coast-to-coast where durability, not peak sharpness, is the currency.\n\nLast night's short sleep is worth noting only as context; it doesn't change anything, and it comes off the back of a genuinely long night two days prior.",
   "watch_items": [
-    "Whether the lower easy-run HR survives the return to higher volume \u2014 the confirming test for this efficiency gain.",
-    "Whether pack-carry running enters the schedule while there's still time to adapt the carry demand before the coast-to-coast.",
-    "Whether ascent per run starts building toward sustained climbing rather than the rolling profiles logged so far, given the mountain crossing."
+    "Whether pack-carry running enters the schedule in time to adapt the 6-8kg load demand before the crossing.",
+    "Whether ascent per run starts trending toward sustained climbing rather than the rolling profiles logged so far.",
+    "Whether the run of shorter nights this week extends, given the volume being absorbed alongside it."
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 4-week volume 190 km vs 126 km prior block (+51%)",
+      "text": "\u25b2 4-week volume 195 km vs 120 km prior block (+63%)",
       "priority": "High"
     },
     {
@@ -28,31 +28,31 @@
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 145 bpm vs 153 bpm prior period (comparable-effort runs, 9 vs 8 runs)",
+      "text": "\u25bc Easy-run HR averaging 144 bpm vs 153 bpm prior period (comparable-effort runs, 10 vs 7 runs)",
       "priority": "High"
     },
     {
-      "text": "\u25b2 Zone 2: 444 min vs 180-240 min/week target (246% of minimum); grey zone (Z3+Z4): 5.2%",
+      "text": "\u25b2 Zone 2: 426 min vs 180-240 min/week target (237% of minimum); grey zone (Z3+Z4): 4.8%",
       "priority": "Low"
     },
     {
-      "text": "\u25ac Strain:tolerance ratio 1.09 (PRODUCTIVE) (strain 94, tolerance 87); sleep averaging 7h36m over the same period",
+      "text": "\u25ac Strain:tolerance ratio 1.00 (MAINTAINING) (strain 78, tolerance 78); sleep averaging 7h23m over the same period",
       "priority": "Low"
     }
   ],
   "insights": [
-    "The lower easy-run HR you saw building through the recent block has carried into a lighter week rather than snapping back \u2014 which is exactly the signal that separates a genuine aerobic efficiency gain from a recovery-week artefact. It's holding at comparable effort across a decent number of runs, so this is looking more like a durable adaptation than noise. Worth noting it's not confirmed until volume steps back up, but the direction is encouraging.\n\nThe recent block landed a meaningful step up in volume over the prior four weeks while doubling strength frequency, and you've absorbed it without the strain ratio drifting out of productive territory. That combination \u2014 more running, more lifting, HR trending down \u2014 is the picture of a base that's consolidating rather than being overreached. Zone distribution stays heavily aerobic with very little grey-zone drift, which is what you want with the event roughly four weeks out and a self-supported, pack-carrying effort ahead.\n\nNothing in today's data argues for changing course. The recovery week is doing its job."
+    "The confirming test flagged last week has resolved in your favour. Easy-run heart rate has held down through the same weeks that saw the four-week block climb well above the prior one \u2014 the efficiency gain isn't an artefact of a light recovery stretch, it's persisting under real load. That's the signal worth taking away today.\n\nToday's short, low-HR run fits the pattern rather than adding anything new: it's a light day sitting comfortably within a block that has otherwise pushed both volume and strength frequency. The strain:tolerance balance is sitting neutral, so you're absorbing this load rather than digging into it \u2014 appropriate roughly three weeks out from a self-supported coast-to-coast where durability, not peak sharpness, is the currency.\n\nLast night's short sleep is worth noting only as context; it doesn't change anything, and it comes off the back of a genuinely long night two days prior."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 5503,
-    "output_tokens": 531,
-    "cost_usd": 0.04079,
-    "cost_dkk": 0.28145,
-    "date": "2026-07-13"
+    "input_tokens": 5522,
+    "output_tokens": 469,
+    "cost_usd": 0.039335,
+    "cost_dkk": 0.27141,
+    "date": "2026-07-15"
   },
-  "usage_mtd_usd": 0.35112,
-  "usage_mtd_dkk": 2.4227,
-  "usage_ytd_usd": 0.35112,
-  "usage_ytd_dkk": 2.4227
+  "usage_mtd_usd": 0.39045,
+  "usage_mtd_dkk": 2.6941,
+  "usage_ytd_usd": 0.39045,
+  "usage_ytd_dkk": 2.6941
 }

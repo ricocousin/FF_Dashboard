@@ -1,38 +1,39 @@
 {
-  "last_updated": "2026-07-15 15:29 UTC",
-  "headline": "The lower easy-run HR has now survived the volume build, confirming the efficiency gain that was on trial.",
-  "confidence_pct": 95,
+  "last_updated": "2026-07-15 16:16 UTC",
+  "headline": "Yesterday's 5 km recovery jog at a notably low HR closes out a +35% volume block with efficiency intact.",
+  "confidence_pct": 97,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
     "LT reading 12d old",
-    "HR data on 6/8 recent runs",
+    "HR data on 7/8 recent runs",
     "Sleep tracked 13/14 nights",
     "Steps tracked 7/7 days",
     "Data fetch up to date",
     "Multiple data sources active in last 3 days"
   ],
-  "confidence_attention": "HR data on 6/8 recent runs",
-  "summary": "The confirming test flagged last week has resolved in your favour. Easy-run heart rate has held down through the same weeks that saw the four-week block climb well above the prior one \u2014 the efficiency gain isn't an artefact of a light recovery stretch, it's persisting under real load. That's the signal worth taking away today.\n\nToday's short, low-HR run fits the pattern rather than adding anything new: it's a light day sitting comfortably within a block that has otherwise pushed both volume and strength frequency. The strain:tolerance balance is sitting neutral, so you're absorbing this load rather than digging into it \u2014 appropriate roughly three weeks out from a self-supported coast-to-coast where durability, not peak sharpness, is the currency.\n\nLast night's short sleep is worth noting only as context; it doesn't change anything, and it comes off the back of a genuinely long night two days prior.",
+  "confidence_attention": null,
+  "summary": "The picture that's been building over the last week now holds firmly: your easy-run heart rate has stayed lower across a block where volume climbed meaningfully, which is the combination you want \u2014 more work absorbed at less cardiac cost. Yesterday's short jog at low effort is exactly the right kind of session to cap this, and its HR sits comfortably within the improved band rather than the old one, so the efficiency gain isn't just a recovery-week artefact.\n\nStrength volume doubled versus the prior block while running volume also rose, and the strain:tolerance ratio still reads as maintaining rather than overreaching. That's a lot of concurrent load handled without the usual warning signs, which speaks to where your durable base currently sits. With St. Olavsleden roughly three weeks out, the qualities that matter most there \u2014 time on feet, back-to-back tolerance, controlled aerobic pacing \u2014 are the ones trending in the right direction.\n\nThe one thing sitting slightly against the grain is sleep: a couple of short nights this week, including last night, landed inside a block you were otherwise absorbing well. It's supporting context only, but worth keeping in view rather than dismissing given the load being carried.",
   "watch_items": [
-    "Whether pack-carry running enters the schedule in time to adapt the 6-8kg load demand before the crossing.",
-    "Whether ascent per run starts trending toward sustained climbing rather than the rolling profiles logged so far.",
-    "Whether the run of shorter nights this week extends, given the volume being absorbed alongside it."
+    "Whether the short nights this week extend into a run, since the training load is still being carried alongside them.",
+    "Whether pack-carry running appears soon enough to adapt to the 6-8kg load before the crossing.",
+    "Whether ascent per run starts shifting toward sustained climbing rather than the rolling profiles logged so far.",
+    "Whether easy-run HR holds at the lower band once the next hard session re-enters the schedule."
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 4-week volume 195 km vs 120 km prior block (+63%)",
+      "text": "\u25b2 4-week volume 162 km vs 120 km prior block (+35%)",
       "priority": "High"
     },
     {
-      "text": "\u25b2 Strength consistency: 9 sessions vs 4 prior 4wk",
+      "text": "\u25b2 Strength consistency: 8 sessions vs 4 prior 4wk",
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 144 bpm vs 153 bpm prior period (comparable-effort runs, 10 vs 7 runs)",
+      "text": "\u25bc Easy-run HR averaging 143 bpm vs 153 bpm prior period (comparable-effort runs, 9 vs 7 runs)",
       "priority": "High"
     },
     {
-      "text": "\u25b2 Zone 2: 426 min vs 180-240 min/week target (237% of minimum); grey zone (Z3+Z4): 4.8%",
+      "text": "\u25b2 Zone 2: 251 min vs 180-240 min/week target (139% of minimum); grey zone (Z3+Z4): 4.1%",
       "priority": "Low"
     },
     {
@@ -41,18 +42,18 @@
     }
   ],
   "insights": [
-    "The confirming test flagged last week has resolved in your favour. Easy-run heart rate has held down through the same weeks that saw the four-week block climb well above the prior one \u2014 the efficiency gain isn't an artefact of a light recovery stretch, it's persisting under real load. That's the signal worth taking away today.\n\nToday's short, low-HR run fits the pattern rather than adding anything new: it's a light day sitting comfortably within a block that has otherwise pushed both volume and strength frequency. The strain:tolerance balance is sitting neutral, so you're absorbing this load rather than digging into it \u2014 appropriate roughly three weeks out from a self-supported coast-to-coast where durability, not peak sharpness, is the currency.\n\nLast night's short sleep is worth noting only as context; it doesn't change anything, and it comes off the back of a genuinely long night two days prior."
+    "The picture that's been building over the last week now holds firmly: your easy-run heart rate has stayed lower across a block where volume climbed meaningfully, which is the combination you want \u2014 more work absorbed at less cardiac cost. Yesterday's short jog at low effort is exactly the right kind of session to cap this, and its HR sits comfortably within the improved band rather than the old one, so the efficiency gain isn't just a recovery-week artefact.\n\nStrength volume doubled versus the prior block while running volume also rose, and the strain:tolerance ratio still reads as maintaining rather than overreaching. That's a lot of concurrent load handled without the usual warning signs, which speaks to where your durable base currently sits. With St. Olavsleden roughly three weeks out, the qualities that matter most there \u2014 time on feet, back-to-back tolerance, controlled aerobic pacing \u2014 are the ones trending in the right direction.\n\nThe one thing sitting slightly against the grain is sleep: a couple of short nights this week, including last night, landed inside a block you were otherwise absorbing well. It's supporting context only, but worth keeping in view rather than dismissing given the load being carried."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 5522,
-    "output_tokens": 469,
-    "cost_usd": 0.039335,
-    "cost_dkk": 0.27141,
+    "input_tokens": 5491,
+    "output_tokens": 601,
+    "cost_usd": 0.04248,
+    "cost_dkk": 0.29311,
     "date": "2026-07-15"
   },
-  "usage_mtd_usd": 0.39045,
-  "usage_mtd_dkk": 2.6941,
-  "usage_ytd_usd": 0.39045,
-  "usage_ytd_dkk": 2.6941
+  "usage_mtd_usd": 0.3936,
+  "usage_mtd_dkk": 2.7158,
+  "usage_ytd_usd": 0.3936,
+  "usage_ytd_dkk": 2.7158
 }

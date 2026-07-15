@@ -282,7 +282,22 @@ def build_strength_row(a):
 # Falls back to date+name only for rows written before this field existed
 # (activity_id will be blank on those).
 def _row_key(row):
-    aid = row.get("activity_id", "")
+    # NORMALIZED (July 2026, defensive hardening after an unresolved real
+    # incident): duplicate rows persisted across several incremental runs
+    # despite merge()'s final whole-list dedup pass appearing correct on
+    # direct code inspection — root cause never confirmed, only worked
+    # around by a FULL_REFRESH (which bypasses merge()/existing_rows
+    # entirely and so can't actually confirm or rule out a dedup bug).
+    # One real possibility: two rows that LOOK identical could carry
+    # activity_id in subtly different string forms after a CSV round-trip
+    # (stray whitespace, differing numeric-string formatting), producing
+    # two DIFFERENT keys here and silently defeating the dedup with no
+    # error. str() + strip() costs nothing and closes that possibility
+    # even though it was never proven to be the actual cause — if
+    # duplicates recur despite this, the mystery is still open and needs
+    # a live debug print of _row_key() output for the specific colliding
+    # rows, not another guess.
+    aid = str(row.get("activity_id", "") or "").strip()
     if aid:
         return ("id", aid)
     return ("legacy", row.get("date", ""), row.get("name", ""))
@@ -327,7 +342,11 @@ def merge(new_rows, existing_rows):
     # since neither existing check compares two existing rows to each other.
     # This pass makes the pipeline self-healing regardless of how a
     # duplicate got introduced, not just the two previously-patched causes.
+    _before_dedup_count = len(merged)
     merged = _dedup_new_rows(merged)
+    _collapsed = _before_dedup_count - len(merged)
+    if _collapsed > 0:
+        print(f"DEBUG merge(): final dedup pass collapsed {_collapsed} duplicate row(s) (before={_before_dedup_count}, after={len(merged)})")
     return sorted(merged, key=lambda x: x.get("date", ""), reverse=True)
 
 new_run_rows = _dedup_new_rows([build_run_row(a) for a in new_running])

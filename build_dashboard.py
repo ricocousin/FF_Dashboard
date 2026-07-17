@@ -680,7 +680,39 @@ for pb in pbs:
 calendar_run_dates = sorted({r["date"] for r in all_run_rows if r.get("date")})
 calendar_strength_dates = sorted({s["date"] for s in all_strength_rows if s.get("date")})
 
-# ── Strength-session HR overlay ───────────────────────────────────────────────
+# ── HR ZONE BOUNDS ─────────────────────────────────────────────────────────────
+# Moved up from the RUN ZONE-TIME PROJECT section (further down this file) —
+# needed earlier now, since per-session zone breakdowns are computed as part
+# of the unified run/strength HR context below, not only in the weekly
+# zone-time aggregate. The zone-time section further down reuses these same
+# definitions rather than redefining them.
+def _hr_zone_bounds(lt_hr):
+    if not lt_hr:
+        return None
+    return (
+        round(lt_hr * 0.80),
+        round(lt_hr * 0.90),
+        round(lt_hr * 0.99),
+        round(lt_hr * 1.05)
+    )
+
+def _classify_hr_zone(hr, bounds):
+    if bounds is None or hr is None:
+        return None
+    z1, z2, z3, z4 = bounds
+    if hr < z1:
+        return "Z1"
+    elif hr < z2:
+        return "Z2"
+    elif hr < z3:
+        return "Z3"
+    elif hr < z4:
+        return "Z4"
+    else:
+        return "Z5"
+
+_lt_hr_bounds = _hr_zone_bounds(latest_lt.get("lt_hr")) if latest_lt else None
+
 def _time_to_seconds(t):
     try:
         h, m, s = (int(p) for p in t.split(":"))
@@ -688,55 +720,74 @@ def _time_to_seconds(t):
     except Exception:
         return None
 
-def build_strength_hr_overlay():
-    overlay = []
-    for s in all_strength_rows:
-        start_time_full = s.get("start_time", "")
-        duration_min = s.get("duration_min", "")
-        if not start_time_full or not duration_min:
+def _zone_minutes_from_timeseries(samples, bounds, gap_max_sec=60):
+    """Time-weighted zone attribution from a sorted (elapsed_sec, hr) series
+    — e.g. Garmin's real per-second run_hr_samples. Skips gaps > gap_max_sec
+    (sensor dropout) rather than misattributing them to whichever zone
+    preceded the gap. Same approach as the weekly zone-time aggregate
+    further down this file, just applied to one session at a time."""
+    zone_minutes = {"Z1": 0.0, "Z2": 0.0, "Z3": 0.0, "Z4": 0.0, "Z5": 0.0}
+    if not bounds or len(samples) < 2:
+        return zone_minutes
+    for i in range(len(samples) - 1):
+        t0, hr0 = samples[i]
+        t1, _ = samples[i + 1]
+        delta_sec = t1 - t0
+        if delta_sec <= 0 or delta_sec > gap_max_sec:
             continue
-        try:
-            session_date = start_time_full[:10]
-            session_start_sec = _time_to_seconds(start_time_full[11:19])
-            duration_sec = float(duration_min) * 60
-        except Exception:
-            continue
-        if session_start_sec is None:
-            continue
-        session_end_sec = session_start_sec + duration_sec
+        zone = _classify_hr_zone(hr0, bounds)
+        if zone:
+            zone_minutes[zone] += delta_sec / 60
+    return zone_minutes
 
-        day_samples = _polar_hr_by_date.get(session_date, [])
-        matched_hrs = []
-        for (t, hr) in day_samples:
-            t_sec = _time_to_seconds(t)
-            if t_sec is not None and session_start_sec <= t_sec <= session_end_sec:
-                try:
-                    matched_hrs.append(float(hr))
-                except (ValueError, TypeError):
-                    continue
+def _zone_breakdown_from_raw_samples(hr_values, duration_min, bounds):
+    """hr_values: individual HR readings (e.g. Polar continuous samples
+    matched to a run/strength window). Polar's continuous HR is
+    event-driven, NOT a clean time grid (confirmed — see PROJECT_CONTEXT),
+    so sample spacing isn't reliable enough to time-weight the way real
+    per-second Garmin data is above. Instead every sample is weighted
+    EQUALLY (a simple count fraction per zone), then scaled against the
+    session's real wall-clock duration. Less precise than true
+    time-weighting, but avoids misattributing long silent gaps between
+    samples to whichever zone happened to precede them."""
+    zone_minutes = {"Z1": 0.0, "Z2": 0.0, "Z3": 0.0, "Z4": 0.0, "Z5": 0.0}
+    if not bounds or not hr_values or not duration_min or duration_min <= 0:
+        return zone_minutes
+    counts = {"Z1": 0, "Z2": 0, "Z3": 0, "Z4": 0, "Z5": 0}
+    for hr in hr_values:
+        zone = _classify_hr_zone(hr, bounds)
+        if zone:
+            counts[zone] += 1
+    total = sum(counts.values())
+    if total == 0:
+        return zone_minutes
+    for z in zone_minutes:
+        zone_minutes[z] = round(duration_min * (counts[z] / total), 1)
+    return zone_minutes
 
-        if matched_hrs:
-            overlay.append({
-                "date": session_date,
-                "name": s.get("name", ""),
-                "avg_hr": round(sum(matched_hrs) / len(matched_hrs)),
-                "max_hr": round(max(matched_hrs)),
-                "sample_count": len(matched_hrs)
-            })
-    return sorted(overlay, key=lambda x: x["date"], reverse=True)
+def _zone_summary_str(zone_minutes):
+    """Compact 'Z1 12m Z2 8m Z5 4m' string for the coach prompt — zero
+    zones omitted so the line stays short and the nonzero zones stand
+    out."""
+    if not zone_minutes:
+        return ""
+    parts = [f"{z} {round(m)}m" for z, m in zone_minutes.items() if m and round(m) > 0]
+    return " ".join(parts) if parts else ""
 
-strength_hr_overlay = build_strength_hr_overlay()
-
-# ── Garmin-vs-Polar run HR comparison (now three-way) ─────────────────────────
-# Extended July 2026 to also include Polar's exercise-list HR (when a
-# matched entry exists in polar_exercises.csv) alongside the original
-# Garmin-vs-continuous-HR comparison. Purpose is diagnostic, per the
-# athlete's own two questions: does continuous HR actually gap during a
+# ── Garmin-vs-Polar run HR comparison (three-way; diagnostic) ─────────────────
+# Moved earlier in the file (previously computed after the strength/dropout
+# sections) only because the calibration offsets it produces are now needed
+# by the unified run+strength HR context below — its own logic is
+# unchanged. Extended July 2026 to also include Polar's exercise-list HR
+# (when a matched entry exists in polar_exercises.csv) alongside the
+# original Garmin-vs-continuous-HR comparison. Purpose is diagnostic, per
+# the athlete's own two questions: does continuous HR actually gap during a
 # Loop-auto-detected exercise window (a run can now show continuous-HR
 # data as None while still having exercise data, or vice versa — both are
 # informative), and is exercise-level HR any closer to Garmin/H10 than
-# continuous HR is. NOT used for any fallback/backfill decision yet — this
-# is comparison data only, to be looked at before that decision is made.
+# continuous HR is. NOT used for any fallback/backfill decision directly —
+# see build_run_hr_context / build_strength_hr_context below for where the
+# actual fallback logic lives.
 def build_run_hr_source_comparison():
     comparison = []
     for r in all_run_rows:
@@ -797,28 +848,32 @@ def build_run_hr_source_comparison():
 
 run_hr_source_comparison = build_run_hr_source_comparison()
 
-# ── H10-DROPOUT FALLBACK (built July 2026 — the real motivating case) ────────
-# CONFIRMED real use case, not hypothetical: 2026-07-11 (Furesø Running,
-# activity_id 23563760621) recorded NO Garmin/H10 heart rate at all —
-# avg_hr and max_hr both blank in runs.csv. Design agreed before building
-# (see PROJECT_CONTEXT H10-DROPOUT FALLBACK note):
-#  1. NEVER touch runs.csv — Garmin's raw report stays exactly what it is.
-#  2. Fallback computed fresh here every run, not backfilled into any
-#     source file.
-#  3. Calibrated using the REAL Garmin-vs-Polar offset already visible in
-#     run_hr_source_comparison (computed just above) — self-correcting as
-#     more comparison data accumulates, rather than a fixed guessed number.
-#  4. Usable for zone-time attribution (below) so a dropout run still
-#     counts toward Zone 2 targets and streaks.
-#  5. Explicitly EXCLUDED from the easy-run-HR evidence trend (#9) — that
-#     comparison is meant to be precision vs-prior-period, and a corrected
-#     estimate risks a subtle bias there even calibrated. This exclusion
-#     happens automatically: evidence item #9 already filters on
-#     r.get("avg_hr") not in (None, "", "0"), and a dropout run's avg_hr
-#     genuinely is blank, so it was never going to be included anyway —
-#     no extra filtering needed here.
-#  6. ALWAYS visibly labeled wherever it appears (e.g. "Polar fallback —
-#     H10 dropout") — never presented as if it were real H10 data.
+# ── UNIFIED HR CONTEXT (rebuilt July 2026) ────────────────────────────────────
+# Replaces the previously-separate build_strength_hr_overlay() and
+# build_hr_dropout_fallback() with one consistent approach applied to BOTH
+# runs and strength sessions, per explicit athlete direction: the Polar
+# overlap/fallback logic should apply anywhere Garmin/H10 has no pulse —
+# runs AND strength sessions, not runs alone. Strength sessions never have
+# H10 data at all (tattoo blocks the optical sensor, no chest strap while
+# lifting), so every strength session is a "dropout" in this sense, not
+# just an occasional gap.
+#
+# ALSO fixes a real accuracy gap the athlete found by direct comparison
+# against Garmin's own registration: the coach was previously given only a
+# single avg_hr number per run, which can average out a spiky effort (e.g.
+# repeated hard sprints inside an otherwise easy run) to look identical to
+# a genuinely steady easy run. Every session below now also carries a
+# per-session zone-minute breakdown and max_hr (max_hr already existed in
+# runs.csv but was never surfaced to the coach prompt) so the coach can see
+# SHAPE, not just an average — this feeds the coach prompt in the next
+# iteration of this file (see PROJECT_CONTEXT COACH DISTRIBUTION /
+# per-session HR context notes).
+#
+# NEVER presented as real H10 data when it isn't — every Polar-sourced
+# entry below carries an explicit source label and, where applicable, a
+# calibration note. runs.csv/strength.csv themselves are never touched;
+# all of this is computed fresh here every run, same discipline as the
+# original H10-dropout fallback design.
 
 def _compute_hr_calibration_offsets(comparison_list):
     """Average (polar − garmin) offset per Polar source, computed from
@@ -837,114 +892,221 @@ def _compute_hr_calibration_offsets(comparison_list):
 
 _hr_calibration = _compute_hr_calibration_offsets(run_hr_source_comparison)
 
-def build_hr_dropout_fallback(calibration):
-    """Identifies runs with NO Garmin HR at all and computes a labeled,
-    calibrated estimate from whichever real Polar source is available.
-    Exercise-entry HR (session-specific boundaries, from polar_exercises.csv)
-    is preferred over continuous HR (all-day stream) when both exist —
-    limited real comparison data exists so far to confirm this preference
-    is optimal; revisit once more accumulates, per the original design
-    note that this choice was deliberately deferred until real data
-    existed rather than guessed upfront."""
-    fallback_runs = []
+def build_run_hr_context():
+    """One entry per run with any HR information at all (Garmin OR Polar),
+    keyed by activity_id.
+    source == 'garmin': real H10 data — real per-second zone breakdown
+    from run_hr_samples.csv when available.
+    source == 'polar_exercise' / 'polar_continuous': H10 dropout — avg/max
+    estimated from Polar and calibrated against the offset in
+    _hr_calibration; zone breakdown computed from the underlying raw
+    samples (continuous only — exercise entries carry no raw sample list,
+    only avg/max, so no zone breakdown is possible from that source).
+    Exercise-entry HR is still preferred over continuous HR when both
+    exist for a dropout run, same preference as the original design — a
+    judgment call pending more real comparison data (see
+    PROJECT_CONTEXT)."""
+    context = {}
     for r in all_run_rows:
-        if r.get("avg_hr") not in (None, "", "0"):
-            continue  # Garmin HR present — not a dropout, nothing to fall back for
+        aid = r.get("activity_id", "")
         start_time_full = r.get("start_time", "")
-        if not start_time_full:
+        if not aid or not start_time_full:
             continue
         run_date = start_time_full[:10]
+        has_garmin_hr = r.get("avg_hr") not in (None, "", "0")
 
-        raw_hr, source, sample_info = None, None, ""
+        if has_garmin_hr:
+            zone_minutes = None
+            if aid in _run_hr_by_activity and _lt_hr_bounds:
+                zone_minutes = _zone_minutes_from_timeseries(_run_hr_by_activity[aid], _lt_hr_bounds)
+            context[aid] = {
+                "activity_id": aid,
+                "date": run_date,
+                "name": r.get("name", ""),
+                "source": "garmin",
+                "avg_hr": round(float(r["avg_hr"])),
+                "max_hr": round(float(r["max_hr"])) if r.get("max_hr") not in (None, "", "0") else None,
+                "zone_minutes": zone_minutes,
+                "zone_summary": _zone_summary_str(zone_minutes) if zone_minutes else "",
+                "label": None,
+                "calibration_note": None
+            }
+            continue
 
-        exercise_row = _polar_exercise_by_garmin_id.get(r.get("activity_id", ""))
+        # H10 dropout — attempt a calibrated Polar-sourced estimate.
+        raw_avg, raw_max, source, sample_info = None, None, None, ""
+
+        exercise_row = _polar_exercise_by_garmin_id.get(aid)
         if exercise_row and exercise_row.get("avg_hr"):
             try:
-                raw_hr = float(exercise_row["avg_hr"])
+                raw_avg = float(exercise_row["avg_hr"])
+                raw_max = float(exercise_row["max_hr"]) if exercise_row.get("max_hr") else None
                 source = "exercise"
                 sample_info = f"Polar exercise entry {exercise_row.get('polar_exercise_id', '')}"
             except (ValueError, TypeError):
-                raw_hr = None
+                raw_avg = None
 
-        if raw_hr is None and run_date in _polar_hr_by_date:
+        matched_continuous = []
+        if run_date in _polar_hr_by_date:
             try:
                 run_start_sec = _time_to_seconds(start_time_full[11:19])
                 elapsed_parts = (r.get("elapsed_time") or "").split(":")
-                if len(elapsed_parts) == 3:
+                if len(elapsed_parts) == 3 and run_start_sec is not None:
                     h, m, s = (int(p) for p in elapsed_parts)
                     duration_sec = h * 3600 + m * 60 + s
-                    if run_start_sec is not None and duration_sec > 0:
+                    if duration_sec > 0:
                         run_end_sec = run_start_sec + duration_sec
-                        matched = []
                         for (t, hr) in _polar_hr_by_date[run_date]:
                             t_sec = _time_to_seconds(t)
                             if t_sec is not None and run_start_sec <= t_sec <= run_end_sec:
                                 try:
-                                    matched.append(float(hr))
+                                    matched_continuous.append(float(hr))
                                 except (ValueError, TypeError):
                                     continue
-                        if matched:
-                            raw_hr = sum(matched) / len(matched)
-                            source = "continuous"
-                            sample_info = f"{len(matched)} continuous HR sample(s)"
             except Exception:
                 pass
 
-        if raw_hr is None:
-            continue  # no Polar data of any kind available for this dropout run either
+        if raw_avg is None and matched_continuous:
+            raw_avg = sum(matched_continuous) / len(matched_continuous)
+            raw_max = max(matched_continuous)
+            source = "continuous"
+            sample_info = f"{len(matched_continuous)} continuous HR sample(s)"
 
-        offset = calibration.get(source)
-        offset_n = calibration.get(f"{source}_n", 0)
+        if raw_avg is None:
+            continue  # no Polar data of any kind for this dropout run
+
+        offset = _hr_calibration.get(source)
+        offset_n = _hr_calibration.get(f"{source}_n", 0)
         if offset is not None and offset_n > 0:
-            estimated_hr = round(raw_hr - offset)
+            estimated_avg = round(raw_avg - offset)
+            estimated_max = round(raw_max - offset) if raw_max is not None else None
             calibration_note = f"calibrated using {offset_n} comparison run(s), offset {offset:+.1f} bpm"
         else:
-            estimated_hr = round(raw_hr)
+            estimated_avg = round(raw_avg)
+            estimated_max = round(raw_max) if raw_max is not None else None
             calibration_note = "uncalibrated — no comparison data yet for this source"
 
-        fallback_runs.append({
-            "activity_id": r.get("activity_id", ""),
+        zone_minutes = None
+        if source == "continuous" and matched_continuous and _lt_hr_bounds:
+            calibrated_samples = [hr - offset for hr in matched_continuous] if offset is not None else matched_continuous
+            try:
+                elapsed_parts = (r.get("elapsed_time") or "").split(":")
+                h, m, s = (int(p) for p in elapsed_parts)
+                duration_min = (h * 3600 + m * 60 + s) / 60
+            except Exception:
+                duration_min = None
+            if duration_min:
+                zone_minutes = _zone_breakdown_from_raw_samples(calibrated_samples, duration_min, _lt_hr_bounds)
+
+        context[aid] = {
+            "activity_id": aid,
             "date": run_date,
             "name": r.get("name", ""),
             "source": source,
-            "raw_polar_hr": round(raw_hr),
-            "estimated_garmin_hr": estimated_hr,
+            "raw_polar_hr": round(raw_avg),
+            "estimated_garmin_hr": estimated_avg,
+            "avg_hr": estimated_avg,
+            "max_hr": estimated_max,
+            "zone_minutes": zone_minutes,
+            "zone_summary": _zone_summary_str(zone_minutes) if zone_minutes else "",
             "calibration_note": calibration_note,
             "sample_info": sample_info,
             "label": "Polar fallback — H10 dropout"
-        })
-    return sorted(fallback_runs, key=lambda x: x["date"], reverse=True)
+        }
+    return context
 
-hr_dropout_fallback = build_hr_dropout_fallback(_hr_calibration)
+def build_strength_hr_context():
+    """Every strength session has NO Garmin HR at all (no chest strap
+    while lifting) — this is the sole HR source for strength, always
+    Polar-derived, always calibrated against the same continuous-HR offset
+    computed from real running comparisons. Deliberate judgment call worth
+    flagging: the calibration offset itself was derived from RUNNING
+    comparisons (no strength-specific Garmin/Polar comparison is possible,
+    since Garmin never has strength HR to compare against) — applied here
+    to lifting anyway, as the best calibration data available. Revisit if
+    a strength-specific comparison ever becomes possible."""
+    context = {}
+    offset = _hr_calibration.get("continuous")
+    offset_n = _hr_calibration.get("continuous_n", 0)
+    for s in all_strength_rows:
+        start_time_full = s.get("start_time", "")
+        duration_min_raw = s.get("duration_min", "")
+        if not start_time_full or not duration_min_raw:
+            continue
+        try:
+            session_date = start_time_full[:10]
+            session_start_sec = _time_to_seconds(start_time_full[11:19])
+            duration_min = float(duration_min_raw)
+        except Exception:
+            continue
+        if session_start_sec is None or duration_min <= 0:
+            continue
+        session_end_sec = session_start_sec + duration_min * 60
+
+        day_samples = _polar_hr_by_date.get(session_date, [])
+        matched_hrs = []
+        for (t, hr) in day_samples:
+            t_sec = _time_to_seconds(t)
+            if t_sec is not None and session_start_sec <= t_sec <= session_end_sec:
+                try:
+                    matched_hrs.append(float(hr))
+                except (ValueError, TypeError):
+                    continue
+
+        if not matched_hrs:
+            continue
+
+        raw_avg = sum(matched_hrs) / len(matched_hrs)
+        raw_max = max(matched_hrs)
+        if offset is not None and offset_n > 0:
+            estimated_avg = round(raw_avg - offset)
+            estimated_max = round(raw_max - offset)
+            calibration_note = f"calibrated using {offset_n} comparison run(s), offset {offset:+.1f} bpm"
+        else:
+            estimated_avg = round(raw_avg)
+            estimated_max = round(raw_max)
+            calibration_note = "uncalibrated — no comparison data yet"
+
+        zone_minutes = None
+        if _lt_hr_bounds:
+            calibrated_samples = [hr - offset for hr in matched_hrs] if offset is not None else matched_hrs
+            zone_minutes = _zone_breakdown_from_raw_samples(calibrated_samples, duration_min, _lt_hr_bounds)
+
+        key = (session_date, s.get("name", ""))
+        context[key] = {
+            "date": session_date,
+            "name": s.get("name", ""),
+            "avg_hr": estimated_avg,
+            "max_hr": estimated_max,
+            "sample_count": len(matched_hrs),
+            "zone_minutes": zone_minutes,
+            "zone_summary": _zone_summary_str(zone_minutes) if zone_minutes else "",
+            "label": "Polar (calibrated) — no H10 during strength",
+            "calibration_note": calibration_note
+        }
+    return context
+
+_run_hr_context = build_run_hr_context()
+_strength_hr_context = build_strength_hr_context()
+
+# Backward-compatible views for the existing dashboard_metrics.json keys /
+# index.html chart (strength_hr_overlay, hr_dropout_fallback) — same shapes
+# as before, now sourced from the unified context above and enriched with
+# zone_minutes/zone_summary. index.html's existing chart code reads only
+# avg_hr/max_hr/date/name/sample_count and ignores unknown extra fields, so
+# this is safe without an index.html change. The actual UI restructure
+# (folding this into per-session coach annotations instead of a standalone
+# card, per athlete direction) is a separate, later step.
+strength_hr_overlay = sorted(_strength_hr_context.values(), key=lambda x: x["date"], reverse=True)
+hr_dropout_fallback = sorted(
+    [v for v in _run_hr_context.values() if v.get("label")],
+    key=lambda x: x["date"], reverse=True
+)
 _hr_dropout_fallback_by_activity = {f["activity_id"]: f for f in hr_dropout_fallback if f.get("activity_id")}
 
 # ── RUN ZONE-TIME PROJECT ─────────────────────────────────────────────────────
-def _hr_zone_bounds(lt_hr):
-    if not lt_hr:
-        return None
-    return (
-        round(lt_hr * 0.80),
-        round(lt_hr * 0.90),
-        round(lt_hr * 0.99),
-        round(lt_hr * 1.05)
-    )
-
-def _classify_hr_zone(hr, bounds):
-    if bounds is None or hr is None:
-        return None
-    z1, z2, z3, z4 = bounds
-    if hr < z1:
-        return "Z1"
-    elif hr < z2:
-        return "Z2"
-    elif hr < z3:
-        return "Z3"
-    elif hr < z4:
-        return "Z4"
-    else:
-        return "Z5"
-
-_lt_hr_bounds = _hr_zone_bounds(latest_lt.get("lt_hr")) if latest_lt else None
+# (zone bounds / classify function / _lt_hr_bounds now defined earlier in
+# this file, above the unified HR context — not redefined here.)
 
 ATTIA_Z2_TARGET_MIN = 180
 ATTIA_Z2_TARGET_MAX = 240
@@ -1260,6 +1422,16 @@ dashboard_metrics = {
     "zone_time": zone_time,
     "run_hr_source_comparison": run_hr_source_comparison,
     "hr_dropout_fallback": hr_dropout_fallback,
+
+    # NEW (July 2026) — full per-session HR context (avg/max/zone breakdown,
+    # for BOTH runs and strength) backing the unified HR unification work.
+    # Not yet consumed by index.html or the coach prompt — that's the next
+    # two steps (coach prompt update, then the UI restructure that folds
+    # H10-dropout annotations into per-session commentary instead of a
+    # standalone card). Capped to the most recent 30 sessions each; not
+    # meant as a full-history data source, just enough for "recent" framing.
+    "run_hr_context": sorted(_run_hr_context.values(), key=lambda x: x["date"], reverse=True)[:30],
+    "strength_hr_context": sorted(_strength_hr_context.values(), key=lambda x: x["date"], reverse=True)[:30],
 
     "digest": digest_lines
 }

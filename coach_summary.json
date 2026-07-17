@@ -1,59 +1,55 @@
 {
-  "last_updated": "2026-07-15 16:16 UTC",
-  "headline": "Yesterday's 5 km recovery jog at a notably low HR closes out a +35% volume block with efficiency intact.",
-  "confidence_pct": 97,
+  "last_updated": "2026-07-17 15:57 UTC",
+  "headline": "Today's 12 km at controlled HR fits the lower easy-run band cleanly, keeping the efficiency signal intact.",
+  "confidence_pct": 98,
   "confidence_label": "High data confidence",
   "confidence_reasons": [
-    "LT reading 12d old",
+    "LT reading 14d old",
     "HR data on 7/8 recent runs",
-    "Sleep tracked 13/14 nights",
+    "Sleep tracked 14/14 nights",
     "Steps tracked 7/7 days",
     "Data fetch up to date",
     "Multiple data sources active in last 3 days"
   ],
   "confidence_attention": null,
-  "summary": "The picture that's been building over the last week now holds firmly: your easy-run heart rate has stayed lower across a block where volume climbed meaningfully, which is the combination you want \u2014 more work absorbed at less cardiac cost. Yesterday's short jog at low effort is exactly the right kind of session to cap this, and its HR sits comfortably within the improved band rather than the old one, so the efficiency gain isn't just a recovery-week artefact.\n\nStrength volume doubled versus the prior block while running volume also rose, and the strain:tolerance ratio still reads as maintaining rather than overreaching. That's a lot of concurrent load handled without the usual warning signs, which speaks to where your durable base currently sits. With St. Olavsleden roughly three weeks out, the qualities that matter most there \u2014 time on feet, back-to-back tolerance, controlled aerobic pacing \u2014 are the ones trending in the right direction.\n\nThe one thing sitting slightly against the grain is sleep: a couple of short nights this week, including last night, landed inside a block you were otherwise absorbing well. It's supporting context only, but worth keeping in view rather than dismissing given the load being carried.",
+  "summary": "Today's run sits comfortably in the pattern you've built over the last month: an easy-effort 12 km carried at a heart rate that lands in the lower band rather than the one you were running at a block ago. That answers the open question from last week directly \u2014 the easy-run efficiency has held so far, though it's worth noting today wasn't a hard session, so the real test of whether it holds under intensity is still ahead.\n\nThe bigger picture remains a well-supported build. The recent four-week block is up meaningfully on the prior one, strength volume has roughly tripled over the same window, and the strain-to-tolerance balance reads productive rather than overreached. Nothing here suggests you're overcooked; the load is being absorbed and the durability qualities you care about for a long self-supported crossing are trending the right way.\n\nSleep is the one wobble worth naming \u2014 last night was short following another compressed night, and the recent nights have been uneven. That's supporting context only and shouldn't change what you do, but it's the sort of thing that can quietly accumulate if it runs for a week rather than a couple of days.",
   "watch_items": [
-    "Whether the short nights this week extend into a run, since the training load is still being carried alongside them.",
-    "Whether pack-carry running appears soon enough to adapt to the 6-8kg load before the crossing.",
-    "Whether ascent per run starts shifting toward sustained climbing rather than the rolling profiles logged so far.",
-    "Whether easy-run HR holds at the lower band once the next hard session re-enters the schedule."
+    "Whether the run of short nights continues past a couple of days rather than resolving on its own.",
+    "Whether easy-run HR stays in the lower band once a genuinely hard session re-enters the schedule \u2014 today doesn't test that.",
+    "Whether pack-carry running appears in time to adapt to the 6-8kg load before the August crossing.",
+    "Whether ascent per run starts trending toward sustained climbing rather than the rolling profiles logged so far."
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 4-week volume 162 km vs 120 km prior block (+35%)",
+      "text": "\u25b2 4-week volume 174 km vs 120 km prior block (+45%)",
       "priority": "High"
     },
     {
-      "text": "\u25b2 Strength consistency: 8 sessions vs 4 prior 4wk",
+      "text": "\u25b2 Strength consistency: 9 sessions vs 3 prior 4wk",
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 143 bpm vs 153 bpm prior period (comparable-effort runs, 9 vs 7 runs)",
+      "text": "\u25bc Easy-run HR averaging 143 bpm vs 153 bpm prior period (comparable-effort runs, 10 vs 7 runs)",
       "priority": "High"
     },
     {
-      "text": "\u25b2 Zone 2: 251 min vs 180-240 min/week target (139% of minimum); grey zone (Z3+Z4): 4.1%",
-      "priority": "Low"
-    },
-    {
-      "text": "\u25ac Strain:tolerance ratio 1.00 (MAINTAINING) (strain 78, tolerance 78); sleep averaging 7h23m over the same period",
+      "text": "\u25ac Strain:tolerance ratio 1.02 (PRODUCTIVE) (strain 71, tolerance 70); sleep averaging 7h10m over the same period",
       "priority": "Low"
     }
   ],
   "insights": [
-    "The picture that's been building over the last week now holds firmly: your easy-run heart rate has stayed lower across a block where volume climbed meaningfully, which is the combination you want \u2014 more work absorbed at less cardiac cost. Yesterday's short jog at low effort is exactly the right kind of session to cap this, and its HR sits comfortably within the improved band rather than the old one, so the efficiency gain isn't just a recovery-week artefact.\n\nStrength volume doubled versus the prior block while running volume also rose, and the strain:tolerance ratio still reads as maintaining rather than overreaching. That's a lot of concurrent load handled without the usual warning signs, which speaks to where your durable base currently sits. With St. Olavsleden roughly three weeks out, the qualities that matter most there \u2014 time on feet, back-to-back tolerance, controlled aerobic pacing \u2014 are the ones trending in the right direction.\n\nThe one thing sitting slightly against the grain is sleep: a couple of short nights this week, including last night, landed inside a block you were otherwise absorbing well. It's supporting context only, but worth keeping in view rather than dismissing given the load being carried."
+    "Today's run sits comfortably in the pattern you've built over the last month: an easy-effort 12 km carried at a heart rate that lands in the lower band rather than the one you were running at a block ago. That answers the open question from last week directly \u2014 the easy-run efficiency has held so far, though it's worth noting today wasn't a hard session, so the real test of whether it holds under intensity is still ahead.\n\nThe bigger picture remains a well-supported build. The recent four-week block is up meaningfully on the prior one, strength volume has roughly tripled over the same window, and the strain-to-tolerance balance reads productive rather than overreached. Nothing here suggests you're overcooked; the load is being absorbed and the durability qualities you care about for a long self-supported crossing are trending the right way.\n\nSleep is the one wobble worth naming \u2014 last night was short following another compressed night, and the recent nights have been uneven. That's supporting context only and shouldn't change what you do, but it's the sort of thing that can quietly accumulate if it runs for a week rather than a couple of days."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 5491,
-    "output_tokens": 601,
-    "cost_usd": 0.04248,
-    "cost_dkk": 0.29311,
-    "date": "2026-07-15"
+    "input_tokens": 5536,
+    "output_tokens": 571,
+    "cost_usd": 0.041955,
+    "cost_dkk": 0.28949,
+    "date": "2026-07-17"
   },
-  "usage_mtd_usd": 0.3936,
-  "usage_mtd_dkk": 2.7158,
-  "usage_ytd_usd": 0.3936,
-  "usage_ytd_dkk": 2.7158
+  "usage_mtd_usd": 0.43555,
+  "usage_mtd_dkk": 3.0053,
+  "usage_ytd_usd": 0.43555,
+  "usage_ytd_dkk": 3.0053
 }

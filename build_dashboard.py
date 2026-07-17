@@ -1693,13 +1693,59 @@ for label, min_dist in pb_cats:
         best = min(eligible, key=lambda r: parse_pace_sec(r["avg_pace_min_km"]) or 9999)
         pb_lines.append(f"{label}: {best['avg_pace_min_km']} /km on {best['date']} ({best.get('distance_km')} km)")
 
+# HR detail per run now pulls from the unified _run_hr_context (built
+# earlier in this file) instead of the raw avg_hr field alone — includes
+# max_hr and a per-session zone-minute breakdown so a spiky effort (e.g.
+# several hard intervals inside an otherwise easy run) doesn't average out
+# to look identical to a genuinely steady session at the same avg HR. This
+# was a real, athlete-confirmed gap: a run with repeated hard sprints was
+# previously described by the coach as a uniform "low HR" run because only
+# a single averaged number was ever visible in this prompt.
+def _run_hr_prompt_str(r):
+    hr_ctx = _run_hr_context.get(r.get("activity_id", ""))
+    if not hr_ctx:
+        return "n/a"
+    bits = f"avg {hr_ctx['avg_hr']}"
+    if hr_ctx.get("max_hr") is not None:
+        bits += f"/max {hr_ctx['max_hr']}"
+    if hr_ctx.get("zone_summary"):
+        bits += f" ({hr_ctx['zone_summary']})"
+    if hr_ctx.get("label"):
+        bits += f" [{hr_ctx['label']}]"
+    return bits
+
 run_details = []
 for r in reversed(recent_runs[-8:]):
     elev = f" | ↑{r.get('elevation_gain_m','?')}m" if r.get('elevation_gain_m') else ""
     run_details.append(
         f"  {r['date']} | {r.get('distance_km','?')} km | {r.get('avg_pace_min_km','?')} /km | "
-        f"HR {r.get('avg_hr','?')} | load {r.get('training_load','?')} | "
+        f"HR {_run_hr_prompt_str(r)} | load {r.get('training_load','?')} | "
         f"ATE {r.get('aerobic_training_effect','?')}{elev} | {r.get('type','?')}"
+    )
+
+# Same per-session HR/zone detail for strength — previously the coach only
+# ever saw an aggregate session COUNT for strength, never any per-session
+# detail at all (no HR, no duration breakdown). Every strength session now
+# always carries Polar-derived HR (see build_strength_hr_context — no H10
+# during lifting, ever), so this is a straightforward, always-labeled
+# addition rather than a fallback case.
+def _strength_hr_prompt_str(s):
+    hr_ctx = _strength_hr_context.get((s.get("date", ""), s.get("name", "")))
+    if not hr_ctx:
+        return "n/a"
+    bits = f"avg {hr_ctx['avg_hr']}"
+    if hr_ctx.get("max_hr") is not None:
+        bits += f"/max {hr_ctx['max_hr']}"
+    if hr_ctx.get("zone_summary"):
+        bits += f" ({hr_ctx['zone_summary']})"
+    bits += " [Polar, no H10]"
+    return bits
+
+strength_details = []
+for s in reversed(recent_strength[-8:]):
+    strength_details.append(
+        f"  {s.get('date','?')} | {s.get('name','?')} | {s.get('duration_min','?')} min | "
+        f"HR {_strength_hr_prompt_str(s)}"
     )
 
 cutoff_12wk = today_date - timedelta(days=84)
@@ -1745,6 +1791,8 @@ COACHING PRINCIPLES:
 - You will be given a RECENT COACHING HISTORY block showing your last few days' headlines and the most recent WATCH items. Use it only for continuity — to avoid reusing the same framing two days running, and to notice if something previously flagged has resolved, worsened, or changed. Never treat it as evidence, never quote it back verbatim, and never let it substitute for today's actual data.
 - Sleep data (from Polar Loop) is supporting context only. Note it when relevant, but do not change training recommendations or caution level based on sleep — this data stream is new and not yet validated enough to drive advice.
 - Cardio load strain/tolerance (from Polar Loop, Training Load Pro) is likewise supporting context, not yet validated enough on its own to drive advice. When both sleep and the strain:tolerance ratio point the same direction (e.g. reduced sleep alongside an elevated ratio), that convergence is worth naming as a pattern — but treat each figure as its own signal in its own unit, never combine them into a single score or imply one measures the other.
+- Every run and strength session's HR line includes max HR and a zone-minute breakdown (e.g. "avg 150/max 178 (Z2 1m Z3 2m)"), not just an average. Use the breakdown and max HR together with the average to judge the actual character of the effort — an average alone can make a session built from several hard efforts with easy recovery between them look identical to a genuinely steady effort at the same average. Do not describe a session's intensity from the average number alone when a zone breakdown is present; if the zone breakdown shows meaningful time in Z4/Z5, that is a materially different session than one sitting entirely in Z1/Z2, even at a matching average.
+- Some HR entries are Polar-derived rather than real Garmin/H10 chest-strap data, marked "[Polar fallback — H10 dropout]" (a run where the H10 recorded nothing) or "[Polar, no H10]" (every strength session — no chest strap is worn while lifting). These are calibrated estimates, not raw H10-precision readings — treat them as directionally reliable and usable exactly like other HR data for judging effort and trends, but do not discuss the sensor, calibration, or data-source mechanics themselves in your output; that's plumbing the athlete already knows about, not part of the coaching story.
 
 DECISION FRAMEWORK — ask these questions before writing:
 1. What changed since the prior period? Is the change meaningful or within normal variance?
@@ -1843,9 +1891,8 @@ VOLUME CONTEXT:
 RECENT RUNS (last 8, oldest first — compare against the athlete's own baseline, not generic norms):
 {chr(10).join(run_details) if run_details else "  No runs in the last 4 weeks"}
 
-STRENGTH:
-- Last 4 weeks: {len(recent_strength)} sessions
-- Year to date: {summary.get('total_strength_this_year', '?')} sessions ({strength_per_week_ytd}/week average)
+STRENGTH (last 4 weeks: {len(recent_strength)} sessions | year to date: {summary.get('total_strength_this_year', '?')} sessions, {strength_per_week_ytd}/week average):
+{chr(10).join(strength_details) if strength_details else "  No strength sessions in the last 4 weeks"}
 
 LACTATE THRESHOLD:
 - Current: {latest_lt['lt_pace'] + ' /km @ ' + str(latest_lt['lt_hr']) + ' bpm (' + latest_lt['date'] + ')' if latest_lt else 'No data yet'}

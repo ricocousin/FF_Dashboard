@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-17 15:57 UTC",
+  "last_updated": "2026-07-17 18:47 UTC",
   "last_complete_date": "2026-07-16",
   "this_year": "2026",
   "this_month_short": "Jul",
@@ -901,44 +901,104 @@
     {
       "date": "2026-07-15",
       "name": "Functional Fitness",
-      "avg_hr": 112,
-      "max_hr": 135,
-      "sample_count": 1532
+      "avg_hr": 126,
+      "max_hr": 149,
+      "sample_count": 1532,
+      "zone_minutes": {
+        "Z1": 29.8,
+        "Z2": 7.1,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 30m Z2 7m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
     },
     {
       "date": "2026-07-13",
       "name": "Functional Fitness",
-      "avg_hr": 118,
-      "max_hr": 140,
-      "sample_count": 1013
+      "avg_hr": 132,
+      "max_hr": 154,
+      "sample_count": 1013,
+      "zone_minutes": {
+        "Z1": 31.4,
+        "Z2": 19.2,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 31m Z2 19m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
     },
     {
       "date": "2026-07-10",
       "name": "Functional Fitness",
-      "avg_hr": 111,
-      "max_hr": 141,
-      "sample_count": 1506
+      "avg_hr": 126,
+      "max_hr": 155,
+      "sample_count": 1506,
+      "zone_minutes": {
+        "Z1": 47.9,
+        "Z2": 7.4,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 48m Z2 7m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
     },
     {
       "date": "2026-07-08",
       "name": "Functional Fitness",
-      "avg_hr": 100,
-      "max_hr": 132,
-      "sample_count": 3189
+      "avg_hr": 115,
+      "max_hr": 146,
+      "sample_count": 3189,
+      "zone_minutes": {
+        "Z1": 57.8,
+        "Z2": 2.2,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 58m Z2 2m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
     },
     {
       "date": "2026-07-06",
       "name": "Functional Fitness",
-      "avg_hr": 101,
-      "max_hr": 106,
-      "sample_count": 1802
+      "avg_hr": 116,
+      "max_hr": 120,
+      "sample_count": 1802,
+      "zone_minutes": {
+        "Z1": 46.2,
+        "Z2": 0.0,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 46m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
     },
     {
       "date": "2026-07-03",
       "name": "Copenhagen Running",
-      "avg_hr": 107,
-      "max_hr": 125,
-      "sample_count": 1041
+      "avg_hr": 121,
+      "max_hr": 139,
+      "sample_count": 1041,
+      "zone_minutes": {
+        "Z1": 65.7,
+        "Z2": 0.0,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 66m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
     }
   ],
   "zone_time": {
@@ -1100,9 +1160,548 @@
       "source": "exercise",
       "raw_polar_hr": 149,
       "estimated_garmin_hr": 155,
+      "avg_hr": 155,
+      "max_hr": 183,
+      "zone_minutes": null,
+      "zone_summary": "",
       "calibration_note": "calibrated using 7 comparison run(s), offset -6.0 bpm",
       "sample_info": "Polar exercise entry 496523533",
       "label": "Polar fallback \u2014 H10 dropout"
+    }
+  ],
+  "run_hr_context": [
+    {
+      "activity_id": "23621478819",
+      "date": "2026-07-16",
+      "name": "Fures\u00f8 Running",
+      "source": "garmin",
+      "avg_hr": 143,
+      "max_hr": 163,
+      "zone_minutes": {
+        "Z1": 33.70000000000022,
+        "Z2": 43.23333333333301,
+        "Z3": 0.7666666666666668,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 34m Z2 43m Z3 1m",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23599920729",
+      "date": "2026-07-14",
+      "name": "Copenhagen Running",
+      "source": "garmin",
+      "avg_hr": 137,
+      "max_hr": 177,
+      "zone_minutes": {
+        "Z1": 18.866666666666877,
+        "Z2": 6.6999999999999815,
+        "Z3": 3.5499999999999923,
+        "Z4": 0.3333333333333333,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 19m Z2 7m Z3 4m",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23567127214",
+      "date": "2026-07-12",
+      "name": "Copenhagen Running",
+      "source": "garmin",
+      "avg_hr": 153,
+      "max_hr": 176,
+      "zone_minutes": {
+        "Z1": 8.04999999999998,
+        "Z2": 45.04999999999958,
+        "Z3": 15.000000000000078,
+        "Z4": 0.06666666666666667,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 8m Z2 45m Z3 15m",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23563760621",
+      "date": "2026-07-11",
+      "name": "Fures\u00f8 Running",
+      "source": "exercise",
+      "raw_polar_hr": 149,
+      "estimated_garmin_hr": 155,
+      "avg_hr": 155,
+      "max_hr": 183,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "calibration_note": "calibrated using 7 comparison run(s), offset -6.0 bpm",
+      "sample_info": "Polar exercise entry 496523533",
+      "label": "Polar fallback \u2014 H10 dropout"
+    },
+    {
+      "activity_id": "23540360315",
+      "date": "2026-07-09",
+      "name": "Copenhagen Running",
+      "source": "garmin",
+      "avg_hr": 141,
+      "max_hr": 160,
+      "zone_minutes": {
+        "Z1": 25.150000000000407,
+        "Z2": 22.11666666666692,
+        "Z3": 0.21666666666666665,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 25m Z2 22m",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23524591680",
+      "date": "2026-07-08",
+      "name": "Copenhagen Running",
+      "source": "garmin",
+      "avg_hr": 147,
+      "max_hr": 166,
+      "zone_minutes": {
+        "Z1": 6.9333333333333185,
+        "Z2": 46.78333333333324,
+        "Z3": 1.4333333333333347,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 7m Z2 47m Z3 1m",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23514250146",
+      "date": "2026-07-07",
+      "name": "Copenhagen Running",
+      "source": "garmin",
+      "avg_hr": 155,
+      "max_hr": 186,
+      "zone_minutes": {
+        "Z1": 2.5166666666666675,
+        "Z2": 23.883333333333677,
+        "Z3": 6.183333333333321,
+        "Z4": 1.3666666666666678,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 3m Z2 24m Z3 6m Z4 1m",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23492470480",
+      "date": "2026-07-05",
+      "name": "Copenhagen Running",
+      "source": "garmin",
+      "avg_hr": 135,
+      "max_hr": 154,
+      "zone_minutes": {
+        "Z1": 44.00000000000006,
+        "Z2": 21.86666666666691,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 44m Z2 22m",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23481217090",
+      "date": "2026-07-04",
+      "name": "Copenhagen Running",
+      "source": "garmin",
+      "avg_hr": 140,
+      "max_hr": 155,
+      "zone_minutes": {
+        "Z1": 65.01666666666807,
+        "Z2": 49.96666666666744,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 65m Z2 50m",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23457896369",
+      "date": "2026-07-02",
+      "name": "Copenhagen Running",
+      "source": "garmin",
+      "avg_hr": 137,
+      "max_hr": 160,
+      "zone_minutes": {
+        "Z1": 57.599999999998865,
+        "Z2": 24.45000000000021,
+        "Z3": 0.13333333333333336,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 58m Z2 24m",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23433063474",
+      "date": "2026-06-30",
+      "name": "Copenhagen Running",
+      "source": "garmin",
+      "avg_hr": 143,
+      "max_hr": 169,
+      "zone_minutes": {
+        "Z1": 26.216666666666907,
+        "Z2": 43.16666666666635,
+        "Z3": 1.6000000000000008,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 26m Z2 43m Z3 2m",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23400878129",
+      "date": "2026-06-27",
+      "name": "Copenhagen Running",
+      "source": "garmin",
+      "avg_hr": 161,
+      "max_hr": 184,
+      "zone_minutes": {
+        "Z1": 8.683333333333323,
+        "Z2": 21.683333333333508,
+        "Z3": 35.3166666666668,
+        "Z4": 11.100000000000023,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 9m Z2 22m Z3 35m Z4 11m",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23368720074",
+      "date": "2026-06-24",
+      "name": "Copenhagen Running",
+      "source": "garmin",
+      "avg_hr": 148,
+      "max_hr": 170,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23321556833",
+      "date": "2026-06-20",
+      "name": "Copenhagen Running",
+      "source": "garmin",
+      "avg_hr": 156,
+      "max_hr": 179,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23219878639",
+      "date": "2026-06-12",
+      "name": "Bornholm Running",
+      "source": "garmin",
+      "avg_hr": 138,
+      "max_hr": 158,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23181450100",
+      "date": "2026-06-08",
+      "name": "Reykjavik Running",
+      "source": "garmin",
+      "avg_hr": 155,
+      "max_hr": 182,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23161902888",
+      "date": "2026-06-07",
+      "name": "Running",
+      "source": "garmin",
+      "avg_hr": 153,
+      "max_hr": 172,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "23068172637",
+      "date": "2026-05-30",
+      "name": "Running",
+      "source": "garmin",
+      "avg_hr": 152,
+      "max_hr": 179,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "22992948931",
+      "date": "2026-05-24",
+      "name": "Running",
+      "source": "garmin",
+      "avg_hr": 150,
+      "max_hr": 182,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "22983923505",
+      "date": "2026-05-23",
+      "name": "Running",
+      "source": "garmin",
+      "avg_hr": 156,
+      "max_hr": 182,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "22976487520",
+      "date": "2026-05-22",
+      "name": "Running",
+      "source": "garmin",
+      "avg_hr": 165,
+      "max_hr": 192,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "22927626716",
+      "date": "2026-05-18",
+      "name": "Hill Intervals",
+      "source": "garmin",
+      "avg_hr": 156,
+      "max_hr": 190,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "22832309946",
+      "date": "2026-05-10",
+      "name": "Running",
+      "source": "garmin",
+      "avg_hr": 163,
+      "max_hr": 181,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "22746838692",
+      "date": "2026-05-03",
+      "name": "Running",
+      "source": "garmin",
+      "avg_hr": 148,
+      "max_hr": 174,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "22723614353",
+      "date": "2026-05-01",
+      "name": "Running",
+      "source": "garmin",
+      "avg_hr": 158,
+      "max_hr": 172,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "22704893210",
+      "date": "2026-04-29",
+      "name": "Running",
+      "source": "garmin",
+      "avg_hr": 151,
+      "max_hr": 188,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "22654849975",
+      "date": "2026-04-25",
+      "name": "LISS",
+      "source": "garmin",
+      "avg_hr": 156,
+      "max_hr": 176,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "22620526600",
+      "date": "2026-04-22",
+      "name": "Running",
+      "source": "garmin",
+      "avg_hr": 137,
+      "max_hr": 172,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "22571945137",
+      "date": "2026-04-18",
+      "name": "Running",
+      "source": "garmin",
+      "avg_hr": 151,
+      "max_hr": 172,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    },
+    {
+      "activity_id": "22537344206",
+      "date": "2026-04-15",
+      "name": "Running",
+      "source": "garmin",
+      "avg_hr": 173,
+      "max_hr": 192,
+      "zone_minutes": null,
+      "zone_summary": "",
+      "label": null,
+      "calibration_note": null
+    }
+  ],
+  "strength_hr_context": [
+    {
+      "date": "2026-07-15",
+      "name": "Functional Fitness",
+      "avg_hr": 126,
+      "max_hr": 149,
+      "sample_count": 1532,
+      "zone_minutes": {
+        "Z1": 29.8,
+        "Z2": 7.1,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 30m Z2 7m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
+    },
+    {
+      "date": "2026-07-13",
+      "name": "Functional Fitness",
+      "avg_hr": 132,
+      "max_hr": 154,
+      "sample_count": 1013,
+      "zone_minutes": {
+        "Z1": 31.4,
+        "Z2": 19.2,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 31m Z2 19m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
+    },
+    {
+      "date": "2026-07-10",
+      "name": "Functional Fitness",
+      "avg_hr": 126,
+      "max_hr": 155,
+      "sample_count": 1506,
+      "zone_minutes": {
+        "Z1": 47.9,
+        "Z2": 7.4,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 48m Z2 7m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
+    },
+    {
+      "date": "2026-07-08",
+      "name": "Functional Fitness",
+      "avg_hr": 115,
+      "max_hr": 146,
+      "sample_count": 3189,
+      "zone_minutes": {
+        "Z1": 57.8,
+        "Z2": 2.2,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 58m Z2 2m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
+    },
+    {
+      "date": "2026-07-06",
+      "name": "Functional Fitness",
+      "avg_hr": 116,
+      "max_hr": 120,
+      "sample_count": 1802,
+      "zone_minutes": {
+        "Z1": 46.2,
+        "Z2": 0.0,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 46m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
+    },
+    {
+      "date": "2026-07-03",
+      "name": "Copenhagen Running",
+      "avg_hr": 121,
+      "max_hr": 139,
+      "sample_count": 1041,
+      "zone_minutes": {
+        "Z1": 65.7,
+        "Z2": 0.0,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 66m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
     }
   ],
   "digest": [

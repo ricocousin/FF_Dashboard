@@ -137,7 +137,7 @@
     @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.6); } }
 
     /* ── Zone-time card ─────────────────────────────────────────────────── */
-    .zt-toggle { display: flex; gap: 0.4rem; }
+    .zt-toggle { display: flex; gap: 0.4rem; flex-wrap: wrap; }
     .zt-toggle button { background: var(--border); border: none; color: var(--text-dim); padding: 0.4rem 0.75rem; border-radius: 4px; cursor: pointer; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
     .zt-toggle button:hover { color: var(--text-hi); }
     .zt-toggle button.active { background: var(--accent); color: #0d0d0f; font-weight: 700; }
@@ -501,7 +501,9 @@ async function init() {
     const zt = m.zone_time ? m.zone_time[ztWindow] : null;
     const toggleHtml = `<div class="zt-toggle">
       <button data-win="rolling" class="${ztWindow === 'rolling' ? 'active' : ''}">This week</button>
-      <button data-win="last_completed_week" class="${ztWindow === 'last_completed_week' ? 'active' : ''}">Last completed week</button>
+      <button data-win="last_month" class="${ztWindow === 'last_month' ? 'active' : ''}">Last month</button>
+      <button data-win="ytd" class="${ztWindow === 'ytd' ? 'active' : ''}">Year to date</button>
+      <button data-win="all_time" class="${ztWindow === 'all_time' ? 'active' : ''}">All time</button>
     </div>`;
 
     if (!zt || !zt.has_lt_data || !zt.total_minutes) {

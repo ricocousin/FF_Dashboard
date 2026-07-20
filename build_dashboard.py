@@ -1220,18 +1220,43 @@ def _compute_zone_time(window_start, window_end, window_label, window_days):
 _rolling_start = today_date - timedelta(days=7)
 zone_time_rolling = _compute_zone_time(_rolling_start, today_date, "This week (rolling 7d)", 7)
 
-if last_complete_date.weekday() == 6:
-    _true_last_completed_week = last_complete_week
-else:
-    _true_last_completed_week = _shift_week_key(last_complete_week, -1)
+# REPLACED July 2026 (athlete request): the original toggle was
+# this-week/last-completed-week. Now a 4-way toggle — this week / last
+# month / year to date / all time. "Last month" means the last FULLY
+# COMPLETED calendar month (e.g. all of June while currently in July),
+# matching this project's existing convention of "last completed period"
+# (see last_completed_week elsewhere) rather than a trailing-30-days
+# window — flag to the athlete if a trailing window was actually wanted
+# instead.
+_this_month_first = today_date.replace(day=1)
+_last_month_end = _this_month_first - timedelta(days=1)
+_last_month_start = _last_month_end.replace(day=1)
+zone_time_last_month = _compute_zone_time(
+    _last_month_start, _last_month_end, "Last month",
+    (_last_month_end - _last_month_start).days + 1
+)
 
-_last_week_monday = _week_start_date(_true_last_completed_week)
-_last_week_sunday = _last_week_monday + timedelta(days=6)
-zone_time_last_completed_week = _compute_zone_time(_last_week_monday, _last_week_sunday, "Last completed week", 7)
+_ytd_start = today_date.replace(month=1, day=1)
+zone_time_ytd = _compute_zone_time(
+    _ytd_start, last_complete_date, "Year to date",
+    (last_complete_date - _ytd_start).days + 1
+)
+
+_all_time_dates = [r["date"] for r in all_run_rows if r.get("date")] + [s["date"] for s in all_strength_rows if s.get("date")]
+if _all_time_dates:
+    _all_time_start = datetime.strptime(min(_all_time_dates), "%Y-%m-%d").date()
+else:
+    _all_time_start = last_complete_date
+zone_time_all_time = _compute_zone_time(
+    _all_time_start, last_complete_date, "All time",
+    (last_complete_date - _all_time_start).days + 1
+)
 
 zone_time = {
     "rolling": zone_time_rolling,
-    "last_completed_week": zone_time_last_completed_week,
+    "last_month": zone_time_last_month,
+    "ytd": zone_time_ytd,
+    "all_time": zone_time_all_time,
     "default_view": "rolling"
 }
 
@@ -1242,20 +1267,20 @@ if latest_lt and baseline_lt:
     d_sec = parse_pace_sec(baseline_lt["lt_pace"]) - parse_pace_sec(latest_lt["lt_pace"])
     arrow = "▲" if d_sec > 1 else "▼" if d_sec < -1 else "➔"
     word = "improved" if d_sec > 0 else "slowed" if d_sec < 0 else "unchanged"
-    digest_lines.append(f"{arrow} LT pace {word} {abs(d_sec)}s/km over 30 days ({baseline_lt['lt_pace']} → {latest_lt['lt_pace']}/km)")
+    digest_lines.append({"text": f"{arrow} LT pace {word} {abs(d_sec)}s/km over 30 days ({baseline_lt['lt_pace']} → {latest_lt['lt_pace']}/km)", "section": "lt"})
 elif latest_lt:
-    digest_lines.append(f"➔ LT established at {latest_lt['lt_pace']}/km (baseline building)")
+    digest_lines.append({"text": f"➔ LT established at {latest_lt['lt_pace']}/km (baseline building)", "section": "lt"})
 else:
-    digest_lines.append("➔ No LT reading yet")
+    digest_lines.append({"text": "➔ No LT reading yet", "section": "lt"})
 
 vol_delta = recent_dist - prior_dist
 vol_arrow = "▲" if vol_delta > 1 else "▼" if vol_delta < -1 else "➔"
 vol_word = "building" if prior_dist <= 0 else ("unchanged" if abs(vol_delta) <= 1 else ("increased" if vol_delta > 0 else "reduced"))
-digest_lines.append(f"{vol_arrow} 4-week volume {vol_word} ({recent_dist:.0f} vs {prior_dist:.0f} km prior block)")
+digest_lines.append({"text": f"{vol_arrow} 4-week volume {vol_word} ({recent_dist:.0f} vs {prior_dist:.0f} km prior block)", "section": "running"})
 
 str_delta = len(recent_strength) - len(prior_strength)
 str_arrow = "▲" if str_delta > 0.5 else "▼" if str_delta < -0.5 else "➔"
-digest_lines.append(f"{str_arrow} Strength frequency {len(recent_strength)} vs {len(prior_strength)} sessions prior block")
+digest_lines.append({"text": f"{str_arrow} Strength frequency {len(recent_strength)} vs {len(prior_strength)} sessions prior block", "section": "strength"})
 
 steps_recent_4wk = [v for d, v in steps_data.items() if datetime.strptime(d, "%Y-%m-%d").date() >= cutoff_4wk and d <= last_complete_str]
 steps_prior_4wk = [v for d, v in steps_data.items() if cutoff_8wk <= datetime.strptime(d, "%Y-%m-%d").date() < cutoff_4wk]
@@ -1263,9 +1288,9 @@ if steps_recent_4wk and steps_prior_4wk:
     r_avg, p_avg = sum(steps_recent_4wk) / len(steps_recent_4wk), sum(steps_prior_4wk) / len(steps_prior_4wk)
     d = r_avg - p_avg
     arrow = "▲" if d > 300 else "▼" if d < -300 else "➔"
-    digest_lines.append(f"{arrow} Steps averaging {round(r_avg):,} vs {round(p_avg):,}/day prior block")
+    digest_lines.append({"text": f"{arrow} Steps averaging {round(r_avg):,} vs {round(p_avg):,}/day prior block", "section": "steps"})
 else:
-    digest_lines.append("➔ Steps data still accumulating")
+    digest_lines.append({"text": "➔ Steps data still accumulating", "section": "steps"})
 
 sleep_recent_4wk = [float(v["total_sleep_min"]) for d, v in sleep_data.items() if v.get("total_sleep_min") and datetime.strptime(d, "%Y-%m-%d").date() >= cutoff_4wk and d <= str(today_date)]
 sleep_prior_4wk = [float(v["total_sleep_min"]) for d, v in sleep_data.items() if v.get("total_sleep_min") and cutoff_8wk <= datetime.strptime(d, "%Y-%m-%d").date() < cutoff_4wk]
@@ -1275,11 +1300,11 @@ if sleep_recent_4wk and sleep_prior_4wk:
     arrow = "▲" if d > 5 else "▼" if d < -5 else "➔"
     def _hm(mins):
         return f"{int(mins) // 60}h{int(mins) % 60:02d}m"
-    digest_lines.append(f"{arrow} Sleep averaging {_hm(r_avg)} vs {_hm(p_avg)} prior block")
+    digest_lines.append({"text": f"{arrow} Sleep averaging {_hm(r_avg)} vs {_hm(p_avg)} prior block", "section": "recovery"})
 else:
-    digest_lines.append("➔ Sleep data still accumulating")
+    digest_lines.append({"text": "➔ Sleep data still accumulating", "section": "recovery"})
 
-digest_lines.append(f"➔ Running streak: {summary.get('current_weekly_streak', '—')} wks (best: {summary.get('longest_weekly_streak', '—')})")
+digest_lines.append({"text": f"➔ Running streak: {summary.get('current_weekly_streak', '—')} wks (best: {summary.get('longest_weekly_streak', '—')})", "section": "running"})
 
 # ── Calendar commentary ────────────────────────────────────────────────────────
 def _calendar_commentary():
@@ -1556,19 +1581,19 @@ def build_evidence_catalog():
             arrow = _trend_arrow(delta_sec)
             text = (f"{arrow} LT pace {'improved' if delta_sec > 0 else 'slowed' if delta_sec < 0 else 'unchanged'} "
                     f"{abs(delta_sec)}s/km over 30 days ({baseline_lt['lt_pace']} → {latest_lt['lt_pace']}/km)")
-            items.append((text, _priority_tier(abs(delta_sec), high=5, medium=2)))
+            items.append((text, _priority_tier(abs(delta_sec), high=5, medium=2), "lt"))
 
     if prior_dist > 0:
         vol_delta_pct = ((recent_dist - prior_dist) / prior_dist) * 100
         arrow = _trend_arrow(recent_dist - prior_dist, threshold=1)
         text = (f"{arrow} 4-week volume {recent_dist:.0f} km vs {prior_dist:.0f} km prior block "
                 f"({vol_delta_pct:+.0f}%)")
-        items.append((text, _priority_tier(abs(vol_delta_pct), high=15, medium=5)))
+        items.append((text, _priority_tier(abs(vol_delta_pct), high=15, medium=5), "running"))
 
     current_streak = summary.get("current_weekly_streak")
     if current_streak:
         text = f"▬ {current_streak}-week running streak (best: {summary.get('longest_weekly_streak', '?')} wks)"
-        items.append((text, "Medium"))
+        items.append((text, "Medium", "running"))
 
     prior_sleep = {d: s for d, s in sleep_data.items()
         if cutoff_8wk <= datetime.strptime(d, "%Y-%m-%d").date() < cutoff_4wk}
@@ -1581,7 +1606,7 @@ def build_evidence_catalog():
         def _fmt_hm(mins):
             return f"{int(mins) // 60}h{int(mins) % 60:02d}m"
         text = f"{arrow} Sleep averaging {_fmt_hm(avg_recent_sleep)} vs {_fmt_hm(avg_prior_sleep)} prior period"
-        items.append((text, _priority_tier(abs(delta_sleep), high=30, medium=10)))
+        items.append((text, _priority_tier(abs(delta_sleep), high=30, medium=10), "recovery"))
 
     prior_sleep_scores = [float(s["sleep_score"]) for s in prior_sleep.values() if s.get("sleep_score")]
     if sleep_scores and prior_sleep_scores:
@@ -1590,7 +1615,7 @@ def build_evidence_catalog():
         delta_score = avg_recent_score - avg_prior_score
         arrow = _trend_arrow(delta_score, threshold=3)
         text = f"{arrow} Sleep score averaging {avg_recent_score:.0f} vs {avg_prior_score:.0f} prior period"
-        items.append((text, _priority_tier(abs(delta_score), high=10, medium=4)))
+        items.append((text, _priority_tier(abs(delta_score), high=10, medium=4), "recovery"))
 
     zt = zone_time.get("rolling", {})
     if zt.get("has_lt_data") and zt.get("total_minutes", 0) > 0:
@@ -1601,7 +1626,7 @@ def build_evidence_catalog():
         text = (f"{arrow} Zone 2: {z2_min:.0f} min vs {zt['z2_target_min']}-{zt['z2_target_max']} min/week target "
                 f"({z2_ratio:.0f}% of minimum); grey zone (Z3+Z4): {grey_pct:.1f}%")
         priority = "High" if z2_ratio < 50 else "Medium" if z2_ratio < 100 else "Low"
-        items.append((text, priority))
+        items.append((text, priority, "zone_time"))
 
     # Cardio load ratio (strain vs tolerance) — NEW. Cross-referenced with
     # sleep in the SAME item (not a separate one) specifically because the
@@ -1622,13 +1647,13 @@ def build_evidence_catalog():
         arrow = "▲" if cl_ratio >= 1.3 else "▼" if cl_ratio < 0.8 else "▬"
         text = (f"{arrow} Strain:tolerance ratio {cl_ratio:.2f}{cl_status_text} "
                 f"(strain {cardio_load['strain']:.0f}, tolerance {cardio_load['tolerance']:.0f}){sleep_clause}")
-        items.append((text, _priority_tier(abs(cl_ratio - 1.0), high=0.5, medium=0.2)))
+        items.append((text, _priority_tier(abs(cl_ratio - 1.0), high=0.5, medium=0.2), "load"))
 
     if len(recent_strength) or len(prior_strength):
         delta_strength = len(recent_strength) - len(prior_strength)
         arrow = _trend_arrow(delta_strength)
         text = f"{arrow} Strength consistency: {len(recent_strength)} sessions vs {len(prior_strength)} prior 4wk"
-        items.append((text, _priority_tier(abs(delta_strength), high=2, medium=1)))
+        items.append((text, _priority_tier(abs(delta_strength), high=2, medium=1), "strength"))
 
     if latest_lt:
         lt_sec = parse_pace_sec(latest_lt["lt_pace"])
@@ -1647,7 +1672,7 @@ def build_evidence_catalog():
                 arrow = _trend_arrow(delta_hr, threshold=1)
                 text = (f"{arrow} Easy-run HR averaging {avg_recent_hr:.0f} bpm vs {avg_prior_hr:.0f} bpm prior period "
                         f"(comparable-effort runs, {len(recent_easy_hr)} vs {len(prior_easy_hr)} runs)")
-                items.append((text, _priority_tier(abs(delta_hr), high=5, medium=2)))
+                items.append((text, _priority_tier(abs(delta_hr), high=5, medium=2), "running"))
 
     for exercise, history in strength_test_history.items():
         if len(history) < 2:
@@ -1664,13 +1689,21 @@ def build_evidence_catalog():
         unit = latest.get("unit", "")
         text = (f"{arrow} {exercise} {latest_val:g}{unit} vs {prior_val:g}{unit} "
                 f"({latest['date']} vs {prior['date']}, {delta_pct:+.0f}%)")
-        items.append((text, _priority_tier(abs(delta_pct), high=8, medium=3)))
+        items.append((text, _priority_tier(abs(delta_pct), high=8, medium=3), "strength"))
 
     return items
 
 evidence_catalog_tiered = build_evidence_catalog()
-evidence_catalog = [text for text, _priority in evidence_catalog_tiered]
-evidence_priority_map = {text: priority for text, priority in evidence_catalog_tiered}
+evidence_catalog = [text for text, _priority, _section in evidence_catalog_tiered]
+evidence_priority_map = {text: priority for text, priority, _section in evidence_catalog_tiered}
+# NEW (July 2026) — explicit section tag per evidence item, so index.html
+# can route each selected item to the tile/card it's actually about
+# instead of living only in the top coach card. See PROJECT_CONTEXT COACH
+# DISTRIBUTION — this was flagged as "the missing piece" before this work
+# started: the catalog's numbered items already map 1:1 to a section
+# conceptually, this just makes that mapping explicit and machine-readable
+# rather than implicit in category order.
+evidence_section_map = {text: section for text, _priority, section in evidence_catalog_tiered}
 
 # ── YoY / PB / context for the coach prompt ───────────────────────────────────
 try:
@@ -2002,7 +2035,9 @@ def parse_coach_sections(text):
                 ))
                 priority_order = {"High": 0, "Medium": 1, "Low": 2}
                 evidence_items = sorted(
-                    [{"text": evidence_catalog[i - 1], "priority": evidence_priority_map.get(evidence_catalog[i - 1], "Medium")}
+                    [{"text": evidence_catalog[i - 1],
+                      "priority": evidence_priority_map.get(evidence_catalog[i - 1], "Medium"),
+                      "section": evidence_section_map.get(evidence_catalog[i - 1])}
                      for i in selected_indices],
                     key=lambda x: priority_order.get(x["priority"], 1)
                 )

@@ -1,27 +1,31 @@
 {
-  "last_updated": "2026-07-17 18:47 UTC",
-  "headline": "Yesterday's easy 12 km sits cleanly in the lower HR band, holding the efficiency signal steady into a high-volume block.",
-  "confidence_pct": 98,
-  "confidence_label": "High data confidence",
+  "last_updated": "2026-07-20 11:01 UTC",
+  "headline": "The +94% volume block delivered a genuine easy-run efficiency gain: comparable-effort HR is running roughly 9 beats lower.",
+  "confidence_pct": 74,
+  "confidence_label": "Moderate data confidence",
   "confidence_reasons": [
-    "LT reading 14d old",
+    "LT reading 17d old",
     "HR data on 7/8 recent runs",
     "Sleep tracked 14/14 nights",
-    "Steps tracked 7/7 days",
+    "Steps tracked 4/7 days",
     "Data fetch up to date",
-    "Multiple data sources active in last 3 days"
+    "Limited data sources active in last 3 days"
   ],
-  "confidence_attention": null,
-  "summary": "The recent easy-run heart rate continues to track meaningfully lower than the prior period across a comparable set of runs, and yesterday's controlled effort fits that pattern rather than testing it. That's now a consistent enough signal to treat as a genuine efficiency gain rather than day-to-day noise \u2014 the caveat remains that none of these recent runs has been a hard one, so how the lower band holds under real intensity is still unanswered.\n\nThe bigger structural story is that you're carrying a substantial four-week volume step-up alongside a strength block that has roughly tripled in frequency, and the strain-to-tolerance balance still reads productive. That combination \u2014 more running load, more lifting, no HR drift upward \u2014 is the kind of durable base-building that matters heading toward a nine-day self-supported crossing. Nothing here suggests you're overreaching; it suggests the added load is being absorbed.\n\nWith the St. Olavsleden crossing under a month out, the gap worth closing isn't fitness but specificity: the terrain and pack demands of that route don't yet appear in your logged sessions.",
+  "confidence_attention": "Limited data sources active in last 3 days",
+  "summary": "The story of this block is efficiency, and it's now holding across enough runs to trust. Saturday's 20 km sat comfortably in the low aerobic band at a controlled effort, and the same pattern shows up across the recent easy work \u2014 you're moving at familiar paces for noticeably less cardiac cost than the prior period. This is the answer to the question left open last week: the lower HR band has held even as volume climbed, so it reads as a real adaptation rather than a recovery-week artefact.\n\nWhat's less clear-cut is the intensity distribution. Almost everything recently has lived in Z1\u2013Z2, with only a token amount of time above threshold. That's appropriate given the volume ramp and the pilgrim crossing on the horizon \u2014 this is base-building that plays directly to the 580 km demand. But the efficiency signal was earned on easy running; you haven't yet stress-tested whether it survives a genuinely hard effort. Don't read the \"detraining\" strain label as fitness loss \u2014 it reflects Polar's rolling comparison against a heavier 28-day window and sits alongside your highest volume block, so the two contradict each other and the volume is the more reliable signal.\n\nStrength has been the quiet anchor here \u2014 three times the session count of the prior block, sustained right through the volume ramp. That's a meaningful piece of the hybrid picture holding steady while running load builds.",
   "watch_items": [
-    "Whether the lower easy-run HR band holds once a genuinely hard session returns to the schedule.",
-    "Whether loaded pack-carry running appears soon enough to adapt to the 6-8kg demand before the crossing.",
-    "Whether sustained climbing starts replacing the rolling ascent profiles logged so far, given the mountain crossing ahead.",
-    "Whether the recent run of short nights extends further or settles back toward the block average."
+    "Whether the lower easy-run HR band holds the first time a genuinely hard or threshold session returns.",
+    "Whether loaded pack-carry running and sustained (not just rolling) climbing enter the schedule with enough runway before the crossing.",
+    "Whether weekly Z2 minutes climb back toward the intended range as the base block continues, given how little time has sat above easy lately.",
+    "Whether the short-night cluster settles back toward the block average or stretches further."
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 4-week volume 174 km vs 120 km prior block (+45%)",
+      "text": "\u25b2 4-week volume 181 km vs 94 km prior block (+94%)",
+      "priority": "High"
+    },
+    {
+      "text": "\u25bc Strain:tolerance ratio 0.18 (DETRAINING) (strain 11, tolerance 59); sleep averaging 7h10m over the same period",
       "priority": "High"
     },
     {
@@ -29,31 +33,23 @@
       "priority": "High"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 143 bpm vs 153 bpm prior period (comparable-effort runs, 10 vs 7 runs)",
+      "text": "\u25bc Easy-run HR averaging 142 bpm vs 151 bpm prior period (comparable-effort runs, 10 vs 5 runs)",
       "priority": "High"
-    },
-    {
-      "text": "\u25b2 Zone 2: 225 min vs 180-240 min/week target (125% of minimum); grey zone (Z3+Z4): 4.4%",
-      "priority": "Low"
-    },
-    {
-      "text": "\u25ac Strain:tolerance ratio 1.02 (PRODUCTIVE) (strain 71, tolerance 70); sleep averaging 7h10m over the same period",
-      "priority": "Low"
     }
   ],
   "insights": [
-    "The recent easy-run heart rate continues to track meaningfully lower than the prior period across a comparable set of runs, and yesterday's controlled effort fits that pattern rather than testing it. That's now a consistent enough signal to treat as a genuine efficiency gain rather than day-to-day noise \u2014 the caveat remains that none of these recent runs has been a hard one, so how the lower band holds under real intensity is still unanswered.\n\nThe bigger structural story is that you're carrying a substantial four-week volume step-up alongside a strength block that has roughly tripled in frequency, and the strain-to-tolerance balance still reads productive. That combination \u2014 more running load, more lifting, no HR drift upward \u2014 is the kind of durable base-building that matters heading toward a nine-day self-supported crossing. Nothing here suggests you're overreaching; it suggests the added load is being absorbed.\n\nWith the St. Olavsleden crossing under a month out, the gap worth closing isn't fitness but specificity: the terrain and pack demands of that route don't yet appear in your logged sessions."
+    "The story of this block is efficiency, and it's now holding across enough runs to trust. Saturday's 20 km sat comfortably in the low aerobic band at a controlled effort, and the same pattern shows up across the recent easy work \u2014 you're moving at familiar paces for noticeably less cardiac cost than the prior period. This is the answer to the question left open last week: the lower HR band has held even as volume climbed, so it reads as a real adaptation rather than a recovery-week artefact.\n\nWhat's less clear-cut is the intensity distribution. Almost everything recently has lived in Z1\u2013Z2, with only a token amount of time above threshold. That's appropriate given the volume ramp and the pilgrim crossing on the horizon \u2014 this is base-building that plays directly to the 580 km demand. But the efficiency signal was earned on easy running; you haven't yet stress-tested whether it survives a genuinely hard effort. Don't read the \"detraining\" strain label as fitness loss \u2014 it reflects Polar's rolling comparison against a heavier 28-day window and sits alongside your highest volume block, so the two contradict each other and the volume is the more reliable signal.\n\nStrength has been the quiet anchor here \u2014 three times the session count of the prior block, sustained right through the volume ramp. That's a meaningful piece of the hybrid picture holding steady while running load builds."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 6546,
-    "output_tokens": 579,
-    "cost_usd": 0.047205,
-    "cost_dkk": 0.32571,
-    "date": "2026-07-17"
+    "input_tokens": 6548,
+    "output_tokens": 676,
+    "cost_usd": 0.04964,
+    "cost_dkk": 0.34252,
+    "date": "2026-07-20"
   },
-  "usage_mtd_usd": 0.4408,
-  "usage_mtd_dkk": 3.0415,
-  "usage_ytd_usd": 0.4408,
-  "usage_ytd_dkk": 3.0415
+  "usage_mtd_usd": 0.49044,
+  "usage_mtd_dkk": 3.3841,
+  "usage_ytd_usd": 0.49044,
+  "usage_ytd_dkk": 3.3841
 }

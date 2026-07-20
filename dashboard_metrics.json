@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-20 11:01 UTC",
+  "last_updated": "2026-07-20 11:29 UTC",
   "last_complete_date": "2026-07-19",
   "this_year": "2026",
   "this_month_short": "Jul",
@@ -1036,37 +1036,103 @@
       "dropout_fallback_sessions_with_data": 0,
       "has_lt_data": true
     },
-    "last_completed_week": {
-      "label": "Last completed week",
-      "window_days": 7,
-      "window_start": "2026-07-13",
-      "window_end": "2026-07-19",
+    "last_month": {
+      "label": "Last month",
+      "window_days": 30,
+      "window_start": "2026-06-01",
+      "window_end": "2026-06-30",
       "minutes": {
-        "Z1": 193.9,
-        "Z2": 113.9,
-        "Z3": 7.2,
-        "Z4": 0.3,
+        "Z1": 34.9,
+        "Z2": 64.8,
+        "Z3": 36.9,
+        "Z4": 11.1,
         "Z5": 0.0
       },
-      "total_minutes": 315.3,
-      "z1_pct": 61.5,
-      "z2_pct": 36.1,
-      "grey_pct": 2.4,
+      "total_minutes": 147.8,
+      "z1_pct": 23.6,
+      "z2_pct": 43.9,
+      "grey_pct": 32.5,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
-      "z2_vs_target_pct": 63,
+      "z2_vs_target_pct": 36,
       "z1_target_min_pct": 75,
       "z1_target_max_pct": 80,
-      "z1_vs_target_pct": 82,
+      "z1_vs_target_pct": 31,
       "grey_ceiling_pct": 10,
-      "grey_vs_ceiling_pct": 24,
+      "grey_vs_ceiling_pct": 325,
       "z5_target_min_pct": 15,
       "z5_target_max_pct": 20,
       "z5_vs_target_pct": 0,
-      "running_sessions_with_data": 3,
-      "strength_sessions_with_data": 2,
+      "running_sessions_with_data": 2,
+      "strength_sessions_with_data": 0,
       "dropout_fallback_sessions_with_data": 0,
+      "has_lt_data": true
+    },
+    "ytd": {
+      "label": "Year to date",
+      "window_days": 200,
+      "window_start": "2026-01-01",
+      "window_end": "2026-07-19",
+      "minutes": {
+        "Z1": 665.3,
+        "Z2": 543.2,
+        "Z3": 67.0,
+        "Z4": 12.9,
+        "Z5": 0.0
+      },
+      "total_minutes": 1288.4,
+      "z1_pct": 51.6,
+      "z2_pct": 42.2,
+      "grey_pct": 6.2,
+      "z5_pct": 0.0,
+      "z2_target_min": 180,
+      "z2_target_max": 240,
+      "z2_vs_target_pct": 302,
+      "z1_target_min_pct": 75,
+      "z1_target_max_pct": 80,
+      "z1_vs_target_pct": 69,
+      "grey_ceiling_pct": 10,
+      "grey_vs_ceiling_pct": 62,
+      "z5_target_min_pct": 15,
+      "z5_target_max_pct": 20,
+      "z5_vs_target_pct": 0,
+      "running_sessions_with_data": 12,
+      "strength_sessions_with_data": 6,
+      "dropout_fallback_sessions_with_data": 1,
+      "has_lt_data": true
+    },
+    "all_time": {
+      "label": "All time",
+      "window_days": 1930,
+      "window_start": "2021-04-07",
+      "window_end": "2026-07-19",
+      "minutes": {
+        "Z1": 665.3,
+        "Z2": 543.2,
+        "Z3": 67.0,
+        "Z4": 12.9,
+        "Z5": 0.0
+      },
+      "total_minutes": 1288.4,
+      "z1_pct": 51.6,
+      "z2_pct": 42.2,
+      "grey_pct": 6.2,
+      "z5_pct": 0.0,
+      "z2_target_min": 180,
+      "z2_target_max": 240,
+      "z2_vs_target_pct": 302,
+      "z1_target_min_pct": 75,
+      "z1_target_max_pct": 80,
+      "z1_vs_target_pct": 69,
+      "grey_ceiling_pct": 10,
+      "grey_vs_ceiling_pct": 62,
+      "z5_target_min_pct": 15,
+      "z5_target_max_pct": 20,
+      "z5_vs_target_pct": 0,
+      "running_sessions_with_data": 12,
+      "strength_sessions_with_data": 6,
+      "dropout_fallback_sessions_with_data": 1,
       "has_lt_data": true
     },
     "default_view": "rolling"
@@ -1712,11 +1778,29 @@
     }
   ],
   "digest": [
-    "\u2794 LT established at 4:24/km (baseline building)",
-    "\u25b2 4-week volume increased (181 vs 94 km prior block)",
-    "\u25b2 Strength frequency 9 vs 3 sessions prior block",
-    "\u25b2 Steps averaging 17,114 vs 14,083/day prior block",
-    "\u2794 Sleep data still accumulating",
-    "\u2794 Running streak: 22 wks (best: 22)"
+    {
+      "text": "\u2794 LT established at 4:24/km (baseline building)",
+      "section": "lt"
+    },
+    {
+      "text": "\u25b2 4-week volume increased (181 vs 94 km prior block)",
+      "section": "running"
+    },
+    {
+      "text": "\u25b2 Strength frequency 9 vs 3 sessions prior block",
+      "section": "strength"
+    },
+    {
+      "text": "\u25b2 Steps averaging 17,114 vs 14,083/day prior block",
+      "section": "steps"
+    },
+    {
+      "text": "\u2794 Sleep data still accumulating",
+      "section": "recovery"
+    },
+    {
+      "text": "\u2794 Running streak: 22 wks (best: 22)",
+      "section": "running"
+    }
   ]
 }

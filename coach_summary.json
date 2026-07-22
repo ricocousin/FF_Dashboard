@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-22 11:12 UTC",
-  "headline": "Easy-run efficiency is holding firmly across the recent 20 km and 11 km work, but with a 580 km self-supported crossing under three weeks out, the training still lacks anything resembling loaded-pack carrying or sustained climbing. That gap, not fitness, is the story worth sitting with right now.",
+  "last_updated": "2026-07-22 13:08 UTC",
+  "headline": "",
   "confidence_pct": 76,
   "confidence_label": "Moderate data confidence",
   "confidence_reasons": [
@@ -13,8 +13,8 @@
   ],
   "confidence_attention": "Steps tracked 2/7 days",
   "sections": {
-    "overview": "The recent block sits squarely in a build phase \u2014 running volume across the last four weeks is well up on the prior four, and the runs themselves are clustering in the lower HR bands at comparable paces, which is a genuinely encouraging efficiency picture. Strength has stayed present but light lately, with shorter functional sessions rather than the hour-long blocks from earlier in the month; that's a sensible trade against the rising run load rather than a lapse. Steps remain high even on rest days, so background time-on-feet is doing real work here. The one figure to actively disregard is the cardio-load \"detraining\" status \u2014 it reads zero strain against a healthy tolerance, which given the volume you're actually running is clearly an artefact, not a signal. Sleep has been erratic, with several short and a couple of unscored nights, but that stays in the supporting column.",
-    "trends": "The year-to-date comparison is the headline shape: you're carrying nearly five times the distance you had by this date last year, and the recent four-week jump reflects a deliberate ramp rather than noise. The 12-week average masks how front-loaded the recent volume is. This building shape fits year-round hybrid readiness well, and the ramp is steep enough that the next natural move is consolidation rather than another step up \u2014 especially with a long self-supported effort approaching.",
+    "overview": "Training data updated \u2014 coach summary unavailable today.",
+    "trends": "",
     "threshold": "",
     "zones": "",
     "hr_comparison": "",
@@ -22,13 +22,7 @@
     "personal_bests": ""
   },
   "watch_items": [],
-  "usage": {
-    "input_tokens": 7691,
-    "output_tokens": 700,
-    "cost_usd": 0.055955,
-    "cost_dkk": 0.38609,
-    "date": "2026-07-22"
-  },
+  "usage": null,
   "usage_mtd_usd": 0.54479,
   "usage_mtd_dkk": 3.759,
   "usage_ytd_usd": 0.54479,

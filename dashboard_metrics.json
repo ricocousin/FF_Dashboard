@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-22 07:01 UTC",
+  "last_updated": "2026-07-22 08:26 UTC",
   "last_complete_date": "2026-07-21",
   "this_year": "2026",
   "this_month_short": "Jul",
@@ -414,6 +414,178 @@
       "date": "2024-10-18",
       "name": "Vordingborg Running",
       "lt_gap_sec": null
+    }
+  ],
+  "strength_tests": [
+    {
+      "exercise": "Bodyweight",
+      "category": "bodyweight",
+      "latest_value": "82.9",
+      "unit": "kg",
+      "latest_date": "2026-04-13",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "Dead Hang",
+      "category": "durability",
+      "latest_value": "110",
+      "unit": "sec",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "Box Jump",
+      "category": "power",
+      "latest_value": "30",
+      "unit": "in",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "Standing Long Jump",
+      "category": "power",
+      "latest_value": "2.1",
+      "unit": "m",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "Back Squat",
+      "category": "strength",
+      "latest_value": "95",
+      "unit": "kg",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "Barbell Row",
+      "category": "strength",
+      "latest_value": "95",
+      "unit": "kg",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "Bench Press",
+      "category": "strength",
+      "latest_value": "110",
+      "unit": "kg",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "Deadlift",
+      "category": "strength",
+      "latest_value": "160",
+      "unit": "kg",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "Dips",
+      "category": "strength",
+      "latest_value": "23",
+      "unit": "reps",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "Dumbbell Shoulder Press (per arm)",
+      "category": "strength",
+      "latest_value": "30",
+      "unit": "kg",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "Incline Dumbbell Bench 1RM",
+      "category": "strength",
+      "latest_value": "40",
+      "unit": "kg",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "OH Barbell Press",
+      "category": "strength",
+      "latest_value": "55",
+      "unit": "kg",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "Pull-ups",
+      "category": "strength",
+      "latest_value": "16",
+      "unit": "reps",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "Romanian Deadlift",
+      "category": "strength",
+      "latest_value": "130",
+      "unit": "kg",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "Split Squat 3RM",
+      "category": "strength",
+      "latest_value": "70",
+      "unit": "kg",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "Weighted Dip 1RM",
+      "category": "strength",
+      "latest_value": "40",
+      "unit": "kg",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
+    },
+    {
+      "exercise": "Weighted Pull-up 1RM",
+      "category": "strength",
+      "latest_value": "40",
+      "unit": "kg",
+      "latest_date": "2026-07-04",
+      "prior_value": null,
+      "prior_date": null,
+      "delta_pct": null
     }
   ],
   "calendar": {
@@ -873,9 +1045,7 @@
       "2026-07-15",
       "2026-07-20"
     ],
-    "hike_dates": [
-      "2026-07-17"
-    ],
+    "hike_dates": [],
     "commentary": "23-week streak \u2014 currently matching your all-time best. Keep it going."
   },
   "data_freshness": {
@@ -1786,40 +1956,6 @@
       "zone_summary": "Z1 66m",
       "label": "Polar (calibrated) \u2014 no H10 during strength",
       "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
-    }
-  ],
-  "digest": [
-    {
-      "text": "\u2794 LT established at 4:24/km (baseline building)",
-      "section": "lt"
-    },
-    {
-      "text": "\u25b2 4-week volume increased (189 vs 97 km prior block)",
-      "section": "running"
-    },
-    {
-      "text": "\u25b2 Strength frequency 9 vs 4 sessions prior block",
-      "section": "strength"
-    },
-    {
-      "text": "\u25b2 Steps averaging 17,836 vs 14,179/day prior block",
-      "section": "steps"
-    },
-    {
-      "text": "\u2794 Sleep data still accumulating",
-      "section": "recovery"
-    },
-    {
-      "text": "\u2794 Running streak: 23 wks (best: 23)",
-      "section": "running"
-    },
-    {
-      "text": "\u25bc Strain:tolerance ratio 0.00 (DETRAINING)",
-      "section": "load"
-    },
-    {
-      "text": "\u25b2 Up \u2014 321 min/week this month vs 239 min/week year avg",
-      "section": "intensity"
     }
   ]
 }

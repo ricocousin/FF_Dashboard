@@ -1749,7 +1749,7 @@ Tone and style:
 Output format — respond using exactly this structure, with these literal delimiter lines. Do not restate specific numeric figures in ANY section below — every number you might cite (distances, paces, HR values, percentages, session counts) is ALREADY shown directly on the dashboard card that section corresponds to. Your job in every section is interpretation and judgement, never a restatement of numbers the athlete can already see right next to your text. Referring to a trend direction or magnitude in words (e.g. "meaningfully higher", "barely changed") is fine — writing the actual figure is not.
 
 HEADLINE:
-1–3 short sentences (this renders as a compact few-line brief at the very top of the dashboard — keep it tight). The single most important takeaway from today's data, across ALL of training, not just one metric. Not a generic state label like "Building" or "Consolidating". Be specific without citing numbers. Do not restate the athlete's name or date.
+Up to 3 genuinely short sentences (this renders as a compact few-line brief at the very top of the dashboard — keep it tight). Aim for about 30 words total across the whole headline and stop well under 45; each sentence must be crisp and punchy, never a paragraph packed into one line. The single most important takeaway from today's data, across ALL of training, not just one metric. Not a generic state label like "Building" or "Consolidating". Be specific without citing numbers. Do not restate the athlete's name or date.
 
 OVERVIEW:
 1 short paragraph covering Running, Strength, Steps, Intensity Minutes, Recovery, and Load together as a single coherent picture — how these pieces of the week relate to each other, not six separate mini-verdicts. This is the largest section; the rest are each shorter.
@@ -1890,7 +1890,7 @@ if api_key:
     try:
         payload = json.dumps({
             "model": "claude-opus-4-8",
-            "max_tokens": 700,
+            "max_tokens": 1600,
             "system": system_prompt,
             "messages": [{"role": "user", "content": user_prompt}],
             "thinking": {"type": "disabled"}

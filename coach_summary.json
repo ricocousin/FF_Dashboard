@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-07-22 08:26 UTC",
-  "headline": "Easy-run efficiency continues to hold cleanly through the recent 20 km and 11 km work, but with the crossing under three weeks out, the training still hasn't included loaded-pack or sustained-climbing work resembling what's ahead.",
+  "last_updated": "2026-07-22 11:12 UTC",
+  "headline": "Easy-run efficiency is holding firmly across the recent 20 km and 11 km work, but with a 580 km self-supported crossing under three weeks out, the training still lacks anything resembling loaded-pack carrying or sustained climbing. That gap, not fitness, is the story worth sitting with right now.",
   "confidence_pct": 76,
   "confidence_label": "Moderate data confidence",
   "confidence_reasons": [
@@ -13,9 +13,9 @@
   ],
   "confidence_attention": "Steps tracked 2/7 days",
   "sections": {
-    "overview": "The picture is one of a solidly built endurance base being maintained rather than pushed harder. Running volume across the recent four weeks nearly doubled the prior block, and the easy sessions are sitting comfortably in the lower aerobic bands with controlled heart rates \u2014 the efficiency signal that's held for two weeks now remains intact under that added load. Strength has stayed regular, though sessions have trended shorter and lighter in character recently, which reads as sensible given the running volume rather than a drop-off. Daily step counts remain very high even on rest days, so background load is substantial beyond what the tracked sessions show. Sleep has been erratic in duration and the Polar strain figure is implausibly low \u2014 neither should shift how the training is read right now.",
-    "trends": "Year-to-date distance is running well ahead of the same point last year, and the recent build shape is coherent: a volume ramp followed by consolidation with efficiency preserved. That's the right shape for someone heading into a multi-day self-supported effort \u2014 durable aerobic capacity accumulated without spikes in intensity. The one gap in the shape is specificity: the trend is all steady time-on-feet, with no recent evidence of the terrain-loaded stress the crossing will actually demand.",
-    "threshold": "The threshold figure is a single anchor point from early July with no rolling baseline yet, so it's a reference rather than a trend. What matters more for the current focus is that comparable-effort easy runs are being held at lower heart rates than earlier in the block \u2014 a practical marker of aerobic improvement that's more relevant to a nine-to-ten-day trail effort than a threshold pace number would be. Treat the threshold value as a placeholder until enough history accumulates to say anything about its direction.",
+    "overview": "The recent block sits squarely in a build phase \u2014 running volume across the last four weeks is well up on the prior four, and the runs themselves are clustering in the lower HR bands at comparable paces, which is a genuinely encouraging efficiency picture. Strength has stayed present but light lately, with shorter functional sessions rather than the hour-long blocks from earlier in the month; that's a sensible trade against the rising run load rather than a lapse. Steps remain high even on rest days, so background time-on-feet is doing real work here. The one figure to actively disregard is the cardio-load \"detraining\" status \u2014 it reads zero strain against a healthy tolerance, which given the volume you're actually running is clearly an artefact, not a signal. Sleep has been erratic, with several short and a couple of unscored nights, but that stays in the supporting column.",
+    "trends": "The year-to-date comparison is the headline shape: you're carrying nearly five times the distance you had by this date last year, and the recent four-week jump reflects a deliberate ramp rather than noise. The 12-week average masks how front-loaded the recent volume is. This building shape fits year-round hybrid readiness well, and the ramp is steep enough that the next natural move is consolidation rather than another step up \u2014 especially with a long self-supported effort approaching.",
+    "threshold": "",
     "zones": "",
     "hr_comparison": "",
     "calendar": "",
@@ -23,14 +23,14 @@
   },
   "watch_items": [],
   "usage": {
-    "input_tokens": 6519,
+    "input_tokens": 7691,
     "output_tokens": 700,
-    "cost_usd": 0.050095,
-    "cost_dkk": 0.34566,
+    "cost_usd": 0.055955,
+    "cost_dkk": 0.38609,
     "date": "2026-07-22"
   },
-  "usage_mtd_usd": 0.53893,
-  "usage_mtd_dkk": 3.7186,
-  "usage_ytd_usd": 0.53893,
-  "usage_ytd_dkk": 3.7186
+  "usage_mtd_usd": 0.54479,
+  "usage_mtd_dkk": 3.759,
+  "usage_ytd_usd": 0.54479,
+  "usage_ytd_dkk": 3.759
 }

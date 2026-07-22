@@ -1265,69 +1265,6 @@ zone_time = {
 }
 
 
-# ── What's Changed digest ─────────────────────────────────────────────────────
-digest_lines = []
-if latest_lt and baseline_lt:
-    d_sec = parse_pace_sec(baseline_lt["lt_pace"]) - parse_pace_sec(latest_lt["lt_pace"])
-    arrow = "▲" if d_sec > 1 else "▼" if d_sec < -1 else "➔"
-    word = "improved" if d_sec > 0 else "slowed" if d_sec < 0 else "unchanged"
-    digest_lines.append({"text": f"{arrow} LT pace {word} {abs(d_sec)}s/km over 30 days ({baseline_lt['lt_pace']} → {latest_lt['lt_pace']}/km)", "section": "lt"})
-elif latest_lt:
-    digest_lines.append({"text": f"➔ LT established at {latest_lt['lt_pace']}/km (baseline building)", "section": "lt"})
-else:
-    digest_lines.append({"text": "➔ No LT reading yet", "section": "lt"})
-
-vol_delta = recent_dist - prior_dist
-vol_arrow = "▲" if vol_delta > 1 else "▼" if vol_delta < -1 else "➔"
-vol_word = "building" if prior_dist <= 0 else ("unchanged" if abs(vol_delta) <= 1 else ("increased" if vol_delta > 0 else "reduced"))
-digest_lines.append({"text": f"{vol_arrow} 4-week volume {vol_word} ({recent_dist:.0f} vs {prior_dist:.0f} km prior block)", "section": "running"})
-
-str_delta = len(recent_strength) - len(prior_strength)
-str_arrow = "▲" if str_delta > 0.5 else "▼" if str_delta < -0.5 else "➔"
-digest_lines.append({"text": f"{str_arrow} Strength frequency {len(recent_strength)} vs {len(prior_strength)} sessions prior block", "section": "strength"})
-
-steps_recent_4wk = [v for d, v in steps_data.items() if datetime.strptime(d, "%Y-%m-%d").date() >= cutoff_4wk and d <= last_complete_str]
-steps_prior_4wk = [v for d, v in steps_data.items() if cutoff_8wk <= datetime.strptime(d, "%Y-%m-%d").date() < cutoff_4wk]
-if steps_recent_4wk and steps_prior_4wk:
-    r_avg, p_avg = sum(steps_recent_4wk) / len(steps_recent_4wk), sum(steps_prior_4wk) / len(steps_prior_4wk)
-    d = r_avg - p_avg
-    arrow = "▲" if d > 300 else "▼" if d < -300 else "➔"
-    digest_lines.append({"text": f"{arrow} Steps averaging {round(r_avg):,} vs {round(p_avg):,}/day prior block", "section": "steps"})
-else:
-    digest_lines.append({"text": "➔ Steps data still accumulating", "section": "steps"})
-
-sleep_recent_4wk = [float(v["total_sleep_min"]) for d, v in sleep_data.items() if v.get("total_sleep_min") and datetime.strptime(d, "%Y-%m-%d").date() >= cutoff_4wk and d <= str(today_date)]
-sleep_prior_4wk = [float(v["total_sleep_min"]) for d, v in sleep_data.items() if v.get("total_sleep_min") and cutoff_8wk <= datetime.strptime(d, "%Y-%m-%d").date() < cutoff_4wk]
-if sleep_recent_4wk and sleep_prior_4wk:
-    r_avg, p_avg = sum(sleep_recent_4wk) / len(sleep_recent_4wk), sum(sleep_prior_4wk) / len(sleep_prior_4wk)
-    d = r_avg - p_avg
-    arrow = "▲" if d > 5 else "▼" if d < -5 else "➔"
-    def _hm(mins):
-        return f"{int(mins) // 60}h{int(mins) % 60:02d}m"
-    digest_lines.append({"text": f"{arrow} Sleep averaging {_hm(r_avg)} vs {_hm(p_avg)} prior block", "section": "recovery"})
-else:
-    digest_lines.append({"text": "➔ Sleep data still accumulating", "section": "recovery"})
-
-digest_lines.append({"text": f"➔ Running streak: {summary.get('current_weekly_streak', '—')} wks (best: {summary.get('longest_weekly_streak', '—')})", "section": "running"})
-
-# NEW (July 2026) — Load and Intensity previously had NO guaranteed digest
-# line, only an optional evidence item the model may or may not select on
-# a given day (cardio load ratio is evidence category #7; intensity has no
-# evidence category at all). That meant those two tiles could go entire
-# days showing no coach annotation whatsoever, unlike every other tile.
-# Both now get a deterministic line every run, same pattern as the rest.
-if cardio_load.get("ratio") is not None:
-    _cl_r = cardio_load["ratio"]
-    _cl_status_text = f" ({cardio_load['status']})" if cardio_load.get("status") else ""
-    _cl_arrow = "▲" if _cl_r >= 1.3 else "▼" if _cl_r < 0.8 else "➔"
-    digest_lines.append({"text": f"{_cl_arrow} Strain:tolerance ratio {_cl_r:.2f}{_cl_status_text}", "section": "load"})
-else:
-    digest_lines.append({"text": "➔ Cardio load data still accumulating", "section": "load"})
-
-_intensity_delta = avg_activity_mins_per_week_month - avg_activity_mins_per_week
-_intensity_arrow = "▲" if _intensity_delta > 15 else "▼" if _intensity_delta < -15 else "➔"
-_intensity_word = "Stable" if abs(_intensity_delta) <= 15 else ("Up" if _intensity_delta > 0 else "Down")
-digest_lines.append({"text": f"{_intensity_arrow} {_intensity_word} — {round(avg_activity_mins_per_week_month)} min/week this month vs {round(avg_activity_mins_per_week)} min/week year avg", "section": "intensity"})
 
 # ── Calendar commentary ────────────────────────────────────────────────────────
 def _calendar_commentary():
@@ -1526,9 +1463,7 @@ dashboard_metrics = {
     # standalone card). Capped to the most recent 30 sessions each; not
     # meant as a full-history data source, just enough for "recent" framing.
     "run_hr_context": sorted(_run_hr_context.values(), key=lambda x: x["date"], reverse=True)[:30],
-    "strength_hr_context": sorted(_strength_hr_context.values(), key=lambda x: x["date"], reverse=True)[:30],
-
-    "digest": digest_lines
+    "strength_hr_context": sorted(_strength_hr_context.values(), key=lambda x: x["date"], reverse=True)[:30]
 }
 
 with open("dashboard_metrics.json", "w", encoding="utf-8") as f:
@@ -1624,156 +1559,6 @@ def compute_confidence():
     return pct, label, reasons, attention
 
 confidence_pct, confidence_label, confidence_reasons, confidence_attention = compute_confidence()
-
-# ── Evidence catalog ────────────────────────────────────────────────────────────
-def _trend_arrow(delta, threshold=0.0001):
-    if delta > threshold:
-        return "▲"
-    elif delta < -threshold:
-        return "▼"
-    return "▬"
-
-def _priority_tier(abs_delta, high, medium):
-    if abs_delta >= high:
-        return "High"
-    elif abs_delta >= medium:
-        return "Medium"
-    return "Low"
-
-def build_evidence_catalog():
-    items = []
-
-    if latest_lt and baseline_lt:
-        latest_sec = parse_pace_sec(latest_lt["lt_pace"])
-        baseline_sec = parse_pace_sec(baseline_lt["lt_pace"])
-        if latest_sec is not None and baseline_sec is not None:
-            delta_sec = baseline_sec - latest_sec
-            arrow = _trend_arrow(delta_sec)
-            text = (f"{arrow} LT pace {'improved' if delta_sec > 0 else 'slowed' if delta_sec < 0 else 'unchanged'} "
-                    f"{abs(delta_sec)}s/km over 30 days ({baseline_lt['lt_pace']} → {latest_lt['lt_pace']}/km)")
-            items.append((text, _priority_tier(abs(delta_sec), high=5, medium=2), "lt"))
-
-    if prior_dist > 0:
-        vol_delta_pct = ((recent_dist - prior_dist) / prior_dist) * 100
-        arrow = _trend_arrow(recent_dist - prior_dist, threshold=1)
-        text = (f"{arrow} 4-week volume {recent_dist:.0f} km vs {prior_dist:.0f} km prior block "
-                f"({vol_delta_pct:+.0f}%)")
-        items.append((text, _priority_tier(abs(vol_delta_pct), high=15, medium=5), "running"))
-
-    current_streak = summary.get("current_weekly_streak")
-    if current_streak:
-        text = f"▬ {current_streak}-week running streak (best: {summary.get('longest_weekly_streak', '?')} wks)"
-        items.append((text, "Medium", "running"))
-
-    prior_sleep = {d: s for d, s in sleep_data.items()
-        if cutoff_8wk <= datetime.strptime(d, "%Y-%m-%d").date() < cutoff_4wk}
-    prior_sleep_durations = [float(s["total_sleep_min"]) for s in prior_sleep.values() if s.get("total_sleep_min")]
-    if sleep_durations and prior_sleep_durations:
-        avg_prior_sleep = sum(prior_sleep_durations) / len(prior_sleep_durations)
-        avg_recent_sleep = sum(sleep_durations) / len(sleep_durations)
-        delta_sleep = avg_recent_sleep - avg_prior_sleep
-        arrow = _trend_arrow(delta_sleep, threshold=5)
-        def _fmt_hm(mins):
-            return f"{int(mins) // 60}h{int(mins) % 60:02d}m"
-        text = f"{arrow} Sleep averaging {_fmt_hm(avg_recent_sleep)} vs {_fmt_hm(avg_prior_sleep)} prior period"
-        items.append((text, _priority_tier(abs(delta_sleep), high=30, medium=10), "recovery"))
-
-    prior_sleep_scores = [float(s["sleep_score"]) for s in prior_sleep.values() if s.get("sleep_score")]
-    if sleep_scores and prior_sleep_scores:
-        avg_prior_score = sum(prior_sleep_scores) / len(prior_sleep_scores)
-        avg_recent_score = sum(sleep_scores) / len(sleep_scores)
-        delta_score = avg_recent_score - avg_prior_score
-        arrow = _trend_arrow(delta_score, threshold=3)
-        text = f"{arrow} Sleep score averaging {avg_recent_score:.0f} vs {avg_prior_score:.0f} prior period"
-        items.append((text, _priority_tier(abs(delta_score), high=10, medium=4), "recovery"))
-
-    zt = zone_time.get("rolling", {})
-    if zt.get("has_lt_data") and zt.get("total_minutes", 0) > 0:
-        z2_min = zt["minutes"]["Z2"]
-        z2_ratio = zt.get("z2_vs_target_pct") or 0
-        grey_pct = zt.get("grey_pct") or 0
-        arrow = "▲" if z2_ratio >= 100 else "▼" if z2_ratio < 65 else "▬"
-        text = (f"{arrow} Zone 2: {z2_min:.0f} min vs {zt['z2_target_min']}-{zt['z2_target_max']} min/week target "
-                f"({z2_ratio:.0f}% of minimum); grey zone (Z3+Z4): {grey_pct:.1f}%")
-        priority = "High" if z2_ratio < 50 else "Medium" if z2_ratio < 100 else "Low"
-        items.append((text, priority, "zone_time"))
-
-    # Cardio load ratio (strain vs tolerance) — NEW. Cross-referenced with
-    # sleep in the SAME item (not a separate one) specifically because the
-    # athlete asked for these two to be shown together as independent-but-
-    # related signals: strain/tolerance measures load applied, sleep
-    # measures resourcing available. A single evidence line naming both,
-    # each in its own unit, lets the coach comment on whether they're
-    # pointing the same direction without implying they're one metric.
-    # Priority tiered by how far the ratio sits from a "balanced" ~1.0,
-    # since this is a status read (like the Zone 2 target check) rather
-    # than a vs-prior-period trend.
-    cl_ratio = cardio_load.get("ratio")
-    if cl_ratio is not None:
-        cl_status_text = f" ({cardio_load['status']})" if cardio_load.get("status") else ""
-        sleep_clause = ""
-        if avg_sleep_min is not None:
-            sleep_clause = f"; sleep averaging {avg_sleep_min // 60}h{avg_sleep_min % 60:02d}m over the same period"
-        arrow = "▲" if cl_ratio >= 1.3 else "▼" if cl_ratio < 0.8 else "▬"
-        text = (f"{arrow} Strain:tolerance ratio {cl_ratio:.2f}{cl_status_text} "
-                f"(strain {cardio_load['strain']:.0f}, tolerance {cardio_load['tolerance']:.0f}){sleep_clause}")
-        items.append((text, _priority_tier(abs(cl_ratio - 1.0), high=0.5, medium=0.2), "load"))
-
-    if len(recent_strength) or len(prior_strength):
-        delta_strength = len(recent_strength) - len(prior_strength)
-        arrow = _trend_arrow(delta_strength)
-        text = f"{arrow} Strength consistency: {len(recent_strength)} sessions vs {len(prior_strength)} prior 4wk"
-        items.append((text, _priority_tier(abs(delta_strength), high=2, medium=1), "strength"))
-
-    if latest_lt:
-        lt_sec = parse_pace_sec(latest_lt["lt_pace"])
-        if lt_sec:
-            def _easy_runs_hr(runs):
-                easy = [r for r in runs if r.get("avg_hr") not in (None, "", "0")
-                    and (parse_pace_sec(r.get("avg_pace_min_km")) or 0) > lt_sec + 45]
-                hrs = [float(r["avg_hr"]) for r in easy]
-                return hrs
-            recent_easy_hr = _easy_runs_hr(recent_runs)
-            prior_easy_hr = _easy_runs_hr(prior_runs)
-            if len(recent_easy_hr) >= 2 and len(prior_easy_hr) >= 2:
-                avg_recent_hr = sum(recent_easy_hr) / len(recent_easy_hr)
-                avg_prior_hr = sum(prior_easy_hr) / len(prior_easy_hr)
-                delta_hr = avg_recent_hr - avg_prior_hr
-                arrow = _trend_arrow(delta_hr, threshold=1)
-                text = (f"{arrow} Easy-run HR averaging {avg_recent_hr:.0f} bpm vs {avg_prior_hr:.0f} bpm prior period "
-                        f"(comparable-effort runs, {len(recent_easy_hr)} vs {len(prior_easy_hr)} runs)")
-                items.append((text, _priority_tier(abs(delta_hr), high=5, medium=2), "running"))
-
-    for exercise, history in strength_test_history.items():
-        if len(history) < 2:
-            continue
-        latest, prior = history[-1], history[-2]
-        try:
-            latest_val, prior_val = float(latest["value"]), float(prior["value"])
-        except (ValueError, TypeError):
-            continue
-        if prior_val == 0:
-            continue
-        delta_pct = ((latest_val - prior_val) / prior_val) * 100
-        arrow = _trend_arrow(latest_val - prior_val, threshold=0.01)
-        unit = latest.get("unit", "")
-        text = (f"{arrow} {exercise} {latest_val:g}{unit} vs {prior_val:g}{unit} "
-                f"({latest['date']} vs {prior['date']}, {delta_pct:+.0f}%)")
-        items.append((text, _priority_tier(abs(delta_pct), high=8, medium=3), "strength"))
-
-    return items
-
-evidence_catalog_tiered = build_evidence_catalog()
-evidence_catalog = [text for text, _priority, _section in evidence_catalog_tiered]
-evidence_priority_map = {text: priority for text, priority, _section in evidence_catalog_tiered}
-# NEW (July 2026) — explicit section tag per evidence item, so index.html
-# can route each selected item to the tile/card it's actually about
-# instead of living only in the top coach card. See PROJECT_CONTEXT COACH
-# DISTRIBUTION — this was flagged as "the missing piece" before this work
-# started: the catalog's numbered items already map 1:1 to a section
-# conceptually, this just makes that mapping explicit and machine-readable
-# rather than implicit in category order.
-evidence_section_map = {text: section for text, _priority, section in evidence_catalog_tiered}
 
 # ── YoY / PB / context for the coach prompt ───────────────────────────────────
 try:
@@ -1911,21 +1696,36 @@ Tone and style:
 - Assume the athlete understands training concepts — no need to explain basics.
 - No generic encouragement phrases.
 
-Output format — respond using exactly this structure, with these literal delimiter lines:
+Output format — respond using exactly this structure, with these literal delimiter lines. Do not restate specific numeric figures in ANY section below — every number you might cite (distances, paces, HR values, percentages, session counts) is ALREADY shown directly on the dashboard card that section corresponds to. Your job in every section is interpretation and judgement, never a restatement of numbers the athlete can already see right next to your text. Referring to a trend direction or magnitude in words (e.g. "meaningfully higher", "barely changed") is fine — writing the actual figure is not.
 
 HEADLINE:
-One sentence (roughly 12-20 words), the single most important insight from today's data. This is the answer to "what is today's story?" — not a generic state label like "Building" or "Consolidating". Be specific and data-anchored. Examples of the right level of specificity: "Aerobic fitness remains stable despite reduced peak mileage." / "Threshold fitness continues to strengthen." Do not restate the athlete's name or date.
+1–3 short sentences (this renders as a compact few-line brief at the very top of the dashboard — keep it tight). The single most important takeaway from today's data, across ALL of training, not just one metric. Not a generic state label like "Building" or "Consolidating". Be specific without citing numbers. Do not restate the athlete's name or date.
 
-SUMMARY:
-1–3 short paragraphs — as many as the data genuinely warrants, no more. This section is your COACHING JUDGEMENT, not a restatement of numbers: the EVIDENCE section below will carry the specific figures, so do not repeat exact stats here (no "127 km vs 125 km", no "HR 161", no "Load 239" — that level of detail belongs in EVIDENCE only). Instead, lead with the conclusion and only add a sentence of plain-language reasoning if it materially changes how the reader should interpret the conclusion. Someone should be able to read this section alone, in under 30 seconds, and understand the coaching takeaway. No bullet points, no headers, no greeting, no sign-off. Write in second person ("your threshold...", "you've...").
+OVERVIEW:
+1 short paragraph covering Running, Strength, Steps, Intensity Minutes, Recovery, and Load together as a single coherent picture — how these pieces of the week relate to each other, not six separate mini-verdicts. This is the largest section; the rest are each shorter.
 
-EVIDENCE:
-The AVAILABLE EVIDENCE list below (in the data section) is numbered. Write ONLY the numbers of items that genuinely support the headline and summary you wrote — one number per line, nothing else on that line (no text, no restating the item). Select as many or as few as are genuinely relevant, in any order — there is no fixed count, but prefer fewer, stronger items over many weak ones; comprehensiveness is not the goal. If nothing in the list meaningfully supports today's story, write a single line: "0"
+TRENDS:
+1 short paragraph interpreting the 16-week weekly trend and the year-to-date monthly progression together — is the shape of training building, plateauing, cyclical, or irregular, and does that shape make sense given the athlete's standing goals.
+
+THRESHOLD:
+1 short paragraph on lactate threshold and VO2max together — what the current trend in aerobic/threshold fitness actually means for the athlete right now.
+
+ZONES:
+1 short paragraph on time-in-zone distribution (Z1 through Z5, the Zone 2 target, the "grey zone") — is the intensity distribution appropriate for what this training block is trying to accomplish.
+
+HR_COMPARISON:
+1 short paragraph on the strength-session HR data and the Garmin-vs-Polar comparison data together — anything genuinely worth noting about HR patterns in strength work or sensor-source agreement. If there is truly nothing notable, it is fine for this to be a single plain sentence saying so.
+
+CALENDAR:
+1 short paragraph on training consistency/frequency patterns visible in the activity calendar — separate from the deterministic streak-count line the dashboard already shows beneath it; add genuine interpretation, not a repeat of "N-week streak."
+
+PERSONAL_BESTS:
+1 short paragraph on personal bests — whether current fitness suggests any are within realistic reach soon, or how the existing bests relate to current training focus. If nothing is currently relevant to say, a single plain sentence is fine.
 
 WATCH:
-2–4 short bullet points (one per line, starting with "- ") naming specific things worth paying attention to over the coming week — not prescribed workouts or mileage targets, since the training programme is already structured elsewhere. Frame these as things to observe or monitor, e.g. "Watch whether easy-run HR continues to decline." / "Sleep quality may become more important after the long run." Do NOT cite specific numbers here (no "157 to 147", no "4:24/km") — WATCH items are directional and forward-looking only; exact figures belong in EVIDENCE. CRITICAL: do not restate or lightly rephrase anything already covered in SUMMARY — if a point from SUMMARY has nothing new to add as a forward-looking watch item, drop it rather than repeating it in different words. Each WATCH item must add a genuinely new angle not already said above, or be omitted. If there is nothing meaningfully worth flagging this week, write a single line: "- Nothing notable to flag this week — steady state."
+2–4 short bullet points (one per line, starting with "- ") naming specific things worth paying attention to over the coming week — not prescribed workouts or mileage targets, since the training programme is already structured elsewhere. Frame these as things to observe or monitor, e.g. "Watch whether easy-run HR continues to decline." This section is also read back to you as your own continuity memory tomorrow (see RECENT COACHING HISTORY below), so treat it as seriously as you would want your own future notes to be. Do NOT cite specific numbers here. Each item must add a genuinely new angle not already said above, or be omitted. If there is nothing meaningfully worth flagging this week, write a single line: "- Nothing notable to flag this week — steady state."
 
-Do not add any text outside these four sections, and use the exact delimiter labels (HEADLINE:, SUMMARY:, EVIDENCE:, WATCH:) on their own lines."""
+Do not add any text outside these nine sections, and use the exact delimiter labels (HEADLINE:, OVERVIEW:, TRENDS:, THRESHOLD:, ZONES:, HR_COMPARISON:, CALENDAR:, PERSONAL_BESTS:, WATCH:) on their own lines."""
 
 MEMORY_HISTORY_MAX = 5
 coach_context_history = []
@@ -2019,10 +1819,7 @@ SLEEP (last 4 weeks, from Polar Loop — supporting context only, do not let thi
 CARDIO LOAD (from Polar Loop, Training Load Pro — supporting context only, same caution as sleep above; strain/tolerance are Polar's own rolling 7d/28d averages, not computed here):
 {cardio_load_context}
 
-AVAILABLE EVIDENCE (numbered — in the EVIDENCE: section, write only the numbers of items you select, not the text):
-{chr(10).join(f"  {i+1}. {item}" for i, item in enumerate(evidence_catalog)) if evidence_catalog else '  No evidence items available today — write "0" in the EVIDENCE section.'}
-
-Generate the coaching summary now."""
+Generate the coaching briefing now."""
 
 # ── Call Anthropic API ────────────────────────────────────────────────────────
 api_key = os.environ.get("ANTHROPIC_API_KEY", "")
@@ -2082,36 +1879,36 @@ else:
 if not coach_text:
     coach_text = "Training data updated — coach summary unavailable today."
 
+SECTION_KEYS = ["overview", "trends", "threshold", "zones", "hr_comparison", "calendar", "personal_bests"]
+SECTION_DELIMITERS = ["OVERVIEW", "TRENDS", "THRESHOLD", "ZONES", "HR_COMPARISON", "CALENDAR", "PERSONAL_BESTS"]
+
 def parse_coach_sections(text):
+    """Parses the new 9-part format: HEADLINE + 7 named narrative sections
+    (see SECTION_KEYS/SECTION_DELIMITERS) + WATCH. Evidence is gone
+    entirely (July 2026, athlete direction — data-import confirmation is
+    the freshness dots' job, not evidence's; the athlete wasn't interested
+    in the specific evidence line items). Falls back gracefully: if
+    HEADLINE can't be found at all, the ENTIRE raw text is dumped into the
+    "overview" section so at least something renders, and every other
+    section stays empty rather than guessing at a split."""
     headline = ""
-    summary_text = text
-    evidence_items = []
+    sections = {k: "" for k in SECTION_KEYS}
     watch_items = []
     try:
-        headline_match = re.search(r"HEADLINE:\s*(.+?)(?=\n\s*SUMMARY:)", text, re.DOTALL)
-        summary_match = re.search(r"SUMMARY:\s*(.+?)(?=\n\s*EVIDENCE:)", text, re.DOTALL)
-        evidence_match = re.search(r"EVIDENCE:\s*(.+?)(?=\n\s*WATCH:)", text, re.DOTALL)
-        watch_match = re.search(r"WATCH:\s*(.+)", text, re.DOTALL)
-
-        if headline_match and summary_match:
+        headline_match = re.search(r"HEADLINE:\s*(.+?)(?=\n\s*OVERVIEW:)", text, re.DOTALL)
+        if headline_match:
             headline = headline_match.group(1).strip()
-            summary_text = summary_match.group(1).strip()
 
-            if evidence_match:
-                evidence_raw = evidence_match.group(1).strip()
-                selected_indices = sorted(set(
-                    int(n) for n in re.findall(r"\d+", evidence_raw)
-                    if 1 <= int(n) <= len(evidence_catalog)
-                ))
-                priority_order = {"High": 0, "Medium": 1, "Low": 2}
-                evidence_items = sorted(
-                    [{"text": evidence_catalog[i - 1],
-                      "priority": evidence_priority_map.get(evidence_catalog[i - 1], "Medium"),
-                      "section": evidence_section_map.get(evidence_catalog[i - 1])}
-                     for i in selected_indices],
-                    key=lambda x: priority_order.get(x["priority"], 1)
-                )
+            # Each section runs until the next known delimiter, or until
+            # WATCH: for the last one (PERSONAL_BESTS).
+            for i, key in enumerate(SECTION_KEYS):
+                delim = SECTION_DELIMITERS[i]
+                next_delim = SECTION_DELIMITERS[i + 1] if i + 1 < len(SECTION_DELIMITERS) else "WATCH"
+                m = re.search(rf"{delim}:\s*(.+?)(?=\n\s*{next_delim}:)", text, re.DOTALL)
+                if m:
+                    sections[key] = m.group(1).strip()
 
+            watch_match = re.search(r"WATCH:\s*(.+)", text, re.DOTALL)
             if watch_match:
                 watch_raw = watch_match.group(1).strip()
                 watch_items = [
@@ -2119,11 +1916,16 @@ def parse_coach_sections(text):
                     for line in watch_raw.split("\n")
                     if line.strip().startswith("-")
                 ]
+        else:
+            # Couldn't even find HEADLINE — don't guess at a section split,
+            # just surface the raw text somewhere visible.
+            sections["overview"] = text.strip()
     except Exception as parse_err:
-        print(f"Coach section parsing failed, using raw text as summary: {parse_err}")
-    return headline, summary_text, evidence_items, watch_items
+        print(f"Coach section parsing failed, dumping raw text into overview: {parse_err}")
+        sections["overview"] = text.strip()
+    return headline, sections, watch_items
 
-coach_headline, coach_summary_text, coach_evidence_items, coach_watch_items = parse_coach_sections(coach_text)
+coach_headline, coach_sections, coach_watch_items = parse_coach_sections(coach_text)
 
 if coach_headline:
     coach_context_history = [h for h in coach_context_history if h.get("date") != str(today_date)]
@@ -2171,11 +1973,8 @@ coach_summary = {
     "confidence_label": confidence_label,
     "confidence_reasons": confidence_reasons,
     "confidence_attention": confidence_attention,
-    "summary": coach_summary_text,
+    "sections": coach_sections,
     "watch_items": coach_watch_items,
-    "evidence_items": coach_evidence_items,
-    "insights": [coach_summary_text],
-    "quiet": [],
     "usage": token_usage,
     "usage_mtd_usd": round(mtd_cost_usd, 5),
     "usage_mtd_dkk": round(mtd_cost_dkk, 4),
@@ -2189,7 +1988,7 @@ with open("coach_summary.json", "w", encoding="utf-8") as f:
 print(f"Coach summary written.")
 print(f"  MTD: ${mtd_cost_usd:.5f} / {mtd_cost_dkk:.4f} kr")
 print(f"  YTD: ${ytd_cost_usd:.5f} / {ytd_cost_dkk:.4f} kr")
-print(f"  Headline: {coach_headline[:120]}")
+print(f"  Headline: {coach_headline[:160]}")
 print(f"  Watch items: {len(coach_watch_items)}")
-print(f"  Evidence items: {len(coach_evidence_items)} (catalog had {len(evidence_catalog)} available)")
+print(f"  Sections populated: {sum(1 for v in coach_sections.values() if v)}/{len(coach_sections)}")
 print(f"  Confidence: {confidence_pct}% ({confidence_label})")

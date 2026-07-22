@@ -226,13 +226,22 @@ async function init() {
   // PROJECT_CONTEXT COACH DISTRIBUTION. Returns '' when nothing matches so
   // it's always safe to splice into a template string.
   function coachAnnotationsHtml(section) {
-    const entries = [];
+    const evidenceEntries = [];
     if (coachData && Array.isArray(coachData.evidence_items)) {
       coachData.evidence_items.forEach(e => {
-        if (e && e.section === section && e.text) entries.push({ text: e.text, priority: e.priority || 'Medium' });
+        if (e && e.section === section && e.text) evidenceEntries.push({ text: e.text, priority: e.priority || 'Medium' });
       });
     }
-    if (Array.isArray(m.digest)) {
+    // Evidence and digest frequently describe the SAME underlying
+    // comparison (e.g. both a digest line and an evidence item for "4-week
+    // volume") computed independently — showing both produced visibly
+    // duplicate near-identical messages on a tile. Evidence is richer
+    // (percent change, priority-ranked, LLM-curated as relevant today), so
+    // it wins; digest only fills in when nothing was selected for this
+    // section today.
+    let entries = evidenceEntries;
+    if (!entries.length && Array.isArray(m.digest)) {
+      entries = [];
       m.digest.forEach(d => {
         if (d && d.section === section && d.text) entries.push({ text: d.text, priority: null });
       });
@@ -567,6 +576,7 @@ async function init() {
 
   const runDatesSet = new Set(m.calendar.run_dates);
   const strengthDatesSet = new Set(m.calendar.strength_dates);
+  const hikeDatesSet = new Set(m.calendar.hike_dates || []);
 
   function localDateStr(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
 
@@ -580,6 +590,11 @@ async function init() {
     const todayStr = localDateStr(now);
     const runIcon = (color = '#e8ff5a') => `<svg class="cal-icon" viewBox="0 0 14 14" fill="none"><circle cx="10" cy="3" r="1.5" fill="${color}"/><path d="M7 5.5l1.5-2 2 1-1 2.5-2.5 1L5 11H3" stroke="${color}" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 8l-2 3" stroke="${color}" stroke-width="1.2" stroke-linecap="round"/></svg>`;
     const strengthIcon = (color = '#4a9eff') => `<svg class="cal-icon" viewBox="0 0 14 14" fill="none"><rect x="1" y="6" width="2" height="3" rx="0.5" fill="${color}"/><rect x="11" y="6" width="2" height="3" rx="0.5" fill="${color}"/><rect x="3" y="5" width="2" height="5" rx="0.5" fill="${color}"/><rect x="9" y="5" width="2" height="5" rx="0.5" fill="${color}"/><rect x="5" y="6.5" width="4" height="2" rx="0.5" fill="${color}"/></svg>`;
+    // NEW (July 2026) — hikes previously had no calendar representation at
+    // all (not even fetched into any file — see fetch_activities.py's
+    // is_hike() note). Simple mountain glyph, Accent2 (#ff6b35) per the
+    // project's established color scheme for this kind of secondary marker.
+    const hikeIcon = (color = '#ff6b35') => `<svg class="cal-icon" viewBox="0 0 14 14" fill="none"><path d="M1 11L5 4L7.5 8L9 6L13 11H1Z" fill="${color}" opacity="0.85"/></svg>`;
     let dayCells = '';
     for (let i = 0; i < startDow; i++) dayCells += `<div class="cal-day"></div>`;
     const calRows = [];
@@ -591,9 +606,10 @@ async function init() {
       const isFuture = dateStr > todayStr;
       const hasRun = runDatesSet.has(dateStr);
       const hasStrength = strengthDatesSet.has(dateStr);
-      const hasActivity = hasRun || hasStrength;
+      const hasHike = hikeDatesSet.has(dateStr);
+      const hasActivity = hasRun || hasStrength || hasHike;
       const cls = ['cal-day', isToday ? 'today' : '', isFuture ? 'future' : '', hasActivity ? 'has-activity' : ''].filter(Boolean).join(' ');
-      dayCells += `<div class="${cls}"><div class="cal-day-num">${d}</div>${hasActivity ? `<div class="cal-icons">${hasRun ? runIcon() : ''}${hasStrength ? strengthIcon() : ''}</div>` : ''}</div>`;
+      dayCells += `<div class="${cls}"><div class="cal-day-num">${d}</div>${hasActivity ? `<div class="cal-icons">${hasRun ? runIcon() : ''}${hasStrength ? strengthIcon() : ''}${hasHike ? hikeIcon() : ''}</div>` : ''}</div>`;
       currentRow.push(dateStr);
       if (currentRow.length === 7) { calRows.push([...currentRow]); currentRow = []; }
     }

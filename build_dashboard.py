@@ -5,7 +5,7 @@ Reads runs.csv, strength.csv, lactate.json, sleep.csv, polar_steps.csv,
 steps.csv, strength_tests.csv (all written by fetch_activities.py or, for
 steps.csv/strength_tests.csv, by other sources) and computes EVERY derived
 dashboard number (streaks, deltas, chart data, PBs, LT zones/trend, calendar
-date-sets, "what's changed" digest) into dashboard_metrics.json. Then calls
+date-sets) into dashboard_metrics.json. Then calls
 Claude to generate the daily coaching briefing into coach_summary.json.
 
 index.html remains a pure renderer of these two JSON files.
@@ -1652,6 +1652,56 @@ avg_ate_ytd = round(sum(ate_values) / max(len(ate_values), 1), 2)
 strength_per_week_ytd = round(
     summary.get('total_strength_this_year', 0) / max(today_date.timetuple().tm_yday / 7, 1), 1)
 
+# Real strength profile for the coach prompt — latest value per exercise
+# from strength_tests_summary (built above from strength_tests.csv), rather
+# than a hardcoded five-lift string that silently went stale and omitted
+# most of the logged tests. Grouped by the CSV's `category` field: known
+# categories first in a deliberate order, then any unknown category
+# appended alphabetically — derived from the known order rather than a
+# hardcoded fixed list, so an unrecognised category is surfaced at the end
+# instead of being silently dropped. One "Exercise Value Unit" token per
+# exercise within each group, joined by " | ". Latest value only — no
+# historical rows.
+STRENGTH_CATEGORY_ORDER = ["strength", "power", "durability", "bodyweight"]
+_strength_by_category = {}
+for e in strength_tests_summary:
+    _strength_by_category.setdefault(e.get("category", ""), []).append(e)
+_ordered_strength_categories = (
+    [c for c in STRENGTH_CATEGORY_ORDER if c in _strength_by_category]
+    + sorted(c for c in _strength_by_category if c not in STRENGTH_CATEGORY_ORDER)
+)
+_strength_profile_lines = []
+for _cat in _ordered_strength_categories:
+    _cat_exs = " | ".join(
+        f"{e['exercise']} {e['latest_value']} {e['unit']}".strip()
+        for e in _strength_by_category[_cat]
+    )
+    _cat_label = _cat.capitalize() if _cat else "Other"
+    _strength_profile_lines.append(f"{_cat_label}: {_cat_exs}")
+strength_profile_str = "\n    ".join(_strength_profile_lines) if _strength_profile_lines else "No strength test data logged yet"
+
+# Per-session HR shape for the coach prompt (NEW) — most recent 8 runs and
+# 8 strength sessions from the unified HR context, each with avg/max HR, a
+# zone-minute breakdown, and any Polar/H10-dropout source label. Gives the
+# coach per-session SHAPE (not just weekly aggregates) for the ZONES and
+# HR_COMPARISON sections. The same context is written to
+# dashboard_metrics.json capped at 30; here we feed only the most recent 8
+# of each to keep prompt size bounded.
+def _hr_ctx_prompt_line(c):
+    bits = f"avg {c['avg_hr']}"
+    if c.get("max_hr") is not None:
+        bits += f"/max {c['max_hr']}"
+    if c.get("zone_summary"):
+        bits += f" ({c['zone_summary']})"
+    if c.get("label"):
+        bits += f" [{c['label']}]"
+    return f"  {c.get('date', '?')} | {c.get('name', '?')} | HR {bits}"
+
+_recent_run_hr_ctx = sorted(_run_hr_context.values(), key=lambda x: x["date"], reverse=True)[:8]
+_recent_strength_hr_ctx = sorted(_strength_hr_context.values(), key=lambda x: x["date"], reverse=True)[:8]
+run_hr_shape_block = "\n".join(_hr_ctx_prompt_line(c) for c in _recent_run_hr_ctx) if _recent_run_hr_ctx else "  No per-session run HR data yet"
+strength_hr_shape_block = "\n".join(_hr_ctx_prompt_line(c) for c in _recent_strength_hr_ctx) if _recent_strength_hr_ctx else "  No per-session strength HR data yet"
+
 # ── Build prompt ──────────────────────────────────────────────────────────────
 system_prompt = """You are an experienced hybrid performance coach with a strong sports science background working with a Danish athlete with serious ultra-endurance and multi-sport capacity.
 
@@ -1700,7 +1750,7 @@ Tone and style:
 Output format — respond using exactly this structure, with these literal delimiter lines. Do not restate specific numeric figures in ANY section below — every number you might cite (distances, paces, HR values, percentages, session counts) is ALREADY shown directly on the dashboard card that section corresponds to. Your job in every section is interpretation and judgement, never a restatement of numbers the athlete can already see right next to your text. Referring to a trend direction or magnitude in words (e.g. "meaningfully higher", "barely changed") is fine — writing the actual figure is not.
 
 HEADLINE:
-1–3 short sentences (this renders as a compact few-line brief at the very top of the dashboard — keep it tight). The single most important takeaway from today's data, across ALL of training, not just one metric. Not a generic state label like "Building" or "Consolidating". Be specific without citing numbers. Do not restate the athlete's name or date.
+Up to 3 genuinely short sentences (this renders as a compact few-line brief at the very top of the dashboard — keep it tight). Aim for about 30 words total across the whole headline and stop well under 45; each sentence must be crisp and punchy, never a paragraph packed into one line. The single most important takeaway from today's data, across ALL of training, not just one metric. Not a generic state label like "Building" or "Consolidating". Be specific without citing numbers. Do not restate the athlete's name or date.
 
 OVERVIEW:
 1 short paragraph covering Running, Strength, Steps, Intensity Minutes, Recovery, and Load together as a single coherent picture — how these pieces of the week relate to each other, not six separate mini-verdicts. This is the largest section; the rest are each shorter.
@@ -1712,10 +1762,10 @@ THRESHOLD:
 1 short paragraph on lactate threshold and VO2max together — what the current trend in aerobic/threshold fitness actually means for the athlete right now.
 
 ZONES:
-1 short paragraph on time-in-zone distribution (Z1 through Z5, the Zone 2 target, the "grey zone") — is the intensity distribution appropriate for what this training block is trying to accomplish.
+1 short paragraph on time-in-zone distribution (Z1 through Z5, the Zone 2 target, the "grey zone") — is the intensity distribution appropriate for what this training block is trying to accomplish. You now also have a PER-SESSION HR SHAPE block (avg/max HR and zone-minute breakdown for the most recent runs and strength sessions), not just the weekly zone aggregate — use it to judge whether individual sessions' intensity distribution matches the block's intent.
 
 HR_COMPARISON:
-1 short paragraph on the strength-session HR data and the Garmin-vs-Polar comparison data together — anything genuinely worth noting about HR patterns in strength work or sensor-source agreement. If there is truly nothing notable, it is fine for this to be a single plain sentence saying so.
+1 short paragraph on the strength-session HR data and the Garmin-vs-Polar comparison data together — anything genuinely worth noting about HR patterns in strength work or sensor-source agreement. The PER-SESSION HR SHAPE block also marks which sessions are Polar-derived (an H10 dropout on a run, or every strength session) — draw on it for per-session HR patterns, but as noted above do not discuss the sensor/calibration plumbing itself in your output. If there is truly nothing notable, it is fine for this to be a single plain sentence saying so.
 
 CALENDAR:
 1 short paragraph on training consistency/frequency patterns visible in the activity calendar — separate from the deterministic streak-count line the dashboard already shows beneath it; add genuine interpretation, not a repeat of "N-week streak."
@@ -1768,7 +1818,7 @@ ATHLETE PROFILE:
 - Longest effort: 137 km (Møn/Vordingborg 100-mile attempt)
 - Running PBs: see PERSONAL BESTS below
 - Current demonstrated strength profile:
-    Squat 95 kg | Bench 110 kg | OH Press 55 kg | BB RDL 130 kg | Pull-ups 16 reps BW
+    {strength_profile_str}
 - Daily commute: 8 km by bike on weekdays (untracked background load)
 - Active modalities: running, strength, occasional bouldering, martial arts, swimming
 - Training frequency: ~4x/week running + regular strength
@@ -1820,6 +1870,12 @@ SLEEP (last 4 weeks, from Polar Loop — supporting context only, do not let thi
 CARDIO LOAD (from Polar Loop, Training Load Pro — supporting context only, same caution as sleep above; strain/tolerance are Polar's own rolling 7d/28d averages, not computed here):
 {cardio_load_context}
 
+PER-SESSION HR SHAPE (most recent 8 runs and 8 strength sessions — avg/max HR and a zone-minute breakdown per session, so you can judge each session's intensity distribution and sensor-source pattern rather than only the weekly zone aggregate; entries marked with a Polar/H10-dropout label are calibrated estimates — use them normally, but do not discuss the sensor/calibration plumbing in your output):
+Runs:
+{run_hr_shape_block}
+Strength:
+{strength_hr_shape_block}
+
 Generate the coaching briefing now."""
 
 # ── Call Anthropic API ────────────────────────────────────────────────────────
@@ -1835,7 +1891,7 @@ if api_key:
     try:
         payload = json.dumps({
             "model": "claude-opus-4-8",
-            "max_tokens": 700,
+            "max_tokens": 1600,
             "system": system_prompt,
             "messages": [{"role": "user", "content": user_prompt}],
             "thinking": {"type": "disabled"}

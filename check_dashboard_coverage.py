@@ -87,6 +87,9 @@ def check_layer1_metrics_coverage(build_src, html_src):
     # rendered instead of quietly excused.
     KNOWN_UNUSED = {
         "last_complete_date",  # backend cutoff param — historical stats already reflect it via their computed values, no separate UI display needed
+        "run_hr_context",      # staging key — written for a not-yet-shipped UI/coach step; not consumed by index.html yet (see build_dashboard.py note)
+        "strength_hr_context", # staging key — same as run_hr_context; per-session HR context awaiting its UI/coach consumer
+        "hr_dropout_fallback", # consumed internally by build_dashboard.py for zone-time attribution; standalone UI card was intentionally removed
     }
     for k in keys:
         if k in KNOWN_UNUSED:
@@ -111,7 +114,7 @@ def check_layer1_coach_coverage(build_src, html_src):
     # if these are never referenced. Keep this list short and only add to
     # it with an explicit reason, mirroring the DELIBERATELY EXCLUDED
     # pattern used elsewhere in this project for intentional omissions.
-    KNOWN_UNUSED = {"quiet"}  # legacy compat field, documented as vestigial
+    KNOWN_UNUSED = {"watch_items"}  # backend continuity memory only — persisted to coach_context.json and fed into the next day's prompt, never rendered in the UI
     for k in keys:
         if k in KNOWN_UNUSED:
             ok(f"coach_summary.{k} is deliberately unused (documented) — skipping")
@@ -138,7 +141,10 @@ def check_layer2_feature_markers(html_src):
         (r'strengthHrChart', "Strength session HR overlay chart"),
         (r'hrCompareChart', "Garmin vs Polar run HR comparison chart"),
         (r'polar_exercise_avg_hr', "Three-way HR comparison: Polar exercise-entry line"),
-        (r'hr_dropout_fallback|dropoutFallback', "H10 dropout fallback card"),
+        # H10 dropout fallback card removed July 2026 — dropout HR is now folded
+        # into zone-time attribution (build_dashboard.py) rather than shown as a
+        # standalone card, so there is no longer a marker to guard here.
+        # (r'hr_dropout_fallback|dropoutFallback', "H10 dropout fallback card"),
         (r'<svg[^>]*>.*?</svg>', "Banner monogram SVG in the header"),
         (r'changeLine', "Single-sentence overview change function (changeLine)"),
         (r'optionAChart', "16-week distance/strength chart"),

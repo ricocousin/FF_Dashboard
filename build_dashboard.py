@@ -21,6 +21,7 @@ import os
 import csv
 import json
 import re
+import random
 import urllib.request
 from datetime import datetime, timedelta
 
@@ -1992,3 +1993,165 @@ print(f"  Headline: {coach_headline[:160]}")
 print(f"  Watch items: {len(coach_watch_items)}")
 print(f"  Sections populated: {sum(1 for v in coach_sections.values() if v)}/{len(coach_sections)}")
 print(f"  Confidence: {confidence_pct}% ({confidence_label})")
+
+# ── Model A/B shadow logging (14-day experiment) ─────────────────────────────
+# PURE SIDE-LOGGING — ZERO effect on what the dashboard renders. The live Opus
+# coach and the coach_summary.json write above are already complete and are
+# NEVER touched by anything below. This block fires a parallel Sonnet call on
+# the IDENTICAL prompts, an Opus judge scoring both outputs blind (A/B
+# randomized per run), and appends the full record to model_ab_log.json.
+# The ENTIRE block is wrapped in try/except: any failure (Sonnet call, judge
+# call, parse, or file write) is logged and swallowed so a shadow failure can
+# never affect the live coach output or fail the build.
+SONNET_PRICE_INPUT_PER_M = 3.00
+SONNET_PRICE_OUTPUT_PER_M = 15.00
+SHADOW_MAX_TOKENS = 1600
+
+def _anthropic_message(model, sys_prompt, usr_prompt, max_tokens):
+    """Minimal Messages API call, same shape as the live coach call above.
+    Returns (text, usage_dict). Raises on any HTTP/parse error — the caller's
+    try/except handles it."""
+    body = json.dumps({
+        "model": model,
+        "max_tokens": max_tokens,
+        "system": sys_prompt,
+        "messages": [{"role": "user", "content": usr_prompt}],
+        "thinking": {"type": "disabled"}
+    }).encode("utf-8")
+    request = urllib.request.Request(
+        "https://api.anthropic.com/v1/messages",
+        data=body,
+        headers={
+            "x-api-key": api_key,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json"
+        },
+        method="POST"
+    )
+    with urllib.request.urlopen(request, timeout=60) as resp:
+        parsed = json.loads(resp.read().decode("utf-8"))
+    return parsed["content"][0]["text"].strip(), parsed.get("usage", {})
+
+def _shadow_cost(usage, price_in, price_out):
+    it = usage.get("input_tokens", 0)
+    ot = usage.get("output_tokens", 0)
+    cost_usd = (it * price_in / 1_000_000) + (ot * price_out / 1_000_000)
+    return {
+        "input_tokens": it,
+        "output_tokens": ot,
+        "cost_usd": round(cost_usd, 6),
+        "cost_dkk": round(cost_usd * USD_TO_DKK, 5)
+    }
+
+def _parse_judge_json(text):
+    """Defensive parse — the judge is asked for strict JSON, but if it wraps
+    the object in prose (or returns invalid JSON) we recover the first {...}
+    block, and failing that we log the raw text rather than crashing."""
+    try:
+        return json.loads(text)
+    except Exception:
+        match = re.search(r"\{.*\}", text, re.DOTALL)
+        if match:
+            try:
+                return json.loads(match.group(0))
+            except Exception:
+                pass
+    return {"parse_error": True, "raw_text": text}
+
+# Only run when the live Opus call genuinely succeeded (token_usage is set only
+# inside that call's success path) — never shadow a fallback/failed day.
+if api_key and token_usage:
+    try:
+        # 1. Parallel Sonnet call on the IDENTICAL system_prompt + user_prompt.
+        sonnet_text, sonnet_usage = _anthropic_message(
+            "claude-sonnet-5", system_prompt, user_prompt, SHADOW_MAX_TOKENS)
+        opus_cost = _shadow_cost(token_usage, PRICE_INPUT_PER_M, PRICE_OUTPUT_PER_M)
+        sonnet_cost = _shadow_cost(sonnet_usage, SONNET_PRICE_INPUT_PER_M, SONNET_PRICE_OUTPUT_PER_M)
+
+        # 2. Blind A/B assignment — randomize which model is A vs B per run so
+        #    the judge can't pattern-match on position. coach_text is the live
+        #    Opus output.
+        opus_is_a = random.random() < 0.5
+        output_a = coach_text if opus_is_a else sonnet_text
+        output_b = sonnet_text if opus_is_a else coach_text
+        ab_mapping = {
+            "A": "opus" if opus_is_a else "sonnet",
+            "B": "sonnet" if opus_is_a else "opus"
+        }
+
+        # 3. Judge call — Opus scores both outputs blind against the rubric,
+        #    returning STRICT JSON only.
+        judge_system = (
+            "You are an impartial evaluator comparing two AI-generated daily "
+            "training-coaching briefings, labelled OUTPUT A and OUTPUT B. Both "
+            "were generated from the identical data context shown below. Score "
+            "each output on a 1-5 integer scale for each rubric criterion, with "
+            "a one-line reason per score, then state which output you prefer "
+            "overall and why. Do not reveal or guess which model produced which "
+            "output. Return STRICT JSON only — no prose, no markdown fences, "
+            "nothing outside the JSON object."
+        )
+        judge_rubric = (
+            "RUBRIC (score each output 1-5 on all four):\n"
+            "1. context_awareness: did it surface genuinely important "
+            "situational context (e.g. an upcoming event's specific demands) "
+            "rather than just restating metrics?\n"
+            "2. artefact_handling: did it correctly identify and disregard "
+            "known-bad signals rather than treating them as real?\n"
+            "3. no_fabrication: did it avoid stating specific numbers/figures "
+            "(the spec forbids restating figures — all numbers already live on "
+            "the dashboard cards)?\n"
+            "4. coaching_usefulness: overall usefulness of the coaching to the "
+            "athlete.\n\n"
+            "Return EXACTLY this JSON shape (scores are integers 1-5):\n"
+            '{"output_a": {"context_awareness": {"score": 0, "reason": ""}, '
+            '"artefact_handling": {"score": 0, "reason": ""}, '
+            '"no_fabrication": {"score": 0, "reason": ""}, '
+            '"coaching_usefulness": {"score": 0, "reason": ""}}, '
+            '"output_b": {"context_awareness": {"score": 0, "reason": ""}, '
+            '"artefact_handling": {"score": 0, "reason": ""}, '
+            '"no_fabrication": {"score": 0, "reason": ""}, '
+            '"coaching_usefulness": {"score": 0, "reason": ""}}, '
+            '"preferred": "A", "preference_reason": ""}'
+        )
+        judge_user = (
+            judge_rubric
+            + "\n\n=== ORIGINAL DATA CONTEXT (given to both) ===\n" + user_prompt
+            + "\n\n=== OUTPUT A ===\n" + output_a
+            + "\n\n=== OUTPUT B ===\n" + output_b
+        )
+        judge_text, judge_usage = _anthropic_message(
+            "claude-opus-4-8", judge_system, judge_user, SHADOW_MAX_TOKENS)
+        judge_result = _parse_judge_json(judge_text)
+        judge_cost = _shadow_cost(judge_usage, PRICE_INPUT_PER_M, PRICE_OUTPUT_PER_M)
+
+        # 4. Append one entry to model_ab_log.json (a list; whole history kept).
+        ab_log_file = "model_ab_log.json"
+        ab_log = []
+        if os.path.exists(ab_log_file):
+            try:
+                with open(ab_log_file, "r", encoding="utf-8") as f:
+                    ab_log = json.load(f)
+                if not isinstance(ab_log, list):
+                    ab_log = []
+            except Exception:
+                ab_log = []
+        ab_log.append({
+            "date": str(today_date),
+            "ab_mapping": ab_mapping,
+            "output_a": output_a,
+            "output_b": output_b,
+            "opus_usage": opus_cost,
+            "sonnet_usage": sonnet_cost,
+            "judge": judge_result,
+            "judge_usage": judge_cost
+        })
+        with open(ab_log_file, "w", encoding="utf-8") as f:
+            json.dump(ab_log, f, indent=2)
+        print(f"Model A/B shadow log appended (model_ab_log.json: {len(ab_log)} run(s)). "
+              f"A={ab_mapping['A']} B={ab_mapping['B']} | "
+              f"judge preferred: {judge_result.get('preferred', 'unparsed')}")
+
+    except Exception as shadow_err:
+        # A shadow failure must NEVER affect the live coach or fail the build.
+        print(f"Model A/B shadow logging failed (non-fatal, ignored): {shadow_err}")

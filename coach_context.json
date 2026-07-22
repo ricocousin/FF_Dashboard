@@ -1,15 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-07-12",
-      "headline": "A 12 km moderate run at controlled HR follows yesterday's long effort, capping a level four-week block heading into taper territory.",
-      "watch_items": [
-        "Whether pack-loaded running finally enters the schedule, since the general base is ready but the specific weighted demand still isn't trained.",
-        "Whether climbing per run starts trending toward sustained ascent rather than the rolling profiles logged so far.",
-        "Whether the short-sleep nights begin clustering as longer efforts continue, rather than alternating with long-sleep nights."
-      ]
-    },
-    {
       "date": "2026-07-13",
       "headline": "Easy-run HR holds well below the prior block into the recovery week, strengthening the case for a real efficiency gain.",
       "watch_items": [
@@ -46,6 +37,16 @@
         "Whether loaded pack-carry running and sustained climbing enter the schedule with enough runway before the crossing.",
         "Whether Polar's strain window catches up to actual load once a few more sessions accumulate, or the DETRAINING label persists implausibly.",
         "Whether the short-night cluster settles, given how it may matter more as long-run frequency rises."
+      ]
+    },
+    {
+      "date": "2026-07-22",
+      "headline": "Easy-run efficiency is holding into the 20 km work, but this block still hasn't tested a genuinely hard effort.",
+      "watch_items": [
+        "Whether any loaded-pack or sustained-climbing work appears before the crossing, given the terrain and pack weight ahead.",
+        "Whether the lower easy-run HR band holds once daily back-to-back-style fatigue accumulates on trail.",
+        "Whether sleep duration stabilises, since consecutive long days will make recovery quality matter more than it does now.",
+        "Whether Polar's strain window ever catches up to actual load, or the implausible DETRAINING label simply persists and should be ignored."
       ]
     }
   ]

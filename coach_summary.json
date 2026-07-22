@@ -1,59 +1,59 @@
 {
-  "last_updated": "2026-07-20 11:29 UTC",
-  "headline": "The 20 km run held its efficiency gain, sitting almost entirely in Z1\u2013Z2 at a lower comparable-effort HR.",
-  "confidence_pct": 74,
+  "last_updated": "2026-07-22 07:01 UTC",
+  "headline": "Easy-run efficiency is holding into the 20 km work, but this block still hasn't tested a genuinely hard effort.",
+  "confidence_pct": 76,
   "confidence_label": "Moderate data confidence",
   "confidence_reasons": [
-    "LT reading 17d old",
+    "LT reading 19d old",
     "HR data on 7/8 recent runs",
     "Sleep tracked 14/14 nights",
-    "Steps tracked 4/7 days",
+    "Steps tracked 2/7 days",
     "Data fetch up to date",
     "Limited data sources active in last 3 days"
   ],
-  "confidence_attention": "Limited data sources active in last 3 days",
-  "summary": "Your longest run of this block ran predominantly in the easy bands with only a token few minutes drifting into Z3, and the average sat comfortably in the lower HR range you've been holding across the block. That's the answer to a question worth asking: the efficiency signal that emerged during the volume ramp wasn't a recovery-week artefact \u2014 it held up when the distance climbed. Comparable-effort easy runs are genuinely running lower than the prior period across a solid sample, and this session extends that rather than breaking it.\n\nThe one thing this block hasn't tested is deliberate intensity. Time above easy remains minimal \u2014 the grey-zone fraction is tiny and Z2 minutes are still short of where a base block should sit. That's a load-distribution observation, not a fitness concern: the ramp itself was substantial, strength has been consistent, and the pilgrim crossing three weeks out favours durable time-on-feet over sharp sessions anyway. The DETRAINING strain flag reads that way largely because Polar's rolling window hasn't caught up to the recent volume, so I'd weigh it lightly against everything else the data shows.",
+  "confidence_attention": "Steps tracked 2/7 days",
+  "summary": "Your comparable-effort easy runs continue to sit in a lower HR band than the prior period, and yesterday's 11 km fits that pattern cleanly \u2014 controlled, almost entirely sub-threshold, with only a token minute of Z3. Across a doubled four-week block that efficiency has stayed intact rather than eroding under the added load, which is the signal that matters most right now. Strength has also become genuinely consistent, running at more than double the prior block's session count, so this isn't endurance volume crowding out the rest of your athletic base.\n\nThe open question hasn't changed: the easy-run picture is strong, but the last few weeks have been built almost entirely from Z1\u2013Z2. You've accumulated durability and time on feet, but no threshold or sustained-hard effort has stress-tested whether that lower HR band survives real intensity. That's not a gap to force this week \u2014 with St. Olavsleden roughly two weeks out, staying aerobic and durable is the right call \u2014 but it's worth naming that current fitness is well-evidenced on the easy end and largely unproven at the top end.\n\nWith the crossing approaching, the more relevant readiness gap is specificity: loaded pack-carry and sustained vertical remain absent from what the data shows, and those are the demands a 6\u20138 kg self-supported hilly trail will actually impose.",
   "watch_items": [
-    "Whether the lower easy-run HR band survives the first genuinely hard or threshold effort, which this block hasn't yet included.",
-    "Whether loaded pack-carry running and sustained climbing enter the schedule with enough runway before the crossing.",
-    "Whether Polar's strain window catches up to actual load once a few more sessions accumulate, or the DETRAINING label persists implausibly.",
-    "Whether the short-night cluster settles, given how it may matter more as long-run frequency rises."
+    "Whether any loaded-pack or sustained-climbing work appears before the crossing, given the terrain and pack weight ahead.",
+    "Whether the lower easy-run HR band holds once daily back-to-back-style fatigue accumulates on trail.",
+    "Whether sleep duration stabilises, since consecutive long days will make recovery quality matter more than it does now.",
+    "Whether Polar's strain window ever catches up to actual load, or the implausible DETRAINING label simply persists and should be ignored."
   ],
   "evidence_items": [
     {
-      "text": "\u25b2 4-week volume 181 km vs 94 km prior block (+94%)",
+      "text": "\u25b2 4-week volume 189 km vs 97 km prior block (+95%)",
       "priority": "High",
       "section": "running"
     },
     {
-      "text": "\u25b2 Strength consistency: 9 sessions vs 3 prior 4wk",
+      "text": "\u25b2 Strength consistency: 9 sessions vs 4 prior 4wk",
       "priority": "High",
       "section": "strength"
     },
     {
-      "text": "\u25bc Easy-run HR averaging 142 bpm vs 151 bpm prior period (comparable-effort runs, 10 vs 5 runs)",
+      "text": "\u25bc Easy-run HR averaging 142 bpm vs 151 bpm prior period (comparable-effort runs, 11 vs 5 runs)",
       "priority": "High",
       "section": "running"
     },
     {
-      "text": "\u25bc Zone 2: 114 min vs 180-240 min/week target (63% of minimum); grey zone (Z3+Z4): 2.4%",
+      "text": "\u25ac 23-week running streak (best: 23 wks)",
       "priority": "Medium",
-      "section": "zone_time"
+      "section": "running"
     }
   ],
   "insights": [
-    "Your longest run of this block ran predominantly in the easy bands with only a token few minutes drifting into Z3, and the average sat comfortably in the lower HR range you've been holding across the block. That's the answer to a question worth asking: the efficiency signal that emerged during the volume ramp wasn't a recovery-week artefact \u2014 it held up when the distance climbed. Comparable-effort easy runs are genuinely running lower than the prior period across a solid sample, and this session extends that rather than breaking it.\n\nThe one thing this block hasn't tested is deliberate intensity. Time above easy remains minimal \u2014 the grey-zone fraction is tiny and Z2 minutes are still short of where a base block should sit. That's a load-distribution observation, not a fitness concern: the ramp itself was substantial, strength has been consistent, and the pilgrim crossing three weeks out favours durable time-on-feet over sharp sessions anyway. The DETRAINING strain flag reads that way largely because Polar's rolling window hasn't caught up to the recent volume, so I'd weigh it lightly against everything else the data shows."
+    "Your comparable-effort easy runs continue to sit in a lower HR band than the prior period, and yesterday's 11 km fits that pattern cleanly \u2014 controlled, almost entirely sub-threshold, with only a token minute of Z3. Across a doubled four-week block that efficiency has stayed intact rather than eroding under the added load, which is the signal that matters most right now. Strength has also become genuinely consistent, running at more than double the prior block's session count, so this isn't endurance volume crowding out the rest of your athletic base.\n\nThe open question hasn't changed: the easy-run picture is strong, but the last few weeks have been built almost entirely from Z1\u2013Z2. You've accumulated durability and time on feet, but no threshold or sustained-hard effort has stress-tested whether that lower HR band survives real intensity. That's not a gap to force this week \u2014 with St. Olavsleden roughly two weeks out, staying aerobic and durable is the right call \u2014 but it's worth naming that current fitness is well-evidenced on the easy end and largely unproven at the top end.\n\nWith the crossing approaching, the more relevant readiness gap is specificity: loaded pack-carry and sustained vertical remain absent from what the data shows, and those are the demands a 6\u20138 kg self-supported hilly trail will actually impose."
   ],
   "quiet": [],
   "usage": {
-    "input_tokens": 6561,
-    "output_tokens": 609,
-    "cost_usd": 0.04803,
-    "cost_dkk": 0.33141,
-    "date": "2026-07-20"
+    "input_tokens": 6569,
+    "output_tokens": 672,
+    "cost_usd": 0.049645,
+    "cost_dkk": 0.34255,
+    "date": "2026-07-22"
   },
-  "usage_mtd_usd": 0.48883,
-  "usage_mtd_dkk": 3.373,
-  "usage_ytd_usd": 0.48883,
-  "usage_ytd_dkk": 3.373
+  "usage_mtd_usd": 0.53848,
+  "usage_mtd_dkk": 3.7155,
+  "usage_ytd_usd": 0.53848,
+  "usage_ytd_dkk": 3.7155
 }

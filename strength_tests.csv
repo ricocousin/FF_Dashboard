@@ -1,4 +1,5 @@
 date,exercise,category,value,unit,notes
+2026-04-13,Bodyweight,bodyweight,82.9,kg,notion measurement
 2026-07-04,Back Squat,strength,95,kg,
 2026-07-04,Bench Press,strength,110,kg,
 2026-07-04,Deadlift,strength,160,kg,
@@ -10,7 +11,8 @@ date,exercise,category,value,unit,notes
 2026-07-04,Dead Hang,durability,110,sec,recorded as >1:50 (110s) - protocol may be open-ended
 2026-07-04,Standing Long Jump,power,2.1,m,estimate
 2026-07-04,Box Jump,power,30,in,tested for repetitions - rep count not recorded this test, height only
-2026-07-06,Weighted Pull-up 1RM,strength,40,kg,added weight on top of bodyweight
-2026-07-06,Weighted Dip 1RM,strength,40,kg,added weight on top of bodyweight
-2026-07-06,Split Squat 3RM,strength,70,kg,
-2026-07-06,Incline Dumbbell Bench 1RM,strength,40,kg,
+2026-07-04,Weighted Pull-up 1RM,strength,40,kg,added weight on top of bodyweight
+2026-07-04,Weighted Dip 1RM,strength,40,kg,added weight on top of bodyweight
+2026-07-04,Split Squat 3RM,strength,70,kg,
+2026-07-04,Incline Dumbbell Bench 1RM,strength,40,kg,
+2026-07-04,Dumbbell Shoulder Press (per arm),strength,30,kg,

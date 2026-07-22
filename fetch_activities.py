@@ -91,8 +91,26 @@ def is_strength(a):
     type_key = a.get("activityType", {}).get("typeKey", "").lower()
     return type_key in ["strength_training", "fitness_equipment"]
 
+# NEW (July 2026) — hikes previously fell through every filter and were
+# never fetched into ANY file at all (not runs.csv, not a separate file,
+# nothing) despite an earlier assumption that daily step totals in
+# steps.csv/polar_steps.csv "already captured" hike activity — that only
+# captures raw step counts, not the fact that a discrete hike happened, so
+# it was never actually true that hikes were represented anywhere.
+# Deliberately kept OUT of runs.csv (a hike's pace is categorically slower
+# than running pace and would skew PB/pace-based evidence and LT-gap
+# calculations) — written to its own hikes.csv instead, calendar-visible
+# only for now. typeKey "hiking" is Garmin's documented value but NOT yet
+# confirmed against a real payload from this account — see the one-time
+# DEBUG print below, which will confirm or correct this on the first real
+# hike fetched.
+def is_hike(a):
+    type_key = a.get("activityType", {}).get("typeKey", "").lower()
+    return type_key in ["hiking"]
+
 new_running = [a for a in new_activities if is_running(a)]
 new_strength = [a for a in new_activities if is_strength(a)]
+new_hikes = [a for a in new_activities if is_hike(a)]
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def fmt_time(seconds):
@@ -276,6 +294,26 @@ def build_strength_row(a):
         "start_time": full_start
     }
 
+# ── Build hike records (minimal — calendar visibility only) ──────────────────
+# Deliberately NOT the same rich shape as run_fieldnames: hikes aren't fed
+# into any pace/PB/LT-zone logic (see is_hike() note above), so only enough
+# fields to show a hike on the calendar and, if useful later, a rough
+# distance/duration. Extend this if hikes ever need real stats treatment —
+# not needed for the current calendar-icon-only ask.
+hike_fieldnames = ["date", "name", "distance_km", "elapsed_time", "activity_id", "start_time"]
+
+def build_hike_row(a):
+    dist = a.get("distance", 0)
+    full_start = a.get("startTimeLocal", "")
+    return {
+        "date": full_start[:10],
+        "name": a.get("activityName", ""),
+        "distance_km": round(dist / 1000, 2) if dist else "",
+        "elapsed_time": fmt_time(a.get("duration", 0)),
+        "activity_id": a.get("activityId", ""),
+        "start_time": full_start
+    }
+
 # ── Merge new + existing, deduplicate ─────────────────────────────────────────
 # Prefer Garmin's own activityId as the true unique key — date+name alone can
 # collapse two genuinely different same-day activities that share a name.
@@ -351,13 +389,27 @@ def merge(new_rows, existing_rows):
 
 new_run_rows = _dedup_new_rows([build_run_row(a) for a in new_running])
 new_strength_rows = _dedup_new_rows([build_strength_row(a) for a in new_strength])
+new_hike_rows = _dedup_new_rows([build_hike_row(a) for a in new_hikes])
+
+if new_hike_rows:
+    print(f"DEBUG hikes: {len(new_hike_rows)} activity(ies) matched typeKey 'hiking' — sample name/date: "
+          f"{new_hike_rows[0].get('name')!r} / {new_hike_rows[0].get('date')!r}. "
+          f"If this looks wrong (e.g. 0 found when a hike was definitely logged), the real typeKey "
+          f"needs confirming from a live Garmin payload — see is_hike().")
+
+existing_hikes = []
+if os.path.exists("hikes.csv") and not is_full_refresh:
+    with open("hikes.csv", "r", encoding="utf-8") as f:
+        existing_hikes = list(csv.DictReader(f))
 
 if is_full_refresh:
     all_run_rows = sorted(new_run_rows, key=lambda x: x.get("date", ""), reverse=True)
     all_strength_rows = sorted(new_strength_rows, key=lambda x: x.get("date", ""), reverse=True)
+    all_hike_rows = sorted(new_hike_rows, key=lambda x: x.get("date", ""), reverse=True)
 else:
     all_run_rows = merge(new_run_rows, existing_runs)
     all_strength_rows = merge(new_strength_rows, existing_strength)
+    all_hike_rows = merge(new_hike_rows, existing_hikes)
 
 # ── Write runs.csv ────────────────────────────────────────────────────────────
 with open("runs.csv", "w", newline="", encoding="utf-8") as f:
@@ -372,6 +424,14 @@ with open("strength.csv", "w", newline="", encoding="utf-8") as f:
     writer.writerows(all_strength_rows)
 
 print(f"runs.csv: {len(all_run_rows)} rows | strength.csv: {len(all_strength_rows)} rows")
+
+# ── Write hikes.csv ───────────────────────────────────────────────────────────
+with open("hikes.csv", "w", newline="", encoding="utf-8") as f:
+    writer = csv.DictWriter(f, fieldnames=hike_fieldnames, extrasaction='ignore')
+    writer.writeheader()
+    writer.writerows(all_hike_rows)
+
+print(f"hikes.csv: {len(all_hike_rows)} rows")
 
 # ── Lactate threshold ─────────────────────────────────────────────────────────
 lt_records = []

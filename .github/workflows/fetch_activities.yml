@@ -58,7 +58,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          for f in runs.csv strength.csv lactate.json coach_summary.json api_usage.json steps.csv sleep.csv polar_steps.csv dashboard_metrics.json fetch_status.json polar_hr.csv run_hr_samples.csv coach_context.json garmin_fitness_metrics.csv polar_cardio_load.csv polar_exercises.csv polar_pending_transaction.json; do
+          for f in runs.csv strength.csv lactate.json coach_summary.json api_usage.json steps.csv sleep.csv polar_steps.csv dashboard_metrics.json fetch_status.json polar_hr.csv run_hr_samples.csv coach_context.json garmin_fitness_metrics.csv polar_cardio_load.csv polar_exercises.csv polar_pending_transaction.json hikes.csv; do
             if [ -f "$f" ]; then
               git add "$f"
             else

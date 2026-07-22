@@ -297,8 +297,11 @@ async function init() {
       return `<div class="coach-confidence" title="${escapeHtml(reasons)}"><div class="coach-confidence-bar"><div class="coach-confidence-fill" style="width:${pct}%;background:${barColor}"></div></div><span>${pct}% · ${escapeHtml(label)}</span></div>`;
     })() : '';
     const attentionHtml = coachData.confidence_attention ? `<div class="coach-confidence-attention">${escapeHtml(coachData.confidence_attention)}</div>` : '';
-    const watchItems = Array.isArray(coachData.watch_items) ? coachData.watch_items.filter(Boolean) : [];
-    const watchHtml = watchItems.length ? `<div class="coach-watch"><div class="coach-watch-title">Things to watch</div>${watchItems.map(w => `<div class="coach-watch-item">${escapeHtml(w)}</div>`).join('')}</div>` : '';
+    // Watch items: removed from UI (July 2026, athlete feedback — they read
+    // as useful for the coach's own continuity, not informative to the
+    // athlete). Still computed and written to coach_context.json by
+    // build_dashboard.py for that continuity purpose — this is a
+    // display-only change, no backend removal.
 
     function usageColor(usd) { if (usd < 0.004) return '#4a9eff'; if (usd < 0.008) return '#7bc67e'; if (usd < 0.015) return '#e8ff5a'; if (usd < 0.025) return '#ff9f40'; return '#ff6b35'; }
     function mtdColor(usd) { if (usd < 0.10) return '#4a9eff'; if (usd < 0.25) return '#7bc67e'; if (usd < 0.35) return '#e8ff5a'; if (usd < 0.42) return '#ff9f40'; return '#ff6b35'; }
@@ -310,7 +313,7 @@ async function init() {
     // PROJECT_CONTEXT COACH CARD EXPAND/COLLAPSE). Evidence and digest no
     // longer live here at all — see coachAnnotationsHtml() above.
     const detailsToggleHtml = `<button id="coachDetailsToggle" style="background:var(--border);border:none;color:var(--text-dim);padding:0.35rem 0.7rem;border-radius:4px;cursor:pointer;font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.06em;align-self:flex-start;margin-top:0.2rem">Show details ▾</button>`;
-    const detailsHtml = `<div id="coachDetails" style="display:none">${parasHtml}${watchHtml}<div class="coach-updated">Generated ${coachData.last_updated}</div>${usageHtml}</div>`;
+    const detailsHtml = `<div id="coachDetails" style="display:none">${parasHtml}<div class="coach-updated">Generated ${coachData.last_updated}</div>${usageHtml}</div>`;
     coachCard.innerHTML = `<div class="coach-header"><span class="coach-dot"></span>Training status</div>${headlineHtml}${confidenceHtml}${attentionHtml}${detailsToggleHtml}${detailsHtml}`;
     app.appendChild(coachCard);
     const coachDetailsEl = $('coachDetails');
@@ -419,7 +422,7 @@ async function init() {
   // ── 16-week chart card ────────────────────────────────────────────────────────
   const comparisonGrid = document.createElement('div');
   comparisonGrid.className = 'card';
-  comparisonGrid.innerHTML = `<div class="card-title">Weekly distance & strength — last 16 weeks</div><div class="chart-wrap"><canvas id="optionAChart"></canvas></div>`;
+  comparisonGrid.innerHTML = `<div class="card-title">Weekly distance & strength — last 16 weeks</div><div class="chart-wrap"><canvas id="optionAChart"></canvas></div>${coachAnnotationsHtml('running')}${coachAnnotationsHtml('strength')}`;
   app.appendChild(comparisonGrid);
 
   // ── Annual chart card ────────────────────────────────────────────────────────
@@ -447,6 +450,7 @@ async function init() {
       </div>
     </div>
     <div class="chart-wrap" style="height:200px"><canvas id="monthChart"></canvas></div>
+    ${coachAnnotationsHtml('running')}${coachAnnotationsHtml('strength')}
   `;
   app.appendChild(grid1);
 
@@ -619,7 +623,7 @@ async function init() {
     const currentStreak = m.running.current_weekly_streak ?? 0;
     const rowsHtml = calRows.map((row, ri) => { const isCurrentRow = ri === todayRowIdx; const done = streakCol[ri]; const streakCell = isCurrentRow ? `<div class="streak-week current-fire">🔥</div>` : `<div class="streak-week ${done ? 'done' : 'empty'}">${done ? '✓' : ''}</div>`; return `<div class="cal-row-wrap">${streakCell}</div>`; }).join('');
     const commentaryHtml = (m.calendar && m.calendar.commentary) ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:1rem;padding-top:0.9rem;border-top:1px solid var(--border)">${escapeHtml(m.calendar.commentary)}</div>` : '';
-    calCard.innerHTML = `<div class="card-title">Activity calendar</div><div class="cal-header"><div class="cal-title">${monthNames[month]} ${year}</div><div class="cal-nav"><button id="calPrev">‹</button><button id="calNext">›</button></div></div><div class="cal-with-streak"><div class="cal-grid">${dayLabels.map(l => `<div class="cal-day-label">${l}</div>`).join('')}${dayCells}</div><div class="streak-col"><div class="streak-col-spacer"></div>${rowsHtml}<div class="streak-total"><div class="streak-count">${currentStreak}</div><div class="streak-label">wks</div></div></div></div>${commentaryHtml}`;
+    calCard.innerHTML = `<div class="card-title">Activity calendar</div><div class="cal-header"><div class="cal-title">${monthNames[month]} ${year}</div><div class="cal-nav"><button id="calPrev">‹</button><button id="calNext">›</button></div></div><div class="cal-with-streak"><div class="cal-grid">${dayLabels.map(l => `<div class="cal-day-label">${l}</div>`).join('')}${dayCells}</div><div class="streak-col"><div class="streak-col-spacer"></div>${rowsHtml}<div class="streak-total"><div class="streak-count">${currentStreak}</div><div class="streak-label">wks</div></div></div></div>${commentaryHtml}${coachAnnotationsHtml('running')}`;
     $('calPrev').onclick = () => { if (month === 0) renderCalendar(year - 1, 11); else renderCalendar(year, month - 1); };
     $('calNext').onclick = () => { const n = new Date(); const maxY = n.getFullYear(), maxM = n.getMonth(); if (year < maxY || (year === maxY && month < maxM)) month === 11 ? renderCalendar(year + 1, 0) : renderCalendar(year, month + 1); };
   }
@@ -644,8 +648,43 @@ async function init() {
     const timeLabel = fmtDuration(pb.time);
     const distLabel = pb.dist !== null && pb.dist !== undefined ? `${fmt(pb.dist, 1)} km` : '—';
     return `<div class="effort"><div class="effort-label">${pb.label}</div><div class="effort-value">${paceLabel}</div><div class="effort-detail">${timeLabel} · ${distLabel}</div><div class="effort-sub">${escapeHtml(pb.name || (pb.pace ? '' : 'no data yet'))}</div><div class="effort-date">${pb.date ?? ''}</div>${gapHtml}</div>`;
-  }).join('')}</div>`;
+  }).join('')}</div>${coachAnnotationsHtml('running')}`;
   app.appendChild(effortsCard);
+
+  // ── Strength tests (new July 2026) ────────────────────────────────────────
+  // Currently baseline-only (single July 4 2026 entry per exercise) — no
+  // chart, since one point isn't a trend. A delta-vs-prior line appears
+  // automatically the moment a second test is logged for any exercise, no
+  // rebuild needed — same growth pattern as the LT/VO2max card. Grouped by
+  // category (strength/power/durability) since that's how strength_tests.csv
+  // itself categorizes entries.
+  const strengthTests = Array.isArray(m.strength_tests) ? m.strength_tests : [];
+  if (strengthTests.length) {
+    const stCard = document.createElement('div');
+    stCard.className = 'card';
+    const byCategory = {};
+    strengthTests.forEach(t => {
+      const cat = t.category || 'other';
+      (byCategory[cat] = byCategory[cat] || []).push(t);
+    });
+    const categoryLabels = { strength: 'Strength', power: 'Power', durability: 'Durability', other: 'Other' };
+    const categoryOrder = ['strength', 'power', 'durability', 'other'];
+    const sectionsHtml = categoryOrder.filter(c => byCategory[c]).map(cat => `
+      <div style="margin-bottom:1.25rem">
+        <div style="font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-dim);margin-bottom:0.6rem">${categoryLabels[cat] || cat}</div>
+        <div class="efforts-grid">
+          ${byCategory[cat].map(t => {
+            const deltaHtml = (t.delta_pct !== null && t.delta_pct !== undefined)
+              ? `<div class="effort-sub" style="margin-top:0.2rem;color:${t.delta_pct > 0 ? 'var(--accent)' : t.delta_pct < 0 ? 'var(--accent2)' : 'var(--text-dim)'}">${t.delta_pct > 0 ? '▲' : t.delta_pct < 0 ? '▼' : '▬'} ${Math.abs(t.delta_pct)}% vs ${t.prior_value}${t.unit} (${t.prior_date})</div>`
+              : `<div class="effort-sub" style="margin-top:0.2rem;opacity:0.6">No retest yet</div>`;
+            return `<div class="effort"><div class="effort-label">${escapeHtml(t.exercise)}</div><div class="effort-value">${escapeHtml(String(t.latest_value))}<small style="font-size:.6em;color:var(--text-dim)"> ${escapeHtml(t.unit)}</small></div><div class="effort-date">${t.latest_date}</div>${deltaHtml}</div>`;
+          }).join('')}
+        </div>
+      </div>
+    `).join('');
+    stCard.innerHTML = `<div class="card-title">Strength tests</div>${sectionsHtml}${coachAnnotationsHtml('strength')}`;
+    app.appendChild(stCard);
+  }
 
   // ── Render charts ─────────────────────────────────────────────────────────────
   requestAnimationFrame(() => {

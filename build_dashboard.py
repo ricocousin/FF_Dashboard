@@ -1908,7 +1908,13 @@ if api_key:
             method="POST"
         )
 
-        with urllib.request.urlopen(req, timeout=30) as resp:
+        # Timeout must comfortably exceed the model's generation time for a
+        # full max_tokens response. When max_tokens was 700 a 30s read timeout
+        # was fine; raising it to 1600 pushed non-streaming Opus generations
+        # past 30s, so the read timed out ("The read operation timed out"),
+        # coach_text stayed None, and the dashboard fell back to "coach summary
+        # unavailable today". 120s gives ~2x headroom for a 1600-token reply.
+        with urllib.request.urlopen(req, timeout=120) as resp:
             result = json.loads(resp.read().decode("utf-8"))
             coach_text = result["content"][0]["text"].strip()
             usage = result.get("usage", {})
@@ -2084,7 +2090,10 @@ def _anthropic_message(model, sys_prompt, usr_prompt, max_tokens):
         },
         method="POST"
     )
-    with urllib.request.urlopen(request, timeout=60) as resp:
+    # Same 1600-token generations as the live call — use the same generous
+    # read timeout so a slow Sonnet/judge reply doesn't spuriously fail the
+    # (non-critical) shadow experiment.
+    with urllib.request.urlopen(request, timeout=120) as resp:
         parsed = json.loads(resp.read().decode("utf-8"))
     return parsed["content"][0]["text"].strip(), parsed.get("usage", {})
 

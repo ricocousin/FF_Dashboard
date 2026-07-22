@@ -156,12 +156,10 @@
     .hr-subcard { margin-bottom: 1.75rem; }
     .hr-subcard:last-child { margin-bottom: 0; }
 
-    /* ── Coach tile annotations (per-section evidence/digest, moved out of
-       the top coach card and into the relevant tile/card — July 2026) ──── */
-    .coach-tile-note { margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px dashed var(--border); display: flex; flex-direction: column; gap: 0.3rem; }
-    .coach-tile-note-item { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); line-height: 1.5; padding-left: 1rem; position: relative; }
-    .coach-tile-note-item::before { content: '◦'; position: absolute; left: 0; color: var(--accent); }
-    .coach-tile-note-item.coach-tile-note-low { opacity: 0.7; }
+    /* ── Coach section narrative (per-card grouped paragraph, replaces the
+       old evidence/digest tile-note system — July 2026) ──────────────── */
+    .coach-section-note { margin-top: 0.9rem; padding-top: 0.75rem; border-top: 1px dashed var(--border); font-family: var(--font-body); font-size: 12.5px; color: var(--text); line-height: 1.65; grid-column: 1 / -1; }
+    .coach-section-label { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.4rem; }
   </style>
 </head>
 <body>
@@ -218,41 +216,20 @@ async function init() {
   const app = $('app');
   app.innerHTML = '';
 
-  // ── Coach tile annotations ────────────────────────────────────────────────
-  // Evidence items and digest lines now carry an explicit "section" tag
-  // (added in build_dashboard.py) mapping each one to the tile/card it's
-  // actually about. Restored here as small inline notes on the relevant
-  // tile/card instead of living only in the top coach card — see
-  // PROJECT_CONTEXT COACH DISTRIBUTION. Returns '' when nothing matches so
-  // it's always safe to splice into a template string.
-  function coachAnnotationsHtml(section) {
-    const evidenceEntries = [];
-    if (coachData && Array.isArray(coachData.evidence_items)) {
-      coachData.evidence_items.forEach(e => {
-        if (e && e.section === section && e.text) evidenceEntries.push({ text: e.text, priority: e.priority || 'Medium' });
-      });
-    }
-    // Evidence and digest frequently describe the SAME underlying
-    // comparison (e.g. both a digest line and an evidence item for "4-week
-    // volume") computed independently — showing both produced visibly
-    // duplicate near-identical messages on a tile. Evidence is richer
-    // (percent change, priority-ranked, LLM-curated as relevant today), so
-    // it wins; digest only fills in when nothing was selected for this
-    // section today.
-    let entries = evidenceEntries;
-    if (!entries.length && Array.isArray(m.digest)) {
-      entries = [];
-      m.digest.forEach(d => {
-        if (d && d.section === section && d.text) entries.push({ text: d.text, priority: null });
-      });
-    }
-    if (!entries.length) return '';
-    const itemsHtml = entries.map(en => {
-      const lowCls = en.priority === 'Low' ? ' coach-tile-note-low' : '';
-      const highStyle = en.priority === 'High' ? ' style="color:var(--text-hi);font-weight:500"' : '';
-      return `<div class="coach-tile-note-item${lowCls}"${highStyle}>${escapeHtml(en.text)}</div>`;
-    }).join('');
-    return `<div class="coach-tile-note" style="grid-column:1/-1">${itemsHtml}</div>`;
+  // ── Coach section narrative ────────────────────────────────────────────────
+  // REPLACED (July 2026, athlete direction): evidence and digest are gone
+  // entirely — the coach now writes ONE short paragraph per named group
+  // directly (coachData.sections.overview/trends/threshold/zones/
+  // hr_comparison/calendar/personal_bests), pre-grouped in the prompt
+  // itself rather than assembled here from scattered one-liners. This
+  // fixes the earlier duplication problem structurally: each card gets
+  // exactly one coach note, written once, not reused across multiple
+  // cards. Returns '' when a section is empty so it's always safe to
+  // splice into a template string.
+  function coachSectionHtml(key) {
+    const text = coachData && coachData.sections && coachData.sections[key];
+    if (!text) return '';
+    return `<div class="coach-section-note"><div class="coach-section-label">Coach</div>${escapeHtml(text)}</div>`;
   }
 
   // ── Freshness indicator (single dot + label for the whole overview panel) ────
@@ -273,22 +250,19 @@ async function init() {
   }
 
   // ── Coach card ────────────────────────────────────────────────────────────────
-  // Shrunk (July 2026, per athlete direction — see PROJECT_CONTEXT COACH
-  // DISTRIBUTION): this card now carries ONLY headline + confidence +
-  // summary + watch. Evidence items and the digest have moved out to their
-  // respective tiles/cards via coachAnnotationsHtml() above. Per-session
-  // HR/dropout detail (previously its own "H10 dropout fallback" card) is
-  // no longer a standalone info tile at all — that data now feeds the
-  // coach's own SUMMARY narrative (see build_dashboard.py's enriched
-  // per-session HR prompt), so it surfaces as coaching prose here rather
-  // than a separate UI element.
-  if (coachData && (coachData.summary || (coachData.insights && coachData.insights.length > 0))) {
+  // Shrunk further (July 2026, second pass — per athlete direction): this
+  // card now carries ONLY headline (up to 3 short sentences) + confidence.
+  // The old single SUMMARY paragraph is gone entirely — the coach now
+  // writes one grouped narrative paragraph per card (Overview, Trends,
+  // Threshold, Zones, HR comparison, Calendar, Personal bests), each
+  // rendered directly on its own card via coachSectionHtml() below, not
+  // duplicated here. Evidence is gone completely too, per direct athlete
+  // request — data-import confirmation is the freshness dots' job, not a
+  // numbered evidence list's.
+  if (coachData && coachData.headline) {
     const coachCard = document.createElement('div');
     coachCard.className = 'coach-card';
-    const rawText = coachData.summary || coachData.insights.join('\n\n');
-    const paragraphs = rawText.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
-    const parasHtml = paragraphs.map(p => `<div class="coach-insight">${escapeHtml(p)}</div>`).join('');
-    const headlineHtml = coachData.headline ? `<div class="coach-headline">${escapeHtml(coachData.headline)}</div>` : '';
+    const headlineHtml = `<div class="coach-headline">${escapeHtml(coachData.headline)}</div>`;
     const confidenceHtml = (coachData.confidence_pct !== undefined && coachData.confidence_pct !== null) ? (() => {
       const pct = coachData.confidence_pct;
       const label = coachData.confidence_label || '';
@@ -297,23 +271,16 @@ async function init() {
       return `<div class="coach-confidence" title="${escapeHtml(reasons)}"><div class="coach-confidence-bar"><div class="coach-confidence-fill" style="width:${pct}%;background:${barColor}"></div></div><span>${pct}% · ${escapeHtml(label)}</span></div>`;
     })() : '';
     const attentionHtml = coachData.confidence_attention ? `<div class="coach-confidence-attention">${escapeHtml(coachData.confidence_attention)}</div>` : '';
-    // Watch items: removed from UI (July 2026, athlete feedback — they read
-    // as useful for the coach's own continuity, not informative to the
-    // athlete). Still computed and written to coach_context.json by
-    // build_dashboard.py for that continuity purpose — this is a
-    // display-only change, no backend removal.
 
     function usageColor(usd) { if (usd < 0.004) return '#4a9eff'; if (usd < 0.008) return '#7bc67e'; if (usd < 0.015) return '#e8ff5a'; if (usd < 0.025) return '#ff9f40'; return '#ff6b35'; }
     function mtdColor(usd) { if (usd < 0.10) return '#4a9eff'; if (usd < 0.25) return '#7bc67e'; if (usd < 0.35) return '#e8ff5a'; if (usd < 0.42) return '#ff9f40'; return '#ff6b35'; }
     function ytdColor(usd) { if (usd < 1.00) return '#4a9eff'; if (usd < 2.50) return '#7bc67e'; if (usd < 3.50) return '#e8ff5a'; if (usd < 4.50) return '#ff9f40'; return '#ff6b35'; }
     const u = coachData.usage;
     const usageHtml = u ? (() => { const dc = usageColor(u.cost_usd); const mc = mtdColor(coachData.usage_mtd_usd || 0); const yc = ytdColor(coachData.usage_ytd_usd || 0); return `<div class="coach-usage"><div><span style="color:${dc}">${u.input_tokens.toLocaleString()} it · ${u.output_tokens.toLocaleString()} ot · $${u.cost_usd.toFixed(4)} / ${u.cost_dkk.toFixed(3)} kr</span></div><div><span style="color:${mc}">MTD $${(coachData.usage_mtd_usd || 0).toFixed(4)} / ${(coachData.usage_mtd_dkk || 0).toFixed(3)} kr</span></div><div><span style="color:${yc}">YTD $${(coachData.usage_ytd_usd || 0).toFixed(4)} / ${(coachData.usage_ytd_dkk || 0).toFixed(3)} kr</span></div><div class="coach-usage-scale"><div style="background:linear-gradient(to right,#4a9eff,#7bc67e,#e8ff5a,#ff9f40,#ff6b35);height:2px;border-radius:1px;margin-top:4px;opacity:0.5"></div><div style="display:flex;justify-content:space-between;font-size:8px;color:var(--muted);margin-top:2px"><span>min</span><span>normal</span><span>elevated</span><span>high</span><span>max</span></div></div></div>`; })() : '';
-    // Headline + confidence bar always visible; summary + watch + footer
-    // collapsed by default behind "Show details ▾" (unchanged UX — see
-    // PROJECT_CONTEXT COACH CARD EXPAND/COLLAPSE). Evidence and digest no
-    // longer live here at all — see coachAnnotationsHtml() above.
+    // Only the generated-timestamp/usage footer stays behind the toggle
+    // now — there's no large summary blob left to hide.
     const detailsToggleHtml = `<button id="coachDetailsToggle" style="background:var(--border);border:none;color:var(--text-dim);padding:0.35rem 0.7rem;border-radius:4px;cursor:pointer;font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.06em;align-self:flex-start;margin-top:0.2rem">Show details ▾</button>`;
-    const detailsHtml = `<div id="coachDetails" style="display:none">${parasHtml}<div class="coach-updated">Generated ${coachData.last_updated}</div>${usageHtml}</div>`;
+    const detailsHtml = `<div id="coachDetails" style="display:none"><div class="coach-updated">Generated ${coachData.last_updated}</div>${usageHtml}</div>`;
     coachCard.innerHTML = `<div class="coach-header"><span class="coach-dot"></span>Training status</div>${headlineHtml}${confidenceHtml}${attentionHtml}${detailsToggleHtml}${detailsHtml}`;
     app.appendChild(coachCard);
     const coachDetailsEl = $('coachDetails');
@@ -378,16 +345,16 @@ async function init() {
     ? `<br><span class="cross-ref" style="color:var(--load)">Strain:tolerance ${cl.ratio.toFixed(2)}${cl.status ? ' · ' + escapeHtml(cl.status) : ''}</span>`
     : '';
 
-  const stepsRow = (sp.avg_all_time !== null) ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps${stepsFreshDot}</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_all_time?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsChangeHtml}</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsDiscrepancyHtml}</span></div>${coachAnnotationsHtml('steps')}</div>` : '';
+  const stepsRow = (sp.avg_all_time !== null) ? `<div class="overview-full"><div class="overview-label intensity" style="grid-column:1/-1;color:var(--steps)">Steps${stepsFreshDot}</div><div class="stat"><span class="stat-label">Avg / day (all time)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_all_time?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps</span></div><div class="stat"><span class="stat-label">Avg / day (7d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_7d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsChangeHtml}</span></div><div class="stat"><span class="stat-label">Avg / day (30d)</span><span class="stat-value" style="color:var(--steps)">${sp.avg_30d?.toLocaleString() ?? '—'}</span><span class="stat-sub">steps${stepsDiscrepancyHtml}</span></div></div>` : '';
 
   const recoveryTile = (label, data, changeHtml, crossRefHtml) => {
     const durationStr = data && data.mins ? fmtHrs(data.mins) : '—';
     const scoreStr = data && data.score !== null && data.score !== undefined ? `Score: ${Math.round(data.score)}` : 'Score: —';
     return `<div class="stat"><span class="stat-label">${label}</span><span class="stat-value" style="color:var(--recovery)">${durationStr}</span><span class="stat-sub">${scoreStr}${changeHtml || ''}${crossRefHtml || ''}</span></div>`;
   };
-  const recoveryRow = (rc.week.mins !== null || rc.month.mins !== null || rc.year.mins !== null) ? `<div class="overview-full"><div class="overview-label recovery" style="grid-column:1/-1">Recovery${recoveryFreshDot}</div>${recoveryTile('Avg / week', rc.week, recoveryChangeHtml, cardioCrossRefHtml)}${recoveryTile('Avg / month', rc.month)}${recoveryTile('Avg / year', rc.year)}${coachAnnotationsHtml('recovery')}</div>` : '';
+  const recoveryRow = (rc.week.mins !== null || rc.month.mins !== null || rc.year.mins !== null) ? `<div class="overview-full"><div class="overview-label recovery" style="grid-column:1/-1">Recovery${recoveryFreshDot}</div>${recoveryTile('Avg / week', rc.week, recoveryChangeHtml, cardioCrossRefHtml)}${recoveryTile('Avg / month', rc.month)}${recoveryTile('Avg / year', rc.year)}</div>` : '';
 
-  const loadRow = (cl.strain !== null && cl.strain !== undefined) ? `<div class="overview-full"><div class="overview-label load" style="grid-column:1/-1">Load (Polar Cardio)${loadFreshDot}</div><div class="stat"><span class="stat-label">Strain (7d avg)</span><span class="stat-value" style="color:var(--load)">${fmt(cl.strain, 0)}</span><span class="stat-sub">load units</span></div><div class="stat"><span class="stat-label">Tolerance (28d avg)</span><span class="stat-value" style="color:var(--load)">${fmt(cl.tolerance, 0)}</span><span class="stat-sub">load units</span></div><div class="stat"><span class="stat-label">Strain:tolerance ratio</span><span class="stat-value" style="color:var(--load)">${cl.ratio !== null && cl.ratio !== undefined ? cl.ratio.toFixed(2) : '—'}</span><span class="stat-sub">${cl.status ? escapeHtml(cl.status) : '—'}${cl.latest_date ? ' · ' + cl.latest_date : ''}</span></div>${coachAnnotationsHtml('load')}</div>` : '';
+  const loadRow = (cl.strain !== null && cl.strain !== undefined) ? `<div class="overview-full"><div class="overview-label load" style="grid-column:1/-1">Load (Polar Cardio)${loadFreshDot}</div><div class="stat"><span class="stat-label">Strain (7d avg)</span><span class="stat-value" style="color:var(--load)">${fmt(cl.strain, 0)}</span><span class="stat-sub">load units</span></div><div class="stat"><span class="stat-label">Tolerance (28d avg)</span><span class="stat-value" style="color:var(--load)">${fmt(cl.tolerance, 0)}</span><span class="stat-sub">load units</span></div><div class="stat"><span class="stat-label">Strain:tolerance ratio</span><span class="stat-value" style="color:var(--load)">${cl.ratio !== null && cl.ratio !== undefined ? cl.ratio.toFixed(2) : '—'}</span><span class="stat-sub">${cl.status ? escapeHtml(cl.status) : '—'}${cl.latest_date ? ' · ' + cl.latest_date : ''}</span></div></div>` : '';
 
   const overviewBlock = document.createElement('div');
   overviewBlock.className = 'overview-block';
@@ -397,14 +364,12 @@ async function init() {
       <div class="stat"><span class="stat-label">Avg / run</span><span class="stat-value accent">${fmt(r.avg_per_run_km, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${r.runs_this_year} runs ${m.this_year}</span></div>
       <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(r.avg_per_week_km, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${fmt(r.total_distance_this_year_km, 0)} km ${m.this_year}${runChangeHtml}</span></div>
       <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value accent">${r.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${r.longest_weekly_streak ?? '—'} wks</span></div>
-      ${coachAnnotationsHtml('running')}
     </div>
     <div class="overview-full">
       <div class="overview-label lift" style="grid-column:1/-1">Strength${strengthFreshDot}</div>
       <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value blue">${fmt(st.avg_sessions_per_week, 1)}</span><span class="stat-sub">${st.sessions_this_year} sessions ${m.this_year}${strengthChangeHtml}</span></div>
       <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(st.avg_hours_per_week, 1)} <small style="font-size:.9rem;color:var(--text-dim)">hrs</small></span><span class="stat-sub">${fmt(st.total_hours_this_year, 1)} hrs ${m.this_year}</span></div>
       <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value blue">${st.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${st.longest_weekly_streak ?? '—'} wks</span></div>
-      ${coachAnnotationsHtml('strength')}
     </div>
     ${stepsRow}
     <div class="overview-full">
@@ -412,17 +377,25 @@ async function init() {
       <div class="stat"><span class="stat-label">Avg / week (${m.this_year})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(iv.avg_week_year_mins)}</span><span class="stat-sub">${fmtHrs(iv.avg_week_year_run_mins)} run · ${fmtHrs(iv.avg_week_year_lift_mins)} lift</span></div>
       <div class="stat"><span class="stat-label">Avg / week (${m.this_month_short})</span><span class="stat-value" style="color:var(--intensity)">${fmtHrs(iv.avg_week_month_mins)}</span><span class="stat-sub">${fmtHrs(iv.avg_week_month_run_mins)} run · ${fmtHrs(iv.avg_week_month_lift_mins)} lift${intensityChangeHtml}</span></div>
       <div class="stat"><span class="stat-label">Streak vs ${iv.goal_mins}min goal</span><span class="stat-value" style="color:var(--intensity)">${iv.streak_weeks} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${iv.best_streak_weeks} wks</span></div>
-      ${coachAnnotationsHtml('intensity')}
     </div>
     ${recoveryRow}
     ${loadRow}
   `;
+  // Single combined Overview narrative, covering Running/Strength/Steps/
+  // Intensity/Recovery/Load together as ONE picture — deliberately shown
+  // once here, not repeated per tile (that repetition was the whole
+  // problem with the old evidence/digest system). Own surface-colored
+  // wrapper to match the visual rhythm of the tile rows above it.
+  const overviewNoteText = coachSectionHtml('overview');
+  if (overviewNoteText) {
+    overviewBlock.innerHTML += `<div style="background:var(--surface);padding:1rem 1.5rem">${overviewNoteText}</div>`;
+  }
   app.appendChild(overviewBlock);
 
   // ── 16-week chart card ────────────────────────────────────────────────────────
   const comparisonGrid = document.createElement('div');
   comparisonGrid.className = 'card';
-  comparisonGrid.innerHTML = `<div class="card-title">Weekly distance & strength — last 16 weeks</div><div class="chart-wrap"><canvas id="optionAChart"></canvas></div>${coachAnnotationsHtml('running')}${coachAnnotationsHtml('strength')}`;
+  comparisonGrid.innerHTML = `<div class="card-title">Weekly distance & strength — last 16 weeks</div><div class="chart-wrap"><canvas id="optionAChart"></canvas></div>${coachSectionHtml('trends')}`;
   app.appendChild(comparisonGrid);
 
   // ── Annual chart card ────────────────────────────────────────────────────────
@@ -450,7 +423,6 @@ async function init() {
       </div>
     </div>
     <div class="chart-wrap" style="height:200px"><canvas id="monthChart"></canvas></div>
-    ${coachAnnotationsHtml('running')}${coachAnnotationsHtml('strength')}
   `;
   app.appendChild(grid1);
 
@@ -491,9 +463,9 @@ async function init() {
       ? `<div class="chart-wrap" style="height:140px;margin-top:1rem"><canvas id="ltVo2Chart"></canvas></div>`
       : `<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:1rem">Trend builds as more readings land — check back soon.</p>`;
 
-    ltVo2Card.innerHTML = `<div class="card-title-row"><div class="card-title">Lactate threshold &amp; VO2max</div>${tileFreshDot(pipelineStatus)}</div><div class="lt-grid" style="grid-template-columns:1fr 1fr"><div>${ltHeaderHtml}</div><div>${vo2HeaderHtml}</div></div>${hasLt ? `<div style="margin-top:1rem"><div class="lt-label" style="margin-bottom:0.75rem">Training zones</div><div class="zones">${zonesHtml}</div></div>` : ''}${trendHtml}${coachAnnotationsHtml('lt')}`;
+    ltVo2Card.innerHTML = `<div class="card-title-row"><div class="card-title">Lactate threshold &amp; VO2max</div>${tileFreshDot(pipelineStatus)}</div><div class="lt-grid" style="grid-template-columns:1fr 1fr"><div>${ltHeaderHtml}</div><div>${vo2HeaderHtml}</div></div>${hasLt ? `<div style="margin-top:1rem"><div class="lt-label" style="margin-bottom:0.75rem">Training zones</div><div class="zones">${zonesHtml}</div></div>` : ''}${trendHtml}${coachSectionHtml('threshold')}`;
   } else {
-    ltVo2Card.innerHTML = `<div class="card-title-row"><div class="card-title">Lactate threshold &amp; VO2max</div>${tileFreshDot(pipelineStatus)}</div><p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">No LT or VO2max data yet.</p>${coachAnnotationsHtml('lt')}`;
+    ltVo2Card.innerHTML = `<div class="card-title-row"><div class="card-title">Lactate threshold &amp; VO2max</div>${tileFreshDot(pipelineStatus)}</div><p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">No LT or VO2max data yet.</p>${coachSectionHtml('threshold')}`;
   }
   app.appendChild(ltVo2Card);
 
@@ -520,7 +492,7 @@ async function init() {
     </div>`;
 
     if (!zt || !zt.has_lt_data || !zt.total_minutes) {
-      ztCard.innerHTML = `<div class="card-title-row"><div class="card-title">Time in zone</div>${toggleHtml}</div><p class="zt-empty">${!zt || !zt.has_lt_data ? 'No LT reading yet — zone boundaries need a valid LT to compute.' : 'No zone data for this window yet.'}</p>${coachAnnotationsHtml('zone_time')}`;
+      ztCard.innerHTML = `<div class="card-title-row"><div class="card-title">Time in zone</div>${toggleHtml}</div><p class="zt-empty">${!zt || !zt.has_lt_data ? 'No LT reading yet — zone boundaries need a valid LT to compute.' : 'No zone data for this window yet.'}</p>${coachSectionHtml('zones')}`;
     } else {
       const zones = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5'];
       const stackHtml = zones.map(z => {
@@ -545,7 +517,7 @@ async function init() {
       const dropoutNote = zt.dropout_fallback_sessions_with_data ? `, ${zt.dropout_fallback_sessions_with_data} via H10 dropout fallback` : '';
       const sessionsNote = `<div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:1rem">${zt.running_sessions_with_data} run(s), ${zt.strength_sessions_with_data} strength session(s) with zone data this window${dropoutNote} · ${zt.window_start} to ${zt.window_end}</div>`;
 
-      ztCard.innerHTML = `<div class="card-title-row"><div class="card-title">Time in zone</div>${toggleHtml}</div><div class="zt-stack">${stackHtml}</div><div class="zt-legend">${legendHtml}</div>${goalsHtml}${sessionsNote}${coachAnnotationsHtml('zone_time')}`;
+      ztCard.innerHTML = `<div class="card-title-row"><div class="card-title">Time in zone</div>${toggleHtml}</div><div class="zt-stack">${stackHtml}</div><div class="zt-legend">${legendHtml}</div>${goalsHtml}${sessionsNote}${coachSectionHtml('zones')}`;
     }
 
     ztCard.querySelectorAll('.zt-toggle button').forEach(btn => {
@@ -569,6 +541,7 @@ async function init() {
       <div class="hr-subcard-title">Run HR: Garmin (H10) vs Polar (wrist continuous vs exercise entry) — same run windows</div>
       ${hrCompare.length ? `<div class="chart-wrap" style="height:160px"><canvas id="hrCompareChart"></canvas></div>` : `<p class="zt-empty">No matched run windows yet.</p>`}
     </div>
+    ${coachSectionHtml('hr_comparison')}
   `;
   app.appendChild(hrCard);
 
@@ -623,7 +596,7 @@ async function init() {
     const currentStreak = m.running.current_weekly_streak ?? 0;
     const rowsHtml = calRows.map((row, ri) => { const isCurrentRow = ri === todayRowIdx; const done = streakCol[ri]; const streakCell = isCurrentRow ? `<div class="streak-week current-fire">🔥</div>` : `<div class="streak-week ${done ? 'done' : 'empty'}">${done ? '✓' : ''}</div>`; return `<div class="cal-row-wrap">${streakCell}</div>`; }).join('');
     const commentaryHtml = (m.calendar && m.calendar.commentary) ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:1rem;padding-top:0.9rem;border-top:1px solid var(--border)">${escapeHtml(m.calendar.commentary)}</div>` : '';
-    calCard.innerHTML = `<div class="card-title">Activity calendar</div><div class="cal-header"><div class="cal-title">${monthNames[month]} ${year}</div><div class="cal-nav"><button id="calPrev">‹</button><button id="calNext">›</button></div></div><div class="cal-with-streak"><div class="cal-grid">${dayLabels.map(l => `<div class="cal-day-label">${l}</div>`).join('')}${dayCells}</div><div class="streak-col"><div class="streak-col-spacer"></div>${rowsHtml}<div class="streak-total"><div class="streak-count">${currentStreak}</div><div class="streak-label">wks</div></div></div></div>${commentaryHtml}${coachAnnotationsHtml('running')}`;
+    calCard.innerHTML = `<div class="card-title">Activity calendar</div><div class="cal-header"><div class="cal-title">${monthNames[month]} ${year}</div><div class="cal-nav"><button id="calPrev">‹</button><button id="calNext">›</button></div></div><div class="cal-with-streak"><div class="cal-grid">${dayLabels.map(l => `<div class="cal-day-label">${l}</div>`).join('')}${dayCells}</div><div class="streak-col"><div class="streak-col-spacer"></div>${rowsHtml}<div class="streak-total"><div class="streak-count">${currentStreak}</div><div class="streak-label">wks</div></div></div></div>${commentaryHtml}${coachSectionHtml('calendar')}`;
     $('calPrev').onclick = () => { if (month === 0) renderCalendar(year - 1, 11); else renderCalendar(year, month - 1); };
     $('calNext').onclick = () => { const n = new Date(); const maxY = n.getFullYear(), maxM = n.getMonth(); if (year < maxY || (year === maxY && month < maxM)) month === 11 ? renderCalendar(year + 1, 0) : renderCalendar(year, month + 1); };
   }
@@ -648,7 +621,7 @@ async function init() {
     const timeLabel = fmtDuration(pb.time);
     const distLabel = pb.dist !== null && pb.dist !== undefined ? `${fmt(pb.dist, 1)} km` : '—';
     return `<div class="effort"><div class="effort-label">${pb.label}</div><div class="effort-value">${paceLabel}</div><div class="effort-detail">${timeLabel} · ${distLabel}</div><div class="effort-sub">${escapeHtml(pb.name || (pb.pace ? '' : 'no data yet'))}</div><div class="effort-date">${pb.date ?? ''}</div>${gapHtml}</div>`;
-  }).join('')}</div>${coachAnnotationsHtml('running')}`;
+  }).join('')}</div>${coachSectionHtml('personal_bests')}`;
   app.appendChild(effortsCard);
 
   // ── Strength tests (new July 2026) ────────────────────────────────────────
@@ -695,7 +668,7 @@ async function init() {
         </div>
       </div>
     `).join('');
-    stCard.innerHTML = `<div class="card-title">Strength tests</div>${sectionsHtml}${coachAnnotationsHtml('strength')}`;
+    stCard.innerHTML = `<div class="card-title">Strength tests</div>${sectionsHtml}`;
     app.appendChild(stCard);
   }
 

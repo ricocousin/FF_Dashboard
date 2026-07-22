@@ -667,8 +667,21 @@ async function init() {
       const cat = t.category || 'other';
       (byCategory[cat] = byCategory[cat] || []).push(t);
     });
-    const categoryLabels = { strength: 'Strength', power: 'Power', durability: 'Durability', other: 'Other' };
-    const categoryOrder = ['strength', 'power', 'durability', 'other'];
+    const categoryLabels = { strength: 'Strength', power: 'Power', durability: 'Durability', bodyweight: 'Bodyweight', other: 'Other' };
+    // FIXED (July 2026): previously a hardcoded 4-item list, which meant
+    // any category value not in that list (e.g. a new "bodyweight" entry
+    // in strength_tests.csv) silently vanished from this card instead of
+    // rendering — contradicts strength_tests.csv's own "flat by design,
+    // new exercise = new row, no schema changes ever" convention. Category
+    // order is now derived from whatever's actually present in the data:
+    // known categories first in a sensible reading order, anything unknown
+    // appended alphabetically after — new categories just work.
+    const knownCategoryOrder = ['strength', 'power', 'durability', 'bodyweight'];
+    const presentCategories = Object.keys(byCategory);
+    const categoryOrder = [
+      ...knownCategoryOrder.filter(c => presentCategories.includes(c)),
+      ...presentCategories.filter(c => !knownCategoryOrder.includes(c)).sort()
+    ];
     const sectionsHtml = categoryOrder.filter(c => byCategory[c]).map(cat => `
       <div style="margin-bottom:1.25rem">
         <div style="font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-dim);margin-bottom:0.6rem">${categoryLabels[cat] || cat}</div>

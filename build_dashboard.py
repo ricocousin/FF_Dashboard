@@ -679,6 +679,10 @@ for pb in pbs:
 # ── Calendar (all-history activity dates, compact) ────────────────────────────
 calendar_run_dates = sorted({r["date"] for r in all_run_rows if r.get("date")})
 calendar_strength_dates = sorted({s["date"] for s in all_strength_rows if s.get("date")})
+# NEW (July 2026) — hikes previously weren't captured anywhere at all (see
+# fetch_activities.py's is_hike() note); now read from hikes.csv for
+# calendar visibility only, same pattern as run/strength dates.
+calendar_hike_dates = sorted({h["date"] for h in _load_csv("hikes.csv") if h.get("date")})
 
 # ── HR ZONE BOUNDS ─────────────────────────────────────────────────────────────
 # Moved up from the RUN ZONE-TIME PROJECT section (further down this file) —
@@ -1306,6 +1310,25 @@ else:
 
 digest_lines.append({"text": f"➔ Running streak: {summary.get('current_weekly_streak', '—')} wks (best: {summary.get('longest_weekly_streak', '—')})", "section": "running"})
 
+# NEW (July 2026) — Load and Intensity previously had NO guaranteed digest
+# line, only an optional evidence item the model may or may not select on
+# a given day (cardio load ratio is evidence category #7; intensity has no
+# evidence category at all). That meant those two tiles could go entire
+# days showing no coach annotation whatsoever, unlike every other tile.
+# Both now get a deterministic line every run, same pattern as the rest.
+if cardio_load.get("ratio") is not None:
+    _cl_r = cardio_load["ratio"]
+    _cl_status_text = f" ({cardio_load['status']})" if cardio_load.get("status") else ""
+    _cl_arrow = "▲" if _cl_r >= 1.3 else "▼" if _cl_r < 0.8 else "➔"
+    digest_lines.append({"text": f"{_cl_arrow} Strain:tolerance ratio {_cl_r:.2f}{_cl_status_text}", "section": "load"})
+else:
+    digest_lines.append({"text": "➔ Cardio load data still accumulating", "section": "load"})
+
+_intensity_delta = avg_activity_mins_per_week_month - avg_activity_mins_per_week
+_intensity_arrow = "▲" if _intensity_delta > 15 else "▼" if _intensity_delta < -15 else "➔"
+_intensity_word = "Stable" if abs(_intensity_delta) <= 15 else ("Up" if _intensity_delta > 0 else "Down")
+digest_lines.append({"text": f"{_intensity_arrow} {_intensity_word} — {round(avg_activity_mins_per_week_month)} min/week this month vs {round(avg_activity_mins_per_week)} min/week year avg", "section": "intensity"})
+
 # ── Calendar commentary ────────────────────────────────────────────────────────
 def _calendar_commentary():
     streak = summary.get("current_weekly_streak") or 0
@@ -1434,6 +1457,7 @@ dashboard_metrics = {
     "calendar": {
         "run_dates": calendar_run_dates,
         "strength_dates": calendar_strength_dates,
+        "hike_dates": calendar_hike_dates,
         "commentary": _calendar_commentary()
     },
 

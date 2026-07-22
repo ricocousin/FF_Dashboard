@@ -1384,6 +1384,51 @@ def _tile_freshness():
         "load": "fresh" if load_fresh else "stale"
     }
 
+# ── Strength test summary (for a new UI card — July 2026) ────────────────────
+# strength_test_history was previously only used internally for evidence
+# catalog item #10 (a delta only appears once a SECOND test is logged for
+# an exercise — currently DORMANT, single July 4 2026 baseline entries
+# only). This exposes the same underlying data as a standalone
+# dashboard_metrics.json key so a UI card can show current baseline values
+# grouped by category, with a delta line that appears automatically the
+# moment a second test lands — same "grows into a trend, no rebuild
+# needed" pattern as the LT/VO2max card. Deliberately independent from the
+# evidence-catalog delta logic above rather than refactored to share it —
+# lower risk of an accidental regression to a working evidence category
+# for a same-day UI addition.
+def _strength_test_summary():
+    summary_list = []
+    for exercise, history in strength_test_history.items():
+        if not history:
+            continue
+        latest = history[-1]
+        entry = {
+            "exercise": exercise,
+            "category": latest.get("category", ""),
+            "latest_value": latest.get("value"),
+            "unit": latest.get("unit", ""),
+            "latest_date": latest.get("date"),
+            "prior_value": None,
+            "prior_date": None,
+            "delta_pct": None
+        }
+        if len(history) >= 2:
+            prior = history[-2]
+            try:
+                latest_val, prior_val = float(latest["value"]), float(prior["value"])
+                if prior_val != 0:
+                    entry["prior_value"] = prior.get("value")
+                    entry["prior_date"] = prior.get("date")
+                    entry["delta_pct"] = round(((latest_val - prior_val) / prior_val) * 100, 1)
+            except (ValueError, TypeError):
+                pass
+        summary_list.append(entry)
+    # Group by category, then alphabetically within each — stable, readable
+    # ordering rather than insertion order (which follows CSV row order).
+    return sorted(summary_list, key=lambda e: (e["category"], e["exercise"]))
+
+strength_tests_summary = _strength_test_summary()
+
 dashboard_metrics = {
     "last_updated": today.strftime("%Y-%m-%d %H:%M UTC"),
     "last_complete_date": last_complete_str,
@@ -1453,6 +1498,7 @@ dashboard_metrics = {
     },
 
     "pbs": pbs,
+    "strength_tests": strength_tests_summary,
 
     "calendar": {
         "run_dates": calendar_run_dates,

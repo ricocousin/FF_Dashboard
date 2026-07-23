@@ -65,5 +65,72 @@
       "cost_usd": 0.056585,
       "cost_dkk": 0.39044
     }
+  },
+  {
+    "date": "2026-07-23",
+    "ab_mapping": {
+      "A": "sonnet",
+      "B": "opus"
+    },
+    "output_a": "HEADLINE:\nTwo functional fitness sessions this week keep strength consistent while running rests. Efficiency gains from the recent block remain the story \u2014 the specificity gap for the crossing is still open.\n\nOVERVIEW:\nThis week shows a clear pivot from the running-heavy volume block into something quieter \u2014 no runs logged in the last two days, replaced by two functional fitness sessions bookending the gap. Steps remain very high relative to rest-day baseline, which continues to reflect the standing daily movement floor (commute plus general activity) rather than any specific training signal. The strain/tolerance readout showing zero strain against a still-substantial tolerance number is consistent with the running pause rather than a genuine fitness cliff \u2014 one or two quiet days will do that to a rolling 7-day figure. Nothing here reads as detraining in the meaningful sense; it reads as a natural trough between a completed high-volume running block and whatever comes next.\n\nTRENDS:\nThe 16-week shape remains a steady build culminating in the recent +64% four-week jump, and the year-to-date comparison against last year is stark \u2014 this is a fundamentally different volume year. The current pause doesn't break that shape; a single quiet stretch after a sustained loading block is exactly what you'd expect to see in a year built on progressive accumulation rather than rigid periodisation. Nothing about this week suggests plateau or reversal, just a natural undulation.\n\nTHRESHOLD:\nThreshold pace and heart rate haven't updated since early July, so there's no new evidence either way this week. Given the volume absorbed since that reading \u2014 including the 20 km effort and the sustained higher-HR 12 km session \u2014 the standing threshold figure likely still understates current capability, but that's inference, not demonstrated fitness from fresh data.\n\nZONES:\nThe last run block sat predominantly in Z1\u2013Z2 with only brief Z3 excursions, consistent with genuine easy-effort work rather than grey-zone drift \u2014 a good sign for durability-focused training. The two most recent strength sessions carry no HR line, so there's nothing to add on intensity distribution there beyond noting the pattern of low, controlled HR in prior functional fitness sessions holding steady where data exists.\n\nHR_COMPARISON:\nNothing new to flag here this week \u2014 recent strength sessions without HR data mean there's no fresh comparison point, and the pattern from sessions that do have data continues to show the expected low, steady strength-session profile against more variable running HR.\n\nCALENDAR:\nThe pattern this week \u2014 a two-day run gap flanked by strength sessions \u2014 breaks from the near-daily rhythm of the preceding month, but a brief pause after a sustained volume increase is a normal and arguably sensible punctuation point rather than a consistency concern. Worth watching whether this becomes a short reset or the start of a genuine step-down as the crossing approaches.\n\nPERSONAL_BESTS:\nNo new PB-relevant data this week; the existing marks remain the reference points, and nothing in this week's quieter running load moves that picture either direction.\n\nWATCH:\n- Watch whether the run gap resolves into renewed volume or signals a deliberate step-down ahead of the crossing.\n- The specificity gap \u2014 loaded, hilly, sustained time-on-feet \u2014 is still unaddressed with the event now inside three weeks.\n- Watch how multi-day durability responds once running resumes, especially if back-to-back days enter the plan.\n- Sleep remains inconsistent night to night; keep half an eye on it as pre-event load decisions firm up.",
+    "output_b": "HEADLINE:\nAerobic efficiency is locked in and back-to-back durability is proven. With St. Olavsleden two weeks out, the taper window has arrived \u2014 and loaded, sustained-climb specificity never entered the picture.\n\nOVERVIEW:\nThe recent four-week block landed a substantial volume jump while holding easy-run HR in its lower band, which is exactly what you want going into a multi-day self-supported effort \u2014 the durability base is real, not borrowed. Strength has stayed frequent through the same window, sitting almost entirely in low zones, so it's supporting the running rather than competing with it. Steps remain very high even on rest days, meaning your true daily load is higher than the run log alone suggests, and that background time-on-feet matters more than usual for what's coming. The one genuine gap remains terrain: none of this volume carried a loaded pack or sustained climbing, so the crossing's specific demand is still untested. Recovery signals are mixed and the cardio-load status reads as detraining, which almost certainly reflects a real recent drop in logged running \u2014 appropriate this close to the start, not a concern.\n\nTRENDS:\nThe 16-week shape is clearly a build-then-consolidate rhythm rather than a flat plateau, and the year-to-date jump against the same point last year is enormous \u2014 you're operating in a completely different volume tier than a year ago. That trajectory makes sense for someone building durable year-round hybrid capacity, and the recent block's expansion followed by an easing edge fits a deliberate approach to the event window rather than any loss of momentum.\n\nTHRESHOLD:\nThreshold pace remains sharp from the early-July measurement, and there's no signal it's eroded \u2014 the easy work has been protecting aerobic fitness, not blunting it. But with insufficient rolling baseline history, treat the single figure as a reference point rather than a trend. For the crossing, threshold speed isn't the limiter anyway; sustained low-intensity economy over days is, and that's the quality your recent runs actually demonstrate.\n\nZONES:\nThe distribution is strongly aerobic, which is right for this phase \u2014 the long runs and easy sessions sit predominantly in Z1\u2013Z2 with only brief excursions higher. The per-session shapes confirm it: your recent long and mid-distance runs are genuinely steady, not disguised interval sessions, with only the earlier faster session carrying meaningful Z3 time. That's the appropriate texture heading into a self-supported multi-day effort where control, not intensity, is the skill being rehearsed.\n\nHR_COMPARISON:\nStrength sessions continue to sit low and steady, confirming these are functional/conditioning-flavoured rather than maximal-load days \u2014 sensible alongside the running volume. The two most recent strength sessions carry no HR at all, so there's less to read there, but nothing in the pattern suggests strength work is adding hidden cardiovascular strain. Sensor sources agree well enough across runs that effort judgements hold regardless of origin.\n\nCALENDAR:\nThe mix of running and strength across the block shows a well-distributed week rather than clustering, and the back-to-back-capable spacing has quietly built the multi-day tolerance the crossing needs. The strength cadence has held its own rhythm alongside running without either crowding the other \u2014 a sign the schedule is genuinely sustainable rather than propped up by good weeks.\n\nPERSONAL_BESTS:\nYour standing 5K through Half bests were all set in a faster-focused window last year, and current training is deliberately pointed elsewhere \u2014 endurance economy, not top-end speed \u2014 so none are realistic targets in this window, nor should they be. The relevant \"best\" right now is durability over consecutive days, which won't show on the PB board but is exactly what you're sharpening.\n\nWATCH:\n- Watch whether any loaded-pack or elevation-heavy session appears before the start \u2014 still the single open variable, and the last realistic window to touch it is closing.\n- Watch how easy-run HR behaves as logged volume drops into the taper; a continued low band confirms freshness rather than lost stimulus.\n- Watch that the taper doesn't over-shed \u2014 the goal is arriving fresh, not detrained, so some quality time-on-feet should remain.\n- Keep a loose eye on recovery consistency as pre-event logistics build; erratic patterns are worth noting but not overreacting to this close in.",
+    "opus_usage": {
+      "input_tokens": 7910,
+      "output_tokens": 1440,
+      "cost_usd": 0.07555,
+      "cost_dkk": 0.5213
+    },
+    "sonnet_usage": {
+      "input_tokens": 7910,
+      "output_tokens": 1165,
+      "cost_usd": 0.041205,
+      "cost_dkk": 0.28431
+    },
+    "judge": {
+      "output_a": {
+        "context_awareness": {
+          "score": 4,
+          "reason": "Surfaces the specificity gap and event proximity (inside three weeks), and reads the run gap as a possible deliberate step-down, though event framing is lighter than B."
+        },
+        "artefact_handling": {
+          "score": 5,
+          "reason": "Correctly identifies the zero-strain/detraining readout as an artefact of a brief run pause, not a real fitness cliff."
+        },
+        "no_fabrication": {
+          "score": 3,
+          "reason": "Mostly avoids figures but restates the +64% four-week jump and references specific 20 km and 12 km sessions."
+        },
+        "coaching_usefulness": {
+          "score": 4,
+          "reason": "Grounded, cautious read of a quiet week with a clear watch list; slightly less event-specific actionability than B."
+        }
+      },
+      "output_b": {
+        "context_awareness": {
+          "score": 5,
+          "reason": "Strongly ties everything to St. Olavsleden's multi-day loaded/hilly demands, the closing specificity window, and taper framing."
+        },
+        "artefact_handling": {
+          "score": 5,
+          "reason": "Correctly frames detraining status as reflecting a real recent drop in logged running, appropriate this close to the start."
+        },
+        "no_fabrication": {
+          "score": 4,
+          "reason": "Largely avoids restating numbers, describing trends qualitatively; only loose references like 'four-week block' and 'earlier faster session' rather than hard figures."
+        },
+        "coaching_usefulness": {
+          "score": 5,
+          "reason": "Actionable event-focused guidance: close the specificity gap, avoid over-tapering, reframe PBs toward durability \u2014 highly relevant to the athlete's situation."
+        }
+      },
+      "preferred": "B",
+      "preference_reason": "B is more event-aware, ties every section to the crossing's specific demands, avoids restating hard figures better, and gives more actionable taper/specificity coaching; both handle the artefact well but B is more useful overall."
+    },
+    "judge_usage": {
+      "input_tokens": 7692,
+      "output_tokens": 639,
+      "cost_usd": 0.054435,
+      "cost_dkk": 0.3756
+    }
   }
 ]

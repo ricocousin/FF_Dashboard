@@ -1,41 +1,41 @@
 {
-  "last_updated": "2026-07-22 13:41 UTC",
-  "headline": "Aerobic efficiency is solidly in place three weeks out. But the crossing demands loaded, hilly time-on-feet, and the training has none of that. Terrain specificity, not fitness, is the open question.",
-  "confidence_pct": 76,
+  "last_updated": "2026-07-23 13:05 CEST",
+  "headline": "Aerobic efficiency is locked in and back-to-back durability is proven. With St. Olavsleden two weeks out, the taper window has arrived \u2014 and loaded, sustained-climb specificity never entered the picture.",
+  "confidence_pct": 74,
   "confidence_label": "Moderate data confidence",
   "confidence_reasons": [
-    "LT reading 19d old",
+    "LT reading 20d old",
     "HR data on 7/8 recent runs",
     "Sleep tracked 14/14 nights",
-    "Steps tracked 2/7 days",
+    "Steps tracked 1/7 days",
     "Data fetch up to date",
     "Limited data sources active in last 3 days"
   ],
-  "confidence_attention": "Steps tracked 2/7 days",
+  "confidence_attention": "Steps tracked 1/7 days",
   "sections": {
-    "overview": "The running picture is coherent and strong: the recent four-week block nearly doubled the prior stretch, and the easy-run efficiency signal has held clean across the longer efforts, with comparable-effort HR sitting in the lower band. Strength has been steady rather than heavy \u2014 the functional sessions are short and low-HR, more circuit-durability than max-load work, which fits a period where running volume is the priority. Step counts remain high enough that background movement is meaningfully padding the daily load beyond what the logged sessions show, and even rest days aren't truly sedentary. What's missing is not effort or consistency but modality: with a self-supported crossing carrying a pack over a mountain border under three weeks away, the training remains almost entirely flat, unloaded road running. The flat cardio-load status is a byproduct of that data stream not capturing this week's work rather than a real absence of training.",
-    "trends": "The year-to-date jump over last year is dramatic, and the 16-week shape reads as a genuine build layered on top of a much larger base than this point last season. That build makes sense for a hybrid athlete maintaining year-round readiness \u2014 this isn't a taper and doesn't need to be one yet. The shape is a rising, slightly cyclical progression with recovery weeks folded in, which is exactly what sustainable long-term development should look like. The one caveat is that \"more running volume\" and \"more crossing-specific preparation\" are not the same trend, and the former has been climbing while the latter hasn't appeared.",
-    "threshold": "The single threshold marker from early July is fast and sits well within this athlete's demonstrated speed range, but with no 30-day baseline yet it's a point, not a trajectory. For the crossing, threshold pace is largely academic \u2014 the event is a multi-day sub-threshold grind, and current aerobic efficiency at easy paces is the far more relevant readout. That efficiency is holding, which is the reassuring part. Speed capacity is clearly intact; it just isn't the quality this next block hinges on.",
-    "zones": "The recent sessions distribute sensibly \u2014 the longer runs are sitting predominantly in Z1\u2013Z2 with only token Z3, which is the correct signature for durability work and matches the block's intent. The one genuinely mixed session earlier in the month had real Z3 time and a higher average, a deliberate faster effort rather than grey-zone drift. There's no meaningful accumulation of unproductive middle-intensity work across the recent runs; easy is staying easy and the harder day was clearly harder. For what this phase is trying to build, the polarisation is appropriate.",
-    "hr_comparison": "The strength sessions read as low-intensity throughout, avg HR sitting comfortably in the lower zones with brief excursions \u2014 consistent with circuit-style functional work rather than heavy loading, which is worth naming only because it means strength isn't currently contributing much systemic stress on top of the running. The one long-run HR estimate earlier in the month ran higher than the surrounding chest-strap runs, but the more recent efforts agree well with the established easy-run band, so there's no source-disagreement worth worrying about.",
-    "calendar": "The running and strength cadence has been reliably interleaved \u2014 runs and functional sessions alternating without long gaps \u2014 which is the real story behind the consistency, more than the streak length itself. What the calendar doesn't show is variety of stimulus: every logged run is a Copenhagen or Fures\u00f8 road/path outing. For an athlete about to spend nine days on hilly self-supported trail, the uniformity of the training environment is the pattern to notice.",
-    "personal_bests": "Nothing on the road-PB front is the priority right now, and none of the existing bests are in play during a block oriented toward a long slow crossing. The 50K/ultra best is the relevant reference, and the current base clearly exceeds where it was set \u2014 but that best came with far more time-on-feet specificity than the current road-heavy weeks provide."
+    "overview": "The recent four-week block landed a substantial volume jump while holding easy-run HR in its lower band, which is exactly what you want going into a multi-day self-supported effort \u2014 the durability base is real, not borrowed. Strength has stayed frequent through the same window, sitting almost entirely in low zones, so it's supporting the running rather than competing with it. Steps remain very high even on rest days, meaning your true daily load is higher than the run log alone suggests, and that background time-on-feet matters more than usual for what's coming. The one genuine gap remains terrain: none of this volume carried a loaded pack or sustained climbing, so the crossing's specific demand is still untested. Recovery signals are mixed and the cardio-load status reads as detraining, which almost certainly reflects a real recent drop in logged running \u2014 appropriate this close to the start, not a concern.",
+    "trends": "The 16-week shape is clearly a build-then-consolidate rhythm rather than a flat plateau, and the year-to-date jump against the same point last year is enormous \u2014 you're operating in a completely different volume tier than a year ago. That trajectory makes sense for someone building durable year-round hybrid capacity, and the recent block's expansion followed by an easing edge fits a deliberate approach to the event window rather than any loss of momentum.",
+    "threshold": "Threshold pace remains sharp from the early-July measurement, and there's no signal it's eroded \u2014 the easy work has been protecting aerobic fitness, not blunting it. But with insufficient rolling baseline history, treat the single figure as a reference point rather than a trend. For the crossing, threshold speed isn't the limiter anyway; sustained low-intensity economy over days is, and that's the quality your recent runs actually demonstrate.",
+    "zones": "The distribution is strongly aerobic, which is right for this phase \u2014 the long runs and easy sessions sit predominantly in Z1\u2013Z2 with only brief excursions higher. The per-session shapes confirm it: your recent long and mid-distance runs are genuinely steady, not disguised interval sessions, with only the earlier faster session carrying meaningful Z3 time. That's the appropriate texture heading into a self-supported multi-day effort where control, not intensity, is the skill being rehearsed.",
+    "hr_comparison": "Strength sessions continue to sit low and steady, confirming these are functional/conditioning-flavoured rather than maximal-load days \u2014 sensible alongside the running volume. The two most recent strength sessions carry no HR at all, so there's less to read there, but nothing in the pattern suggests strength work is adding hidden cardiovascular strain. Sensor sources agree well enough across runs that effort judgements hold regardless of origin.",
+    "calendar": "The mix of running and strength across the block shows a well-distributed week rather than clustering, and the back-to-back-capable spacing has quietly built the multi-day tolerance the crossing needs. The strength cadence has held its own rhythm alongside running without either crowding the other \u2014 a sign the schedule is genuinely sustainable rather than propped up by good weeks.",
+    "personal_bests": "Your standing 5K through Half bests were all set in a faster-focused window last year, and current training is deliberately pointed elsewhere \u2014 endurance economy, not top-end speed \u2014 so none are realistic targets in this window, nor should they be. The relevant \"best\" right now is durability over consecutive days, which won't show on the PB board but is exactly what you're sharpening."
   },
   "watch_items": [
-    "Watch whether any loaded-pack or sustained-climb sessions enter the training before the crossing \u2014 the specificity gap is the one genuinely open variable.",
-    "Watch how the body responds to back-to-back days as the event nears, since multi-day durability, not single-run pace, is what the crossing tests.",
-    "Watch whether easy-run HR stays in its current lower band as volume tapers toward the start.",
-    "Note sleep has been erratic across recent weeks; worth keeping an eye on as pre-event load settles, without reading too much into it yet."
+    "Watch whether any loaded-pack or elevation-heavy session appears before the start \u2014 still the single open variable, and the last realistic window to touch it is closing.",
+    "Watch how easy-run HR behaves as logged volume drops into the taper; a continued low band confirms freshness rather than lost stimulus.",
+    "Watch that the taper doesn't over-shed \u2014 the goal is arriving fresh, not detrained, so some quality time-on-feet should remain.",
+    "Keep a loose eye on recovery consistency as pre-event logistics build; erratic patterns are worth noting but not overreacting to this close in."
   ],
   "usage": {
-    "input_tokens": 7769,
-    "output_tokens": 1564,
-    "cost_usd": 0.077945,
-    "cost_dkk": 0.53782,
-    "date": "2026-07-22"
+    "input_tokens": 7910,
+    "output_tokens": 1440,
+    "cost_usd": 0.07555,
+    "cost_dkk": 0.5213,
+    "date": "2026-07-23"
   },
-  "usage_mtd_usd": 0.56678,
-  "usage_mtd_dkk": 3.9108,
-  "usage_ytd_usd": 0.56678,
-  "usage_ytd_dkk": 3.9108
+  "usage_mtd_usd": 0.64233,
+  "usage_mtd_dkk": 4.4321,
+  "usage_ytd_usd": 0.64233,
+  "usage_ytd_dkk": 4.4321
 }

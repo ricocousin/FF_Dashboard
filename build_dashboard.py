@@ -24,8 +24,18 @@ import re
 import random
 import urllib.request
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 today = datetime.today()
+
+# Human-facing "last updated" stamp in Danish local time (the athlete is in
+# Denmark; the GitHub runner is UTC, which is why this previously showed UTC).
+# %Z renders CEST/CET automatically from the zone. Falls back to a UTC stamp
+# only if the tz database is somehow unavailable.
+try:
+    last_updated_str = datetime.now(ZoneInfo("Europe/Copenhagen")).strftime("%Y-%m-%d %H:%M %Z")
+except Exception:
+    last_updated_str = today.strftime("%Y-%m-%d %H:%M UTC")
 
 # ── Load raw data from disk ───────────────────────────────────────────────────
 def _load_csv(path):
@@ -174,7 +184,7 @@ weeks_in_year = len(set(get_week(
 ) for a in summary_runs_this_year if a.get("date")))
 
 summary = {
-    "last_updated": today.strftime("%Y-%m-%d %H:%M UTC"),
+    "last_updated": last_updated_str,
     "last_complete_date": last_complete_str,
     "total_runs_this_year": len(summary_runs_this_year),
     "total_distance_this_year_km": round(total_distance_this_year, 1),
@@ -1368,7 +1378,7 @@ def _strength_test_summary():
 strength_tests_summary = _strength_test_summary()
 
 dashboard_metrics = {
-    "last_updated": today.strftime("%Y-%m-%d %H:%M UTC"),
+    "last_updated": last_updated_str,
     "last_complete_date": last_complete_str,
     "this_year": this_year_str,
     "this_month_short": this_month_short,
@@ -2030,7 +2040,7 @@ mtd_cost_dkk = mtd_cost_usd * USD_TO_DKK
 ytd_cost_dkk = ytd_cost_usd * USD_TO_DKK
 
 coach_summary = {
-    "last_updated": today.strftime("%Y-%m-%d %H:%M UTC"),
+    "last_updated": last_updated_str,
     "headline": coach_headline,
     "confidence_pct": confidence_pct,
     "confidence_label": confidence_label,

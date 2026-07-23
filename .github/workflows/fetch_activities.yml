@@ -1,8 +1,19 @@
 name: Sync Training Data
 on:
   schedule:
-    - cron: '0 4 * * *'   # 6am Danish time in summer (UTC+2)
-    - cron: '0 5 * * *'   # 6am Danish time in winter (UTC+1)
+    # Several morning fires (04:00-07:00 UTC = ~06:00-09:00 Danish across DST).
+    # GitHub's scheduled runs are best-effort and are frequently delayed or
+    # dropped, so multiple shots make it very likely at least one fires each
+    # morning. The "run gate" step below makes every fire after the day's first
+    # successful fetch a no-op, so the extra crons cost nothing and a dropped
+    # early fire just means a slightly later update that morning — never a
+    # missed day. (The old design fired only 04:00/05:00 and proceeded only if
+    # the Danish hour was exactly 06, so any delayed fire was cancelled
+    # outright — that turned GitHub's flakiness into skipped days.)
+    - cron: '0 4 * * *'
+    - cron: '0 5 * * *'
+    - cron: '0 6 * * *'
+    - cron: '0 7 * * *'
   workflow_dispatch:
     inputs:
       full_refresh:
@@ -15,20 +26,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Check if this is the correct Danish local hour
+      - name: Decide whether to run (once per Danish day; delay/drop tolerant)
         id: dst_check
         run: |
+          # Idempotency gate: run only if we have NOT already had a successful
+          # fetch today (Danish date). fetch_status.json's last_success_date is
+          # written only when fetch_activities.py completes successfully, so:
+          #   - whichever morning cron fires first (even if GitHub delayed it)
+          #     does the day's update;
+          #   - every later fire that same day finds last_success_date == today
+          #     and no-ops;
+          #   - if a fetch FAILS, last_success_date stays stale, so the next
+          #     cron that morning automatically retries.
+          # No exact-hour check, so a delayed fire is never cancelled.
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "Manual run via workflow_dispatch — bypassing DST hour check."
+            echo "Manual run via workflow_dispatch — always proceed."
             echo "run=true" >> "$GITHUB_OUTPUT"
           else
-            DK_HOUR=$(TZ='Europe/Copenhagen' date +%H)
-            echo "Danish local hour right now: $DK_HOUR"
-            if [ "$DK_HOUR" == "06" ]; then
-              echo "run=true" >> "$GITHUB_OUTPUT"
-            else
+            TODAY_DK=$(TZ='Europe/Copenhagen' date +%F)
+            LAST=$(sed -n 's/.*"last_success_date": *"\([0-9-]*\)".*/\1/p' fetch_status.json 2>/dev/null)
+            echo "Danish date today: $TODAY_DK | last successful fetch: ${LAST:-<none>}"
+            if [ "$LAST" == "$TODAY_DK" ]; then
               echo "run=false" >> "$GITHUB_OUTPUT"
-              echo "Skipping — this cron fire doesn't match current Danish 6am (DST offset)."
+              echo "Already updated today — skipping (idempotent no-op)."
+            else
+              echo "run=true" >> "$GITHUB_OUTPUT"
+              echo "Not yet updated today — proceeding."
             fi
           fi
       - name: Set up Python

@@ -593,6 +593,57 @@ if polar_token:
                 existing_polar_steps[date] = int(steps)
                 new_step_count += 1
 
+        # NEW (Jul 2026): the list endpoint above returns a frozen ~15-day
+        # window that stopped advancing at 2026-07-16 — every run re-fetches the
+        # same 15 rows. The transaction-based daily-activity flow is deprecated
+        # (and previously returned 405s), so as a targeted attempt to pull the
+        # recent days the list may be withholding, also probe the per-date
+        # endpoint /v3/users/activities/{date} for the last STEPS_BACKFILL_DAYS
+        # days. Every outcome is logged per date so the next run's log is
+        # diagnostic: if recent dates return steps, this unfreezes them; if they
+        # come back empty/404, Polar's cloud has no daily-activity summary for
+        # those days (a Polar Loop sync gap, not a code bug). Per-date failures
+        # are logged and skipped — they never abort the fetch or drop existing
+        # data, and the list-endpoint result above is preserved regardless.
+        def _polar_day_steps(date_str):
+            req = urllib.request.Request(
+                f"https://www.polaraccesslink.com/v3/users/activities/{date_str}",
+                headers={"Authorization": f"Bearer {polar_token}", "Accept": "application/json"},
+                method="GET",
+            )
+            with urllib.request.urlopen(req, timeout=30) as r:
+                if r.status == 204:
+                    return None
+                payload = json.loads(r.read().decode("utf-8"))
+            entry = payload[0] if isinstance(payload, list) and payload else payload
+            if not isinstance(entry, dict):
+                return None
+            s = entry.get("steps")
+            if s is None:
+                s = entry.get("active-steps", entry.get("active_steps"))
+            return int(s) if s is not None else None
+
+        STEPS_BACKFILL_DAYS = 10
+        probe_found, probe_empty, probe_err = [], [], []
+        for _i in range(1, STEPS_BACKFILL_DAYS + 1):
+            d = (today.date() - timedelta(days=_i)).isoformat()
+            try:
+                s = _polar_day_steps(d)
+                if s is not None:
+                    existing_polar_steps[d] = s
+                    probe_found.append(d)
+                else:
+                    probe_empty.append(d)
+            except urllib.error.HTTPError as e:
+                if e.code in (204, 404):
+                    probe_empty.append(d)
+                else:
+                    probe_err.append(f"{d}:HTTP{e.code}")
+            except Exception as e:
+                probe_err.append(f"{d}:{type(e).__name__}")
+        print(f"Polar steps per-date probe (last {STEPS_BACKFILL_DAYS}d): "
+              f"found={probe_found or '[]'} empty={probe_empty or '[]'} errors={probe_err or '[]'}")
+
         with open("polar_steps.csv", "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=["date", "steps"])
             writer.writeheader()

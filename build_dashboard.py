@@ -129,6 +129,13 @@ def row_date(row):
 complete_run_rows = [r for r in all_run_rows if row_date(r) and r["date"] <= last_complete_str]
 complete_strength_rows = [s for s in all_strength_rows if row_date(s) and s["date"] <= last_complete_str]
 
+# Hikes (NEW — feeds the 16-week/annual chart stacking + combined running
+# totals below; kept as a distinct list from complete_run_rows so PBs/pace/
+# LT-gap/zone-time logic elsewhere in this file remains untouched — hikes
+# are deliberately still excluded from all of that, see hikes.csv notes).
+all_hike_rows = sorted(_load_csv("hikes.csv"), key=lambda x: x.get("date", ""), reverse=True)
+complete_hike_rows = [h for h in all_hike_rows if row_date(h) and h["date"] <= last_complete_str]
+
 prev_year_start = datetime(today.year - 1, 1, 1).date()
 prev_year_end = datetime(today.year - 1, 12, 31).date()
 
@@ -141,6 +148,18 @@ summary_strength_this_year = [a for a in complete_strength_rows if a.get("date",
 total_distance_this_year = sum(float(a.get("distance_km") or 0) for a in summary_runs_this_year)
 total_distance_prev_year = sum(float(a.get("distance_km") or 0) for a in summary_runs_prev_year)
 total_strength_min_this_year = sum(float(a.get("duration_min") or 0) for a in summary_strength_this_year)
+
+# Hike distance sums (this year / prev year), same "complete days only" cutoff
+# as everything above. Folds hikes into the RUNNING tile's combined "Avg /
+# week" + yearly-progress totals further down this file, per explicit
+# athlete direction — hike km stacks on top of run km in both volume charts
+# AND these two overview figures, with a colored note showing how much of
+# the total came from hiking specifically.
+summary_hikes_this_year = [h for h in complete_hike_rows if h.get("date", "")[:4] == str(today.year)]
+summary_hikes_prev_year = [h for h in complete_hike_rows
+    if str(prev_year_start) <= h.get("date", "") <= str(prev_year_end)]
+total_hike_distance_this_year = sum(float(h.get("distance_km") or 0) for h in summary_hikes_this_year)
+total_hike_distance_prev_year = sum(float(h.get("distance_km") or 0) for h in summary_hikes_prev_year)
 
 run_dates = sorted(set(
     datetime.strptime(a["date"], "%Y-%m-%d").date()
@@ -435,17 +454,33 @@ this_month_short = today_date.strftime("%b")
 
 year_runs = [r for r in complete_run_rows if r.get("date", "").startswith(this_year_str)]
 year_sessions = [s for s in complete_strength_rows if s.get("date", "").startswith(this_year_str)]
+year_hikes = [h for h in complete_hike_rows if h.get("date", "").startswith(this_year_str)]
 year_dist = sum(float(r.get("distance_km") or 0) for r in year_runs)
+year_hike_dist = sum(float(h.get("distance_km") or 0) for h in year_hikes)
 total_strength_min_year = sum(float(s.get("duration_min") or 0) for s in year_sessions)
 
 run_weeks_year = {_iso_week_key(datetime.strptime(r["date"], "%Y-%m-%d").date()) for r in year_runs if r.get("date")}
 s_weeks_year = {_iso_week_key(datetime.strptime(s["date"], "%Y-%m-%d").date()) for s in year_sessions if s.get("date")}
+hike_weeks_year = {_iso_week_key(datetime.strptime(h["date"], "%Y-%m-%d").date()) for h in year_hikes if h.get("date")}
 activity_weeks_year = run_weeks_year | s_weeks_year
+# Combined run-or-hike week set — denominator for the combined "Avg / week"
+# figure below, so a week containing ONLY a hike (no run) still counts
+# toward the average rather than being silently excluded.
+run_or_hike_weeks_year = run_weeks_year | hike_weeks_year
 num_run_weeks = max(len(run_weeks_year), 1)
 num_s_weeks = max(len(s_weeks_year), 1)
 num_activity_weeks = max(len(activity_weeks_year), 1)
+num_run_or_hike_weeks = max(len(run_or_hike_weeks_year), 1)
 
-avg_run_dist_per_week = year_dist / num_run_weeks
+# NEW — folds hike km into the Running tile's "Avg / week" figure, per
+# explicit athlete direction: hike distance stacks on top of run distance
+# in both volume charts AND this headline average (see also the yearly
+# progress bar below and the combined weekly delta a few lines down). A
+# dedicated "hike_distance_this_year_km" field is surfaced separately in
+# dashboard_metrics so index.html can render a distinct-colored note
+# showing how much of the combined total came from hiking specifically —
+# this figure is never silently blended without attribution.
+avg_run_dist_per_week = (year_dist + year_hike_dist) / num_run_or_hike_weeks
 avg_runs_per_week = len(year_runs) / num_run_weeks
 avg_run_dist_per_run = year_dist / max(len(year_runs), 1)
 avg_sess_per_week = len(year_sessions) / num_s_weeks
@@ -472,10 +507,16 @@ prev_complete_week = _shift_week_key(last_complete_week, -1)
 def _week_run_dist(wk):
     return sum(float(r.get("distance_km") or 0) for r in complete_run_rows if r.get("date") and _iso_week_key(datetime.strptime(r["date"], "%Y-%m-%d").date()) == wk)
 
+def _week_hike_dist(wk):
+    return sum(float(h.get("distance_km") or 0) for h in complete_hike_rows if h.get("date") and _iso_week_key(datetime.strptime(h["date"], "%Y-%m-%d").date()) == wk)
+
 def _week_strength_count(wk):
     return sum(1 for s in complete_strength_rows if s.get("date") and _iso_week_key(datetime.strptime(s["date"], "%Y-%m-%d").date()) == wk)
 
-run_week_delta = _week_run_dist(last_complete_week) - _week_run_dist(prev_complete_week)
+# Combined (run + hike) week-over-week delta — same "fold hikes into the
+# Running tile" direction as avg_run_dist_per_week above.
+run_week_delta = (_week_run_dist(last_complete_week) + _week_hike_dist(last_complete_week)) - \
+                  (_week_run_dist(prev_complete_week) + _week_hike_dist(prev_complete_week))
 strength_week_delta = _week_strength_count(last_complete_week) - _week_strength_count(prev_complete_week)
 
 RUN_STABLE_THRESHOLD = 1
@@ -560,8 +601,19 @@ for s in complete_strength_rows:
     if s.get("date"):
         wk = _iso_week_key(datetime.strptime(s["date"], "%Y-%m-%d").date())
         s_week_map_16[wk] = s_week_map_16.get(wk, 0) + 1
+# NEW — hike km per week, stacked on top of run km in index.html (own
+# distinct color). Kept as its own map (not merged into week_map_16) so
+# run-only distance is still available separately for anything that
+# shouldn't include hikes.
+h_week_map_16 = {}
+for h in complete_hike_rows:
+    if h.get("date"):
+        wk = _iso_week_key(datetime.strptime(h["date"], "%Y-%m-%d").date())
+        h_week_map_16[wk] = h_week_map_16.get(wk, 0) + (float(h.get("distance_km") or 0))
 
-all_week_keys_16 = sorted(set(list(week_map_16.keys()) + list(s_week_map_16.keys())))[-16:]
+# Include hike-only weeks (a week with a hike but no run/strength) in the
+# window union so such a week isn't silently dropped from the chart.
+all_week_keys_16 = sorted(set(list(week_map_16.keys()) + list(s_week_map_16.keys()) + list(h_week_map_16.keys())))[-16:]
 month_names_short = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 chart_16wk_month_boundaries = []
 chart_16wk_month_labels = []
@@ -574,17 +626,26 @@ for i, wk in enumerate(all_week_keys_16):
 chart_16wk = {
     "labels": [wk.split("-W")[1] for wk in all_week_keys_16],
     "distance_km": [round(week_map_16.get(wk, 0), 1) for wk in all_week_keys_16],
+    "hike_distance_km": [round(h_week_map_16.get(wk, 0), 1) for wk in all_week_keys_16],
     "strength_sessions": [s_week_map_16.get(wk, 0) for wk in all_week_keys_16],
     "month_boundaries": chart_16wk_month_boundaries,
     "month_labels": chart_16wk_month_labels
 }
 
 # ── Annual progress chart ─────────────────────────────────────────────────────
+# Combined (run + hike) totals — per explicit athlete direction, hike km
+# stacks on top of run km here too, so the progress bar reflects true
+# combined volume vs. last year's combined volume (apples-to-apples: last
+# year's hikes are folded into the comparison target as well, not just
+# this year's). year_dist / prev_year_dist below remain the pure-running
+# figures (still used for the monthly RUN-only chart series further down).
+combined_year_dist = year_dist + year_hike_dist
 prev_year_dist = summary.get("total_distance_prev_year_km")
-target_km = prev_year_dist if (prev_year_dist and prev_year_dist > 0) else 2000
-target_label = f"vs {today_date.year - 1} total ({target_km:.0f} km)" if (prev_year_dist and prev_year_dist > 0) else "Progress to 2,000 km"
-raw_pct = (year_dist / target_km) * 100 if target_km else 0
-is_overflow = year_dist > target_km
+combined_prev_year_dist = (prev_year_dist or 0) + total_hike_distance_prev_year
+target_km = combined_prev_year_dist if combined_prev_year_dist > 0 else 2000
+target_label = f"vs {today_date.year - 1} total ({target_km:.0f} km)" if combined_prev_year_dist > 0 else "Progress to 2,000 km"
+raw_pct = (combined_year_dist / target_km) * 100 if target_km else 0
+is_overflow = combined_year_dist > target_km
 
 month_dist = [0.0] * 12
 for r in year_runs:
@@ -595,6 +656,12 @@ month_strength = [0] * 12
 for s in year_sessions:
     if s.get("date"):
         month_strength[datetime.strptime(s["date"], "%Y-%m-%d").date().month - 1] += 1
+# NEW — monthly hike km, stacked on top of month_dist in index.html (own
+# distinct color, same treatment as the 16-week chart above).
+month_hike_dist = [0.0] * 12
+for h in year_hikes:
+    if h.get("date"):
+        month_hike_dist[datetime.strptime(h["date"], "%Y-%m-%d").date().month - 1] += float(h.get("distance_km") or 0)
 
 total_strength_prev_year = sum(1 for s in all_strength_rows if s.get("date", "").startswith(prev_year_str))
 strength_pct = round((len(year_sessions) / total_strength_prev_year) * 100) if total_strength_prev_year > 0 else None
@@ -606,8 +673,11 @@ chart_annual = {
     "raw_pct": round(raw_pct, 1),
     "display_pct": round(min(raw_pct, 130), 1),
     "is_overflow": is_overflow,
-    "year_dist_km": round(year_dist, 1),
-    "km_to_target_km": round(abs(target_km - year_dist), 1),
+    "year_dist_km": round(combined_year_dist, 1),
+    "km_to_target_km": round(abs(target_km - combined_year_dist), 1),
+    # Colored-note figure — how much of year_dist_km above came from hiking,
+    # never silently blended without attribution (see index.html).
+    "hike_dist_this_year_km": round(year_hike_dist, 1),
     "strength_target_label": (f"vs {prev_year_str} total ({total_strength_prev_year} sessions)" if total_strength_prev_year > 0 else "Sessions this year"),
     "strength_pct": strength_pct,
     "strength_display_pct": min(strength_pct, 130) if strength_pct is not None else 0,
@@ -616,6 +686,7 @@ chart_annual = {
     "strength_sessions_to_match": (total_strength_prev_year - len(year_sessions)) if total_strength_prev_year > 0 else None,
     "month_labels": month_names_short[:current_month_idx + 1],
     "month_distance_km": [round(v, 1) for v in month_dist[:current_month_idx + 1]],
+    "month_hike_distance_km": [round(v, 1) for v in month_hike_dist[:current_month_idx + 1]],
     "month_strength_sessions": month_strength[:current_month_idx + 1],
     "current_month_index": current_month_idx
 }
@@ -1384,11 +1455,20 @@ dashboard_metrics = {
     "this_month_short": this_month_short,
 
     "running": {
+        # avg_per_run_km / runs_this_year deliberately stay RUN-ONLY — "per
+        # run" and "count of runs" don't have a sensible hike-inclusive
+        # meaning (a hike isn't a run). avg_per_week_km, total_distance_
+        # this_year_km, and week_delta_km/week_qual are the combined
+        # (run + hike) figures per athlete direction — hike_distance_
+        # this_year_km below is the colored-note figure index.html uses to
+        # show how much of the combined total came from hiking, so it's
+        # never silently blended without attribution.
         "avg_per_run_km": round(avg_run_dist_per_run, 1),
         "runs_this_year": summary.get("total_runs_this_year", len(year_runs)),
         "avg_per_week_km": round(avg_run_dist_per_week, 1),
         "avg_runs_per_week": round(avg_runs_per_week, 1),
-        "total_distance_this_year_km": summary.get("total_distance_this_year_km", round(year_dist, 1)),
+        "total_distance_this_year_km": round(year_dist + year_hike_dist, 1),
+        "hike_distance_this_year_km": round(year_hike_dist, 1),
         "current_weekly_streak": summary.get("current_weekly_streak"),
         "longest_weekly_streak": summary.get("longest_weekly_streak"),
         "week_delta_km": round(run_week_delta, 1),

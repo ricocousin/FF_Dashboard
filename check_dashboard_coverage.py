@@ -149,6 +149,7 @@ def check_layer2_feature_markers(html_src):
         (r'changeLine', "Single-sentence overview change function (changeLine)"),
         (r'optionAChart', "16-week distance/strength chart"),
         (r'monthChart', "Annual distance/strength chart"),
+        (r"label:\s*'Hike \(km\)'", "Hike km stacked on top of run km (16-week + annual charts)"),
     ]
     for pattern, description in MARKERS:
         if re.search(pattern, html_src, re.S):

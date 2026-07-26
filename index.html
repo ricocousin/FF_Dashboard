@@ -327,6 +327,13 @@ async function init() {
   const loadFreshDot = tileFreshDot(tf.load || 'failed');
 
   const runChangeHtml = changeLine(r.week_delta_km, r.week_qual, 'last week', v => `${v.toFixed(1)} km`);
+  // Colored note showing how much of the combined (run+hike) total above
+  // came from hiking specifically — never silently blended without
+  // attribution, per athlete direction. Same hike accent color used on the
+  // calendar icon and the two volume charts.
+  const runHikeNoteHtml = (r.hike_distance_this_year_km ?? 0) > 0
+    ? ` <span style="color:var(--accent2)">(+${fmt(r.hike_distance_this_year_km, 0)} km hiking)</span>`
+    : '';
   const strengthChangeHtml = changeLine(st.week_delta_sessions, st.week_qual, 'last week', v => `${Math.round(v)}`);
   const stepsChangeHtml = sp.avg_7d !== null ? changeLine(sp.delta_7d_vs_30d, sp.qual, '30d average', v => `${Math.round(v).toLocaleString()}`) : '';
   const stepsDiscrepancyHtml = sp.discrepancy_avg !== null ? `<br><span style="color:var(--text-dim)">Polar vs iPhone: ±${sp.discrepancy_avg.toLocaleString()}/day (${sp.discrepancy_days}d overlap)</span>` : '';
@@ -354,7 +361,7 @@ async function init() {
     <div class="overview-full">
       <div class="overview-label run" style="grid-column:1/-1">Running${runningFreshDot}</div>
       <div class="stat"><span class="stat-label">Avg / run</span><span class="stat-value accent">${fmt(r.avg_per_run_km, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${r.runs_this_year} runs ${m.this_year}</span></div>
-      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(r.avg_per_week_km, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${fmt(r.total_distance_this_year_km, 0)} km ${m.this_year}${runChangeHtml}</span></div>
+      <div class="stat"><span class="stat-label">Avg / week</span><span class="stat-value">${fmt(r.avg_per_week_km, 1)} <small style="font-size:.9rem;color:var(--text-dim)">km</small></span><span class="stat-sub">${fmt(r.total_distance_this_year_km, 0)} km ${m.this_year}${runHikeNoteHtml}${runChangeHtml}</span></div>
       <div class="stat"><span class="stat-label">Weekly streak</span><span class="stat-value accent">${r.current_weekly_streak ?? '—'} <small style="font-size:.9rem;color:var(--text-dim)">wks</small></span><span class="stat-sub">Best: ${r.longest_weekly_streak ?? '—'} wks</span></div>
     </div>
     <div class="overview-full">
@@ -404,7 +411,7 @@ async function init() {
           <span style="font-family:var(--font-display);font-size:1.4rem;color:${ca.is_overflow ? 'var(--accent2)' : 'var(--accent)'}">${fmt(ca.raw_pct, 0)}%</span>
         </div>
         <div class="year-bar-track"><div class="year-bar-fill${ca.is_overflow ? ' overflow' : ''}" style="width:${ca.display_pct}%"></div></div>
-        <div class="year-bar-labels"><span>${fmt(ca.year_dist_km, 0)} km done</span><span>${ca.is_overflow ? '+' + fmt(ca.km_to_target_km, 0) + ' km ahead' : fmt(ca.km_to_target_km, 0) + ' km to go'}</span></div>
+        <div class="year-bar-labels"><span>${fmt(ca.year_dist_km, 0)} km done${(ca.hike_dist_this_year_km ?? 0) > 0 ? ` <span style="color:var(--accent2)">(+${fmt(ca.hike_dist_this_year_km, 0)}km hiking)</span>` : ''}</span><span>${ca.is_overflow ? '+' + fmt(ca.km_to_target_km, 0) + ' km ahead' : fmt(ca.km_to_target_km, 0) + ' km to go'}</span></div>
       </div>
       <div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.25rem">
@@ -668,31 +675,56 @@ async function init() {
   // ── Render charts ─────────────────────────────────────────────────────────────
   requestAnimationFrame(() => {
     const monthData = ca.month_distance_km;
+    const monthHikeData = ca.month_hike_distance_km || monthData.map(() => 0);
+    const monthCombined = monthData.map((v, i) => v + (monthHikeData[i] || 0));
     const monthStrengthData = ca.month_strength_sessions;
-    const maxMonthDist = Math.max(...monthData, 1);
+    const maxMonthDist = Math.max(...monthCombined, ...monthData, 1);
     const maxMonthStr = Math.max(...monthStrengthData, 1);
 
     new Chart($('monthChart'), {
       type: 'bar',
       data: { labels: ca.month_labels, datasets: [
-        { type: 'line', label: 'Distance (km)', data: monthData, borderColor: 'rgba(232,255,90,0.9)', backgroundColor: 'rgba(232,255,90,0.08)', pointBackgroundColor: monthData.map((_, i) => i === ca.current_month_index ? 'rgba(255,107,53,1)' : 'rgba(232,255,90,0.9)'), pointBorderColor: 'transparent', pointRadius: 4, borderWidth: 2, tension: 0.35, fill: true, yAxisID: 'yDist', order: 1 },
+        { type: 'line', label: 'Run (km)', data: monthData, borderColor: 'rgba(232,255,90,0.9)', backgroundColor: 'rgba(232,255,90,0.08)', pointBackgroundColor: monthData.map((_, i) => i === ca.current_month_index ? 'rgba(255,107,53,1)' : 'rgba(232,255,90,0.9)'), pointBorderColor: 'transparent', pointRadius: 4, borderWidth: 2, tension: 0.35, fill: 'origin', yAxisID: 'yDist', order: 1 },
+        // Stacks on top of the Run line above via fill:'-1' (fills the gap
+        // between this line and the previous dataset in the array), in the
+        // hike accent color — same color used for hikes on the calendar.
+        // Data here is the COMBINED (run+hike) total so the line's actual
+        // height reads correctly on the chart; the tooltip below overrides
+        // the displayed number back to the hike-only figure so nothing
+        // confusing shows up ("Hike: Xkm", not "Hike: run+hike km").
+        { type: 'line', label: 'Hike (km)', data: monthCombined, borderColor: 'rgba(255,107,53,0.85)', backgroundColor: 'rgba(255,107,53,0.18)', borderDash: [3, 2], pointRadius: 0, borderWidth: 1.5, tension: 0.35, fill: '-1', yAxisID: 'yDist', order: 1 },
         { type: 'bar', label: 'Strength sessions', data: monthStrengthData, backgroundColor: monthStrengthData.map((_, i) => i === ca.current_month_index ? 'rgba(74,158,255,0.7)' : 'rgba(74,158,255,0.25)'), borderRadius: 2, yAxisID: 'yStr', order: 2 }
       ] },
-      options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 14 } }, scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, yDist: { type: 'linear', position: 'left', grid: { color: '#1f1f24' }, ticks: { color: '#e8ff5a', callback: v => `${v}km` }, min: 0, max: Math.ceil(maxMonthDist * 1.2) }, yStr: { type: 'linear', position: 'right', grid: { display: false }, ticks: { color: '#4a9eff', stepSize: 1, callback: v => Number.isInteger(v) ? `${v}s` : '' }, min: 0, max: Math.max(maxMonthStr + 1, 4) } }, plugins: { legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1, titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 10, callbacks: { label: ctx => ctx.dataset.yAxisID === 'yDist' ? ` ${ctx.parsed.y} km` : ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}` } } } }
+      options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 14 } }, scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, yDist: { type: 'linear', position: 'left', grid: { color: '#1f1f24' }, ticks: { color: '#e8ff5a', callback: v => `${v}km` }, min: 0, max: Math.ceil(maxMonthDist * 1.2) }, yStr: { type: 'linear', position: 'right', grid: { display: false }, ticks: { color: '#4a9eff', stepSize: 1, callback: v => Number.isInteger(v) ? `${v}s` : '' }, min: 0, max: Math.max(maxMonthStr + 1, 4) } }, plugins: { legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1, titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 10, callbacks: { label: ctx => {
+        if (ctx.dataset.label === 'Hike (km)') return ` Hike: ${monthHikeData[ctx.dataIndex].toFixed(1)} km`;
+        if (ctx.dataset.yAxisID === 'yDist') return ` Run: ${ctx.parsed.y.toFixed(1)} km`;
+        return ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}`;
+      } } } } }
     });
 
     const c16 = m.chart_16wk;
-    const maxDist = Math.max(...c16.distance_km, 1);
+    const c16Hike = c16.hike_distance_km || c16.distance_km.map(() => 0);
+    const c16Combined = c16.distance_km.map((v, i) => v + (c16Hike[i] || 0));
+    const maxDist = Math.max(...c16Combined, ...c16.distance_km, 1);
     const maxSess = Math.max(...c16.strength_sessions, 1);
     const makeMonthPlugin = (id, boundaries, labels) => ({ id, afterDraw(chart) { const { ctx, chartArea, scales } = chart; ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.setLineDash([3,3]); ctx.font = '9px "DM Mono", monospace'; ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.textAlign = 'left'; boundaries.forEach((isBoundary, i) => { if (isBoundary) { const x = scales.x.getPixelForValue(i) - (scales.x.getPixelForValue(1) - scales.x.getPixelForValue(0)) / 2; ctx.beginPath(); ctx.moveTo(x, chartArea.top); ctx.lineTo(x, chartArea.bottom); ctx.stroke(); ctx.setLineDash([]); ctx.fillText(labels[i], x + 4, chartArea.top + 10); ctx.setLineDash([3,3]); } }); ctx.restore(); } });
 
     new Chart($('optionAChart'), {
       type: 'bar',
       data: { labels: c16.labels, datasets: [
-        { type: 'line', label: 'Distance (km)', data: c16.distance_km, borderColor: 'rgba(232,255,90,0.9)', backgroundColor: 'rgba(232,255,90,0.12)', pointBackgroundColor: c16.distance_km.map((_, i) => i === c16.distance_km.length-1 ? 'rgba(255,107,53,1)' : 'rgba(232,255,90,0.9)'), pointBorderColor: 'transparent', pointRadius: 3, borderWidth: 2, tension: 0.35, fill: true, yAxisID: 'yRun', order: 1 },
+        { type: 'line', label: 'Run (km)', data: c16.distance_km, borderColor: 'rgba(232,255,90,0.9)', backgroundColor: 'rgba(232,255,90,0.12)', pointBackgroundColor: c16.distance_km.map((_, i) => i === c16.distance_km.length-1 ? 'rgba(255,107,53,1)' : 'rgba(232,255,90,0.9)'), pointBorderColor: 'transparent', pointRadius: 3, borderWidth: 2, tension: 0.35, fill: 'origin', yAxisID: 'yRun', order: 1 },
+        // Stacked on top of Run via fill:'-1' — same pattern as the annual
+        // chart above. Data is the COMBINED total (for correct line height);
+        // tooltip below shows the hike-only figure instead of the combined
+        // number.
+        { type: 'line', label: 'Hike (km)', data: c16Combined, borderColor: 'rgba(255,107,53,0.85)', backgroundColor: 'rgba(255,107,53,0.18)', borderDash: [3, 2], pointRadius: 0, borderWidth: 1.5, tension: 0.35, fill: '-1', yAxisID: 'yRun', order: 1 },
         { type: 'bar', label: 'Strength sessions', data: c16.strength_sessions, backgroundColor: c16.strength_sessions.map((_, i) => i === c16.strength_sessions.length-1 ? 'rgba(74,158,255,0.7)' : 'rgba(74,158,255,0.3)'), borderRadius: 2, yAxisID: 'yStr', order: 2 }
       ] },
-      options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 14 } }, scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, yRun: { type: 'linear', position: 'left', grid: { color: '#1f1f24' }, ticks: { color: '#e8ff5a', callback: v => `${v}km` }, min: 0, max: Math.ceil(maxDist * 1.15) }, yStr: { type: 'linear', position: 'right', grid: { display: false }, ticks: { color: '#4a9eff', stepSize: 1, callback: v => Number.isInteger(v) ? `${v}s` : '' }, min: 0, max: Math.max(maxSess + 1, 4) } }, plugins: { legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1, titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 10, callbacks: { label: ctx => ctx.dataset.yAxisID === 'yRun' ? ` ${ctx.parsed.y} km` : ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}` } } } },
+      options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 14 } }, scales: { x: { grid: { display: false }, ticks: { color: '#6b6b78' } }, yRun: { type: 'linear', position: 'left', grid: { color: '#1f1f24' }, ticks: { color: '#e8ff5a', callback: v => `${v}km` }, min: 0, max: Math.ceil(maxDist * 1.15) }, yStr: { type: 'linear', position: 'right', grid: { display: false }, ticks: { color: '#4a9eff', stepSize: 1, callback: v => Number.isInteger(v) ? `${v}s` : '' }, min: 0, max: Math.max(maxSess + 1, 4) } }, plugins: { legend: { display: true, position: 'top', labels: { color: '#6b6b78', font: { family: "'DM Mono', monospace", size: 10 }, boxWidth: 12 } }, tooltip: { backgroundColor: '#141417', borderColor: '#1f1f24', borderWidth: 1, titleColor: '#eeeef4', bodyColor: '#c8c8d4', padding: 10, callbacks: { label: ctx => {
+        if (ctx.dataset.label === 'Hike (km)') return ` Hike: ${c16Hike[ctx.dataIndex].toFixed(1)} km`;
+        if (ctx.dataset.yAxisID === 'yRun') return ` Run: ${ctx.parsed.y.toFixed(1)} km`;
+        return ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}`;
+      } } } } },
       plugins: [makeMonthPlugin('optionAMonthLines', c16.month_boundaries, c16.month_labels)]
     });
 

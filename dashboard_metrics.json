@@ -1,18 +1,19 @@
 {
-  "last_updated": "2026-07-26 11:58 CEST",
+  "last_updated": "2026-07-26 13:48 CEST",
   "last_complete_date": "2026-07-25",
   "this_year": "2026",
   "this_month_short": "Jul",
   "running": {
     "avg_per_run_km": 11.3,
     "runs_this_year": 62,
-    "avg_per_week_km": 27.1,
+    "avg_per_week_km": 28.8,
     "avg_runs_per_week": 2.4,
-    "total_distance_this_year_km": 703.5,
+    "total_distance_this_year_km": 749.3,
+    "hike_distance_this_year_km": 45.8,
     "current_weekly_streak": 23,
     "longest_weekly_streak": 23,
-    "week_delta_km": 2.8,
-    "week_qual": "Increased"
+    "week_delta_km": -0.6,
+    "week_qual": "Stable"
   },
   "strength": {
     "avg_sessions_per_week": 1.9,
@@ -201,6 +202,24 @@
       37.4,
       40.2
     ],
+    "hike_distance_km": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      24.6,
+      21.2
+    ],
     "strength_sessions": [
       0,
       2,
@@ -257,13 +276,14 @@
     ]
   },
   "chart_annual": {
-    "target_label": "vs 2025 total (490 km)",
-    "target_km": 490.0,
-    "raw_pct": 143.6,
-    "display_pct": 130,
+    "target_label": "vs 2025 total (591 km)",
+    "target_km": 590.7,
+    "raw_pct": 126.8,
+    "display_pct": 126.8,
     "is_overflow": true,
-    "year_dist_km": 703.5,
-    "km_to_target_km": 213.5,
+    "year_dist_km": 749.3,
+    "km_to_target_km": 158.6,
+    "hike_dist_this_year_km": 45.8,
     "strength_target_label": "vs 2025 total (51 sessions)",
     "strength_pct": 82,
     "strength_display_pct": 82,
@@ -287,6 +307,15 @@
       148.7,
       113.2,
       179.3
+    ],
+    "month_hike_distance_km": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      45.8
     ],
     "month_strength_sessions": [
       3,

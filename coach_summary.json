@@ -1,10 +1,10 @@
 {
-  "last_updated": "2026-07-26 13:48 CEST",
-  "headline": "The taper is holding after yesterday's sharp tempo \u2014 no follow-up run, which is the right call. Legs got their fast stimulus; now the quiet returns with under two weeks to the crossing.",
+  "last_updated": "2026-07-27 15:44 CEST",
+  "headline": "Five days without a run \u2014 the taper's quiet stretch has held longer than any gap this block. Legs are rested, the engine is banked. Twelve days to the crossing.",
   "confidence_pct": 65,
   "confidence_label": "Moderate data confidence",
   "confidence_reasons": [
-    "LT reading 23d old",
+    "LT reading 24d old",
     "HR data on 7/8 recent runs",
     "Sleep tracked 14/14 nights",
     "Steps tracked 0/7 days",
@@ -13,29 +13,29 @@
   ],
   "confidence_attention": "Steps tracked 0/7 days",
   "sections": {
-    "overview": "Running has done its job for this phase: the recent four-week block ran well ahead of the prior one, and yesterday's brisk tempo confirmed the aerobic engine still has a top end without dulling the legs. Today's absence of a run reads as deliberate spacing after that harder effort, not a gap. Strength has settled into a genuinely low-intensity, functional cadence \u2014 short sessions sitting mostly in the easiest zone \u2014 which is exactly what you want as departure nears, since it's maintenance, not a new stressor. Steps stay high on training days and drop sharply on rest days, so background time-on-feet remains substantial even when no run is logged. The strain-to-tolerance figure flagging \"detraining\" is an artefact of the winding-down volume against a fuller 28-day window \u2014 treat it as the taper showing up in the math, not a fitness warning. Recovery remains the one genuinely uneven input: sleep is erratic night to night.",
-    "trends": "The medium-term shape is a clear build into recent weeks followed by an intentional wind-down \u2014 cyclical rather than plateauing, and the timing lines up with the event on the horizon. Year-to-date volume dwarfs the same point last year, so this taper sits atop a far deeper base than the raw recent numbers alone suggest. That's the right frame: the quiet weeks are drawing down from a genuinely accumulated foundation, not from a thin one. For a hybrid athlete who maintains year-round readiness, this looks like a deliberate sharpening arc, not a loss of momentum.",
-    "threshold": "Threshold sits on a single early-July reference point with no 30-day baseline yet, so the number is a marker rather than a trend. What yesterday's tempo showed \u2014 sustained time above threshold at the quickest pace in weeks, with the effort held rather than surged \u2014 is the more useful current read: aerobic-threshold fitness is intact and accessible on demand. Nothing here suggests the top end has eroded during the lower-volume stretch.",
-    "zones": "The recent distribution is appropriate for a taper: most runs have lived low in the aerobic band with minimal grey-zone drift, and yesterday's session was the deliberate exception \u2014 a real chunk of time in the harder zones, cleanly polarised against the easy days around it rather than a muddy moderate slog. That's the right way to place a single quality effort inside a wind-down. Strength sessions sit almost entirely in the lowest zone, which keeps them as maintenance rather than competing for recovery.",
-    "hr_comparison": "Strength HR continues to sit low and controlled across sessions, consistent with functional maintenance work rather than anything metabolically taxing. The one run where the chest strap dropped out fell in line with surrounding efforts, so source agreement isn't raising any flags. Nothing notable to add beyond that.",
-    "calendar": "The pattern shows running and strength interleaved on a regular rhythm, with rest days that clearly correspond to the lowered step counts \u2014 you genuinely stop on stop days rather than backfilling with junk mileage. That discipline matters more now than at any point in the block: the ability to hold true rest through a taper is a skill, and the calendar shows it's in place.",
-    "personal_bests": "No PBs are in realistic reach right now, nor should they be \u2014 the shorter-distance bests date from a faster-focused window last autumn, and current training is pointed at multi-day loaded durability, a different quality entirely. The tempo confirms the speed hasn't vanished, but chasing a PB now would work against the taper. Park it for after the crossing."
+    "overview": "The running side has gone fully quiet since the sharp tempo, and that's the correct read this close to departure \u2014 no drift back toward intensity, no restless filler miles. The recent four-week block was a genuine build before this wind-down, so the current stillness sits on top of real accumulated volume rather than masking a gap. Strength has also gone silent for several days, which matters more than the running quiet: the prior weeks kept it short and maintenance-level, exactly as intended, and the last logged sessions were low-HR and controlled. Steps remain high on training-adjacent days, so the background load hasn't collapsed even as structured work pauses \u2014 the bike commute and daily movement are carrying the baseline. Sleep is patchy and the cardio-load status reads as detraining, but both are supporting signals only, and the detraining flag here is a mechanical artefact of a deliberate taper, not a fitness verdict.",
+    "trends": "The medium-term shape is a clear build followed by an intentional descent \u2014 the recent four weeks stepped up meaningfully over the prior four, then folded into taper right on schedule for the event window. Year-to-date, the distance gap over last year is enormous, which frames this taper correctly: it's a pause at a high plateau, not a retreat to a low one. The shape makes sense against the standing goal of durable year-round capacity with a near-term crossing to be fresh for. Nothing here suggests plateau or irregularity \u2014 it's a well-formed peak-and-ease.",
+    "threshold": "The threshold figure is still anchored to a single early-July test with no rolling baseline yet, so read it as a reference point rather than a live trend. What's more informative right now is the behaviour of easy-run HR through the build \u2014 controlled at genuinely easy paces \u2014 which tells you the aerobic engine is intact and efficient. That's the quality that carries a multi-day self-supported effort, and it's demonstrably in place. No reason to expect it has eroded in a few quiet days.",
+    "zones": "Across the block the distribution has been appropriately easy-skewed, with most sessions sitting in Z1\u2013Z2 and only the deliberate tempo pushing into Z4. That last hard run was a true mixed effort \u2014 real time up in Z3 and Z4 rather than a flat grind at a middling average \u2014 which is exactly what a single sharpening stimulus should look like before a taper. The surrounding runs stayed clean in the easy band with minimal grey-zone bleed. For a block whose job is to arrive fresh with the engine primed, that's the right shape: one quality touch, everything else controlled.",
+    "hr_comparison": "Strength sessions have run low and steady in the aerobic sense \u2014 consistent with short maintenance work rather than metabolically demanding circuits \u2014 and the estimated HR sits comfortably where you'd expect for that intent. The one run that lacked chest-strap data slotted in line with its neighbours, so source agreement isn't raising any flags. Nothing here worth acting on.",
+    "calendar": "The rhythm through the build was reliably rota-like \u2014 a few runs a week interleaved with regular strength \u2014 which is why the current cluster of empty days stands out against the athlete's own pattern rather than blending in. This isn't the erratic on-off of lost consistency; it's a clean, uniform pause after a dense stretch. The contrast itself is the signal that the taper is real and intentional.",
+    "personal_bests": "None of the standing PBs are in play during a taper, and chasing one now would work directly against the point of the next twelve days. The speed bests sit from a sharper period last autumn; the ultra/distance side is where current focus lives, and the crossing is a durability event, not a PB attempt. Nothing to pursue here right now."
   },
   "watch_items": [
-    "Watch whether any residual soreness or heaviness from the tempo lingers a second day, since that would matter more this close to departure than in a normal week.",
-    "Watch that the next runs drop back into the easy band rather than drifting toward yesterday's intensity as habit.",
-    "Watch how sleep tracks as travel and pre-event logistics ramp up \u2014 note it, don't chase it.",
-    "Watch that strength stays maintenance-level and short right through to departure rather than becoming a late durability substitute."
+    "Watch that the first run back lands squarely in the easy band and feels unremarkable, confirming the tempo left no residue.",
+    "Watch whether the strength pause resumes as brief maintenance or stays dark through to departure \u2014 either is fine, but note which.",
+    "Watch that daily movement and steps hold their baseline through the pause so the legs stay ticking over rather than going fully cold.",
+    "Watch how sleep tracks as travel logistics ramp \u2014 observe it, don't let it drive anything."
   ],
   "usage": {
-    "input_tokens": 8035,
-    "output_tokens": 1426,
-    "cost_usd": 0.075825,
-    "cost_dkk": 0.52319,
-    "date": "2026-07-26"
+    "input_tokens": 8009,
+    "output_tokens": 1454,
+    "cost_usd": 0.076395,
+    "cost_dkk": 0.52713,
+    "date": "2026-07-27"
   },
-  "usage_mtd_usd": 0.87521,
-  "usage_mtd_dkk": 6.0389,
-  "usage_ytd_usd": 0.87521,
-  "usage_ytd_dkk": 6.0389
+  "usage_mtd_usd": 0.9516,
+  "usage_mtd_dkk": 6.5661,
+  "usage_ytd_usd": 0.9516,
+  "usage_ytd_dkk": 6.5661
 }

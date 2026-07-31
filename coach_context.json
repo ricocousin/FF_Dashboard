@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-07-26",
-      "headline": "The taper is holding after yesterday's sharp tempo \u2014 no follow-up run, which is the right call. Legs got their fast stimulus; now the quiet returns with under two weeks to the crossing.",
-      "watch_items": [
-        "Watch whether any residual soreness or heaviness from the tempo lingers a second day, since that would matter more this close to departure than in a normal week.",
-        "Watch that the next runs drop back into the easy band rather than drifting toward yesterday's intensity as habit.",
-        "Watch how sleep tracks as travel and pre-event logistics ramp up \u2014 note it, don't chase it.",
-        "Watch that strength stays maintenance-level and short right through to departure rather than becoming a late durability substitute."
-      ]
-    },
-    {
       "date": "2026-07-27",
       "headline": "Five days without a run \u2014 the taper's quiet stretch has held longer than any gap this block. Legs are rested, the engine is banked. Twelve days to the crossing.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Note whether strength drops fully to zero in the final pre-travel days or holds one more light session; either is fine, just track which way it breaks.",
         "Keep steps from collapsing to cold rest-day zeros as logistics intensify, so the legs stay warm into departure.",
         "Read sleep purely as context through the packing-and-travel window, not as a readiness signal."
+      ]
+    },
+    {
+      "date": "2026-07-31",
+      "headline": "Eight days to the crossing and the taper is fully engaged. Legs are banked, strength held to the last, and the quiet is deliberate. The audit begins when the trail does.",
+      "watch_items": [
+        "Watch how the legs respond to the shift from short controlled runs to sustained daily time-on-feet in the crossing's first two or three days \u2014 that's the real durability audit.",
+        "Note whether strength holds one final light session or goes to zero in the last pre-travel days; either is fine, just track which way it breaks.",
+        "Keep an eye on whether step activity stays warm through the packing-and-travel window rather than collapsing entirely as logistics intensify.",
+        "Once the crossing begins, watch how easy-run HR behaves under pack load and cumulative fatigue \u2014 the first sustained days will reset what \"easy\" costs."
       ]
     }
   ]

@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-07-27",
-      "headline": "Five days without a run \u2014 the taper's quiet stretch has held longer than any gap this block. Legs are rested, the engine is banked. Twelve days to the crossing.",
-      "watch_items": [
-        "Watch that the first run back lands squarely in the easy band and feels unremarkable, confirming the tempo left no residue.",
-        "Watch whether the strength pause resumes as brief maintenance or stays dark through to departure \u2014 either is fine, but note which.",
-        "Watch that daily movement and steps hold their baseline through the pause so the legs stay ticking over rather than going fully cold.",
-        "Watch how sleep tracks as travel logistics ramp \u2014 observe it, don't let it drive anything."
-      ]
-    },
-    {
       "date": "2026-07-28",
       "headline": "Six days without a run \u2014 the longest quiet stretch of the block, right on cue. Strength stayed live through the pause. Legs are banked; the crossing is now under two weeks out.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Note whether strength holds one final light session or goes to zero in the last pre-travel days; either is fine, just track which way it breaks.",
         "Keep an eye on whether step activity stays warm through the packing-and-travel window rather than collapsing entirely as logistics intensify.",
         "Once the crossing begins, watch how easy-run HR behaves under pack load and cumulative fatigue \u2014 the first sustained days will reset what \"easy\" costs."
+      ]
+    },
+    {
+      "date": "2026-08-01",
+      "headline": "Last short shakeout before travel \u2014 legs sharp, HR barely lifting. A week out from the crossing, the taper is complete. From here it's logistics, not fitness.",
+      "watch_items": [
+        "Watch how easy-run HR behaves once the crossing begins under pack load and cumulative days \u2014 the first sustained days will redefine what \"easy\" costs.",
+        "Note whether steps stay warm through the packing-and-travel window or dip as logistics peak \u2014 a proxy for how much incidental movement survives the transition.",
+        "Once underway, track back-to-back leg response over the first two or three days \u2014 that early durability audit is the real unknown, not fitness.",
+        "Keep an eye on whether sleep steadies before travel, given how variable the recent nights have been heading into a demanding effort."
       ]
     }
   ]

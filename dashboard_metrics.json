@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-08-01 08:21 CEST",
+  "last_updated": "2026-08-01 21:21 CEST",
   "last_complete_date": "2026-07-31",
   "this_year": "2026",
   "this_month_short": "Aug",
@@ -1120,7 +1120,7 @@
   "fitness_metrics": {
     "latest_date": "2026-08-01",
     "latest_vo2max": 54.0,
-    "latest_vo2max_precise": 53.8,
+    "latest_vo2max_precise": 54.1,
     "trend": {
       "labels": [
         "07-09",
@@ -1245,29 +1245,29 @@
       "window_start": "2026-07-25",
       "window_end": "2026-08-01",
       "minutes": {
-        "Z1": 59.4,
-        "Z2": 65.2,
+        "Z1": 83.1,
+        "Z2": 79.9,
         "Z3": 43.5,
         "Z4": 19.4,
         "Z5": 0.0
       },
-      "total_minutes": 187.5,
-      "z1_pct": 31.7,
-      "z2_pct": 34.8,
-      "grey_pct": 33.6,
+      "total_minutes": 225.9,
+      "z1_pct": 36.8,
+      "z2_pct": 35.4,
+      "grey_pct": 27.9,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
-      "z2_vs_target_pct": 36,
+      "z2_vs_target_pct": 44,
       "z1_target_min_pct": 75,
       "z1_target_max_pct": 80,
-      "z1_vs_target_pct": 42,
+      "z1_vs_target_pct": 49,
       "grey_ceiling_pct": 10,
-      "grey_vs_ceiling_pct": 336,
+      "grey_vs_ceiling_pct": 279,
       "z5_target_min_pct": 15,
       "z5_target_max_pct": 20,
       "z5_vs_target_pct": 0,
-      "running_sessions_with_data": 4,
+      "running_sessions_with_data": 5,
       "strength_sessions_with_data": 0,
       "dropout_fallback_sessions_with_data": 0,
       "has_lt_data": true
@@ -1473,6 +1473,24 @@
     }
   ],
   "run_hr_context": [
+    {
+      "activity_id": "23816310897",
+      "date": "2026-08-01",
+      "name": "Vordingborg Running",
+      "source": "garmin",
+      "avg_hr": 139,
+      "max_hr": 157,
+      "zone_minutes": {
+        "Z1": 23.666666666667,
+        "Z2": 14.699999999999962,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 24m Z2 15m",
+      "label": null,
+      "calibration_note": null
+    },
     {
       "activity_id": "23805912745",
       "date": "2026-08-01",
@@ -1927,18 +1945,6 @@
       "source": "garmin",
       "avg_hr": 156,
       "max_hr": 190,
-      "zone_minutes": null,
-      "zone_summary": "",
-      "label": null,
-      "calibration_note": null
-    },
-    {
-      "activity_id": "22832309946",
-      "date": "2026-05-10",
-      "name": "Running",
-      "source": "garmin",
-      "avg_hr": 163,
-      "max_hr": 181,
       "zone_minutes": null,
       "zone_summary": "",
       "label": null,

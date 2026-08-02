@@ -1,18 +1,18 @@
 {
-  "last_updated": "2026-08-01 21:21 CEST",
-  "last_complete_date": "2026-07-31",
+  "last_updated": "2026-08-02 08:27 CEST",
+  "last_complete_date": "2026-08-01",
   "this_year": "2026",
   "this_month_short": "Aug",
   "running": {
-    "avg_per_run_km": 11.2,
-    "runs_this_year": 64,
-    "avg_per_week_km": 28.3,
+    "avg_per_run_km": 11.0,
+    "runs_this_year": 66,
+    "avg_per_week_km": 28.7,
     "avg_runs_per_week": 2.4,
-    "total_distance_this_year_km": 763.6,
+    "total_distance_this_year_km": 774.6,
     "hike_distance_this_year_km": 45.8,
     "current_weekly_streak": 24,
     "longest_weekly_streak": 24,
-    "week_delta_km": -47.1,
+    "week_delta_km": -36.1,
     "week_qual": "Decreased"
   },
   "strength": {
@@ -28,22 +28,22 @@
   "steps": {
     "avg_all_time": 12266,
     "avg_7d": null,
-    "avg_30d": 20489,
+    "avg_30d": 20446,
     "delta_7d_vs_30d": null,
     "qual": null,
     "discrepancy_avg": null,
     "discrepancy_days": 0
   },
   "intensity": {
-    "avg_week_year_mins": 243,
-    "avg_week_year_run_mins": 155,
+    "avg_week_year_mins": 245,
+    "avg_week_year_run_mins": 158,
     "avg_week_year_lift_mins": 113,
-    "avg_week_month_mins": 0,
-    "avg_week_month_run_mins": 0,
+    "avg_week_month_mins": 59,
+    "avg_week_month_run_mins": 59,
     "avg_week_month_lift_mins": 0,
-    "delta_month_vs_year": -243,
+    "delta_month_vs_year": -186,
     "qual": "Decreased",
-    "streak_weeks": 4,
+    "streak_weeks": 5,
     "best_streak_weeks": 6,
     "goal_mins": 210
   },
@@ -53,8 +53,8 @@
       "score": null
     },
     "month": {
-      "mins": 429.93333333333334,
-      "score": 54.666666666666664
+      "mins": 432.5,
+      "score": 54.57142857142857
     },
     "year": {
       "mins": 429.93333333333334,
@@ -64,14 +64,13 @@
     "qual": null
   },
   "cardio_load": {
-    "latest_date": "2026-08-01",
+    "latest_date": "2026-08-02",
     "status": "DETRAINING",
     "strain": 0.0,
-    "tolerance": 28.951094,
+    "tolerance": 26.242258,
     "ratio": 0.0,
     "trend": {
       "labels": [
-        "07-04",
         "07-05",
         "07-06",
         "07-07",
@@ -99,10 +98,10 @@
         "07-29",
         "07-30",
         "07-31",
-        "08-01"
+        "08-01",
+        "08-02"
       ],
       "strain": [
-        100.66793,
         94.46279,
         75.57024,
         73.986465,
@@ -130,10 +129,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
         0.0
       ],
       "tolerance": [
-        100.66793,
         94.46279,
         75.57024,
         73.986465,
@@ -161,7 +160,8 @@
         39.736942,
         35.67273,
         34.805637,
-        28.951094
+        28.951094,
+        26.242258
       ]
     }
   },
@@ -200,7 +200,7 @@
       57.9,
       37.4,
       40.2,
-      14.3
+      25.3
     ],
     "hike_distance_km": [
       0,
@@ -278,11 +278,11 @@
   "chart_annual": {
     "target_label": "vs 2025 total (591 km)",
     "target_km": 590.7,
-    "raw_pct": 129.3,
-    "display_pct": 129.3,
+    "raw_pct": 131.1,
+    "display_pct": 130,
     "is_overflow": true,
-    "year_dist_km": 763.6,
-    "km_to_target_km": 172.8,
+    "year_dist_km": 774.6,
+    "km_to_target_km": 183.9,
     "hike_dist_this_year_km": 45.8,
     "strength_target_label": "vs 2025 total (51 sessions)",
     "strength_pct": 86,
@@ -308,7 +308,7 @@
       148.7,
       113.2,
       193.6,
-      0.0
+      11.1
     ],
     "month_hike_distance_km": [
       0.0,
@@ -1109,7 +1109,7 @@
   },
   "data_freshness": {
     "status": "fresh",
-    "last_success_date": "2026-08-01",
+    "last_success_date": "2026-08-02",
     "age_days": 0
   },
   "tile_freshness": {
@@ -1242,32 +1242,32 @@
     "rolling": {
       "label": "This week (rolling 7d)",
       "window_days": 7,
-      "window_start": "2026-07-25",
-      "window_end": "2026-08-01",
+      "window_start": "2026-07-26",
+      "window_end": "2026-08-02",
       "minutes": {
-        "Z1": 83.1,
-        "Z2": 79.9,
-        "Z3": 43.5,
-        "Z4": 19.4,
+        "Z1": 75.1,
+        "Z2": 61.4,
+        "Z3": 1.7,
+        "Z4": 0.0,
         "Z5": 0.0
       },
-      "total_minutes": 225.9,
-      "z1_pct": 36.8,
-      "z2_pct": 35.4,
-      "grey_pct": 27.9,
+      "total_minutes": 138.2,
+      "z1_pct": 54.3,
+      "z2_pct": 44.4,
+      "grey_pct": 1.3,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
-      "z2_vs_target_pct": 44,
+      "z2_vs_target_pct": 34,
       "z1_target_min_pct": 75,
       "z1_target_max_pct": 80,
-      "z1_vs_target_pct": 49,
+      "z1_vs_target_pct": 72,
       "grey_ceiling_pct": 10,
-      "grey_vs_ceiling_pct": 279,
+      "grey_vs_ceiling_pct": 13,
       "z5_target_min_pct": 15,
       "z5_target_max_pct": 20,
       "z5_vs_target_pct": 0,
-      "running_sessions_with_data": 5,
+      "running_sessions_with_data": 4,
       "strength_sessions_with_data": 0,
       "dropout_fallback_sessions_with_data": 0,
       "has_lt_data": true
@@ -1307,66 +1307,66 @@
     },
     "ytd": {
       "label": "Year to date",
-      "window_days": 212,
+      "window_days": 213,
       "window_start": "2026-01-01",
-      "window_end": "2026-07-31",
+      "window_end": "2026-08-01",
       "minutes": {
-        "Z1": 736.5,
-        "Z2": 695.0,
+        "Z1": 780.9,
+        "Z2": 710.2,
         "Z3": 117.7,
         "Z4": 32.3,
         "Z5": 0.0
       },
-      "total_minutes": 1581.4,
-      "z1_pct": 46.6,
-      "z2_pct": 43.9,
-      "grey_pct": 9.5,
+      "total_minutes": 1641.0,
+      "z1_pct": 47.6,
+      "z2_pct": 43.3,
+      "grey_pct": 9.1,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
-      "z2_vs_target_pct": 386,
+      "z2_vs_target_pct": 395,
       "z1_target_min_pct": 75,
       "z1_target_max_pct": 80,
-      "z1_vs_target_pct": 62,
+      "z1_vs_target_pct": 63,
       "grey_ceiling_pct": 10,
-      "grey_vs_ceiling_pct": 95,
+      "grey_vs_ceiling_pct": 91,
       "z5_target_min_pct": 15,
       "z5_target_max_pct": 20,
       "z5_vs_target_pct": 0,
-      "running_sessions_with_data": 17,
+      "running_sessions_with_data": 19,
       "strength_sessions_with_data": 6,
       "dropout_fallback_sessions_with_data": 1,
       "has_lt_data": true
     },
     "all_time": {
       "label": "All time",
-      "window_days": 1942,
+      "window_days": 1943,
       "window_start": "2021-04-07",
-      "window_end": "2026-07-31",
+      "window_end": "2026-08-01",
       "minutes": {
-        "Z1": 736.5,
-        "Z2": 695.0,
+        "Z1": 780.9,
+        "Z2": 710.2,
         "Z3": 117.7,
         "Z4": 32.3,
         "Z5": 0.0
       },
-      "total_minutes": 1581.4,
-      "z1_pct": 46.6,
-      "z2_pct": 43.9,
-      "grey_pct": 9.5,
+      "total_minutes": 1641.0,
+      "z1_pct": 47.6,
+      "z2_pct": 43.3,
+      "grey_pct": 9.1,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
-      "z2_vs_target_pct": 386,
+      "z2_vs_target_pct": 395,
       "z1_target_min_pct": 75,
       "z1_target_max_pct": 80,
-      "z1_vs_target_pct": 62,
+      "z1_vs_target_pct": 63,
       "grey_ceiling_pct": 10,
-      "grey_vs_ceiling_pct": 95,
+      "grey_vs_ceiling_pct": 91,
       "z5_target_min_pct": 15,
       "z5_target_max_pct": 20,
       "z5_vs_target_pct": 0,
-      "running_sessions_with_data": 17,
+      "running_sessions_with_data": 19,
       "strength_sessions_with_data": 6,
       "dropout_fallback_sessions_with_data": 1,
       "has_lt_data": true

@@ -931,5 +931,72 @@
       "cost_usd": 0.05298,
       "cost_dkk": 0.36556
     }
+  },
+  {
+    "date": "2026-08-04",
+    "ab_mapping": {
+      "A": "sonnet",
+      "B": "opus"
+    },
+    "output_a": "HEADLINE:\nFour days out, and the last easy doubles landed exactly as intended \u2014 HR obedient, legs quiet. Strength held through to the final window. Logistics take over from here.\n\nOVERVIEW:\nThis week closed the taper cleanly. Running volume was intentionally light and easy \u2014 two short outdoor runs on the same day, both sitting in low HR territory with no strain visible \u2014 while a functional fitness session just yesterday kept strength engagement current right up to departure. Steps remain high on running/training days but the rest-day-zero pattern continues, which is normal for this athlete's structure but worth remembering when reading the flat cardio load figures below. Nothing here suggests fatigue; it suggests a taper that did its job and a system now sitting quiet before load returns in a very different form \u2014 daily pack-loaded distance rather than structured sessions.\n\nTRENDS:\nThe 16-week shape is unmistakably a build-then-taper: the 4-week volume jump against the prior 4 weeks reflects a real ramp in July, followed by this final deliberate pull-back into single-digit-kilometre easy runs. Year-to-date distance is running far ahead of last year's pace at the same date, which confirms the broader base is substantially deeper than 12 months ago \u2014 the taper is a dip within a much bigger year, not a plateau or a stall.\n\nTHRESHOLD:\nThreshold pace hasn't moved in the last month, which is expected \u2014 taper weeks aren't designed to shift threshold, they're designed to protect what's already been earned. Nothing in the recent easy-paced sessions tests or threatens that number; the relevant question is simply whether the fitness holds through the transition into sustained trail effort, not whether it's still improving right now.\n\nZONES:\nThe last handful of runs sit almost entirely in Z1 with light Z2 \u2014 a textbook taper distribution, and appropriately so this close to departure. Contrast that against the July 25th session's substantial Z3/Z4 time and it's clear the athlete was still touching real intensity just over a week ago before deliberately backing off. That's the right sequencing: sharpen, then go quiet, rather than arriving flat.\n\nHR_COMPARISON:\nNothing unusual to flag \u2014 the most recent strength session has no HR attached, and the last several sessions with data show the same low-Z1-dominant pattern the taper would predict. No disagreement or oddity worth noting between sources this week.\n\nCALENDAR:\nThe pattern over the past two weeks shows a clear taper signature \u2014 frequency stayed reasonably steady but each session shortened and softened, including a same-day double that reads more as final leg-clearing than a training stimulus. That's consistent with someone managing the final days before a multi-day effort rather than someone losing consistency; the running streak reset shown elsewhere reflects definitional bookkeeping around the taper, not an actual gap in engagement.\n\nPERSONAL_BESTS:\nNo PB-relevant signal this week \u2014 taper efforts aren't pace tests, and nothing here changes the standing marks. The more relevant frontier over the next ten days is durability under load, not speed.\n\nWATCH:\n- With departure now days away, this is the last window to notice baseline resting HR and sleep before the pack-loaded days begin \u2014 useful as a pre-trail reference point.\n- Once daily distance resumes, watch how quickly \"easy\" pace drifts upward under pack weight versus the unloaded taper pace seen this week.\n- Reassess the cardio load status once real trail data starts flowing \u2014 a flat/zero reading right now is a taper artifact, not a fitness signal.\n- Carry forward the same open questions on back-to-back durability and the mountain-crossing terrain spike \u2014 they remain unanswered until the trail actually starts.",
+    "output_b": "HEADLINE:\nFour days out and the final quiet holds. Strength stayed live right up to the edge, legs are fresh, engine banked. Everything from here is the trail itself.\n\nOVERVIEW:\nThe picture is a clean pre-event trough, not a fade. Running has dropped to short, easy shakeouts sitting almost entirely in the lowest zone, which is exactly what you want with the crossing imminent \u2014 the 71% four-week build already banked the durability, and these last runs are just keeping the legs turning. Strength is the standout thread: the session two weeks running kept the streak alive into its eighth week and held load right to the taper's edge rather than dropping it early. Steps remain genuinely high even as running volume falls, so background load and time on feet haven't collapsed the way the \"detraining\" strain readout implies. That flag reads the recent quiet literally; it doesn't see the base underneath it. Recovery nights are the one unsettled variable, but they don't change the readiness verdict this close to the start.\n\nTRENDS:\nThe 16-week shape is a deliberate build-then-taper into a defined event, which is a departure from the athlete's usual year-round non-periodised rhythm \u2014 and appropriately so, given a 580 km self-supported crossing. Year-to-date, the distance gap versus last year is enormous, which tells you the aerobic base under this taper is far deeper than the recent weekly numbers alone suggest. The current dip isn't a plateau or drift; it's the intended low point before a very long, sustained block of loaded time on feet takes over.\n\nTHRESHOLD:\nThreshold pace and its anchoring HR are unchanged over the baseline window, which is precisely what you'd expect through a taper \u2014 you don't sharpen threshold this close in, you protect it. The relevant read isn't whether threshold is improving right now but that it's intact and stable heading into an event where raw speed matters far less than repeatable aerobic economy under a pack. The engine is where it needs to be.\n\nZONES:\nThe recent per-session shapes are textbook taper: the last several runs sit almost wholly in Z1 with brief Z2 touches and no meaningful Z3+ time, a deliberate contrast to the genuinely hard mixed session late in July that carried real Z3 and Z4 minutes. That earlier run confirms top-end was present when the block wanted it; the recent flatness confirms it's been correctly switched off. For what these final days are trying to do \u2014 arrive fresh \u2014 the distribution is right.\n\nHR_COMPARISON:\nNothing concerning in the strength or run HR patterns. The strength sessions sit low and steady, consistent with functional maintenance work rather than metabolically taxing efforts, and where run HR is present it tracks pace sensibly. No source-agreement issue worth flagging.\n\nCALENDAR:\nThe calendar shows the frequency deliberately thinning as the event nears \u2014 strength held to a steady cadence while running compressed into short doubles on the final active days. That's a controlled wind-down, not an erratic gap. The consistency of the strength thread through the taper is the genuinely notable part: it's the one modality that never got fully parked.\n\nPERSONAL_BESTS:\nNo PBs are in play here and none should be \u2014 the training focus has been durability and banked base, not sharpening for a fast time trial. The speed bests from last autumn remain the reference point for a future speed-oriented block, not this one.\n\nWATCH:\n- Watch how \"easy\" HR behaves once consecutive loaded days begin \u2014 the first few days will reset what easy actually costs under a pack.\n- Track the back-to-back leg response early; cumulative durability under load is still the real unknown, not the engine.\n- Note how the border mountain crossing sits within the daily rhythm \u2014 read that terrain spike separately from the flatter sections.\n- Watch whether recovery nights steady once the trail rhythm replaces the travel-and-logistics window.",
+    "opus_usage": {
+      "input_tokens": 7763,
+      "output_tokens": 1279,
+      "cost_usd": 0.07079,
+      "cost_dkk": 0.48845
+    },
+    "sonnet_usage": {
+      "input_tokens": 7763,
+      "output_tokens": 1229,
+      "cost_usd": 0.041724,
+      "cost_dkk": 0.2879
+    },
+    "judge": {
+      "output_a": {
+        "context_awareness": {
+          "score": 4,
+          "reason": "Frames the taper against the imminent multi-day pack-loaded effort and shifts focus to durability/loaded-pace transitions, though slightly less explicit about the 580km crossing specifics than B."
+        },
+        "artefact_handling": {
+          "score": 5,
+          "reason": "Explicitly calls the flat/zero cardio-load 'detraining' reading a taper artifact and flags the streak reset as bookkeeping, plus notes no-HR strength session correctly."
+        },
+        "no_fabrication": {
+          "score": 4,
+          "reason": "Mostly avoids figures but slips in '4-week volume jump' and references single-digit-kilometre and same-day double, staying mostly qualitative."
+        },
+        "coaching_usefulness": {
+          "score": 4,
+          "reason": "Clear, actionable pre-trail reference-point advice and forward watch items, well-aligned to the transition ahead."
+        }
+      },
+      "output_b": {
+        "context_awareness": {
+          "score": 5,
+          "reason": "Explicitly ties the taper to the 580km self-supported crossing and contrasts with the athlete's usual non-periodised rhythm, surfacing genuine event-specific demand."
+        },
+        "artefact_handling": {
+          "score": 4,
+          "reason": "Correctly reframes the DETRAINING strain readout as literal-reading noise over a deeper base, but does not address the streak-reset or no-HR strength artefact as cleanly as A."
+        },
+        "no_fabrication": {
+          "score": 2,
+          "reason": "Restates the 71% four-week build figure explicitly and cites the eighth strength week \u2014 the spec forbids restating figures already on cards."
+        },
+        "coaching_usefulness": {
+          "score": 4,
+          "reason": "Solid readiness verdict and forward watch items, though the WATCH list closely mirrors the prior flagged-to-watch items nearly verbatim."
+        }
+      },
+      "preferred": "A",
+      "preference_reason": "Both are strong and event-aware, but A avoids restating dashboard figures (B explicitly cites 71% and the eighth week) and handles more artefacts (cardio-load, streak reset, no-HR strength), while B's watch list nearly duplicates the prior day's flags."
+    },
+    "judge_usage": {
+      "input_tokens": 7448,
+      "output_tokens": 729,
+      "cost_usd": 0.055465,
+      "cost_dkk": 0.38271
+    }
   }
 ]

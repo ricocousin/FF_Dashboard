@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-07-31",
-      "headline": "Eight days to the crossing and the taper is fully engaged. Legs are banked, strength held to the last, and the quiet is deliberate. The audit begins when the trail does.",
-      "watch_items": [
-        "Watch how the legs respond to the shift from short controlled runs to sustained daily time-on-feet in the crossing's first two or three days \u2014 that's the real durability audit.",
-        "Note whether strength holds one final light session or goes to zero in the last pre-travel days; either is fine, just track which way it breaks.",
-        "Keep an eye on whether step activity stays warm through the packing-and-travel window rather than collapsing entirely as logistics intensify.",
-        "Once the crossing begins, watch how easy-run HR behaves under pack load and cumulative fatigue \u2014 the first sustained days will reset what \"easy\" costs."
-      ]
-    },
-    {
       "date": "2026-08-01",
       "headline": "Taper is complete and the engine is intact. Two runs today, both easy, HR obedient. From here it's travel and logistics \u2014 the crossing writes the next chapter.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Track the back-to-back leg response early; cumulative durability under load is still the real unknown, not the engine.",
         "Note how the border mountain crossing sits within the daily rhythm \u2014 read that terrain spike separately from the flatter sections.",
         "Watch whether recovery nights steady once the trail rhythm replaces the travel-and-logistics window."
+      ]
+    },
+    {
+      "date": "2026-08-05",
+      "headline": "Three days to the start line and the taper has held clean. Legs are fresh, engine banked, strength live to the end. From here it's 580 km on foot.",
+      "watch_items": [
+        "Watch how easy-run HR behaves once loaded days start stacking under a pack \u2014 the first days will redefine what \"easy\" costs.",
+        "Track the back-to-back leg response early; cumulative durability under load remains the genuine unknown, not the engine.",
+        "Read the border mountain crossing as its own terrain spike, separate from the flatter coastal sections.",
+        "Watch whether nightly recovery settles once the trail rhythm replaces the travel-and-logistics window."
       ]
     }
   ]

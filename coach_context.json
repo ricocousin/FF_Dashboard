@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-02",
-      "headline": "Six days out from the crossing, the taper has landed clean. Legs are banked, engine intact, movement holding through the logistics window. The next chapter is written on the trail, not here.",
-      "watch_items": [
-        "Watch whether recovery nights steady in the final days before departure \u2014 this is the one metric that's stayed variable and the one that compounds most under a multi-day self-supported load.",
-        "Once the crossing begins, track how easy-run HR responds to daily pack-loaded efforts stacking up \u2014 the first two or three days will redefine what \"easy\" actually costs.",
-        "Note the back-to-back leg response over the opening stretch; early durability under cumulative load is the genuine unknown, not the underlying fitness.",
-        "Keep an eye on whether movement holds through the final travel window as a read on residual freshness into the transition."
-      ]
-    },
-    {
       "date": "2026-08-03",
       "headline": "Five days to the crossing. The taper has held clean and the final travel window is here. Everything from now is logistics \u2014 the trail writes the rest.",
       "watch_items": [
@@ -47,6 +37,16 @@
         "Watch how \"easy\" HR recalibrates once loaded days start stacking under the pack \u2014 the first two or three days will reset your sense of what steady costs.",
         "Track the back-to-back leg response early; cumulative durability under load, not the engine, remains the real unknown.",
         "Read the border mountain crossing as its own terrain spike, distinct from the flatter coastal running.",
+        "Watch whether nightly recovery settles once trail rhythm replaces the travel-and-logistics window."
+      ]
+    },
+    {
+      "date": "2026-08-07",
+      "headline": "Start day is here. The taper held and the engine is banked. From tomorrow the 580 km trail becomes the only data that matters.",
+      "watch_items": [
+        "Watch how easy-day HR recalibrates once the pack and consecutive loaded days stack \u2014 the first few days will reset your sense of what steady costs.",
+        "Track the back-to-back leg response early; cumulative durability under load, not the engine, is the genuine unknown.",
+        "Read the border mountain crossing as its own terrain spike, distinct from the flatter coastal sections.",
         "Watch whether nightly recovery settles once trail rhythm replaces the travel-and-logistics window."
       ]
     }

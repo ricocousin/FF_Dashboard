@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-08-07 07:28 CEST",
-  "last_complete_date": "2026-08-06",
+  "last_updated": "2026-08-08 06:48 CEST",
+  "last_complete_date": "2026-08-07",
   "this_year": "2026",
   "this_month_short": "Aug",
   "running": {
@@ -17,31 +17,31 @@
   },
   "strength": {
     "avg_sessions_per_week": 1.9,
-    "sessions_this_year": 45,
-    "avg_hours_per_week": 1.8,
-    "total_hours_this_year": 44.2,
+    "sessions_this_year": 46,
+    "avg_hours_per_week": 1.9,
+    "total_hours_this_year": 44.6,
     "current_weekly_streak": 8,
     "longest_weekly_streak": 23,
-    "week_delta_sessions": -1,
+    "week_delta_sessions": 0,
     "week_qual": "Stable"
   },
   "steps": {
     "avg_all_time": 12266,
     "avg_7d": null,
-    "avg_30d": 19582,
+    "avg_30d": 19297,
     "delta_7d_vs_30d": null,
     "qual": null,
     "discrepancy_avg": null,
     "discrepancy_days": 0
   },
   "intensity": {
-    "avg_week_year_mins": 242,
+    "avg_week_year_mins": 243,
     "avg_week_year_run_mins": 156,
     "avg_week_year_lift_mins": 111,
-    "avg_week_month_mins": 107,
+    "avg_week_month_mins": 118,
     "avg_week_month_run_mins": 85,
-    "avg_week_month_lift_mins": 45,
-    "delta_month_vs_year": -135,
+    "avg_week_month_lift_mins": 66,
+    "delta_month_vs_year": -125,
     "qual": "Decreased",
     "streak_weeks": 5,
     "best_streak_weeks": 6,
@@ -53,8 +53,8 @@
       "score": null
     },
     "month": {
-      "mins": 436.8888888888889,
-      "score": 56.888888888888886
+      "mins": 436.875,
+      "score": 59.125
     },
     "year": {
       "mins": 429.93333333333334,
@@ -64,14 +64,13 @@
     "qual": null
   },
   "cardio_load": {
-    "latest_date": "2026-08-07",
+    "latest_date": "2026-08-08",
     "status": "DETRAINING",
     "strain": 0.0,
-    "tolerance": 17.781265,
+    "tolerance": 9.609979,
     "ratio": 0.0,
     "trend": {
       "labels": [
-        "07-10",
         "07-11",
         "07-12",
         "07-13",
@@ -99,10 +98,10 @@
         "08-04",
         "08-05",
         "08-06",
-        "08-07"
+        "08-07",
+        "08-08"
       ],
       "strain": [
-        68.09749,
         77.36446,
         91.043106,
         94.373146,
@@ -130,10 +129,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
         0.0
       ],
       "tolerance": [
-        68.30656,
         84.3555,
         92.28663,
         86.538605,
@@ -161,7 +160,8 @@
         23.882702,
         20.16887,
         17.781265,
-        17.781265
+        17.781265,
+        9.609979
       ]
     }
   },
@@ -236,7 +236,7 @@
       2,
       2,
       2,
-      1
+      2
     ],
     "month_boundaries": [
       false,
@@ -285,11 +285,11 @@
     "km_to_target_km": 204.4,
     "hike_dist_this_year_km": 45.8,
     "strength_target_label": "vs 2025 total (51 sessions)",
-    "strength_pct": 88,
-    "strength_display_pct": 88,
+    "strength_pct": 90,
+    "strength_display_pct": 90,
     "strength_overflow": false,
-    "strength_sessions_done": 45,
-    "strength_sessions_to_match": 6,
+    "strength_sessions_done": 46,
+    "strength_sessions_to_match": 5,
     "month_labels": [
       "Jan",
       "Feb",
@@ -328,7 +328,7 @@
       6,
       5,
       11,
-      1
+      2
     ],
     "current_month_index": 7
   },
@@ -1087,7 +1087,8 @@
       "2026-07-22",
       "2026-07-27",
       "2026-07-30",
-      "2026-08-03"
+      "2026-08-03",
+      "2026-08-06"
     ],
     "hike_dates": [
       "2021-07-30",
@@ -1112,7 +1113,7 @@
   },
   "data_freshness": {
     "status": "fresh",
-    "last_success_date": "2026-08-07",
+    "last_success_date": "2026-08-08",
     "age_days": 0
   },
   "tile_freshness": {
@@ -1245,32 +1246,32 @@
     "rolling": {
       "label": "This week (rolling 7d)",
       "window_days": 7,
-      "window_start": "2026-07-31",
-      "window_end": "2026-08-07",
+      "window_start": "2026-08-01",
+      "window_end": "2026-08-08",
       "minutes": {
-        "Z1": 79.9,
-        "Z2": 36.8,
+        "Z1": 66.9,
+        "Z2": 29.8,
         "Z3": 0.0,
         "Z4": 0.0,
         "Z5": 0.0
       },
-      "total_minutes": 116.7,
-      "z1_pct": 68.4,
-      "z2_pct": 31.6,
+      "total_minutes": 96.7,
+      "z1_pct": 69.2,
+      "z2_pct": 30.8,
       "grey_pct": 0.0,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
-      "z2_vs_target_pct": 20,
+      "z2_vs_target_pct": 17,
       "z1_target_min_pct": 75,
       "z1_target_max_pct": 80,
-      "z1_vs_target_pct": 91,
+      "z1_vs_target_pct": 92,
       "grey_ceiling_pct": 10,
       "grey_vs_ceiling_pct": 0,
       "z5_target_min_pct": 15,
       "z5_target_max_pct": 20,
       "z5_vs_target_pct": 0,
-      "running_sessions_with_data": 4,
+      "running_sessions_with_data": 3,
       "strength_sessions_with_data": 0,
       "dropout_fallback_sessions_with_data": 0,
       "has_lt_data": true
@@ -1310,9 +1311,9 @@
     },
     "ytd": {
       "label": "Year to date",
-      "window_days": 218,
+      "window_days": 219,
       "window_start": "2026-01-01",
-      "window_end": "2026-08-06",
+      "window_end": "2026-08-07",
       "minutes": {
         "Z1": 803.4,
         "Z2": 724.8,
@@ -1343,9 +1344,9 @@
     },
     "all_time": {
       "label": "All time",
-      "window_days": 1948,
+      "window_days": 1949,
       "window_start": "2021-04-07",
-      "window_end": "2026-08-06",
+      "window_end": "2026-08-07",
       "minutes": {
         "Z1": 803.4,
         "Z2": 724.8,

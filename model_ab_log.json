@@ -1201,5 +1201,73 @@
       "cost_usd": 0.05385,
       "cost_dkk": 0.37157
     }
+  },
+  {
+    "date": "2026-08-08",
+    "ab_mapping": {
+      "A": "opus",
+      "B": "sonnet"
+    },
+    "output_a": "HEADLINE:\nDay one of the 580 km crossing. The taper landed clean and the engine is banked. From here the trail is the only data that counts.\n\nOVERVIEW:\nThe build into this start was deliberate and it held together: the four-week running block ran meaningfully higher than the prior block, strength stayed live right to the edge with short, sharp sessions in the final week, and background step volume has been sitting high enough to add real time-on-feet before the pack even goes on. The taper trimmed load without hollowing anything out \u2014 the recent easy runs sit comfortably in the aerobic zones, nothing forced. The DETRAINING flag on cardio load is an artifact of the deliberate pre-event wind-down, not a fitness signal; treat it as noise this week. What matters now shifts entirely: the question stops being what the training says and becomes how the body absorbs consecutive loaded days under a pack.\n\nTRENDS:\nThe year-to-date picture is unambiguous \u2014 distance run to date sits far ahead of the same point last year, and the recent four-week block built on the one before it rather than coasting. That shape makes sense for someone walking into a multi-day crossing: a genuine build, then a clean pull-back into the start. The 12-week average masks how much of that volume is quality durability work rather than junk miles. This is not a plateau or an irregular stretch \u2014 it's a build-then-taper arc executed to plan.\n\nTHRESHOLD:\nThreshold pace has held flat across the last month, which during a taper is exactly what you want to see \u2014 no erosion, no forced sharpening. The engine that produced the recent long efforts is intact and rested. For the crossing itself, threshold is almost irrelevant to the pace you'll actually hold; the relevant capacity is sustained low-aerobic output repeated day after day, and the banked threshold fitness simply means that steady effort will cost less than it otherwise would.\n\nZONES:\nThe recent session shapes tell the real story better than any weekly aggregate: the final taper runs sat almost entirely in Z1\u2013Z2 with low maxes, genuinely easy rather than easy-on-average. Step back two weeks and the long run showed real Z3\u2013Z4 time \u2014 a proper hard effort \u2014 while the mid-length runs held a controlled Z2 base. That's a clean separation between hard and easy days, which is precisely the distribution you want heading into an effort where discipline over pace, not intensity, decides how the back half goes.\n\nHR_COMPARISON:\nStrength sessions continue to sit low and steady in the aerobic zones, consistent with functional circuit work rather than max-strength grinding \u2014 no HR surprises there. Where run HR and effort estimates overlap, the picture is internally consistent, so nothing about the sensor sourcing changes how the recent efforts should be read.\n\nCALENDAR:\nThe running streak is at its all-time best and strength has held an unbroken run of weeks alongside it \u2014 but the more telling thing is the pairing: strength stayed on the calendar right into the final taper days rather than being dropped early. That's the habit that keeps the frame durable under a loaded pack, and it's the kind of consistency that matters far more over a nine-day crossing than any single session.\n\nPERSONAL_BESTS:\nNone of the current PBs are in play this week \u2014 the focus is entirely on the opposite end of the spectrum. Worth noting the longest-distance record was set on a 137 km effort; the crossing ahead dwarfs that in cumulative terms, and the durability you build over the coming days will quietly reshape what's realistic at the ultra end of your range later.\n\nWATCH:\n- Watch how easy-effort HR recalibrates over the first loaded days \u2014 the pack and consecutive terrain will reset your sense of what steady costs.\n- Track the back-to-back leg response early; cumulative durability, not the aerobic engine, is the genuine unknown here.\n- Read the border mountain crossing as its own terrain spike, distinct from the flatter coastal sections.\n- Watch whether nightly recovery settles once trail rhythm replaces the travel-and-logistics window.",
+    "output_b": "HEADLINE:\nDay one on the trail. No trail data has landed yet \u2014 everything logged is pre-departure noise. Today is a data blackout, not a fitness signal.\n\nOVERVIEW:\nThere's nothing from the trail itself in today's feed \u2014 the runs and strength sessions listed are all pre-departure, the final short shakeouts and the last functional fitness session before setting off. Steps, intensity minutes and load figures reflect the taper window, not what 580 km on foot with a loaded pack will actually demand. The cardio load status reading detraining is an artifact of the taper's low recent training stimulus meeting a rolling 28-day window \u2014 it says nothing about readiness and will look strange for a few more days regardless of how the trail goes, since none of that effort is being captured by these feeds yet. Treat everything today as pre-event context, not a status update.\n\nTRENDS:\nThe 16-week shape remains what it's been through the taper: a build through July into a deliberate step-down over the final week, consistent with sitting fresh at the start line. Year-to-date volume is running well ahead of last year's pace at the same date, which matters more than this week's numbers \u2014 it reflects a genuinely larger aerobic base heading into a multi-day effort than the athlete had a year ago. Nothing about today's data changes that read.\n\nTHRESHOLD:\nNo new threshold data since the early-July session, and none is expected during the crossing itself. The banked number stands as the best available marker of aerobic fitness heading in \u2014 the crossing will test durability and terrain management far more than flat threshold pace, so this metric simply goes quiet for now rather than becoming irrelevant.\n\nZONES:\nThe final pre-trail runs sat almost entirely in Z1/Z2 with only brief excursions higher, which is exactly the right shape for a taper week \u2014 easy legs, no residual fatigue banked. That distribution is now a historical snapshot rather than a live signal; once trail data starts coming in, expect the zone picture to shift toward sustained Z1/Z2 with spikes at the mountain crossing, and that will be the first real test of how the pack and terrain change what \"easy\" costs.\n\nHR_COMPARISON:\nNothing new to flag here \u2014 the last strength sessions show the same low-drift, steady-state HR pattern seen throughout the block, and no fresh Garmin-vs-Polar comparison data has come in to compare against.\n\nCALENDAR:\nThe pre-departure week shows tight, deliberate spacing \u2014 short easy runs and a final light strength session right up to the edge, which is a clean taper pattern rather than a gap in consistency. The real calendar story starts now: back-to-back trail days will be a completely different consistency test than anything in the last 16 weeks, and the first days on foot will set the baseline for reading everything after.\n\nPERSONAL_BESTS:\nNot relevant today \u2014 no PB-pace context applies to a multi-day self-supported crossing, and none of the standing bests are in play until normal training resumes afterward.\n\nWATCH:\n- Watch for the first trail-day data to land and treat it as the actual start of this event's story, not today's blank feed.\n- Watch how easy-pace HR reads once pack weight and cumulative days replace the taper's fresh-legs baseline.\n- Watch the mountain crossing specifically as a distinct terrain spike rather than part of the general trend.\n- Watch whether sleep and recovery metrics resume once trail rhythm replaces the travel window \u2014 expect gaps in tracked nights while self-supported.",
+    "opus_usage": {
+      "input_tokens": 7559,
+      "output_tokens": 1333,
+      "cost_usd": 0.07112,
+      "cost_dkk": 0.49073
+    },
+    "sonnet_usage": {
+      "input_tokens": 7559,
+      "output_tokens": 1148,
+      "cost_usd": 0.039897,
+      "cost_dkk": 0.27529
+    },
+    "judge": {
+      "output_a": {
+        "context_awareness": {
+          "score": 4,
+          "reason": "Surfaces the pack/consecutive-days demand and border crossing as the real story, framing today as day one of the crossing well."
+        },
+        "artefact_handling": {
+          "score": 4,
+          "reason": "Correctly identifies DETRAINING as a taper artifact and handles calibrated HR sensor sourcing without over-discussing plumbing."
+        },
+        "no_fabrication": {
+          "score": 3,
+          "reason": "Mostly qualitative but leans on 'far ahead of last year' and 'four-week block ran higher' which paraphrase specific figures without stating exact numbers."
+        },
+        "coaching_usefulness": {
+          "score": 4,
+          "reason": "Actionable framing on durability being the unknown and threshold's irrelevance to trail pace; solid forward guidance."
+        },
+        "no_fabrication_note": ""
+      },
+      "output_b": {
+        "context_awareness": {
+          "score": 5,
+          "reason": "Recognizes today's feed is entirely pre-departure, that trail data hasn't landed, and anticipates the mountain crossing test \u2014 deeper situational read."
+        },
+        "artefact_handling": {
+          "score": 5,
+          "reason": "Explicitly frames both the DETRAINING flag and the entire feed as a data blackout / pre-event artifact, the most accurate handling of the situation."
+        },
+        "no_fabrication": {
+          "score": 4,
+          "reason": "Avoids stating specific figures, keeps commentary qualitative; 'well ahead of last year' is a mild paraphrase but no raw numbers restated."
+        },
+        "coaching_usefulness": {
+          "score": 4,
+          "reason": "Useful in reframing today as a blackout and setting expectations for first trail data, though slightly repetitive on the no-data point."
+        }
+      },
+      "preferred": "B",
+      "preference_reason": "B more accurately grasps that today's feed contains no trail data and is entirely pre-departure, handles the DETRAINING and blackout artifacts more explicitly, and avoids restating figures slightly better while remaining actionable."
+    },
+    "judge_usage": {
+      "input_tokens": 7217,
+      "output_tokens": 668,
+      "cost_usd": 0.052785,
+      "cost_dkk": 0.36422
+    }
   }
 ]

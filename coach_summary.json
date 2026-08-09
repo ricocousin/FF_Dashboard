@@ -1,41 +1,41 @@
 {
-  "last_updated": "2026-08-08 06:48 CEST",
-  "headline": "Day one of the 580 km crossing. The taper landed clean and the engine is banked. From here the trail is the only data that counts.",
-  "confidence_pct": 49,
-  "confidence_label": "Low data confidence",
+  "last_updated": "2026-08-09 06:56 CEST",
+  "headline": "The logged data stops before the crossing you're apparently mid-way through. Nothing from the trail has landed here yet. Until it does, this reads as a clean post-taper baseline, not a race in progress.",
+  "confidence_pct": 80,
+  "confidence_label": "Moderate data confidence",
   "confidence_reasons": [
-    "LT reading 36d old",
+    "LT reading 37d old",
     "HR data on 6/8 recent runs",
-    "Sleep tracked 6/14 nights",
-    "Steps tracked 0/7 days",
+    "Sleep tracked 14/14 nights",
+    "Steps tracked 7/7 days",
     "Data fetch up to date",
-    "Limited data sources active in last 3 days"
+    "Multiple data sources active in last 3 days"
   ],
-  "confidence_attention": "Steps tracked 0/7 days",
+  "confidence_attention": "LT reading 37d old",
   "sections": {
-    "overview": "The build into this start was deliberate and it held together: the four-week running block ran meaningfully higher than the prior block, strength stayed live right to the edge with short, sharp sessions in the final week, and background step volume has been sitting high enough to add real time-on-feet before the pack even goes on. The taper trimmed load without hollowing anything out \u2014 the recent easy runs sit comfortably in the aerobic zones, nothing forced. The DETRAINING flag on cardio load is an artifact of the deliberate pre-event wind-down, not a fitness signal; treat it as noise this week. What matters now shifts entirely: the question stops being what the training says and becomes how the body absorbs consecutive loaded days under a pack.",
-    "trends": "The year-to-date picture is unambiguous \u2014 distance run to date sits far ahead of the same point last year, and the recent four-week block built on the one before it rather than coasting. That shape makes sense for someone walking into a multi-day crossing: a genuine build, then a clean pull-back into the start. The 12-week average masks how much of that volume is quality durability work rather than junk miles. This is not a plateau or an irregular stretch \u2014 it's a build-then-taper arc executed to plan.",
-    "threshold": "Threshold pace has held flat across the last month, which during a taper is exactly what you want to see \u2014 no erosion, no forced sharpening. The engine that produced the recent long efforts is intact and rested. For the crossing itself, threshold is almost irrelevant to the pace you'll actually hold; the relevant capacity is sustained low-aerobic output repeated day after day, and the banked threshold fitness simply means that steady effort will cost less than it otherwise would.",
-    "zones": "The recent session shapes tell the real story better than any weekly aggregate: the final taper runs sat almost entirely in Z1\u2013Z2 with low maxes, genuinely easy rather than easy-on-average. Step back two weeks and the long run showed real Z3\u2013Z4 time \u2014 a proper hard effort \u2014 while the mid-length runs held a controlled Z2 base. That's a clean separation between hard and easy days, which is precisely the distribution you want heading into an effort where discipline over pace, not intensity, decides how the back half goes.",
-    "hr_comparison": "Strength sessions continue to sit low and steady in the aerobic zones, consistent with functional circuit work rather than max-strength grinding \u2014 no HR surprises there. Where run HR and effort estimates overlap, the picture is internally consistent, so nothing about the sensor sourcing changes how the recent efforts should be read.",
-    "calendar": "The running streak is at its all-time best and strength has held an unbroken run of weeks alongside it \u2014 but the more telling thing is the pairing: strength stayed on the calendar right into the final taper days rather than being dropped early. That's the habit that keeps the frame durable under a loaded pack, and it's the kind of consistency that matters far more over a nine-day crossing than any single session.",
-    "personal_bests": "None of the current PBs are in play this week \u2014 the focus is entirely on the opposite end of the spectrum. Worth noting the longest-distance record was set on a 137 km effort; the crossing ahead dwarfs that in cumulative terms, and the durability you build over the coming days will quietly reshape what's realistic at the ultra end of your range later."
+    "overview": "The numbers on this card describe the state you carried into the start line, not what the trail has done to you since \u2014 no crossing sessions have arrived in the feed. On that pre-event picture, running volume eased slightly over the last four weeks against the prior block, which is exactly what a taper should look like and not a loss of anything. Strength stayed genuinely live into the final days, the last two sessions sitting lighter and shorter as you'd expect at the edge of a taper. Steps remain very high and essentially flat between training and rest days, so your background load never really dropped even as structured running did. The cardio-load status flashing \"detraining\" is a mechanical artefact of that taper \u2014 a low seven-day strain against a much larger 28-day base \u2014 not a real fitness signal, and it should invert sharply once trail days register. Recovery is the one genuinely mixed thread: the recent nights are erratic and several score as unrecorded, consistent with the travel-and-logistics window rather than settled trail rhythm.",
+    "trends": "The year-to-date comparison is the standout: you're carrying more than three times the distance to this date versus last year, which reframes the recent four-week dip entirely \u2014 it's a taper sitting on top of a very large base, not a plateau. The 16-week shape reads as a long build tapering to a deliberate point, which is coherent with heading into a major effort. This is the kind of accumulated volume that makes a multi-day crossing plausible rather than reckless.",
+    "threshold": "Threshold pace and its anchoring HR are unchanged across the 30-day window, so there's no drift in either direction to interpret \u2014 aerobic ceiling is stable. For a long-distance context that stability is the point: you're not chasing threshold gains right now, you're relying on a fixed, well-established engine to sit comfortably below it for hours. Nothing here suggests that engine has softened.",
+    "zones": "The pre-taper session shapes are appropriately polarised. The recent easy runs sit almost entirely in Z1\u2013Z2 with low max HR, genuinely aerobic rather than grey-zone drift, while the one fast session before that carried real Z3\u2013Z4 time \u2014 that's a clean hard/easy separation, not muddled middle-intensity. The long 18 km effort back in late July was the exception, a sustained Z3-heavy piece, but it stands alone rather than defining the block. For a taper into ultra distance, this distribution is right: sharpen once, then keep everything easy and low.",
+    "hr_comparison": "The strength sessions read as controlled circuit work \u2014 the most recent one nudged into Z2 briefly, the one before sat entirely in Z1, both well under any cardiovascular strain that would compete with running. Across the runs, the fallback-sourced sessions track closely with the chest-strap ones at matching efforts, so effort-level agreement is solid and I'd trust the easy-run HR figures as a like-for-like comparison. Nothing anomalous in either stream.",
+    "calendar": "The pre-taper rhythm shows tight run-cluster days \u2014 several short sessions stacked close together in early August rather than spread evenly \u2014 which is the classic taper pattern of frequent, short, low-cost touches to keep the system primed without accumulating fatigue. That's a deliberate shape, not fragmentation. The strength cadence stayed regular right up to the edge, which is what kept the lifting streak intact through the wind-down.",
+    "personal_bests": "None of the standing PBs are relevant to what you're doing right now \u2014 the short-course speed marks were set in a different phase and the crossing is a durability event, not a pace one. Your 50K/100-mile mark is the reference that matters here, and the real question is whether the current effort rewrites the ultra-distance line entirely; that won't show until the trail data lands."
   },
   "watch_items": [
-    "Watch how easy-effort HR recalibrates over the first loaded days \u2014 the pack and consecutive terrain will reset your sense of what steady costs.",
-    "Track the back-to-back leg response early; cumulative durability, not the aerobic engine, is the genuine unknown here.",
-    "Read the border mountain crossing as its own terrain spike, distinct from the flatter coastal sections.",
-    "Watch whether nightly recovery settles once trail rhythm replaces the travel-and-logistics window."
+    "The obvious one: whether the crossing sessions actually appear in the feed \u2014 right now there's a gap between the narrative and the logged data, and the trail is the only evidence that counts.",
+    "Once trail data arrives, watch the cardio-load status flip out of its false \"detraining\" reading \u2014 the speed of that reversal will tell you how hard the first days loaded you.",
+    "Keep an eye on whether nightly recovery consolidates as trail rhythm replaces the logistics window, since the recent nights are still choppy.",
+    "Read easy-effort HR on the first loaded"
   ],
   "usage": {
-    "input_tokens": 7559,
-    "output_tokens": 1333,
-    "cost_usd": 0.07112,
-    "cost_dkk": 0.49073,
-    "date": "2026-08-08"
+    "input_tokens": 7923,
+    "output_tokens": 1600,
+    "cost_usd": 0.079615,
+    "cost_dkk": 0.54934,
+    "date": "2026-08-09"
   },
-  "usage_mtd_usd": 0.59695,
-  "usage_mtd_dkk": 4.119,
-  "usage_ytd_usd": 1.8582,
-  "usage_ytd_dkk": 12.8216
+  "usage_mtd_usd": 0.67656,
+  "usage_mtd_dkk": 4.6683,
+  "usage_ytd_usd": 1.93782,
+  "usage_ytd_dkk": 13.371
 }

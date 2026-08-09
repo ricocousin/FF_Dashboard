@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-08-08 06:48 CEST",
-  "last_complete_date": "2026-08-07",
+  "last_updated": "2026-08-09 06:56 CEST",
+  "last_complete_date": "2026-08-08",
   "this_year": "2026",
   "this_month_short": "Aug",
   "running": {
@@ -26,11 +26,11 @@
     "week_qual": "Stable"
   },
   "steps": {
-    "avg_all_time": 12266,
-    "avg_7d": null,
-    "avg_30d": 19297,
-    "delta_7d_vs_30d": null,
-    "qual": null,
+    "avg_all_time": 13223,
+    "avg_7d": 17446,
+    "avg_30d": 20932,
+    "delta_7d_vs_30d": -3486,
+    "qual": "Decreased",
     "discrepancy_avg": null,
     "discrepancy_days": 0
   },
@@ -49,29 +49,28 @@
   },
   "recovery": {
     "week": {
-      "mins": null,
-      "score": null
+      "mins": 412.6666666666667,
+      "score": 40.333333333333336
     },
     "month": {
-      "mins": 436.875,
-      "score": 59.125
+      "mins": 438.92857142857144,
+      "score": 54.392857142857146
     },
     "year": {
-      "mins": 429.93333333333334,
-      "score": 54.666666666666664
+      "mins": 442.9166666666667,
+      "score": 53.97222222222222
     },
-    "delta_week_vs_month": null,
-    "qual": null
+    "delta_week_vs_month": -26.26190476190476,
+    "qual": "Decreased"
   },
   "cardio_load": {
-    "latest_date": "2026-08-08",
+    "latest_date": "2026-08-09",
     "status": "DETRAINING",
-    "strain": 0.0,
-    "tolerance": 9.609979,
-    "ratio": 0.0,
+    "strain": 9.995585,
+    "tolerance": 48.002823,
+    "ratio": 0.21,
     "trend": {
       "labels": [
-        "07-11",
         "07-12",
         "07-13",
         "07-14",
@@ -99,69 +98,70 @@
         "08-05",
         "08-06",
         "08-07",
-        "08-08"
+        "08-08",
+        "08-09"
       ],
       "strain": [
-        77.36446,
         91.043106,
         94.373146,
         92.71985,
         80.67548,
-        71.12506,
-        71.12506,
-        38.439915,
-        13.925929,
-        10.595885,
-        2.8109572,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0
+        87.54577,
+        87.54577,
+        75.29691,
+        54.34226,
+        51.012215,
+        60.48917,
+        57.678215,
+        57.575928,
+        60.293415,
+        71.38113,
+        67.8218,
+        71.190956,
+        67.2049,
+        67.2049,
+        52.450584,
+        59.279415,
+        37.9644,
+        59.851643,
+        56.482487,
+        50.58214,
+        50.58214,
+        49.01803,
+        42.091812,
+        31.882828,
+        9.995585
       ],
       "tolerance": [
-        84.3555,
         92.28663,
         86.538605,
         84.07367,
         79.473885,
-        74.17563,
-        69.53965,
-        65.44908,
-        61.813023,
-        58.559708,
-        55.63172,
-        52.98259,
-        50.57429,
-        48.37541,
-        46.359768,
-        44.50538,
-        42.793633,
-        41.208683,
-        39.736942,
-        35.67273,
-        34.805637,
-        28.951094,
-        26.242258,
-        26.242258,
-        23.882702,
-        20.16887,
-        17.781265,
-        17.781265,
-        9.609979
+        81.83863,
+        76.72372,
+        80.625496,
+        77.53049,
+        73.449936,
+        75.8191,
+        72.208664,
+        74.118675,
+        71.72319,
+        77.92922,
+        74.81205,
+        72.84174,
+        73.585785,
+        70.957726,
+        67.28454,
+        68.80402,
+        65.501724,
+        68.2647,
+        68.2647,
+        67.749016,
+        64.03519,
+        61.64758,
+        62.302605,
+        54.131317,
+        48.002823
       ]
     }
   },
@@ -1113,12 +1113,12 @@
   },
   "data_freshness": {
     "status": "fresh",
-    "last_success_date": "2026-08-08",
+    "last_success_date": "2026-08-09",
     "age_days": 0
   },
   "tile_freshness": {
-    "steps": "stale",
-    "recovery": "stale",
+    "steps": "fresh",
+    "recovery": "fresh",
     "load": "stale"
   },
   "fitness_metrics": {
@@ -1140,78 +1140,112 @@
   },
   "strength_hr_overlay": [
     {
+      "date": "2026-08-06",
+      "name": "Functional Fitness",
+      "avg_hr": 135,
+      "max_hr": 144,
+      "sample_count": 1303,
+      "zone_minutes": {
+        "Z1": 16.5,
+        "Z2": 5.2,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 16m Z2 5m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
+    },
+    {
+      "date": "2026-08-03",
+      "name": "Functional Fitness",
+      "avg_hr": 113,
+      "max_hr": 137,
+      "sample_count": 1551,
+      "zone_minutes": {
+        "Z1": 44.6,
+        "Z2": 0.0,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 45m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
+    },
+    {
       "date": "2026-07-15",
       "name": "Functional Fitness",
-      "avg_hr": 126,
-      "max_hr": 149,
+      "avg_hr": 133,
+      "max_hr": 156,
       "sample_count": 1532,
       "zone_minutes": {
-        "Z1": 29.8,
+        "Z1": 24.6,
+        "Z2": 12.3,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 25m Z2 12m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
+    },
+    {
+      "date": "2026-07-13",
+      "name": "Functional Fitness",
+      "avg_hr": 139,
+      "max_hr": 161,
+      "sample_count": 1013,
+      "zone_minutes": {
+        "Z1": 27.0,
+        "Z2": 11.7,
+        "Z3": 11.9,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 27m Z2 12m Z3 12m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
+    },
+    {
+      "date": "2026-07-10",
+      "name": "Functional Fitness",
+      "avg_hr": 133,
+      "max_hr": 162,
+      "sample_count": 1506,
+      "zone_minutes": {
+        "Z1": 45.8,
+        "Z2": 6.1,
+        "Z3": 3.5,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 46m Z2 6m Z3 4m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
+    },
+    {
+      "date": "2026-07-08",
+      "name": "Functional Fitness",
+      "avg_hr": 122,
+      "max_hr": 153,
+      "sample_count": 3189,
+      "zone_minutes": {
+        "Z1": 52.9,
         "Z2": 7.1,
         "Z3": 0.0,
         "Z4": 0.0,
         "Z5": 0.0
       },
-      "zone_summary": "Z1 30m Z2 7m",
+      "zone_summary": "Z1 53m Z2 7m",
       "label": "Polar (calibrated) \u2014 no H10 during strength",
-      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
-    },
-    {
-      "date": "2026-07-13",
-      "name": "Functional Fitness",
-      "avg_hr": 132,
-      "max_hr": 154,
-      "sample_count": 1013,
-      "zone_minutes": {
-        "Z1": 31.4,
-        "Z2": 19.2,
-        "Z3": 0.0,
-        "Z4": 0.0,
-        "Z5": 0.0
-      },
-      "zone_summary": "Z1 31m Z2 19m",
-      "label": "Polar (calibrated) \u2014 no H10 during strength",
-      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
-    },
-    {
-      "date": "2026-07-10",
-      "name": "Functional Fitness",
-      "avg_hr": 126,
-      "max_hr": 155,
-      "sample_count": 1506,
-      "zone_minutes": {
-        "Z1": 47.9,
-        "Z2": 7.4,
-        "Z3": 0.0,
-        "Z4": 0.0,
-        "Z5": 0.0
-      },
-      "zone_summary": "Z1 48m Z2 7m",
-      "label": "Polar (calibrated) \u2014 no H10 during strength",
-      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
-    },
-    {
-      "date": "2026-07-08",
-      "name": "Functional Fitness",
-      "avg_hr": 115,
-      "max_hr": 146,
-      "sample_count": 3189,
-      "zone_minutes": {
-        "Z1": 57.8,
-        "Z2": 2.2,
-        "Z3": 0.0,
-        "Z4": 0.0,
-        "Z5": 0.0
-      },
-      "zone_summary": "Z1 58m Z2 2m",
-      "label": "Polar (calibrated) \u2014 no H10 during strength",
-      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
     },
     {
       "date": "2026-07-06",
       "name": "Functional Fitness",
-      "avg_hr": 116,
-      "max_hr": 120,
+      "avg_hr": 123,
+      "max_hr": 127,
       "sample_count": 1802,
       "zone_minutes": {
         "Z1": 46.2,
@@ -1222,58 +1256,58 @@
       },
       "zone_summary": "Z1 46m",
       "label": "Polar (calibrated) \u2014 no H10 during strength",
-      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
     },
     {
       "date": "2026-07-03",
       "name": "Copenhagen Running",
-      "avg_hr": 121,
-      "max_hr": 139,
+      "avg_hr": 128,
+      "max_hr": 146,
       "sample_count": 1041,
       "zone_minutes": {
-        "Z1": 65.7,
-        "Z2": 0.0,
+        "Z1": 44.6,
+        "Z2": 21.1,
         "Z3": 0.0,
         "Z4": 0.0,
         "Z5": 0.0
       },
-      "zone_summary": "Z1 66m",
+      "zone_summary": "Z1 45m Z2 21m",
       "label": "Polar (calibrated) \u2014 no H10 during strength",
-      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
     }
   ],
   "zone_time": {
     "rolling": {
       "label": "This week (rolling 7d)",
       "window_days": 7,
-      "window_start": "2026-08-01",
-      "window_end": "2026-08-08",
+      "window_start": "2026-08-02",
+      "window_end": "2026-08-09",
       "minutes": {
-        "Z1": 66.9,
-        "Z2": 29.8,
+        "Z1": 131.0,
+        "Z2": 46.8,
         "Z3": 0.0,
         "Z4": 0.0,
         "Z5": 0.0
       },
-      "total_minutes": 96.7,
-      "z1_pct": 69.2,
-      "z2_pct": 30.8,
+      "total_minutes": 177.8,
+      "z1_pct": 73.7,
+      "z2_pct": 26.3,
       "grey_pct": 0.0,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
-      "z2_vs_target_pct": 17,
+      "z2_vs_target_pct": 26,
       "z1_target_min_pct": 75,
       "z1_target_max_pct": 80,
-      "z1_vs_target_pct": 92,
+      "z1_vs_target_pct": 98,
       "grey_ceiling_pct": 10,
       "grey_vs_ceiling_pct": 0,
       "z5_target_min_pct": 15,
       "z5_target_max_pct": 20,
       "z5_vs_target_pct": 0,
-      "running_sessions_with_data": 3,
-      "strength_sessions_with_data": 0,
-      "dropout_fallback_sessions_with_data": 0,
+      "running_sessions_with_data": 1,
+      "strength_sessions_with_data": 2,
+      "dropout_fallback_sessions_with_data": 2,
       "has_lt_data": true
     },
     "last_month": {
@@ -1311,73 +1345,103 @@
     },
     "ytd": {
       "label": "Year to date",
-      "window_days": 219,
+      "window_days": 220,
       "window_start": "2026-01-01",
-      "window_end": "2026-08-07",
+      "window_end": "2026-08-08",
       "minutes": {
-        "Z1": 803.4,
-        "Z2": 724.8,
+        "Z1": 911.9,
+        "Z2": 757.0,
         "Z3": 117.7,
         "Z4": 32.3,
         "Z5": 0.0
       },
-      "total_minutes": 1678.1,
-      "z1_pct": 47.9,
-      "z2_pct": 43.2,
-      "grey_pct": 8.9,
+      "total_minutes": 1818.9,
+      "z1_pct": 50.1,
+      "z2_pct": 41.6,
+      "grey_pct": 8.2,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
-      "z2_vs_target_pct": 403,
+      "z2_vs_target_pct": 421,
       "z1_target_min_pct": 75,
       "z1_target_max_pct": 80,
-      "z1_vs_target_pct": 64,
+      "z1_vs_target_pct": 67,
       "grey_ceiling_pct": 10,
-      "grey_vs_ceiling_pct": 89,
+      "grey_vs_ceiling_pct": 82,
       "z5_target_min_pct": 15,
       "z5_target_max_pct": 20,
       "z5_vs_target_pct": 0,
       "running_sessions_with_data": 20,
-      "strength_sessions_with_data": 6,
-      "dropout_fallback_sessions_with_data": 1,
+      "strength_sessions_with_data": 8,
+      "dropout_fallback_sessions_with_data": 3,
       "has_lt_data": true
     },
     "all_time": {
       "label": "All time",
-      "window_days": 1949,
+      "window_days": 1950,
       "window_start": "2021-04-07",
-      "window_end": "2026-08-07",
+      "window_end": "2026-08-08",
       "minutes": {
-        "Z1": 803.4,
-        "Z2": 724.8,
+        "Z1": 911.9,
+        "Z2": 757.0,
         "Z3": 117.7,
         "Z4": 32.3,
         "Z5": 0.0
       },
-      "total_minutes": 1678.1,
-      "z1_pct": 47.9,
-      "z2_pct": 43.2,
-      "grey_pct": 8.9,
+      "total_minutes": 1818.9,
+      "z1_pct": 50.1,
+      "z2_pct": 41.6,
+      "grey_pct": 8.2,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
-      "z2_vs_target_pct": 403,
+      "z2_vs_target_pct": 421,
       "z1_target_min_pct": 75,
       "z1_target_max_pct": 80,
-      "z1_vs_target_pct": 64,
+      "z1_vs_target_pct": 67,
       "grey_ceiling_pct": 10,
-      "grey_vs_ceiling_pct": 89,
+      "grey_vs_ceiling_pct": 82,
       "z5_target_min_pct": 15,
       "z5_target_max_pct": 20,
       "z5_vs_target_pct": 0,
       "running_sessions_with_data": 20,
-      "strength_sessions_with_data": 6,
-      "dropout_fallback_sessions_with_data": 1,
+      "strength_sessions_with_data": 8,
+      "dropout_fallback_sessions_with_data": 3,
       "has_lt_data": true
     },
     "default_view": "rolling"
   },
   "run_hr_source_comparison": [
+    {
+      "date": "2026-08-04",
+      "name": "Copenhagen Running",
+      "garmin_avg_hr": 140,
+      "polar_avg_hr": 131,
+      "diff": -8.6,
+      "polar_sample_count": 637,
+      "polar_exercise_avg_hr": null,
+      "polar_exercise_diff": null
+    },
+    {
+      "date": "2026-08-01",
+      "name": "Vordingborg Running",
+      "garmin_avg_hr": 139,
+      "polar_avg_hr": 128,
+      "diff": -11.3,
+      "polar_sample_count": 603,
+      "polar_exercise_avg_hr": null,
+      "polar_exercise_diff": null
+    },
+    {
+      "date": "2026-08-01",
+      "name": "Copenhagen Running",
+      "garmin_avg_hr": 131,
+      "polar_avg_hr": 30,
+      "diff": -100.5,
+      "polar_sample_count": 631,
+      "polar_exercise_avg_hr": null,
+      "polar_exercise_diff": null
+    },
     {
       "date": "2026-07-14",
       "name": "Copenhagen Running",
@@ -1461,6 +1525,48 @@
   ],
   "hr_dropout_fallback": [
     {
+      "activity_id": "23824282987",
+      "date": "2026-08-02",
+      "name": "Copenhagen Running",
+      "source": "continuous",
+      "raw_polar_hr": 117,
+      "estimated_garmin_hr": 139,
+      "avg_hr": 139,
+      "max_hr": 154,
+      "zone_minutes": {
+        "Z1": 26.1,
+        "Z2": 16.1,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 26m Z2 16m",
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm",
+      "sample_info": "681 continuous HR sample(s)",
+      "label": "Polar fallback \u2014 H10 dropout"
+    },
+    {
+      "activity_id": "23823374252",
+      "date": "2026-08-02",
+      "name": "Copenhagen Running",
+      "source": "continuous",
+      "raw_polar_hr": 133,
+      "estimated_garmin_hr": 155,
+      "avg_hr": 155,
+      "max_hr": 184,
+      "zone_minutes": {
+        "Z1": 11.3,
+        "Z2": 4.6,
+        "Z3": 3.6,
+        "Z4": 12.7,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 11m Z2 5m Z3 4m Z4 13m",
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm",
+      "sample_info": "666 continuous HR sample(s)",
+      "label": "Polar fallback \u2014 H10 dropout"
+    },
+    {
       "activity_id": "23563760621",
       "date": "2026-07-11",
       "name": "Fures\u00f8 Running",
@@ -1494,6 +1600,48 @@
       "zone_summary": "Z1 23m Z2 15m",
       "label": null,
       "calibration_note": null
+    },
+    {
+      "activity_id": "23824282987",
+      "date": "2026-08-02",
+      "name": "Copenhagen Running",
+      "source": "continuous",
+      "raw_polar_hr": 117,
+      "estimated_garmin_hr": 139,
+      "avg_hr": 139,
+      "max_hr": 154,
+      "zone_minutes": {
+        "Z1": 26.1,
+        "Z2": 16.1,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 26m Z2 16m",
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm",
+      "sample_info": "681 continuous HR sample(s)",
+      "label": "Polar fallback \u2014 H10 dropout"
+    },
+    {
+      "activity_id": "23823374252",
+      "date": "2026-08-02",
+      "name": "Copenhagen Running",
+      "source": "continuous",
+      "raw_polar_hr": 133,
+      "estimated_garmin_hr": 155,
+      "avg_hr": 155,
+      "max_hr": 184,
+      "zone_minutes": {
+        "Z1": 11.3,
+        "Z2": 4.6,
+        "Z3": 3.6,
+        "Z4": 12.7,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 11m Z2 5m Z3 4m Z4 13m",
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm",
+      "sample_info": "666 continuous HR sample(s)",
+      "label": "Polar fallback \u2014 H10 dropout"
     },
     {
       "activity_id": "23816310897",
@@ -1935,106 +2083,116 @@
       "zone_summary": "",
       "label": null,
       "calibration_note": null
-    },
-    {
-      "activity_id": "22983923505",
-      "date": "2026-05-23",
-      "name": "Running",
-      "source": "garmin",
-      "avg_hr": 156,
-      "max_hr": 182,
-      "zone_minutes": null,
-      "zone_summary": "",
-      "label": null,
-      "calibration_note": null
-    },
-    {
-      "activity_id": "22976487520",
-      "date": "2026-05-22",
-      "name": "Running",
-      "source": "garmin",
-      "avg_hr": 165,
-      "max_hr": 192,
-      "zone_minutes": null,
-      "zone_summary": "",
-      "label": null,
-      "calibration_note": null
     }
   ],
   "strength_hr_context": [
     {
+      "date": "2026-08-06",
+      "name": "Functional Fitness",
+      "avg_hr": 135,
+      "max_hr": 144,
+      "sample_count": 1303,
+      "zone_minutes": {
+        "Z1": 16.5,
+        "Z2": 5.2,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 16m Z2 5m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
+    },
+    {
+      "date": "2026-08-03",
+      "name": "Functional Fitness",
+      "avg_hr": 113,
+      "max_hr": 137,
+      "sample_count": 1551,
+      "zone_minutes": {
+        "Z1": 44.6,
+        "Z2": 0.0,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 45m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
+    },
+    {
       "date": "2026-07-15",
       "name": "Functional Fitness",
-      "avg_hr": 126,
-      "max_hr": 149,
+      "avg_hr": 133,
+      "max_hr": 156,
       "sample_count": 1532,
       "zone_minutes": {
-        "Z1": 29.8,
+        "Z1": 24.6,
+        "Z2": 12.3,
+        "Z3": 0.0,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 25m Z2 12m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
+    },
+    {
+      "date": "2026-07-13",
+      "name": "Functional Fitness",
+      "avg_hr": 139,
+      "max_hr": 161,
+      "sample_count": 1013,
+      "zone_minutes": {
+        "Z1": 27.0,
+        "Z2": 11.7,
+        "Z3": 11.9,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 27m Z2 12m Z3 12m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
+    },
+    {
+      "date": "2026-07-10",
+      "name": "Functional Fitness",
+      "avg_hr": 133,
+      "max_hr": 162,
+      "sample_count": 1506,
+      "zone_minutes": {
+        "Z1": 45.8,
+        "Z2": 6.1,
+        "Z3": 3.5,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 46m Z2 6m Z3 4m",
+      "label": "Polar (calibrated) \u2014 no H10 during strength",
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
+    },
+    {
+      "date": "2026-07-08",
+      "name": "Functional Fitness",
+      "avg_hr": 122,
+      "max_hr": 153,
+      "sample_count": 3189,
+      "zone_minutes": {
+        "Z1": 52.9,
         "Z2": 7.1,
         "Z3": 0.0,
         "Z4": 0.0,
         "Z5": 0.0
       },
-      "zone_summary": "Z1 30m Z2 7m",
+      "zone_summary": "Z1 53m Z2 7m",
       "label": "Polar (calibrated) \u2014 no H10 during strength",
-      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
-    },
-    {
-      "date": "2026-07-13",
-      "name": "Functional Fitness",
-      "avg_hr": 132,
-      "max_hr": 154,
-      "sample_count": 1013,
-      "zone_minutes": {
-        "Z1": 31.4,
-        "Z2": 19.2,
-        "Z3": 0.0,
-        "Z4": 0.0,
-        "Z5": 0.0
-      },
-      "zone_summary": "Z1 31m Z2 19m",
-      "label": "Polar (calibrated) \u2014 no H10 during strength",
-      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
-    },
-    {
-      "date": "2026-07-10",
-      "name": "Functional Fitness",
-      "avg_hr": 126,
-      "max_hr": 155,
-      "sample_count": 1506,
-      "zone_minutes": {
-        "Z1": 47.9,
-        "Z2": 7.4,
-        "Z3": 0.0,
-        "Z4": 0.0,
-        "Z5": 0.0
-      },
-      "zone_summary": "Z1 48m Z2 7m",
-      "label": "Polar (calibrated) \u2014 no H10 during strength",
-      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
-    },
-    {
-      "date": "2026-07-08",
-      "name": "Functional Fitness",
-      "avg_hr": 115,
-      "max_hr": 146,
-      "sample_count": 3189,
-      "zone_minutes": {
-        "Z1": 57.8,
-        "Z2": 2.2,
-        "Z3": 0.0,
-        "Z4": 0.0,
-        "Z5": 0.0
-      },
-      "zone_summary": "Z1 58m Z2 2m",
-      "label": "Polar (calibrated) \u2014 no H10 during strength",
-      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
     },
     {
       "date": "2026-07-06",
       "name": "Functional Fitness",
-      "avg_hr": 116,
-      "max_hr": 120,
+      "avg_hr": 123,
+      "max_hr": 127,
       "sample_count": 1802,
       "zone_minutes": {
         "Z1": 46.2,
@@ -2045,24 +2203,24 @@
       },
       "zone_summary": "Z1 46m",
       "label": "Polar (calibrated) \u2014 no H10 during strength",
-      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
     },
     {
       "date": "2026-07-03",
       "name": "Copenhagen Running",
-      "avg_hr": 121,
-      "max_hr": 139,
+      "avg_hr": 128,
+      "max_hr": 146,
       "sample_count": 1041,
       "zone_minutes": {
-        "Z1": 65.7,
-        "Z2": 0.0,
+        "Z1": 44.6,
+        "Z2": 21.1,
         "Z3": 0.0,
         "Z4": 0.0,
         "Z5": 0.0
       },
-      "zone_summary": "Z1 66m",
+      "zone_summary": "Z1 45m Z2 21m",
       "label": "Polar (calibrated) \u2014 no H10 during strength",
-      "calibration_note": "calibrated using 8 comparison run(s), offset -14.4 bpm"
+      "calibration_note": "calibrated using 11 comparison run(s), offset -21.4 bpm"
     }
   ]
 }

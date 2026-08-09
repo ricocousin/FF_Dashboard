@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-04",
-      "headline": "Four days out and the final quiet holds. Strength stayed live right up to the edge, legs are fresh, engine banked. Everything from here is the trail itself.",
-      "watch_items": [
-        "Watch how \"easy\" HR behaves once consecutive loaded days begin \u2014 the first few days will reset what easy actually costs under a pack.",
-        "Track the back-to-back leg response early; cumulative durability under load is still the real unknown, not the engine.",
-        "Note how the border mountain crossing sits within the daily rhythm \u2014 read that terrain spike separately from the flatter sections.",
-        "Watch whether recovery nights steady once the trail rhythm replaces the travel-and-logistics window."
-      ]
-    },
-    {
       "date": "2026-08-05",
       "headline": "Three days to the start line and the taper has held clean. Legs are fresh, engine banked, strength live to the end. From here it's 580 km on foot.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Track the back-to-back leg response early; cumulative durability, not the aerobic engine, is the genuine unknown here.",
         "Read the border mountain crossing as its own terrain spike, distinct from the flatter coastal sections.",
         "Watch whether nightly recovery settles once trail rhythm replaces the travel-and-logistics window."
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "headline": "The logged data stops before the crossing you're apparently mid-way through. Nothing from the trail has landed here yet. Until it does, this reads as a clean post-taper baseline, not a race in progress.",
+      "watch_items": [
+        "The obvious one: whether the crossing sessions actually appear in the feed \u2014 right now there's a gap between the narrative and the logged data, and the trail is the only evidence that counts.",
+        "Once trail data arrives, watch the cardio-load status flip out of its false \"detraining\" reading \u2014 the speed of that reversal will tell you how hard the first days loaded you.",
+        "Keep an eye on whether nightly recovery consolidates as trail rhythm replaces the logistics window, since the recent nights are still choppy.",
+        "Read easy-effort HR on the first loaded"
       ]
     }
   ]

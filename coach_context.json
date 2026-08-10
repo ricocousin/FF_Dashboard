@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-05",
-      "headline": "Three days to the start line and the taper has held clean. Legs are fresh, engine banked, strength live to the end. From here it's 580 km on foot.",
-      "watch_items": [
-        "Watch how easy-run HR behaves once loaded days start stacking under a pack \u2014 the first days will redefine what \"easy\" costs.",
-        "Track the back-to-back leg response early; cumulative durability under load remains the genuine unknown, not the engine.",
-        "Read the border mountain crossing as its own terrain spike, separate from the flatter coastal sections.",
-        "Watch whether nightly recovery settles once the trail rhythm replaces the travel-and-logistics window."
-      ]
-    },
-    {
       "date": "2026-08-06",
       "headline": "Two days to the start line, and the taper has done its job cleanly. Legs fresh, engine banked, strength held live to the edge. From here the trail writes it.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Once trail data arrives, watch the cardio-load status flip out of its false \"detraining\" reading \u2014 the speed of that reversal will tell you how hard the first days loaded you.",
         "Keep an eye on whether nightly recovery consolidates as trail rhythm replaces the logistics window, since the recent nights are still choppy.",
         "Read easy-effort HR on the first loaded"
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "headline": "The first big trail effort has landed \u2014 a long, low-HR day on foot at controlled intensity. This is durability work, not a race pace. The gap between narrative and data has closed.",
+      "watch_items": [
+        "Watch whether the cardio-load status reverses out of its detraining reading once the long effort registers \u2014 the speed of that flip is a fair proxy for how hard this day loaded you.",
+        "Watch how the day or two after the long effort look: whether easy-run HR sits normal or runs elevated, which will tell you how much the effort actually cost.",
+        "Watch whether nightly recovery consolidates now that the logistics-heavy window is passing, since the recent nights are still short and broken.",
+        "Watch for any back-to-back long efforts appearing \u2014 that's the durability quality this block is genuinely training, and worth confirming in the data."
       ]
     }
   ]

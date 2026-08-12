@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-07",
-      "headline": "Start day is here. The taper held and the engine is banked. From tomorrow the 580 km trail becomes the only data that matters.",
-      "watch_items": [
-        "Watch how easy-day HR recalibrates once the pack and consecutive loaded days stack \u2014 the first few days will reset your sense of what steady costs.",
-        "Track the back-to-back leg response early; cumulative durability under load, not the engine, is the genuine unknown.",
-        "Read the border mountain crossing as its own terrain spike, distinct from the flatter coastal sections.",
-        "Watch whether nightly recovery settles once trail rhythm replaces the travel-and-logistics window."
-      ]
-    },
-    {
       "date": "2026-08-08",
       "headline": "Day one of the 580 km crossing. The taper landed clean and the engine is banked. From here the trail is the only data that counts.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Watch the first few easy runs after the crossing for elevated HR at normal pace, which would show the effort is still being paid down.",
         "Watch whether nightly sleep consolidates now that the crossing window is closing, since recent nights have been short and fragmented.",
         "Watch when strength re-enters the log \u2014 its return is a fair marker that the trail block has been absorbed and normal training rhythm has resumed."
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "headline": "Three back-to-back ultra days are logged and the trail block is complete. The engine held its shape at controlled HR throughout. The story now is absorption \u2014 recovery and the return to normal rhythm.",
+      "watch_items": [
+        "Watch whether the cardio-load status flips out of detraining as the rolling averages catch up to the crossing \u2014 a slow flip would suggest the real cost ran higher than the low HR implied.",
+        "Watch the first easy runs back for elevated HR at normal pace, which would show the effort is still being paid down.",
+        "Watch when strength re-enters the log \u2014 its return marks that the trail block has been absorbed and normal rhythm resumed.",
+        "Watch whether sleep consolidates now that the crossing window has closed, since recent nights have been short and broken."
       ]
     }
   ]

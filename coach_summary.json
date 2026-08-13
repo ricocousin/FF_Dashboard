@@ -1,41 +1,41 @@
 {
-  "last_updated": "2026-08-12 07:25 CEST",
-  "headline": "Three back-to-back ultra days are logged and the trail block is complete. The engine held its shape at controlled HR throughout. The story now is absorption \u2014 recovery and the return to normal rhythm.",
-  "confidence_pct": 62,
+  "last_updated": "2026-08-13 07:28 CEST",
+  "headline": "The crossing is behind you and the first day off the trail is here. No run logged today \u2014 this is absorption, and that's the correct move. The story now is whether recovery signals come back cleanly.",
+  "confidence_pct": 60,
   "confidence_label": "Low data confidence",
   "confidence_reasons": [
-    "LT reading 40d old",
+    "LT reading 41d old",
     "HR data on 6/8 recent runs",
     "Sleep tracked 14/14 nights",
-    "Steps tracked 4/7 days",
+    "Steps tracked 3/7 days",
     "Data fetch up to date",
     "Limited data sources active in last 3 days"
   ],
   "confidence_attention": "Limited data sources active in last 3 days",
   "sections": {
-    "overview": "The three consecutive long days on foot dominate everything this week, and they close the crossing on the terms this block was built for: very long time on feet at deliberately capped HR, the third day sitting lower still than the first two. That last point matters \u2014 the athlete didn't blow up across three days, they held or even softened intensity, which is exactly the durability signal you want out of back-to-back ultra work. Strength has been absent through the crossing window, which is expected rather than concerning given what the legs were doing, though its return will be the honest marker that the block has been absorbed. Steps remain very high and essentially flat between rest and training days, so background load never really drops. Sleep has been short and fragmented through the crossing, and the cardio-load status still reads detraining \u2014 a rolling-average artefact of the taper that preceded these days, not a real reflection of what just happened. Recovery, not fresh load, is the job this week.",
-    "trends": "The medium-term shape is a clear, deliberate build: recent four weeks well up on the prior block, and year-to-date distance sitting at more than four times last year at this point. That surge is almost entirely the crossing, which is the intended peak of a long ramp rather than a runaway trend \u2014 expect the next few weeks to consolidate hard as the volume unwinds. Nothing here suggests overreach in the structural sense; it makes sense as the top of a planned arc, and the question is simply how cleanly the descent from it is managed.",
-    "threshold": "Threshold pace and the VO2-adjacent markers are stale \u2014 the last threshold reading predates the crossing by weeks, and nothing in the recent log tests that end of the range. That's fine: three ultra-slow days tell you nothing about top-end fitness and shouldn't. The banked threshold work from earlier in the year is still the reference point, and it won't have eroded from a durability block. The real read on aerobic sharpness will come from the first genuinely paced session after recovery, not from anything in this window.",
-    "zones": "The distribution this week is almost entirely Z1, which is precisely correct for what these sessions were \u2014 controlled, sustainable time on feet where the whole point is staying off the gas. The per-session shapes confirm the discipline: even across the longest day, HR barely lifted out of the bottom zone, and the third day was the most restrained of the three. There's no grey-zone creep and no accidental drift into Z3 during long efforts, which is the classic failure mode of ultra-distance days. Intensity distribution matched intent cleanly. When speed work re-enters, that's when the zone picture should broaden again.",
-    "hr_comparison": "Nothing concerning in the strength HR history \u2014 the recent functional sessions sit low and steady, consistent with the earlier block. Across the crossing runs the HR held remarkably flat relative to the distances covered, which is the durability quality showing up in the data rather than any sensor question. No source-agreement issues worth flagging.",
-    "calendar": "The running streak is intact and the crossing sits inside it as a dense cluster of consecutive days \u2014 a genuine departure from the usual roughly four-times-weekly cadence. That clustering is the event, not a new baseline. What to notice over the coming days is the shape of the gap that follows: a sensible easing-off is expected and healthy, and the return of spacing between sessions is part of absorbing what was just done, not a break in consistency.",
-    "personal_bests": "None of the current bests are in play from this block \u2014 they live at the speed end, and nothing here touched that. The 50K best in particular is tied to an effort in the same family as this crossing, so if anything the durability just banked strengthens the base those long-distance marks sit on. Short-course PBs will only become relevant again once paced work resumes and the legs are fresh."
+    "overview": "The four-day trail block dominates every load figure right now, and the picture immediately after it is one of deliberate emptiness. The last logged run was the short, very low-HR shakeout that closed the crossing; nothing new has landed since, which is exactly what a recovery window should look like. The recent four-week running volume is roughly double the prior block, but almost all of that jump is the crossing itself rather than a genuine step-change in weekly rhythm \u2014 worth remembering before reading it as a new baseline. Strength has been absent through the trail window, expected given the demands on foot, and its return is the cleaner marker of the block being absorbed than any single easy run. Steps remain high and essentially flat between rest and training days, so background load never really drops even when structured training does. The cardio-load status reads detraining, which here is an artefact of the rolling averages not yet catching up to the crossing \u2014 not a fitness statement. Sleep across the block was short and broken, unsurprising mid-crossing, and is the thing most worth watching for consolidation now.",
+    "trends": "Year-to-date distance is more than four times last year's mark at this point, which tells the real story: the base has expanded substantially and consistently across the season. The 16-week shape is cyclical rather than linearly building \u2014 normal rhythm punctuated by a large durability block \u2014 and that fits a hybrid athlete maintaining year-round readiness rather than periodising toward one date. The recent doubling of volume is a single event spike, not a trend inflection; expect the weekly figure to settle back once the crossing rolls out of the window. Nothing here suggests either overreaching or drift.",
+    "threshold": "Threshold pace and its anchoring HR are unchanged from the early-July test, so there's no new aerobic data to interpret \u2014 and none should be expected from a block spent entirely at controlled, low-HR durability pace. The trail work builds a different quality than threshold sharpness, and a flat threshold marker through it is neither a gain nor a loss. The relevant question is what threshold work looks like once speed sessions re-enter, not what the number does during recovery.",
+    "zones": "The per-session shapes across the crossing are almost entirely Z1, with only small Z2 touches on the two biggest days \u2014 precisely the controlled-intensity distribution an ultra durability block should produce. There's no grey-zone creep and essentially no Z3+ anywhere in the block, confirming the effort was managed on HR rather than pace throughout. That discipline is the point: hours on feet without accumulating intensity cost. As normal rhythm returns, the distribution will need to reopen toward some genuine Z4/Z5 work to keep speed capacity alive, but during absorption the near-total Z1 profile is correct.",
+    "hr_comparison": "Nothing genuinely notable in the strength HR patterns right now, since no strength has been logged inside the trail window \u2014 the most recent sessions sit in their usual low-to-moderate band. On the two H10-dropout runs from early August, the estimated and expected effort levels line up sensibly with pace, so there's no source-disagreement worth flagging.",
+    "calendar": "The recent calendar is unusually clustered \u2014 four consecutive foot days, then a gap \u2014 which is the opposite of the athlete's normal spread-out four-runs-plus-strength week. That clustering is the crossing, not a change in habit, and the gap after it is intentional. What's worth watching is how quickly the calendar returns to its usual interleaved shape; a prompt return signals clean absorption, while a prolonged gap would suggest the block cost more than the low HR implied.",
+    "personal_bests": "No bests are in play during a recovery window, and the current durability focus sits at the opposite end of the spectrum from the short-distance PBs. Those speed marks will only become relevant again once fast sessions return and threshold work resumes \u2014 nothing to chase here now."
   },
   "watch_items": [
-    "Watch whether the cardio-load status flips out of detraining as the rolling averages catch up to the crossing \u2014 a slow flip would suggest the real cost ran higher than the low HR implied.",
-    "Watch the first easy runs back for elevated HR at normal pace, which would show the effort is still being paid down.",
-    "Watch when strength re-enters the log \u2014 its return marks that the trail block has been absorbed and normal rhythm resumed.",
-    "Watch whether sleep consolidates now that the crossing window has closed, since recent nights have been short and broken."
+    "Watch whether the first easy runs back show elevated HR at normal pace, which would indicate the crossing is still being paid down.",
+    "Watch when strength re-enters the log \u2014 its return is the clearest marker that the block has been absorbed and normal rhythm has resumed.",
+    "Watch whether sleep consolidates now that the crossing window has closed, since the block's nights were short and broken.",
+    "Watch whether the calendar returns to its usual interleaved spread rather than staying sparse, as a prolonged gap would hint at a higher recovery cost than the low HR suggested."
   ],
   "usage": {
-    "input_tokens": 7864,
-    "output_tokens": 1484,
-    "cost_usd": 0.07642,
-    "cost_dkk": 0.5273,
-    "date": "2026-08-12"
+    "input_tokens": 7818,
+    "output_tokens": 1531,
+    "cost_usd": 0.077365,
+    "cost_dkk": 0.53382,
+    "date": "2026-08-13"
   },
-  "usage_mtd_usd": 0.90634,
-  "usage_mtd_dkk": 6.2537,
-  "usage_ytd_usd": 2.16759,
-  "usage_ytd_dkk": 14.9564
+  "usage_mtd_usd": 0.9837,
+  "usage_mtd_dkk": 6.7875,
+  "usage_ytd_usd": 2.24495,
+  "usage_ytd_dkk": 15.4902
 }

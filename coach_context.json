@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-08",
-      "headline": "Day one of the 580 km crossing. The taper landed clean and the engine is banked. From here the trail is the only data that counts.",
-      "watch_items": [
-        "Watch how easy-effort HR recalibrates over the first loaded days \u2014 the pack and consecutive terrain will reset your sense of what steady costs.",
-        "Track the back-to-back leg response early; cumulative durability, not the aerobic engine, is the genuine unknown here.",
-        "Read the border mountain crossing as its own terrain spike, distinct from the flatter coastal sections.",
-        "Watch whether nightly recovery settles once trail rhythm replaces the travel-and-logistics window."
-      ]
-    },
-    {
       "date": "2026-08-09",
       "headline": "The logged data stops before the crossing you're apparently mid-way through. Nothing from the trail has landed here yet. Until it does, this reads as a clean post-taper baseline, not a race in progress.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Watch the first easy runs back for elevated HR at normal pace, which would show the effort is still being paid down.",
         "Watch when strength re-enters the log \u2014 its return marks that the trail block has been absorbed and normal rhythm resumed.",
         "Watch whether sleep consolidates now that the crossing window has closed, since recent nights have been short and broken."
+      ]
+    },
+    {
+      "date": "2026-08-13",
+      "headline": "The crossing is behind you and the first day off the trail is here. No run logged today \u2014 this is absorption, and that's the correct move. The story now is whether recovery signals come back cleanly.",
+      "watch_items": [
+        "Watch whether the first easy runs back show elevated HR at normal pace, which would indicate the crossing is still being paid down.",
+        "Watch when strength re-enters the log \u2014 its return is the clearest marker that the block has been absorbed and normal rhythm has resumed.",
+        "Watch whether sleep consolidates now that the crossing window has closed, since the block's nights were short and broken.",
+        "Watch whether the calendar returns to its usual interleaved spread rather than staying sparse, as a prolonged gap would hint at a higher recovery cost than the low HR suggested."
       ]
     }
   ]

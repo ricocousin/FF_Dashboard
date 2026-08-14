@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-09",
-      "headline": "The logged data stops before the crossing you're apparently mid-way through. Nothing from the trail has landed here yet. Until it does, this reads as a clean post-taper baseline, not a race in progress.",
-      "watch_items": [
-        "The obvious one: whether the crossing sessions actually appear in the feed \u2014 right now there's a gap between the narrative and the logged data, and the trail is the only evidence that counts.",
-        "Once trail data arrives, watch the cardio-load status flip out of its false \"detraining\" reading \u2014 the speed of that reversal will tell you how hard the first days loaded you.",
-        "Keep an eye on whether nightly recovery consolidates as trail rhythm replaces the logistics window, since the recent nights are still choppy.",
-        "Read easy-effort HR on the first loaded"
-      ]
-    },
-    {
       "date": "2026-08-10",
       "headline": "The first big trail effort has landed \u2014 a long, low-HR day on foot at controlled intensity. This is durability work, not a race pace. The gap between narrative and data has closed.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Watch when strength re-enters the log \u2014 its return is the clearest marker that the block has been absorbed and normal rhythm has resumed.",
         "Watch whether sleep consolidates now that the crossing window has closed, since the block's nights were short and broken.",
         "Watch whether the calendar returns to its usual interleaved spread rather than staying sparse, as a prolonged gap would hint at a higher recovery cost than the low HR suggested."
+      ]
+    },
+    {
+      "date": "2026-08-14",
+      "headline": "Second day off the trail, still no run logged. Absorption is taking longer than a single day \u2014 which is exactly right after three back-to-back ultra days. Watch for the first easy run to tell the real recovery story.",
+      "watch_items": [
+        "Watch whether the first easy run back sits at normal HR for its pace, or runs elevated \u2014 the clearest read on whether the crossing is still being paid down.",
+        "Watch for strength to re-enter the log; its continued absence is now the most open thread from the block.",
+        "Watch whether the calendar returns to its usual interleaved rhythm rather than extending the current gap.",
+        "Watch whether sleep consolidates now that the block's short broken nights are behind you."
       ]
     }
   ]

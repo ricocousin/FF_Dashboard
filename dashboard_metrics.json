@@ -1,18 +1,18 @@
 {
-  "last_updated": "2026-08-16 06:27 CEST",
-  "last_complete_date": "2026-08-15",
+  "last_updated": "2026-08-17 06:33 CEST",
+  "last_complete_date": "2026-08-16",
   "this_year": "2026",
   "this_month_short": "Aug",
   "running": {
-    "avg_per_run_km": 13.9,
-    "runs_this_year": 78,
-    "avg_per_week_km": 38.9,
+    "avg_per_run_km": 14.5,
+    "runs_this_year": 79,
+    "avg_per_week_km": 41.1,
     "avg_runs_per_week": 2.7,
-    "total_distance_this_year_km": 1128.8,
+    "total_distance_this_year_km": 1193.3,
     "hike_distance_this_year_km": 45.8,
     "current_weekly_streak": 26,
     "longest_weekly_streak": 26,
-    "week_delta_km": 182.8,
+    "week_delta_km": 247.3,
     "week_qual": "Increased"
   },
   "strength": {
@@ -28,20 +28,20 @@
   "steps": {
     "avg_all_time": 13223,
     "avg_7d": null,
-    "avg_30d": 20640,
+    "avg_30d": 19767,
     "delta_7d_vs_30d": null,
     "qual": null,
     "discrepancy_avg": null,
     "discrepancy_days": 0
   },
   "intensity": {
-    "avg_week_year_mins": 348,
-    "avg_week_year_run_mins": 268,
+    "avg_week_year_mins": 369,
+    "avg_week_year_run_mins": 289,
     "avg_week_year_lift_mins": 111,
-    "avg_week_month_mins": 1210,
-    "avg_week_month_run_mins": 1187,
+    "avg_week_month_mins": 1420,
+    "avg_week_month_run_mins": 1398,
     "avg_week_month_lift_mins": 66,
-    "delta_month_vs_year": 862,
+    "delta_month_vs_year": 1051,
     "qual": "Increased",
     "streak_weeks": 7,
     "best_streak_weeks": 7,
@@ -53,8 +53,8 @@
       "score": null
     },
     "month": {
-      "mins": 452.1904761904762,
-      "score": 53.476190476190474
+      "mins": 444.4,
+      "score": 51.9
     },
     "year": {
       "mins": 442.9166666666667,
@@ -64,14 +64,13 @@
     "qual": null
   },
   "cardio_load": {
-    "latest_date": "2026-08-16",
+    "latest_date": "2026-08-17",
     "status": "DETRAINING",
     "strain": 0.0,
     "tolerance": 34.417255,
     "ratio": 0.0,
     "trend": {
       "labels": [
-        "07-19",
         "07-20",
         "07-21",
         "07-22",
@@ -99,10 +98,10 @@
         "08-13",
         "08-14",
         "08-15",
-        "08-16"
+        "08-16",
+        "08-17"
       ],
       "strain": [
-        54.34226,
         51.012215,
         60.48917,
         57.678215,
@@ -130,10 +129,10 @@
         2.6201,
         0.0,
         0.0,
+        0.0,
         0.0
       ],
       "tolerance": [
-        77.53049,
         73.449936,
         75.8191,
         72.208664,
@@ -161,6 +160,7 @@
         40.41616,
         40.41616,
         35.30709,
+        34.417255,
         34.417255
       ]
     }
@@ -200,7 +200,7 @@
       40.2,
       39.2,
       78.8,
-      261.6
+      326.1
     ],
     "hike_distance_km": [
       0,
@@ -278,11 +278,11 @@
   "chart_annual": {
     "target_label": "vs 2025 total (591 km)",
     "target_km": 590.7,
-    "raw_pct": 191.1,
+    "raw_pct": 202.0,
     "display_pct": 130,
     "is_overflow": true,
-    "year_dist_km": 1128.8,
-    "km_to_target_km": 538.1,
+    "year_dist_km": 1193.3,
+    "km_to_target_km": 602.6,
     "hike_dist_this_year_km": 45.8,
     "strength_target_label": "vs 2025 total (51 sessions)",
     "strength_pct": 90,
@@ -308,7 +308,7 @@
       148.7,
       113.2,
       193.6,
-      365.2
+      429.7
     ],
     "month_hike_distance_km": [
       0.0,
@@ -941,7 +941,8 @@
       "2026-08-11",
       "2026-08-12",
       "2026-08-13",
-      "2026-08-14"
+      "2026-08-14",
+      "2026-08-15"
     ],
     "strength_dates": [
       "2024-07-01",
@@ -1119,7 +1120,7 @@
   },
   "data_freshness": {
     "status": "fresh",
-    "last_success_date": "2026-08-16",
+    "last_success_date": "2026-08-17",
     "age_days": 0
   },
   "tile_freshness": {
@@ -1286,23 +1287,23 @@
     "rolling": {
       "label": "This week (rolling 7d)",
       "window_days": 7,
-      "window_start": "2026-08-09",
-      "window_end": "2026-08-16",
+      "window_start": "2026-08-10",
+      "window_end": "2026-08-17",
       "minutes": {
-        "Z1": 3691.1,
-        "Z2": 44.7,
-        "Z3": 0.0,
+        "Z1": 3647.2,
+        "Z2": 30.0,
+        "Z3": 0.6,
         "Z4": 0.0,
         "Z5": 0.0
       },
-      "total_minutes": 3735.8,
-      "z1_pct": 98.8,
-      "z2_pct": 1.2,
+      "total_minutes": 3677.9,
+      "z1_pct": 99.2,
+      "z2_pct": 0.8,
       "grey_pct": 0.0,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
-      "z2_vs_target_pct": 25,
+      "z2_vs_target_pct": 17,
       "z1_target_min_pct": 75,
       "z1_target_max_pct": 80,
       "z1_vs_target_pct": 132,
@@ -1351,66 +1352,66 @@
     },
     "ytd": {
       "label": "Year to date",
-      "window_days": 227,
+      "window_days": 228,
       "window_start": "2026-01-01",
-      "window_end": "2026-08-15",
+      "window_end": "2026-08-16",
       "minutes": {
-        "Z1": 4603.0,
-        "Z2": 801.7,
-        "Z3": 117.7,
+        "Z1": 5273.1,
+        "Z2": 802.0,
+        "Z3": 118.3,
         "Z4": 32.3,
         "Z5": 0.0
       },
-      "total_minutes": 5554.7,
-      "z1_pct": 82.9,
-      "z2_pct": 14.4,
-      "grey_pct": 2.7,
+      "total_minutes": 6225.6,
+      "z1_pct": 84.7,
+      "z2_pct": 12.9,
+      "grey_pct": 2.4,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
-      "z2_vs_target_pct": 445,
+      "z2_vs_target_pct": 446,
       "z1_target_min_pct": 75,
       "z1_target_max_pct": 80,
-      "z1_vs_target_pct": 111,
+      "z1_vs_target_pct": 113,
       "grey_ceiling_pct": 10,
-      "grey_vs_ceiling_pct": 27,
+      "grey_vs_ceiling_pct": 24,
       "z5_target_min_pct": 15,
       "z5_target_max_pct": 20,
       "z5_vs_target_pct": 0,
-      "running_sessions_with_data": 29,
+      "running_sessions_with_data": 30,
       "strength_sessions_with_data": 8,
       "dropout_fallback_sessions_with_data": 3,
       "has_lt_data": true
     },
     "all_time": {
       "label": "All time",
-      "window_days": 1957,
+      "window_days": 1958,
       "window_start": "2021-04-07",
-      "window_end": "2026-08-15",
+      "window_end": "2026-08-16",
       "minutes": {
-        "Z1": 4603.0,
-        "Z2": 801.7,
-        "Z3": 117.7,
+        "Z1": 5273.1,
+        "Z2": 802.0,
+        "Z3": 118.3,
         "Z4": 32.3,
         "Z5": 0.0
       },
-      "total_minutes": 5554.7,
-      "z1_pct": 82.9,
-      "z2_pct": 14.4,
-      "grey_pct": 2.7,
+      "total_minutes": 6225.6,
+      "z1_pct": 84.7,
+      "z2_pct": 12.9,
+      "grey_pct": 2.4,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
-      "z2_vs_target_pct": 445,
+      "z2_vs_target_pct": 446,
       "z1_target_min_pct": 75,
       "z1_target_max_pct": 80,
-      "z1_vs_target_pct": 111,
+      "z1_vs_target_pct": 113,
       "grey_ceiling_pct": 10,
-      "grey_vs_ceiling_pct": 27,
+      "grey_vs_ceiling_pct": 24,
       "z5_target_min_pct": 15,
       "z5_target_max_pct": 20,
       "z5_vs_target_pct": 0,
-      "running_sessions_with_data": 29,
+      "running_sessions_with_data": 30,
       "strength_sessions_with_data": 8,
       "dropout_fallback_sessions_with_data": 3,
       "has_lt_data": true
@@ -1589,6 +1590,24 @@
     }
   ],
   "run_hr_context": [
+    {
+      "activity_id": "24002961925",
+      "date": "2026-08-15",
+      "name": "\u00c5re Running",
+      "source": "garmin",
+      "avg_hr": 112,
+      "max_hr": 164,
+      "zone_minutes": {
+        "Z1": 670.0833333333569,
+        "Z2": 0.21666666666666667,
+        "Z3": 0.6499999999999999,
+        "Z4": 0.0,
+        "Z5": 0.0
+      },
+      "zone_summary": "Z1 670m Z3 1m",
+      "label": null,
+      "calibration_note": null
+    },
     {
       "activity_id": "23978623061",
       "date": "2026-08-14",
@@ -2111,24 +2130,6 @@
         "Z5": 0.0
       },
       "zone_summary": "Z1 65m Z2 50m",
-      "label": null,
-      "calibration_note": null
-    },
-    {
-      "activity_id": "23457896369",
-      "date": "2026-07-02",
-      "name": "Copenhagen Running",
-      "source": "garmin",
-      "avg_hr": 137,
-      "max_hr": 160,
-      "zone_minutes": {
-        "Z1": 57.599999999998865,
-        "Z2": 24.45000000000021,
-        "Z3": 0.13333333333333336,
-        "Z4": 0.0,
-        "Z5": 0.0
-      },
-      "zone_summary": "Z1 58m Z2 24m",
       "label": null,
       "calibration_note": null
     }

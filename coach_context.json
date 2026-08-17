@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-12",
-      "headline": "Three back-to-back ultra days are logged and the trail block is complete. The engine held its shape at controlled HR throughout. The story now is absorption \u2014 recovery and the return to normal rhythm.",
-      "watch_items": [
-        "Watch whether the cardio-load status flips out of detraining as the rolling averages catch up to the crossing \u2014 a slow flip would suggest the real cost ran higher than the low HR implied.",
-        "Watch the first easy runs back for elevated HR at normal pace, which would show the effort is still being paid down.",
-        "Watch when strength re-enters the log \u2014 its return marks that the trail block has been absorbed and normal rhythm resumed.",
-        "Watch whether sleep consolidates now that the crossing window has closed, since recent nights have been short and broken."
-      ]
-    },
-    {
       "date": "2026-08-13",
       "headline": "The crossing is behind you and the first day off the trail is here. No run logged today \u2014 this is absorption, and that's the correct move. The story now is whether recovery signals come back cleanly.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Watch whether strength finally re-enters the log \u2014 the layoff is now long enough that its continued absence would be a pattern, not just a gap.",
         "Watch whether the return to training reinstates the interleaved run/strength rhythm rather than restarting continuous running volume.",
         "Watch whether the high all-day step count settles as formal training resumes, or whether it stays elevated as a persistent background load."
+      ]
+    },
+    {
+      "date": "2026-08-17",
+      "headline": "Still no run logged since the trail block \u2014 absorption has now run several days deeper than a single easy-day reset. Steps stay high; structured work stays fully paused. The first run remains the untaken test.",
+      "watch_items": [
+        "Watch whether the first logged run returns at a normal easy HR, which would confirm the block absorbed cleanly rather than lingering as fatigue.",
+        "Watch whether the resumption reintroduces any real intensity, or whether running restarts entirely easy and leaves the top end untested for even longer.",
+        "Watch whether strength re-enters the log at all \u2014 its continued absence is now a standing feature, not a post-block gap.",
+        "Watch whether the persistently high step count settles once structured training resumes, or holds as a permanent background load worth accounting for."
       ]
     }
   ]

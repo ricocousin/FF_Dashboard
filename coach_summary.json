@@ -1,10 +1,10 @@
 {
-  "last_updated": "2026-08-16 06:27 CEST",
-  "headline": "Three days off the trail with no run logged yet. Absorption is genuine, not delayed \u2014 steps stay high, but structured work is fully paused. The first easy run remains the real test.",
+  "last_updated": "2026-08-17 06:33 CEST",
+  "headline": "Still no run logged since the trail block \u2014 absorption has now run several days deeper than a single easy-day reset. Steps stay high; structured work stays fully paused. The first run remains the untaken test.",
   "confidence_pct": 58,
   "confidence_label": "Low data confidence",
   "confidence_reasons": [
-    "LT reading 44d old",
+    "LT reading 45d old",
     "HR data on 8/8 recent runs",
     "Sleep tracked 14/14 nights",
     "Steps tracked 0/7 days",
@@ -13,29 +13,29 @@
   ],
   "confidence_attention": "Steps tracked 0/7 days",
   "sections": {
-    "overview": "The picture is one of a deep block still being digested. Running has gone quiet since the multi-day trail crossing, and that silence is the correct response to the load absorbed over those back-to-back ultra days \u2014 not a gap to worry about. Strength has not re-entered the log, which now stretches the layoff long enough that it's worth naming: the concentrated foot volume has eased, but the barbell hasn't returned to fill the space. Steps stay strikingly high even on rest days, so this is not true inactivity \u2014 the athlete is simply moving all day without formal sessions, which is a legitimate form of active recovery here. The load metric reads flat because nothing structured has been logged, and that's expected given where you are in the cycle. This is a genuine trough by design, not a decline.",
-    "trends": "The medium-term shape is a large, deliberate build peaking in the recent trail block, and the sheer year-over-year distance gap shows how much base has been laid down compared to the same point last year. The recent four weeks dwarf the prior four \u2014 that's the trail block's fingerprint, not a sustainable steady state. What you'd expect to see next is a controlled step down as the body reabsorbs, then a return to the interleaved rhythm. That shape fits the standing goal of durable year-round capacity: a big concentrated stimulus followed by absorption is exactly how you consolidate a gain rather than fray it.",
-    "threshold": "Threshold pace and its anchoring heart rate are unchanged from the baseline, which is neither surprising nor concerning \u2014 the recent block was entirely about controlled-HR durability, with essentially no work anywhere near threshold. Nothing in the last stretch was designed to move that number, so its stability is simply confirmation that the speed end has been parked, not lost. When the interleaved rhythm returns and faster work re-enters, that's when this figure becomes informative again. For now it's a stable reference point, not a live signal.",
-    "zones": "Every recent run sat almost entirely in Z1, with only trace minutes drifting into Z2 \u2014 the textbook signature of a long-duration, time-on-feet block executed with discipline. There's no grey-zone creep here at all, which is exactly what you want when the goal is accumulating controlled hours rather than sharpening. The single day with the highest average pushed slightly higher but still held its shape. The intensity distribution matched the block's intent cleanly throughout; nothing ran hot when it should have stayed easy.",
-    "hr_comparison": "The most recent strength sessions show the usual pattern for this kind of functional work \u2014 moderate averages with brief excursions upward, consistent with circuit-style efforts rather than heavy low-rep lifting. Nothing in the strength HR data stands out as unusual against your own history. There's no meaningful sensor-source disagreement worth flagging today.",
-    "calendar": "The calendar has clearly shifted out of its continuous-running phase \u2014 the dense run block has given way to consecutive days without formal training. This is the interruption to the interleaved rhythm I flagged earlier, and it's still ongoing rather than resolved. The question that carries forward is whether the return brings strength and running back in alternation, or whether one modality resumes while the other stays dormant. The high daily movement means the calendar's blank days aren't sedentary \u2014 they're just unstructured.",
-    "personal_bests": "None of the current bests are within reach in this phase \u2014 they all live at the speed end, and the recent training has been the opposite quality. The short-distance PBs from last late-summer remain the standing targets, and they'll only become relevant again once fast work re-enters and threshold gets stressed. For now the training focus and the PB list are pointed in different directions, which is fine and expected mid-absorption."
+    "overview": "The picture is unchanged in shape from the last few days but longer in duration: no run, no strength, and an all-day step count that refuses to drop even with formal training on hold. That elevated background load matters \u2014 it's real time on feet, not true rest, so \"absorption\" here means the nervous and structural systems are recovering from the ultra block while the aerobic base keeps ticking over via walking. Strength has now been absent long enough that it's no longer a post-block gap but a standing feature of the log, and the running streak is being carried entirely by the trail days that closed the block rather than anything recent. The four-week running total still towers over the prior block because those back-to-back ultra days sit inside it; that's a load ghost, not current work. The signal to read is not fitness \u2014 it's readiness to resume, and none of today's data speaks to that yet because nothing structured was logged.",
+    "trends": "The 16-week shape is a classic ramp-and-hold: a steep build into the trail crossing followed by a deliberate flat stretch. Against the standing goal of year-round hybrid readiness, that's coherent \u2014 a big durability block followed by genuine absorption is exactly the rhythm this athlete has earned the right to run. The year-to-date monthly progression against last year remains dramatic and is the real story of the season; the current pause doesn't dent it. What I'd want to see next is the curve turning back upward with structure, not staying flat by default, because a plateau that extends past absorption stops being recovery and becomes drift.",
+    "threshold": "Threshold pace and the VO2max-adjacent picture are static \u2014 the reference point hasn't moved in weeks, and nothing in the recent log could move it, since every trail effort sat deliberately in the lowest zone. That's fine: threshold isn't lost through a controlled ultra block plus a rest window, and the demonstrated speed pedigree in the PB set confirms the high-end engine is intact. But it's now been a long time since anything genuinely tested the top end, so the current threshold figure is increasingly a memory rather than a measurement. Worth re-touching once running resumes.",
+    "zones": "The recent distribution is almost entirely Zone 1 by design \u2014 the trail block was time-on-feet at controlled HR, and the per-session shapes confirm it, with only isolated brief spikes on the longest days. That's the correct intensity signature for what that block was doing. The open question isn't whether the trail work was distributed right \u2014 it was \u2014 but whether the return reintroduces any real intensity at all, because a resumption that's also all easy running would leave the athlete a long way from their last hard effort.",
+    "hr_comparison": "The strength HR history shows the expected pattern \u2014 moderate averages with brief pushes into the higher zones on the more demanding sessions \u2014 but it's all history now, with the most recent strength entries already weeks back. Nothing new to compare on the strength side because nothing new has been logged. On the running side the sources track sensibly across the trail days with no meaningful divergence worth flagging.",
+    "calendar": "The calendar now shows a clean block of consecutive trail days abruptly giving way to an unbroken run of empty training days. That transition is sharp rather than tapered \u2014 the athlete went from maximal to nothing in a single step, which is a legitimate way to close an ultra block but means the resumption will be a genuine restart, not a continuation. The consistency that defined the year is currently on pause, and the calendar's job this week is to show whether the interleaved run/strength cadence reappears or whether running restarts alone.",
+    "personal_bests": "Nothing in the current pattern points at a PB \u2014 the recent work was durability, not speed, and the top-end bests belong to a sharper phase last autumn. They remain realistic targets once structured intensity returns, but that conversation is weeks away, not this week."
   },
   "watch_items": [
-    "Watch whether the first logged run comes back at a normal easy-pace HR, confirming the block absorbed cleanly rather than lingering as fatigue.",
-    "Watch whether strength finally re-enters the log \u2014 the layoff is now long enough that its continued absence would be a pattern, not just a gap.",
-    "Watch whether the return to training reinstates the interleaved run/strength rhythm rather than restarting continuous running volume.",
-    "Watch whether the high all-day step count settles as formal training resumes, or whether it stays elevated as a persistent background load."
+    "Watch whether the first logged run returns at a normal easy HR, which would confirm the block absorbed cleanly rather than lingering as fatigue.",
+    "Watch whether the resumption reintroduces any real intensity, or whether running restarts entirely easy and leaves the top end untested for even longer.",
+    "Watch whether strength re-enters the log at all \u2014 its continued absence is now a standing feature, not a post-block gap.",
+    "Watch whether the persistently high step count settles once structured training resumes, or holds as a permanent background load worth accounting for."
   ],
   "usage": {
-    "input_tokens": 7687,
-    "output_tokens": 1479,
-    "cost_usd": 0.07541,
-    "cost_dkk": 0.52033,
-    "date": "2026-08-16"
+    "input_tokens": 7702,
+    "output_tokens": 1499,
+    "cost_usd": 0.075985,
+    "cost_dkk": 0.5243,
+    "date": "2026-08-17"
   },
-  "usage_mtd_usd": 1.21242,
-  "usage_mtd_dkk": 8.3657,
-  "usage_ytd_usd": 2.47367,
-  "usage_ytd_dkk": 17.0684
+  "usage_mtd_usd": 1.2884,
+  "usage_mtd_dkk": 8.89,
+  "usage_ytd_usd": 2.54966,
+  "usage_ytd_dkk": 17.5926
 }

@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-08-21 06:29 CEST",
-  "last_complete_date": "2026-08-20",
+  "last_updated": "2026-08-22 06:24 CEST",
+  "last_complete_date": "2026-08-21",
   "this_year": "2026",
   "this_month_short": "Aug",
   "running": {
@@ -28,7 +28,7 @@
   "steps": {
     "avg_all_time": 13223,
     "avg_7d": null,
-    "avg_30d": 19884,
+    "avg_30d": 20340,
     "delta_7d_vs_30d": null,
     "qual": null,
     "discrepancy_avg": null,
@@ -53,8 +53,8 @@
       "score": null
     },
     "month": {
-      "mins": 433.5625,
-      "score": 49.0625
+      "mins": 446.26666666666665,
+      "score": 47.733333333333334
     },
     "year": {
       "mins": 442.9166666666667,
@@ -64,14 +64,13 @@
     "qual": null
   },
   "cardio_load": {
-    "latest_date": "2026-08-21",
+    "latest_date": "2026-08-22",
     "status": "DETRAINING",
     "strain": 0.0,
-    "tolerance": 25.342808,
+    "tolerance": 17.461807,
     "ratio": 0.0,
     "trend": {
       "labels": [
-        "07-24",
         "07-25",
         "07-26",
         "07-27",
@@ -99,10 +98,10 @@
         "08-18",
         "08-19",
         "08-20",
-        "08-21"
+        "08-21",
+        "08-22"
       ],
       "strain": [
-        60.293415,
         71.38113,
         67.8218,
         71.190956,
@@ -130,10 +129,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
         0.0
       ],
       "tolerance": [
-        71.72319,
         77.92922,
         74.81205,
         72.84174,
@@ -161,7 +160,8 @@
         30.101786,
         30.101786,
         26.022179,
-        25.342808
+        25.342808,
+        17.461807
       ]
     }
   },
@@ -1122,7 +1122,7 @@
   },
   "data_freshness": {
     "status": "fresh",
-    "last_success_date": "2026-08-21",
+    "last_success_date": "2026-08-22",
     "age_days": 0
   },
   "tile_freshness": {
@@ -1289,19 +1289,19 @@
     "rolling": {
       "label": "This week (rolling 7d)",
       "window_days": 7,
-      "window_start": "2026-08-14",
-      "window_end": "2026-08-21",
+      "window_start": "2026-08-15",
+      "window_end": "2026-08-22",
       "minutes": {
-        "Z1": 1717.6,
+        "Z1": 1210.9,
         "Z2": 0.2,
         "Z3": 0.6,
         "Z4": 0.0,
         "Z5": 0.0
       },
-      "total_minutes": 1718.5,
+      "total_minutes": 1211.7,
       "z1_pct": 99.9,
       "z2_pct": 0.0,
-      "grey_pct": 0.0,
+      "grey_pct": 0.1,
       "z5_pct": 0.0,
       "z2_target_min": 180,
       "z2_target_max": 240,
@@ -1310,11 +1310,11 @@
       "z1_target_max_pct": 80,
       "z1_vs_target_pct": 133,
       "grey_ceiling_pct": 10,
-      "grey_vs_ceiling_pct": 0,
+      "grey_vs_ceiling_pct": 1,
       "z5_target_min_pct": 15,
       "z5_target_max_pct": 20,
       "z5_vs_target_pct": 0,
-      "running_sessions_with_data": 4,
+      "running_sessions_with_data": 2,
       "strength_sessions_with_data": 0,
       "dropout_fallback_sessions_with_data": 0,
       "has_lt_data": true
@@ -1354,9 +1354,9 @@
     },
     "ytd": {
       "label": "Year to date",
-      "window_days": 232,
+      "window_days": 233,
       "window_start": "2026-01-01",
-      "window_end": "2026-08-20",
+      "window_end": "2026-08-21",
       "minutes": {
         "Z1": 5813.9,
         "Z2": 802.0,
@@ -1387,9 +1387,9 @@
     },
     "all_time": {
       "label": "All time",
-      "window_days": 1962,
+      "window_days": 1963,
       "window_start": "2021-04-07",
-      "window_end": "2026-08-20",
+      "window_end": "2026-08-21",
       "minutes": {
         "Z1": 5813.9,
         "Z2": 802.0,

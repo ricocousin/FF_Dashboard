@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-17",
-      "headline": "Still no run logged since the trail block \u2014 absorption has now run several days deeper than a single easy-day reset. Steps stay high; structured work stays fully paused. The first run remains the untaken test.",
-      "watch_items": [
-        "Watch whether the first logged run returns at a normal easy HR, which would confirm the block absorbed cleanly rather than lingering as fatigue.",
-        "Watch whether the resumption reintroduces any real intensity, or whether running restarts entirely easy and leaves the top end untested for even longer.",
-        "Watch whether strength re-enters the log at all \u2014 its continued absence is now a standing feature, not a post-block gap.",
-        "Watch whether the persistently high step count settles once structured training resumes, or holds as a permanent background load worth accounting for."
-      ]
-    },
-    {
       "date": "2026-08-18",
       "headline": "Still no run since the trail block \u2014 absorption has now run longer than any easy reset would need. Steps hold high as a permanent background load. The first structured session remains untaken.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Watch whether strength converts the single recent lift into a repeated cadence rather than another isolated touch.",
         "Watch for the first reappearance of any faster or upper-zone stimulus \u2014 the top end has now been dorment for an unusually long stretch.",
         "Watch whether the first easy run comes back at a normal easy HR, confirming the trail block absorbed cleanly."
+      ]
+    },
+    {
+      "date": "2026-08-22",
+      "headline": "Running still hasn't returned \u2014 the gap since the trail block is now a real off-stretch. One recent lift, no rhythm yet. The base underneath remains deep and intact.",
+      "watch_items": [
+        "Watch whether running finally re-enters this week, or whether the off-stretch tips from deliberate into unplanned.",
+        "Watch whether the single recent lift becomes a repeated strength cadence rather than another isolated touch.",
+        "Watch for the first faster or upper-zone effort \u2014 the top end has now been dormant unusually long and needs a fresh reading.",
+        "Watch that the first easy run returns at a normal easy HR, confirming the trail block absorbed cleanly."
       ]
     }
   ]

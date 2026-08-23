@@ -1,41 +1,41 @@
 {
-  "last_updated": "2026-08-22 06:24 CEST",
-  "headline": "Running still hasn't returned \u2014 the gap since the trail block is now a real off-stretch. One recent lift, no rhythm yet. The base underneath remains deep and intact.",
-  "confidence_pct": 55,
+  "last_updated": "2026-08-23 06:29 CEST",
+  "headline": "Running has stayed away long enough that the trail block is now fully behind you. One lift last week, but no strength rhythm and no top-end reading in weeks. The base is enormous \u2014 the loading side has simply gone quiet.",
+  "confidence_pct": 47,
   "confidence_label": "Low data confidence",
   "confidence_reasons": [
-    "LT reading 50d old",
+    "LT reading 51d old",
     "HR data on 8/8 recent runs",
-    "Sleep tracked 13/14 nights",
+    "Sleep tracked 12/14 nights",
     "Steps tracked 0/7 days",
     "Data fetch up to date",
-    "Limited data sources active in last 3 days"
+    "No recent activity data in last 3 days"
   ],
   "confidence_attention": "Steps tracked 0/7 days",
   "sections": {
-    "overview": "The picture is unchanged in shape but longer in duration: no running has re-entered, and the single strength session logged mid-week hasn't yet become a cadence. What holds the load up right now is background movement \u2014 daily step volume stays high even on nominal rest days, which is the only thing keeping this from being a true full stop. The recent four-week running block was enormous relative to the prior month, so an extended down-period reads as legitimate absorption from that trail load rather than drift. But the length now matters: the top-end and structured stimulus have both been quiet long enough that this is a deliberate off-block, not a reset. Recovery signals are mixed and noisy, and don't independently justify extending the pause further.",
-    "trends": "Year-to-date distance is running dramatically ahead of the same point last year, and the 12-week base is substantial \u2014 the long arc is clearly building, not eroding. The recent shape is a big cyclical spike (the trail block) followed by a trough, which is a normal breathing pattern for a year-round hybrid approach that doesn't strictly periodise. That shape makes sense. What would start to conflict with the standing goals is if the trough flattens into a plateau with no re-entry \u2014 cyclical is healthy, open-ended is not.",
-    "threshold": "Threshold pace and the VO2max picture are unchanged and stem from a benchmark now well over a month old, taken before the trail block. Nothing in the recent running touches that intensity band, so there's no new evidence either way \u2014 the number is stale rather than declining. Demonstrated threshold fitness remains intact on paper; the question is simply that it hasn't been tested recently. Don't read the quiet top end as a loss until a faster effort actually reappears and gives a fresh reading.",
-    "zones": "The recent runs were almost entirely low-aerobic, ceiling-capped efforts \u2014 appropriate for the durability intent of a trail block, and the per-session shapes confirm that character rather than hiding harder work under a soft average. That distribution was correct for what that block was doing. But the block is over, and there's been essentially no upper-zone stimulus since. For a hybrid athlete the grey zone isn't the risk here \u2014 the absence of any Z4/Z5 exposure for an extended stretch is. The intensity distribution was right for absorption; it's now overdue for a spike at the top.",
-    "hr_comparison": "The most recent lift logged without HR, so there's little new to read on strength intensity. Where strength HR does exist, it sits in the expected moderate band for functional work, and the Polar-derived strength figures track sensibly against the running data without any obvious mismatch. Nothing anomalous in source agreement worth flagging.",
-    "calendar": "The calendar tells the real story more clearly than any single metric: a dense, high-volume running cluster followed by a clean break, with only one strength touch since. The running frequency has gone from consistent to absent, and strength hasn't stepped in to fill the structural gap with repetition. Steps remain the one uninterrupted thread. This is a genuine pause in structured training, not a light week \u2014 the consistency pattern has broken, and the coming days decide whether it re-knits.",
-    "personal_bests": "None are in reach right now \u2014 the short-distance PBs need sharp, fast running that hasn't featured at all recently, and the current state is post-block quiet rather than sharpening. The ultra-distance bests remain the most aligned with this athlete's demonstrated durability, but they aren't approached from a trough either. PBs are a question for once structured work resumes, not for this week."
+    "overview": "The picture right now is a large, intact endurance base sitting under a genuinely quiet loading period. The recent trail block was massive \u2014 the four-week running total dwarfs the prior block \u2014 and everything since has been recovery from that, not fresh work. Strength touched down once but hasn't strung together a cadence, so neither of the two main load channels is currently contributing. What's holding the floor up is background movement: step counts stay high even on rest days, which keeps you from being truly sedentary but does nothing for either aerobic or neuromuscular development. The strain-versus-tolerance reading flagging \"detraining\" is simply the arithmetic catching up to a real absence of tracked sessions \u2014 not a surprise given the data, but worth naming as confirmation rather than alarm. Sleep has been thin and inconsistent lately, which is context for why the pause might feel earned even if nothing in the training log demands it.",
+    "trends": "The year-to-date shape is strongly positive \u2014 you're carrying roughly four times last year's distance to the same date, which tells you the annual arc is building, not stalling. The 16-week view shows a big trail-block spike followed by this deliberate trough, which is a normal cyclical shape after a concentrated durability effort. That shape makes sense for a hybrid athlete who maintains year-round readiness rather than periodising to one event. What's now stretching the interpretation is duration: the trough has run long enough that it's no longer a reset and is functioning as a genuine off-stretch. That's a choice, not a problem \u2014 but the longer it runs, the more the next few sessions become the real data point rather than the base behind them.",
+    "threshold": "Threshold pace and the VO2 picture are unchanged simply because there's been no qualifying data to move them \u2014 the last threshold reading is from early July and nothing recent has tested that end. Everything logged in the trail block sat deep in Z1 at very easy paces, which builds durability but tells you nothing about where your threshold currently is. So the honest read is that your aerobic ceiling is undemonstrated right now, not declined. A single tempo or faster effort would resolve that uncertainty quickly \u2014 until then, treat the current number as a stale but probably-still-valid estimate.",
+    "zones": "The recent block was almost entirely Z1 \u2014 heavily skewed toward the bottom, which is exactly right for high-volume time-on-feet trail work and shows no grey-zone creep at all. The per-session shapes confirm genuinely easy efforts: caps well controlled, only brief incidental touches higher on the longer days. That distribution served the trail block's intent cleanly. What the block-level picture is now missing entirely is any upper-zone stimulus \u2014 the top end has been dormant for an unusually long stretch, and the intensity distribution has become one-dimensional purely by absence rather than design.",
+    "hr_comparison": "Nothing concerning in the strength HR patterns \u2014 the lifting sessions that carry HR sit sensibly in the low-to-mid range for functional work, with occasional higher-tempo blocks visible in the older sessions. The most recent lift carries no HR at all, so there's less to read there. Source agreement across run and strength data looks consistent and directionally sound; no divergence worth flagging.",
+    "calendar": "The calendar tells the clearest story: a dense cluster of running through mid-August, then a clean stop, with only a single strength touch since. The running streak has reset to zero from a long prior run, which underlines that this is a real break in cadence rather than a light week. The one lift breaks the silence but doesn't establish a pattern. Consistency has been the athlete's hallmark, so the interpretation hinges on whether this quiet stretch is a chosen pause you'll close deliberately or one that's drifting.",
+    "personal_bests": "None of the speed PBs are in reach right now \u2014 they're all from a sharper, faster-paced period last year, and nothing in the current data touches those speeds. The ultra/50K mark reflects the durability side you've been feeding, and the base under you is more than deep enough to support that end. But PBs at either extreme need a return to actual structured work first; there's nothing actionable here until the loading resumes."
   },
   "watch_items": [
-    "Watch whether running finally re-enters this week, or whether the off-stretch tips from deliberate into unplanned.",
-    "Watch whether the single recent lift becomes a repeated strength cadence rather than another isolated touch.",
-    "Watch for the first faster or upper-zone effort \u2014 the top end has now been dormant unusually long and needs a fresh reading.",
-    "Watch that the first easy run returns at a normal easy HR, confirming the trail block absorbed cleanly."
+    "Watch whether the first run back lands at a normal easy HR, confirming the trail block absorbed cleanly rather than left residual fatigue.",
+    "Watch whether running re-enters at all this week, or whether the off-stretch continues drifting from deliberate toward unplanned.",
+    "Watch for the first upper-zone or faster effort \u2014 the top end is now the single biggest blind spot in the data and needs a fresh reading.",
+    "Watch whether the lone rec"
   ],
   "usage": {
-    "input_tokens": 7613,
-    "output_tokens": 1393,
-    "cost_usd": 0.07289,
-    "cost_dkk": 0.50294,
-    "date": "2026-08-22"
+    "input_tokens": 7584,
+    "output_tokens": 1600,
+    "cost_usd": 0.07792,
+    "cost_dkk": 0.53765,
+    "date": "2026-08-23"
   },
-  "usage_mtd_usd": 1.6642,
-  "usage_mtd_dkk": 11.4829,
-  "usage_ytd_usd": 2.92545,
-  "usage_ytd_dkk": 20.1856
+  "usage_mtd_usd": 1.74211,
+  "usage_mtd_dkk": 12.0206,
+  "usage_ytd_usd": 3.00337,
+  "usage_ytd_dkk": 20.7232
 }

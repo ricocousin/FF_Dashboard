@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-20",
-      "headline": "Strength returned before running did \u2014 the first structured session in the gap was a lift, not a run. Running remains untaken. The pause is now clearly a deliberate off-block rather than absorption.",
-      "watch_items": [
-        "Watch whether running re-enters now that strength has broken the gap, or whether the lift stands alone as an isolated re-entry.",
-        "Watch whether the first easy run returns at a normal easy HR, confirming the trail block absorbed cleanly.",
-        "Watch whether any upper-zone or faster stimulus reappears soon \u2014 the speed side of the profile has now gone untouched for an extended stretch.",
-        "Watch whether training frequency rebuilds into a steady rhythm or remains sporadic after this spike-then-silence pattern."
-      ]
-    },
-    {
       "date": "2026-08-21",
       "headline": "Running is still on hold \u2014 the gap since the trail block is now stretching into a genuine off-stretch. Strength touched down once but hasn't built a rhythm. The base underneath remains large and intact.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Watch for a genuine tempo or threshold effort to refresh the stale threshold reading \u2014 still the largest unverified metric.",
         "Watch whether strength finally builds a consistent cadence rather than sporadic single sessions.",
         "Watch how easy-run HR behaves on the next few runs now that the top end has confirmed a clean response."
+      ]
+    },
+    {
+      "date": "2026-08-25",
+      "headline": "The one run back had genuine range top to bottom, but it's still a single data point. No second run yet to confirm a rhythm. The threshold reading is now the oldest thing on the board.",
+      "watch_items": [
+        "Watch whether a second and third run land this week \u2014 one run doesn't yet distinguish a restart from an isolated session.",
+        "Watch for a sustained tempo or threshold effort to finally refresh the oldest metric on the board.",
+        "Watch whether strength moves from scattered singles to an actual weekly frame.",
+        "Watch whether the next lift captures HR, since the most recent one logged none."
       ]
     }
   ]

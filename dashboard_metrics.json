@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-08-24 06:37 CEST",
-  "last_complete_date": "2026-08-23",
+  "last_updated": "2026-08-25 06:31 CEST",
+  "last_complete_date": "2026-08-24",
   "this_year": "2026",
   "this_month_short": "Aug",
   "running": {
@@ -10,9 +10,9 @@
     "avg_runs_per_week": 2.7,
     "total_distance_this_year_km": 1246.1,
     "hike_distance_this_year_km": 45.8,
-    "current_weekly_streak": 27,
+    "current_weekly_streak": 0,
     "longest_weekly_streak": 27,
-    "week_delta_km": -365.4,
+    "week_delta_km": -6.7,
     "week_qual": "Decreased"
   },
   "strength": {
@@ -20,15 +20,15 @@
     "sessions_this_year": 47,
     "avg_hours_per_week": 1.8,
     "total_hours_this_year": 45.2,
-    "current_weekly_streak": 1,
+    "current_weekly_streak": 0,
     "longest_weekly_streak": 23,
-    "week_delta_sessions": 1,
+    "week_delta_sessions": -1,
     "week_qual": "Stable"
   },
   "steps": {
     "avg_all_time": 13223,
     "avg_7d": null,
-    "avg_30d": 19124,
+    "avg_30d": 18356,
     "delta_7d_vs_30d": null,
     "qual": null,
     "discrepancy_avg": null,
@@ -53,8 +53,8 @@
       "score": null
     },
     "month": {
-      "mins": 433.6923076923077,
-      "score": 43.46153846153846
+      "mins": 411.0833333333333,
+      "score": 47.083333333333336
     },
     "year": {
       "mins": 442.9166666666667,
@@ -64,14 +64,13 @@
     "qual": null
   },
   "cardio_load": {
-    "latest_date": "2026-08-24",
+    "latest_date": "2026-08-25",
     "status": "DETRAINING",
     "strain": 0.0,
-    "tolerance": 16.619518,
+    "tolerance": 13.300561,
     "ratio": 0.0,
     "trend": {
       "labels": [
-        "07-27",
         "07-28",
         "07-29",
         "07-30",
@@ -99,10 +98,10 @@
         "08-21",
         "08-22",
         "08-23",
-        "08-24"
+        "08-24",
+        "08-25"
       ],
       "strain": [
-        71.190956,
         67.2049,
         67.2049,
         52.450584,
@@ -130,10 +129,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
         0.0
       ],
       "tolerance": [
-        72.84174,
         73.585785,
         70.957726,
         67.28454,
@@ -161,7 +160,8 @@
         25.342808,
         17.461807,
         17.461807,
-        16.619518
+        16.619518,
+        13.300561
       ]
     }
   },
@@ -1119,11 +1119,11 @@
       "2026-07-17",
       "2026-07-24"
     ],
-    "commentary": "27-week streak \u2014 currently matching your all-time best. Keep it going."
+    "commentary": "No active running streak right now \u2014 a session this week starts a new one."
   },
   "data_freshness": {
     "status": "fresh",
-    "last_success_date": "2026-08-24",
+    "last_success_date": "2026-08-25",
     "age_days": 0
   },
   "tile_freshness": {
@@ -1290,8 +1290,8 @@
     "rolling": {
       "label": "This week (rolling 7d)",
       "window_days": 7,
-      "window_start": "2026-08-17",
-      "window_end": "2026-08-24",
+      "window_start": "2026-08-18",
+      "window_end": "2026-08-25",
       "minutes": {
         "Z1": 11.0,
         "Z2": 18.6,
@@ -1355,9 +1355,9 @@
     },
     "ytd": {
       "label": "Year to date",
-      "window_days": 235,
+      "window_days": 236,
       "window_start": "2026-01-01",
-      "window_end": "2026-08-23",
+      "window_end": "2026-08-24",
       "minutes": {
         "Z1": 5824.9,
         "Z2": 820.6,
@@ -1388,9 +1388,9 @@
     },
     "all_time": {
       "label": "All time",
-      "window_days": 1965,
+      "window_days": 1966,
       "window_start": "2021-04-07",
-      "window_end": "2026-08-23",
+      "window_end": "2026-08-24",
       "minutes": {
         "Z1": 5824.9,
         "Z2": 820.6,

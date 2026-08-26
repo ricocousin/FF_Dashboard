@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-21",
-      "headline": "Running is still on hold \u2014 the gap since the trail block is now stretching into a genuine off-stretch. Strength touched down once but hasn't built a rhythm. The base underneath remains large and intact.",
-      "watch_items": [
-        "Watch whether running actually re-enters this week, or whether the gap extends further into an unplanned lay-off.",
-        "Watch whether strength converts the single recent lift into a repeated cadence rather than another isolated touch.",
-        "Watch for the first reappearance of any faster or upper-zone stimulus \u2014 the top end has now been dorment for an unusually long stretch.",
-        "Watch whether the first easy run comes back at a normal easy HR, confirming the trail block absorbed cleanly."
-      ]
-    },
-    {
       "date": "2026-08-22",
       "headline": "Running still hasn't returned \u2014 the gap since the trail block is now a real off-stretch. One recent lift, no rhythm yet. The base underneath remains deep and intact.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Watch for a sustained tempo or threshold effort to finally refresh the oldest metric on the board.",
         "Watch whether strength moves from scattered singles to an actual weekly frame.",
         "Watch whether the next lift captures HR, since the most recent one logged none."
+      ]
+    },
+    {
+      "date": "2026-08-26",
+      "headline": "Two runs back-to-back now \u2014 the restart is real, not a one-off. Both carried genuine top-end range. Strength is still the quietest corner of the picture.",
+      "watch_items": [
+        "Watch whether the run frequency holds into a third and fourth session \u2014 two runs confirm a restart, but not yet a sustained weekly cadence.",
+        "Watch for a controlled sustained tempo or threshold effort, since the burst-style intensity so far hasn't refreshed the oldest metric on the board.",
+        "Watch whether strength finally clusters into a repeating weekly slot rather than staying isolated singles.",
+        "Watch whether the next lift captures HR, so the intensity of the strength work stops being a blind spot."
       ]
     }
   ]

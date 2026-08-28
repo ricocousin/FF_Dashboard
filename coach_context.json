@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-23",
-      "headline": "Running has stayed away long enough that the trail block is now fully behind you. One lift last week, but no strength rhythm and no top-end reading in weeks. The base is enormous \u2014 the loading side has simply gone quiet.",
-      "watch_items": [
-        "Watch whether the first run back lands at a normal easy HR, confirming the trail block absorbed cleanly rather than left residual fatigue.",
-        "Watch whether running re-enters at all this week, or whether the off-stretch continues drifting from deliberate toward unplanned.",
-        "Watch for the first upper-zone or faster effort \u2014 the top end is now the single biggest blind spot in the data and needs a fresh reading.",
-        "Watch whether the lone rec"
-      ]
-    },
-    {
       "date": "2026-08-24",
       "headline": "Running is back, and it landed with genuine intensity \u2014 the first run in the gap touched the top end. The blind spot from the off-stretch has its first fresh reading. Base remains deep.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Watch for a controlled sustained tempo effort that could finally refresh the stale threshold reading.",
         "Watch whether strength clusters into a repeating slot rather than staying isolated singles.",
         "Watch whether the next lift captures HR, so strength intensity stops being a blind spot."
+      ]
+    },
+    {
+      "date": "2026-08-28",
+      "headline": "Two short faster runs now sit where the huge \u00c5re trail block used to be. The restart holds its top-end range, but weekly cadence and a fresh threshold reading are both still missing. Strength stays the quiet corner.",
+      "watch_items": [
+        "Watch whether running settles into a repeating weekly cadence now that the restart is two runs deep but still unconfirmed as a rhythm.",
+        "Watch for a single sustained tempo effort \u2014 the threshold reading has now aged past the point where the base can be assumed to still map to it.",
+        "Watch whether strength moves from isolated singles into any kind of recurring slot, and whether the next lift captures HR.",
+        "Watch whether the short runs sharpen into distinct easy-vs-quality intents rather than staying in the mixed grey-zone drift."
       ]
     }
   ]

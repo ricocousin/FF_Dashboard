@@ -1,41 +1,41 @@
 {
-  "last_updated": "2026-08-27 16:53 CEST",
-  "headline": "Two runs back is now a genuine restart, both with real top-end range. The threshold reading is now the oldest signal on the board. Strength remains the quiet corner.",
-  "confidence_pct": 48,
+  "last_updated": "2026-08-28 17:49 CEST",
+  "headline": "Two short faster runs now sit where the huge \u00c5re trail block used to be. The restart holds its top-end range, but weekly cadence and a fresh threshold reading are both still missing. Strength stays the quiet corner.",
+  "confidence_pct": 47,
   "confidence_label": "Low data confidence",
   "confidence_reasons": [
-    "LT reading 55d old",
+    "LT reading 56d old",
     "HR data on 8/8 recent runs",
-    "Sleep tracked 9/14 nights",
+    "Sleep tracked 8/14 nights",
     "Steps tracked 0/7 days",
     "Data fetch up to date",
     "Limited data sources active in last 3 days"
   ],
   "confidence_attention": "Steps tracked 0/7 days",
   "sections": {
-    "overview": "The picture right now is a running restart sitting on top of a very large accumulated base. The two recent runs are short, faster-paced, and carry range from bottom to top \u2014 a clear shift away from the massive slow time-on-feet block that dominated mid-August. That trail block pushed your recent four-week total to a level far above the prior stretch, so even with the current short sessions the base underneath is deep and intact, not eroding. Strength stays the weakest link: it's still isolated singles rather than a repeating slot, and the streak counter reflects that. Steps remain high even on rest days, so background load isn't the issue \u2014 the loading side of structured strength simply hasn't found a rhythm. Treat the Polar detraining flag as an artifact of the short recent sessions against a huge prior block, not a real fitness verdict.",
-    "trends": "Year-to-date, you're running roughly four times the distance you'd banked by this point last year, which reframes any recent quiet stretch as a dip within a much steeper long-term climb. The shape over the last several weeks is cyclical rather than linear: a huge trail-volume spike, a genuine off-stretch, and now a short-run restart. That rhythm fits a year-round hybrid model that doesn't strictly periodise \u2014 you accumulate durability in blocks, then pivot to shorter faster work. The one thing the trend can't yet show is whether this restart sustains into a repeating weekly cadence.",
-    "threshold": "Your threshold figure hasn't moved in nearly two months and is now the oldest metric on the board by a wide margin. That's not evidence of decline \u2014 it simply means the recent work (either very slow ultra volume or short burst-style efforts) hasn't produced the kind of sustained controlled effort that refreshes a threshold reading. The demonstrated aerobic engine from the trail block is enormous, but the specific top-of-aerobic sharpness is currently unverified. A controlled sustained tempo would tell you where you actually stand.",
-    "zones": "The two recent runs show a real spread \u2014 meaningful time across the middle and touches into the top end \u2014 which is a materially different session character from the flat Z1 wall of the trail block. That contrast is healthy: burst-style range after a long slow block is a sensible re-entry. What's still missing from the distribution is a deliberate, sustained middle-zone effort rather than intensity arriving in spikes with easy recovery around it. Right now the intensity is present but scattered, not structured.",
-    "hr_comparison": "The most recent lift didn't capture HR, so its intensity remains a blind spot, continuing a pattern where strength effort is hard to read. Where recent strength HR does exist, it sits mostly low-aerobic with occasional climbs into the middle zones \u2014 consistent with functional circuit work rather than heavy low-rep strength. On the running side the two restart sessions carry clean top-end readings, so effort trends there are readable. Nothing in the source agreement looks off.",
-    "calendar": "The calendar shows the signature of a block boundary: a dense cluster of trail days, a genuine gap, and now the first tentative pair of a new phase. The running streak surviving through the off-stretch tells you the habit held even when volume didn't. Strength, by contrast, shows no clustering at all \u2014 sessions land as scattered singles across weeks, which is why it reads as the least stable thread in your week.",
-    "personal_bests": "Your short-distance PBs were set almost exactly a year ago, in a sharpening window \u2014 and the current short, fast restart is directionally the right kind of work to eventually approach them again, though two sessions is far too early to call anything within reach. The ultra PB from the 137 km effort is well insulated by the recent trail block. For now the bests are a marker of what a focused speed phase can produce, not a near-term target."
+    "overview": "The shape of the last two weeks is a hard pivot: the enormous Swedish trail block \u2014 long, slow, Z1-dominated time on feet \u2014 has given way to two short, sharp road runs that reach into the upper zones. That's a deliberate change of character, not a decline, and the deep base underneath it hasn't gone anywhere. What's genuinely lagging is loading rhythm on both fronts: only three lifts in four weeks, none clustered, and running frequency since the restart still unproven beyond a pair. Steps stay high even on rest days, so background movement is carrying real daily load the tracked sessions don't show. The recovery and cardio-load streams read as quiet-to-detraining, which fits the low tracked-session count more than it reflects the actual body of work banked this month.",
+    "trends": "The medium-term picture is genuinely lopsided: the recent four-week block dwarfs the prior one, driven almost entirely by those big trail days, and year-to-date distance is nearly four times where it sat this time last year. That's a real, durable expansion of base \u2014 the kind of year that builds ultra capacity. The current cyclical dip in tracked load after the trail block is exactly the sort of consolidation that fits year-round hybrid readiness, so long as the running cadence re-establishes rather than trailing off. The shape makes sense; the open question is whether the next fortnight confirms rhythm or drifts.",
+    "threshold": "The threshold reading is now the oldest signal on the board by a wide margin, and nothing since has come close to refreshing it \u2014 the trail block was almost entirely aerobic-floor work, and the two runs back, while they touch the top end, are too short and too intermittent to serve as a sustained threshold probe. So the honest position is uncertainty: aerobic base is demonstrably deep, but where the actual threshold and VO2max sit right now is a genuine blind spot rather than a known quantity. A controlled sustained tempo would resolve that faster than more short mixed efforts.",
+    "zones": "The two restart runs are the opposite of the trail block in distribution \u2014 where the \u00c5re days were pure Z1 floor, these move through Z2, Z3 and briefly into Z4, but the shape reads as varied-terrain drift-up rather than a targeted session, with a lot of time in the Z3 grey band and no sustained anchor in any one zone. For rebuilding top-end feel after a long slow block that's fine as a bridge, but it isn't yet either a clean easy run or a clean quality session. Nothing here needs correcting \u2014 just worth noting the intent of each run is still a little diffuse.",
+    "hr_comparison": "The most recent lift captured no HR at all, so the strength-intensity blind spot flagged earlier hasn't closed. The lifts that do carry HR sit in a believable working range for functional work, mostly low-to-moderate with occasional pushes higher, consistent across the earlier sessions. Where both a run and an estimated line exist, the numbers track sensibly together \u2014 no source disagreement worth acting on.",
+    "calendar": "The calendar shows a clear regime change mid-month: a dense cluster of big trail days, then a gap, then two shorter road runs \u2014 bursty rather than metronomic. Strength appears as isolated singles with long spacing, never a repeating slot. The running side has enough history to trust it re-forms; the strength side is the one where the pattern itself, not just the volume, is the thing to watch.",
+    "personal_bests": "The short-distance PBs were set almost exactly a year ago in a sharper, speed-focused phase \u2014 current training has been base and durability, not speed, so those marks aren't in realistic near-term reach without a dedicated block. The ultra/50K mark, by contrast, sits much closer to this year's demonstrated capacity given the trail volume banked, and would be the more plausible target if a long effort were on the horizon."
   },
   "watch_items": [
-    "Watch whether a third and fourth run land this week \u2014 two confirm a restart, but weekly cadence is still unproven.",
-    "Watch for a controlled sustained tempo effort that could finally refresh the stale threshold reading.",
-    "Watch whether strength clusters into a repeating slot rather than staying isolated singles.",
-    "Watch whether the next lift captures HR, so strength intensity stops being a blind spot."
+    "Watch whether running settles into a repeating weekly cadence now that the restart is two runs deep but still unconfirmed as a rhythm.",
+    "Watch for a single sustained tempo effort \u2014 the threshold reading has now aged past the point where the base can be assumed to still map to it.",
+    "Watch whether strength moves from isolated singles into any kind of recurring slot, and whether the next lift captures HR.",
+    "Watch whether the short runs sharpen into distinct easy-vs-quality intents rather than staying in the mixed grey-zone drift."
   ],
   "usage": {
-    "input_tokens": 7568,
-    "output_tokens": 1455,
-    "cost_usd": 0.074215,
-    "cost_dkk": 0.51208,
-    "date": "2026-08-27"
+    "input_tokens": 7480,
+    "output_tokens": 1544,
+    "cost_usd": 0.076,
+    "cost_dkk": 0.5244,
+    "date": "2026-08-28"
   },
-  "usage_mtd_usd": 2.04221,
-  "usage_mtd_dkk": 14.0912,
-  "usage_ytd_usd": 3.30346,
-  "usage_ytd_dkk": 22.7939
+  "usage_mtd_usd": 2.11821,
+  "usage_mtd_dkk": 14.6156,
+  "usage_ytd_usd": 3.37946,
+  "usage_ytd_dkk": 23.3183
 }

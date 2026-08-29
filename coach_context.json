@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-24",
-      "headline": "Running is back, and it landed with genuine intensity \u2014 the first run in the gap touched the top end. The blind spot from the off-stretch has its first fresh reading. Base remains deep.",
-      "watch_items": [
-        "Watch whether running settles into a repeatable weekly rhythm now that the drought is broken, or reverts to isolated sessions.",
-        "Watch for a genuine tempo or threshold effort to refresh the stale threshold reading \u2014 still the largest unverified metric.",
-        "Watch whether strength finally builds a consistent cadence rather than sporadic single sessions.",
-        "Watch how easy-run HR behaves on the next few runs now that the top end has confirmed a clean response."
-      ]
-    },
-    {
       "date": "2026-08-25",
       "headline": "The one run back had genuine range top to bottom, but it's still a single data point. No second run yet to confirm a rhythm. The threshold reading is now the oldest thing on the board.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Watch for a single sustained tempo effort \u2014 the threshold reading has now aged past the point where the base can be assumed to still map to it.",
         "Watch whether strength moves from isolated singles into any kind of recurring slot, and whether the next lift captures HR.",
         "Watch whether the short runs sharpen into distinct easy-vs-quality intents rather than staying in the mixed grey-zone drift."
+      ]
+    },
+    {
+      "date": "2026-08-29",
+      "headline": "The two short runs back now sit several days cold, with no third to confirm cadence. Big \u00c5re block still anchors the base. Strength and a fresh threshold read remain the open gaps.",
+      "watch_items": [
+        "Watch whether a third run finally lands to confirm the restart as a rhythm rather than an isolated pair.",
+        "Watch for a sustained tempo effort to refresh the now-stale threshold number before assuming the old value still holds.",
+        "Watch whether strength returns to any recurring slot \u2014 it's now the single most degraded consistency signal in the picture.",
+        "Watch whether the short runs separate into clear easy-vs-quality intent instead of settling mid-zone."
       ]
     }
   ]

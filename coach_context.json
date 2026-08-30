@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-25",
-      "headline": "The one run back had genuine range top to bottom, but it's still a single data point. No second run yet to confirm a rhythm. The threshold reading is now the oldest thing on the board.",
-      "watch_items": [
-        "Watch whether a second and third run land this week \u2014 one run doesn't yet distinguish a restart from an isolated session.",
-        "Watch for a sustained tempo or threshold effort to finally refresh the oldest metric on the board.",
-        "Watch whether strength moves from scattered singles to an actual weekly frame.",
-        "Watch whether the next lift captures HR, since the most recent one logged none."
-      ]
-    },
-    {
       "date": "2026-08-26",
       "headline": "Two runs back-to-back now \u2014 the restart is real, not a one-off. Both carried genuine top-end range. Strength is still the quietest corner of the picture.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Watch for a sustained tempo effort to refresh the now-stale threshold number before assuming the old value still holds.",
         "Watch whether strength returns to any recurring slot \u2014 it's now the single most degraded consistency signal in the picture.",
         "Watch whether the short runs separate into clear easy-vs-quality intent instead of settling mid-zone."
+      ]
+    },
+    {
+      "date": "2026-08-30",
+      "headline": "Five days cold since the last run \u2014 the restart pair never became a rhythm. The \u00c5re block still carries the base. Strength and a fresh threshold read remain the two open gaps.",
+      "watch_items": [
+        "Watch whether a run lands soon at all \u2014 the concern has shifted from \"confirm cadence\" to \"restart the cadence\" as the gap widens.",
+        "Watch for a single committed tempo effort to refresh the stale threshold rather than more mixed-intent short runs.",
+        "Watch whether strength reappears in any form \u2014 it remains the most degraded consistency signal and has no recent anchor at all.",
+        "Watch whether the next running block declares a clear direction (trail durability vs speed) or stays in transition limbo."
       ]
     }
   ]

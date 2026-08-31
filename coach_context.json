@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-26",
-      "headline": "Two runs back-to-back now \u2014 the restart is real, not a one-off. Both carried genuine top-end range. Strength is still the quietest corner of the picture.",
-      "watch_items": [
-        "Watch whether the run frequency holds into a third and fourth session \u2014 two runs confirm a restart, but not yet a sustained weekly cadence.",
-        "Watch for a controlled sustained tempo or threshold effort, since the burst-style intensity so far hasn't refreshed the oldest metric on the board.",
-        "Watch whether strength finally clusters into a repeating weekly slot rather than staying isolated singles.",
-        "Watch whether the next lift captures HR, so the intensity of the strength work stops being a blind spot."
-      ]
-    },
-    {
       "date": "2026-08-27",
       "headline": "Two runs back is now a genuine restart, both with real top-end range. The threshold reading is now the oldest signal on the board. Strength remains the quiet corner.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Watch for a single committed tempo effort to refresh the stale threshold rather than more mixed-intent short runs.",
         "Watch whether strength reappears in any form \u2014 it remains the most degraded consistency signal and has no recent anchor at all.",
         "Watch whether the next running block declares a clear direction (trail durability vs speed) or stays in transition limbo."
+      ]
+    },
+    {
+      "date": "2026-08-31",
+      "headline": "Six days now without a run \u2014 the restart pair never took root. The \u00c5re block still holds the base, but strength and a fresh threshold read remain untouched gaps.",
+      "watch_items": [
+        "Watch whether any run lands at all this week \u2014 the gap has now stretched long enough that the priority is simply re-establishing contact, not cadence quality.",
+        "Watch whether strength reappears in any form \u2014 it's been the quiet corner for weeks and now has no recent anchor whatsoever.",
+        "Watch whether the next block finally picks a lane \u2014 trail durability or speed \u2014 rather than continuing to alternate without committing.",
+        "Watch for a clean sustained tempo effort, which is the one session type that would both refresh the stale threshold and fill the missing middle of the zone distribution."
       ]
     }
   ]

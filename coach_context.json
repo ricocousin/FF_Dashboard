@@ -1,16 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-30",
-      "headline": "Five days cold since the last run \u2014 the restart pair never became a rhythm. The \u00c5re block still carries the base. Strength and a fresh threshold read remain the two open gaps.",
-      "watch_items": [
-        "Watch whether a run lands soon at all \u2014 the concern has shifted from \"confirm cadence\" to \"restart the cadence\" as the gap widens.",
-        "Watch for a single committed tempo effort to refresh the stale threshold rather than more mixed-intent short runs.",
-        "Watch whether strength reappears in any form \u2014 it remains the most degraded consistency signal and has no recent anchor at all.",
-        "Watch whether the next running block declares a clear direction (trail durability vs speed) or stays in transition limbo."
-      ]
-    },
-    {
       "date": "2026-08-31",
       "headline": "Six days now without a run \u2014 the restart pair never took root. The \u00c5re block still holds the base, but strength and a fresh threshold read remain untouched gaps.",
       "watch_items": [
@@ -48,6 +38,16 @@
         "Watch whether a second and third run land close to the restart, turning one touch into an actual weekly rhythm.",
         "Watch whether the burst-and-gap calendar pattern gives way to load spread across the week.",
         "Watch whether any sustained tempo shows up to refresh the now two-month-old threshold read."
+      ]
+    },
+    {
+      "date": "2026-09-04",
+      "headline": "Strength is back \u2014 a long functional session broke the two-week gap. The restart run still stands alone, awaiting a second touch. Base intact, rhythm still forming.",
+      "watch_items": [
+        "Watch whether strength converts from a single returning session into a repeating weekly presence, not another isolated touch.",
+        "Watch whether the restart run gains a second and third companion this week to establish an actual running rhythm.",
+        "Watch whether any sustained tempo finally appears to refresh the now two-month-stale threshold read.",
+        "Watch whether sessions start landing spread across days rather than clustering into bursts and gaps."
       ]
     }
   ]

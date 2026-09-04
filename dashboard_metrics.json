@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-09-03 10:25 CEST",
-  "last_complete_date": "2026-09-02",
+  "last_updated": "2026-09-04 10:21 CEST",
+  "last_complete_date": "2026-09-03",
   "this_year": "2026",
   "this_month_short": "Sep",
   "running": {
@@ -16,34 +16,34 @@
     "week_qual": "Decreased"
   },
   "strength": {
-    "avg_sessions_per_week": 1.9,
-    "sessions_this_year": 47,
-    "avg_hours_per_week": 1.8,
-    "total_hours_this_year": 45.2,
-    "current_weekly_streak": 0,
+    "avg_sessions_per_week": 1.8,
+    "sessions_this_year": 48,
+    "avg_hours_per_week": 1.9,
+    "total_hours_this_year": 49.2,
+    "current_weekly_streak": 1,
     "longest_weekly_streak": 23,
-    "week_delta_sessions": 0,
+    "week_delta_sessions": 1,
     "week_qual": "Stable"
   },
   "steps": {
     "avg_all_time": 13223,
     "avg_7d": null,
-    "avg_30d": 15586,
+    "avg_30d": 15345,
     "delta_7d_vs_30d": null,
     "qual": null,
     "discrepancy_avg": null,
     "discrepancy_days": 0
   },
   "intensity": {
-    "avg_week_year_mins": 355,
+    "avg_week_year_mins": 362,
     "avg_week_year_run_mins": 281,
-    "avg_week_year_lift_mins": 109,
-    "avg_week_month_mins": 17,
+    "avg_week_year_lift_mins": 114,
+    "avg_week_month_mins": 257,
     "avg_week_month_run_mins": 17,
-    "avg_week_month_lift_mins": 0,
-    "delta_month_vs_year": -338,
+    "avg_week_month_lift_mins": 240,
+    "delta_month_vs_year": -105,
     "qual": "Decreased",
-    "streak_weeks": 0,
+    "streak_weeks": 1,
     "best_streak_weeks": 7,
     "goal_mins": 210
   },
@@ -53,8 +53,8 @@
       "score": null
     },
     "month": {
-      "mins": 384.8,
-      "score": 48.4
+      "mins": 385.25,
+      "score": 48.0
     },
     "year": {
       "mins": 442.9166666666667,
@@ -64,14 +64,13 @@
     "qual": null
   },
   "cardio_load": {
-    "latest_date": "2026-09-03",
+    "latest_date": "2026-09-04",
     "status": "LOAD_STATUS_NOT_AVAILABLE",
     "strain": 0.0,
     "tolerance": -1.0,
     "ratio": -1.0,
     "trend": {
       "labels": [
-        "08-06",
         "08-07",
         "08-08",
         "08-09",
@@ -99,10 +98,10 @@
         "08-31",
         "09-01",
         "09-02",
-        "09-03"
+        "09-03",
+        "09-04"
       ],
       "strain": [
-        49.01803,
         42.091812,
         31.882828,
         9.995585,
@@ -130,10 +129,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
         0.0
       ],
       "tolerance": [
-        61.64758,
         62.302605,
         54.131317,
         48.002823,
@@ -157,6 +156,7 @@
         12.909532,
         10.522953,
         7.970707,
+        -1.0,
         -1.0,
         -1.0,
         -1.0,
@@ -236,7 +236,7 @@
       0,
       1,
       0,
-      0
+      1
     ],
     "month_boundaries": [
       false,
@@ -285,11 +285,11 @@
     "km_to_target_km": 665.1,
     "hike_dist_this_year_km": 45.8,
     "strength_target_label": "vs 2025 total (51 sessions)",
-    "strength_pct": 92,
-    "strength_display_pct": 92,
+    "strength_pct": 94,
+    "strength_display_pct": 94,
     "strength_overflow": false,
-    "strength_sessions_done": 47,
-    "strength_sessions_to_match": 4,
+    "strength_sessions_done": 48,
+    "strength_sessions_to_match": 3,
     "month_labels": [
       "Jan",
       "Feb",
@@ -332,7 +332,7 @@
       5,
       11,
       3,
-      0
+      1
     ],
     "current_month_index": 8
   },
@@ -1104,7 +1104,8 @@
       "2026-07-30",
       "2026-08-03",
       "2026-08-06",
-      "2026-08-19"
+      "2026-08-19",
+      "2026-09-03"
     ],
     "hike_dates": [
       "2021-07-30",
@@ -1129,7 +1130,7 @@
   },
   "data_freshness": {
     "status": "fresh",
-    "last_success_date": "2026-09-03",
+    "last_success_date": "2026-09-04",
     "age_days": 0
   },
   "tile_freshness": {
@@ -1296,8 +1297,8 @@
     "rolling": {
       "label": "This week (rolling 7d)",
       "window_days": 7,
-      "window_start": "2026-08-27",
-      "window_end": "2026-09-03",
+      "window_start": "2026-08-28",
+      "window_end": "2026-09-04",
       "minutes": {
         "Z1": 6.3,
         "Z2": 11.1,
@@ -1361,9 +1362,9 @@
     },
     "ytd": {
       "label": "Year to date",
-      "window_days": 245,
+      "window_days": 246,
       "window_start": "2026-01-01",
-      "window_end": "2026-09-02",
+      "window_end": "2026-09-03",
       "minutes": {
         "Z1": 5835.6,
         "Z2": 843.6,
@@ -1394,9 +1395,9 @@
     },
     "all_time": {
       "label": "All time",
-      "window_days": 1975,
+      "window_days": 1976,
       "window_start": "2021-04-07",
-      "window_end": "2026-09-02",
+      "window_end": "2026-09-03",
       "minutes": {
         "Z1": 5835.6,
         "Z2": 843.6,

@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-09-04 10:21 CEST",
-  "last_complete_date": "2026-09-03",
+  "last_updated": "2026-09-05 09:57 CEST",
+  "last_complete_date": "2026-09-04",
   "this_year": "2026",
   "this_month_short": "Sep",
   "running": {
@@ -28,7 +28,7 @@
   "steps": {
     "avg_all_time": 13223,
     "avg_7d": null,
-    "avg_30d": 15345,
+    "avg_30d": 14712,
     "delta_7d_vs_30d": null,
     "qual": null,
     "discrepancy_avg": null,
@@ -53,8 +53,8 @@
       "score": null
     },
     "month": {
-      "mins": 385.25,
-      "score": 48.0
+      "mins": 401.6666666666667,
+      "score": 46.0
     },
     "year": {
       "mins": 442.9166666666667,
@@ -64,14 +64,13 @@
     "qual": null
   },
   "cardio_load": {
-    "latest_date": "2026-09-04",
+    "latest_date": "2026-09-05",
     "status": "LOAD_STATUS_NOT_AVAILABLE",
     "strain": 0.0,
     "tolerance": -1.0,
     "ratio": -1.0,
     "trend": {
       "labels": [
-        "08-07",
         "08-08",
         "08-09",
         "08-10",
@@ -99,10 +98,10 @@
         "09-01",
         "09-02",
         "09-03",
-        "09-04"
+        "09-04",
+        "09-05"
       ],
       "strain": [
-        42.091812,
         31.882828,
         9.995585,
         9.995585,
@@ -130,10 +129,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
         0.0
       ],
       "tolerance": [
-        62.302605,
         54.131317,
         48.002823,
         47.17031,
@@ -156,6 +155,7 @@
         12.909532,
         10.522953,
         7.970707,
+        -1.0,
         -1.0,
         -1.0,
         -1.0,
@@ -1130,7 +1130,7 @@
   },
   "data_freshness": {
     "status": "fresh",
-    "last_success_date": "2026-09-04",
+    "last_success_date": "2026-09-05",
     "age_days": 0
   },
   "tile_freshness": {
@@ -1297,8 +1297,8 @@
     "rolling": {
       "label": "This week (rolling 7d)",
       "window_days": 7,
-      "window_start": "2026-08-28",
-      "window_end": "2026-09-04",
+      "window_start": "2026-08-29",
+      "window_end": "2026-09-05",
       "minutes": {
         "Z1": 6.3,
         "Z2": 11.1,
@@ -1362,9 +1362,9 @@
     },
     "ytd": {
       "label": "Year to date",
-      "window_days": 246,
+      "window_days": 247,
       "window_start": "2026-01-01",
-      "window_end": "2026-09-03",
+      "window_end": "2026-09-04",
       "minutes": {
         "Z1": 5835.6,
         "Z2": 843.6,
@@ -1395,9 +1395,9 @@
     },
     "all_time": {
       "label": "All time",
-      "window_days": 1976,
+      "window_days": 1977,
       "window_start": "2021-04-07",
-      "window_end": "2026-09-03",
+      "window_end": "2026-09-04",
       "minutes": {
         "Z1": 5835.6,
         "Z2": 843.6,

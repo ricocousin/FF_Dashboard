@@ -1,5 +1,12 @@
 [
   {
+    "input_tokens": 7265,
+    "output_tokens": 1411,
+    "cost_usd": 0.0716,
+    "cost_dkk": 0.49404,
+    "date": "2026-09-06"
+  },
+  {
     "input_tokens": 7267,
     "output_tokens": 1304,
     "cost_usd": 0.068935,

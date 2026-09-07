@@ -1,39 +1,28 @@
 {
-  "last_updated": "2026-09-06 10:14 CEST",
-  "headline": "The restart run still hasn't found a second partner \u2014 days on. Strength's big session sits alone too. The \u00c5re base carries you, but week 36 remains a collection of isolated touches, not rhythm.",
+  "last_updated": "2026-09-07 10:46 CEST",
+  "headline": "",
   "confidence_pct": 34,
   "confidence_label": "Low data confidence",
   "confidence_reasons": [
-    "LT reading 65d old",
+    "LT reading 66d old",
     "HR data on 7/8 recent runs",
     "Sleep tracked 0/14 nights",
     "Steps tracked 0/7 days",
     "Data fetch up to date",
     "Limited data sources active in last 3 days"
   ],
-  "confidence_attention": "LT reading 65d old",
+  "confidence_attention": "LT reading 66d old",
   "sections": {
-    "overview": "The picture this week is one of intact capacity without reassembled rhythm. The single Copenhagen restart run remains exactly that \u2014 one controlled, short, sensible effort that hasn't been joined by a second or third. Strength shows the same shape: one very long functional session broke a two-week gap, but it hasn't repeated, so the streak reads as technically live rather than genuinely rebuilt. The recent four-week running volume looks enormous versus the prior block, but that number is almost entirely the \u00c5re ultra-terrain days \u2014 durable time on feet, not current weekly rhythm. Steps and cardio-load streams remain blank, so they add nothing to read this week. The honest summary: your demonstrated base is deep and undisturbed, but the frequency that turns base into forward progress hasn't returned yet.",
-    "trends": "Year-to-date, you're miles ahead of the same point last year, and the medium-term shape has been genuinely strong \u2014 the \u00c5re block loaded real long-effort durability into the system. But the recent weekly shape is irregular rather than building: a huge terrain block followed by a near-empty stretch punctuated by single sessions. That's not regression, and given your year-round hybrid orientation it doesn't need to be alarming. It does mean the current few weeks read as a trough between blocks rather than a progression, and the question is simply whether the next block starts assembling before the trough stretches further.",
-    "threshold": "Your threshold read is now well over two months old and hasn't moved because nothing has tested it \u2014 every recent run has either been ultra-slow terrain time or the short controlled restart, none of which touch threshold pace. That staleness isn't evidence of lost fitness; the \u00c5re durability and your strength profile suggest the aerobic engine is intact. But it does mean you're currently coaching partly blind on the top end. A single honest tempo effort would refresh a number that's drifting out of usefulness, not because fitness has changed but because the data has aged.",
-    "zones": "The per-session shapes tell a clean story: the \u00c5re days sat almost entirely in Z1 as they should for that kind of time on feet, and the late-August faster runs showed genuine Z3\u2013Z4 minutes \u2014 real quality, not grey-zone drift. The restart run sat controlled in low Z1\u2013Z2, which is exactly right for a re-entry. So the distribution across recent sessions has actually been appropriate: easy days easy, hard days had real intensity. The gap isn't distribution quality \u2014 it's simply that too few sessions are happening to sustain any distribution at all.",
-    "hr_comparison": "The strength sessions all read from the calibrated non-chest source and cluster in a sensible low-to-moderate band for functional work, with occasional Z2\u2013Z3 spikes on the busier sessions \u2014 consistent with the mixed nature of that training. Nothing about the HR patterns or source agreement is out of line or worth flagging beyond that.",
-    "calendar": "The calendar's defining feature right now is clustering rather than spread \u2014 isolated single sessions separated by empty days, on both the running and strength fronts. The long running streak stays alive on technicalities, but week-to-week the pattern is punctate, not distributed. This is the same open question that's persisted for several days: touches are happening, but they aren't yet chaining into a week that looks like a training week.",
-    "personal_bests": "Your 10K and Half bests were both set around this time last year, so the calendar rhymes \u2014 but current training isn't pointed at short-course speed right now, and with a stale threshold and no recent fast volume, none of those marks are realistically near this week. They're context, not targets, until rhythm and some quality work return."
+    "overview": "Training data updated \u2014 coach summary unavailable today.",
+    "trends": "",
+    "threshold": "",
+    "zones": "",
+    "hr_comparison": "",
+    "calendar": "",
+    "personal_bests": ""
   },
-  "watch_items": [
-    "Watch whether a second and third run finally join the restart \u2014 the persistent open question, still unanswered several days on.",
-    "Watch whether the long functional session repeats within the week rather than remaining an isolated big touch.",
-    "Watch whether any tempo or faster effort appears to refresh the now two-month-stale threshold read.",
-    "Watch whether sessions begin distributing across the week instead of landing as isolated single days."
-  ],
-  "usage": {
-    "input_tokens": 7265,
-    "output_tokens": 1411,
-    "cost_usd": 0.0716,
-    "cost_dkk": 0.49404,
-    "date": "2026-09-06"
-  },
+  "watch_items": [],
+  "usage": null,
   "usage_mtd_usd": 0.43749,
   "usage_mtd_dkk": 3.0187,
   "usage_ytd_usd": 4.04387,

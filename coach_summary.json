@@ -1,17 +1,17 @@
 {
-  "last_updated": "2026-09-08 10:27 CEST",
+  "last_updated": "2026-09-09 10:30 CEST",
   "headline": "",
   "confidence_pct": 41,
   "confidence_label": "Low data confidence",
   "confidence_reasons": [
-    "LT reading 67d old",
+    "LT reading 68d old",
     "HR data on 7/8 recent runs",
     "Sleep tracked 0/14 nights",
     "Steps tracked 0/7 days",
     "Data fetch up to date",
     "Limited data sources active in last 3 days"
   ],
-  "confidence_attention": "LT reading 67d old",
+  "confidence_attention": "LT reading 68d old",
   "sections": {
     "overview": "Training data updated \u2014 coach summary unavailable today.",
     "trends": "",

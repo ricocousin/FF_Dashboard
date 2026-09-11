@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-09-10 10:31 CEST",
-  "last_complete_date": "2026-09-09",
+  "last_updated": "2026-09-11 10:26 CEST",
+  "last_complete_date": "2026-09-10",
   "this_year": "2026",
   "this_month_short": "Sep",
   "running": {
@@ -64,14 +64,13 @@
     "qual": null
   },
   "cardio_load": {
-    "latest_date": "2026-09-10",
+    "latest_date": "2026-09-11",
     "status": "LOAD_STATUS_NOT_AVAILABLE",
     "strain": 0.0,
     "tolerance": -1.0,
     "ratio": -1.0,
     "trend": {
       "labels": [
-        "08-13",
         "08-14",
         "08-15",
         "08-16",
@@ -99,10 +98,11 @@
         "09-07",
         "09-08",
         "09-09",
-        "09-10"
+        "09-10",
+        "09-11"
       ],
       "strain": [
-        2.6201,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -134,7 +134,6 @@
       ],
       "tolerance": [
         40.41616,
-        40.41616,
         35.30709,
         34.417255,
         34.417255,
@@ -150,6 +149,7 @@
         12.909532,
         10.522953,
         7.970707,
+        -1.0,
         -1.0,
         -1.0,
         -1.0,
@@ -1133,7 +1133,7 @@
   },
   "data_freshness": {
     "status": "fresh",
-    "last_success_date": "2026-09-10",
+    "last_success_date": "2026-09-11",
     "age_days": 0
   },
   "tile_freshness": {
@@ -1302,8 +1302,8 @@
     "rolling": {
       "label": "This week (rolling 7d)",
       "window_days": 7,
-      "window_start": "2026-09-03",
-      "window_end": "2026-09-10",
+      "window_start": "2026-09-04",
+      "window_end": "2026-09-11",
       "minutes": {
         "Z1": 57.1,
         "Z2": 21.8,
@@ -1367,9 +1367,9 @@
     },
     "ytd": {
       "label": "Year to date",
-      "window_days": 252,
+      "window_days": 253,
       "window_start": "2026-01-01",
-      "window_end": "2026-09-09",
+      "window_end": "2026-09-10",
       "minutes": {
         "Z1": 5892.7,
         "Z2": 865.4,
@@ -1400,9 +1400,9 @@
     },
     "all_time": {
       "label": "All time",
-      "window_days": 1982,
+      "window_days": 1983,
       "window_start": "2021-04-07",
-      "window_end": "2026-09-09",
+      "window_end": "2026-09-10",
       "minutes": {
         "Z1": 5892.7,
         "Z2": 865.4,

@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-09-23 10:57 CEST",
-  "last_complete_date": "2026-09-22",
+  "last_updated": "2026-09-24 10:53 CEST",
+  "last_complete_date": "2026-09-23",
   "this_year": "2026",
   "this_month_short": "Sep",
   "running": {
@@ -64,14 +64,13 @@
     "qual": null
   },
   "cardio_load": {
-    "latest_date": "2026-09-23",
+    "latest_date": "2026-09-24",
     "status": "LOAD_STATUS_NOT_AVAILABLE",
     "strain": 0.0,
     "tolerance": -1.0,
     "ratio": -1.0,
     "trend": {
       "labels": [
-        "08-26",
         "08-27",
         "08-28",
         "08-29",
@@ -99,7 +98,8 @@
         "09-20",
         "09-21",
         "09-22",
-        "09-23"
+        "09-23",
+        "09-24"
       ],
       "strain": [
         0.0,
@@ -133,10 +133,10 @@
         0.0
       ],
       "tolerance": [
-        13.300561,
         12.909532,
         10.522953,
         7.970707,
+        -1.0,
         -1.0,
         -1.0,
         -1.0,
@@ -1138,7 +1138,7 @@
   },
   "data_freshness": {
     "status": "fresh",
-    "last_success_date": "2026-09-23",
+    "last_success_date": "2026-09-24",
     "age_days": 0
   },
   "tile_freshness": {
@@ -1311,8 +1311,8 @@
     "rolling": {
       "label": "This week (rolling 7d)",
       "window_days": 7,
-      "window_start": "2026-09-16",
-      "window_end": "2026-09-23",
+      "window_start": "2026-09-17",
+      "window_end": "2026-09-24",
       "minutes": {
         "Z1": 53.8,
         "Z2": 15.6,
@@ -1376,9 +1376,9 @@
     },
     "ytd": {
       "label": "Year to date",
-      "window_days": 265,
+      "window_days": 266,
       "window_start": "2026-01-01",
-      "window_end": "2026-09-22",
+      "window_end": "2026-09-23",
       "minutes": {
         "Z1": 5953.4,
         "Z2": 922.1,
@@ -1409,9 +1409,9 @@
     },
     "all_time": {
       "label": "All time",
-      "window_days": 1995,
+      "window_days": 1996,
       "window_start": "2021-04-07",
-      "window_end": "2026-09-22",
+      "window_end": "2026-09-23",
       "minutes": {
         "Z1": 5953.4,
         "Z2": 922.1,
